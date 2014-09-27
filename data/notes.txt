@@ -1,0 +1,2 @@
+http://stackoverflow.com/questions/2545558/foreign-key-constraints-in-android-using-sqlite-on-delete-cascade
+http://www.sqlite.org/foreignkeys.html
