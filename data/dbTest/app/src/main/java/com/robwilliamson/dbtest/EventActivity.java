@@ -43,6 +43,8 @@ public class EventActivity extends Activity {
         }
 
         m_db = null;
+
+        super.onPause();
     }
 
     @Override
