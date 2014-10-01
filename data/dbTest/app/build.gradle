@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 'android-L'
+    buildToolsVersion "20.0.0"
+    defaultConfig {
+        applicationId "com.robwilliamson.dbtest"
+        minSdkVersion 15
+        targetSdkVersion 'L'
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            runProguard false
+        }
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3'
+    androidTestCompile 'com.jakewharton.espresso:espresso-support-v4:1.1-r3'
+}
