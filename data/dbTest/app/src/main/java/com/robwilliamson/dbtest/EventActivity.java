@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.robwilliamson.db.HealthDbHelper;
+
 
 public class EventActivity extends Activity {
+    private HealthDbHelper m_db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,5 +34,20 @@ public class EventActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        if (m_db != null) {
+            m_db.close();
+        }
+
+        m_db = null;
+    }
+
+    @Override
+    public void onResume() {
+        m_db = new HealthDbHelper(getApplicationContext());
+        super.onResume();
     }
 }
