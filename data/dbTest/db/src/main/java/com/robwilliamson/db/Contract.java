@@ -27,11 +27,11 @@ public final class Contract {
         UNITS = new Units(mDb);
 
         TABLES = new Table[] {
-                UNITS,
-                EVENT_TYPE,
                 EVENT,
+                EVENT_TYPE,
+                MEAL_EVENT,
                 MEAL,
-                MEAL_EVENT
+                UNITS,
         };
     }
 
