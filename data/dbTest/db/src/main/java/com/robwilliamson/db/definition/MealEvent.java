@@ -7,6 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
  * Table containing details of a meal event.
  */
 public class MealEvent extends Table {
+    public enum Columns {
+        MEAL_ID,
+        EVENT_ID,
+        AMOUNT,
+        UNITS_ID
+    }
+
     public MealEvent(SQLiteDatabase db) {
         super(db);
     }
@@ -45,12 +52,5 @@ public class MealEvent extends Table {
     @Override
     public void upgrade(int from, int to) {
 
-    }
-
-    public enum Columns {
-        MEAL_ID,
-        EVENT_ID,
-        AMOUNT,
-        UNITS_ID
     }
 }
