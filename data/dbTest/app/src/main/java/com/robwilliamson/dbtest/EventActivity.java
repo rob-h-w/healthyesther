@@ -74,8 +74,8 @@ public class EventActivity extends DbActivity {
         try {
             db.beginTransaction();
             Contract contract = Contract.getInstance(db);
-//            contract.delete();
-//            contract.create();
+            contract.delete();
+            contract.create();
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
