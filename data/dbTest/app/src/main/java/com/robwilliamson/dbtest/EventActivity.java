@@ -8,6 +8,10 @@ import android.view.MenuItem;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.HealthDbHelper;
+import com.robwilliamson.db.definition.Event;
+import com.robwilliamson.db.definition.EventType;
+
+import java.util.Calendar;
 
 
 public class EventActivity extends DbActivity {
@@ -42,48 +46,36 @@ public class EventActivity extends DbActivity {
     }
 
     private void fakeData() {
-        HealthDbHelper helper = HealthDbHelper.getInstance(getApplicationContext());
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase();
+        cleanOldData(db);
         try {
             db.beginTransaction();
-//            db.execSQL("drop table if exists " + Contract.Event.Table.NAME + ";");
-//            db.execSQL("drop table if exists " + Contract.EventTypeTable.Table.NAME + ";");
 
-//            db.execSQL(Contract.Event.CREATE_TABLE);
-//            db.execSQL(Contract.EventTypeTable.CREATE_TABLE);
-            ContentValues values = new ContentValues();
-            values.put(Contract.EventType.Column.NAME, "Eat a meal");
-            db.insert(Contract.EventType.Table.NAME, null, values);
-            /*db.execSQL("insert into " + Contract.EventType.Table.NAME
-                    + "values ( NULL, \"Eat a meal\", \"meal_event\" )");*/
+            Contract contract = Contract.getInstance(db);
 
-            values = new ContentValues();
-            values.put(Contract.EventType.Column.NAME, "Take medication");
-            db.insert(Contract.EventType.Table.NAME, null, values);
-
-            /*db.execSQL("insert into " + Contract.EventType.Table.NAME
-                    + "values ( NULL, \"Take medication\", \"medication_event\" )");*/
             for (int i = 0; i < 100; i++) {
+                int second = 59 - i % 60;
                 int minute = 10 * (i % 6);
                 int hour = i % 24;
                 int day = (int) (i * 0.28) + 1;
                 int type = (i % 2) + 1;
-                db.execSQL("insert into " + Contract.Event.Table.NAME
-                + " ( "
-                        + Contract.Event.Column.WHEN + ", "
-                        + Contract.Event.Column.CREATED + ", "
-                        + Contract.Event.Column.TYPE_ID + ", "
-                        + Contract.Event.Column.NAME
-                + " ) "
-                + "values( "
-                                + "\"2014-03-" + day + " " + hour + ":" + minute + ":00\", "
-                                + "\"2014-04-" + day + " " + hour + ":" + minute + ":00\", "
-                                + type + ", "
-                                + "\"Event " + i + "\""
-                + " )"
-                );
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(2014, Calendar.MARCH, day, hour, minute, second);
+                contract.EVENT.insert(calendar, type, "Event " + i);
             }
 
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private void cleanOldData(SQLiteDatabase db) {
+        try {
+            db.beginTransaction();
+            Contract contract = Contract.getInstance(db);
+//            contract.delete();
+//            contract.create();
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

@@ -4,11 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.robwilliamson.db.definition.Table;
+
 /**
  * Accessor for the health database.
  */
-public class HealthDbHelper extends SQLiteOpenHelper {
+public final class HealthDbHelper extends SQLiteOpenHelper {
     private static volatile HealthDbHelper sInstance = null;
+
     public static synchronized HealthDbHelper getInstance(Context context) {
         if (sInstance == null) {
             sInstance = new HealthDbHelper(context.getApplicationContext());
@@ -18,7 +21,7 @@ public class HealthDbHelper extends SQLiteOpenHelper {
     }
 
     private HealthDbHelper(Context context) {
-        super(context, Contract.NAME, null, Contract.VERSION);
+        super(context.getApplicationContext(), Contract.NAME, null, Contract.VERSION);
     }
 
     @Override
@@ -30,12 +33,11 @@ public class HealthDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(Contract.Event.CREATE_TABLE);
-        sqLiteDatabase.execSQL(Contract.EventType.CREATE_TABLE);
-        sqLiteDatabase.execSQL(Contract.MealEvent.CREATE_TABLE);
+        Contract.getInstance(sqLiteDatabase).create();
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
+        Contract.getInstance(sqLiteDatabase).upgrade(from, to);
     }
 }
