@@ -5,8 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventType;
+import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.MealEvent;
 import com.robwilliamson.db.definition.Table;
+import com.robwilliamson.db.definition.Units;
 
 /**
  * Contains database table and column names, and other database-definition data.
@@ -20,11 +22,15 @@ public final class Contract {
 
         EVENT = new Event(mDb);
         EVENT_TYPE = new EventType(mDb);
+        MEAL = new Meal(mDb);
         MEAL_EVENT = new MealEvent(mDb);
+        UNITS = new Units(mDb);
 
         TABLES = new Table[] {
-                EVENT,
+                UNITS,
                 EVENT_TYPE,
+                EVENT,
+                MEAL,
                 MEAL_EVENT
         };
     }
@@ -42,7 +48,9 @@ public final class Contract {
 
     public final Event EVENT;
     public final EventType EVENT_TYPE;
+    public final Meal MEAL;
     public final MealEvent MEAL_EVENT;
+    public final Units UNITS;
 
     public final Table[] TABLES;
 
