@@ -4,18 +4,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.Contract;
+import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventType;
 import com.robwilliamson.db.definition.Table;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
  * List events and their types.
  */
-public class SelectEventAndType implements Query {
+public class SelectEventAndType implements SelectQuery {
     private final Calendar mEarliest;
+    private final String TYPE_NAME = "type_name";
 
     public SelectEventAndType() {
         mEarliest = null;
@@ -33,46 +36,43 @@ public class SelectEventAndType implements Query {
     @Override
     public Cursor query(SQLiteDatabase db) {
         Cursor cursor = null;
-        Contract c = Contract.getInstance(db);
+        Contract c = Contract.getInstance();
         try {
             db.beginTransaction();
 
-            String eventId = c.EVENT.getFullyQualifiedColumnName(Event.Columns._ID);
-            String when = c.EVENT.getFullyQualifiedColumnName(Event.Columns.WHEN);
-            String eventName = c.EVENT.getFullyQualifiedColumnName(Event.Columns.NAME);
-            String eventTypeName = c.EVENT_TYPE.getFullyQualifiedColumnName(EventType.Columns.Name);
-            String event = c.EVENT.getName();
-            String eventType = c.EVENT_TYPE.getName();
-            String eventDotTypeId = c.EVENT.getFullyQualifiedColumnName(Event.Columns.TYPE_ID);
-            String eventTypeDotId = c.EVENT_TYPE.getFullyQualifiedColumnName(EventType.Columns._Id);
+            String[] qualifiedUniqueColumns = new String[] {
+                    c.EVENT.getQualifiedName(Event._ID),
+                    c.EVENT.getQualifiedName(Event.WHEN),
+                    c.EVENT.getQualifiedName(Event.NAME),
+                    c.EVENT_TYPE.getQualifiedName(EventType.NAME) + " AS " + TYPE_NAME,
+            };
 
             String where = mEarliest == null ? "" :
-                    " where " + when + " >= datetime(" + Table.Time.toString(mEarliest) + ")\n";
+                    " where " + c.EVENT.getQualifiedName(Event.WHEN) + " >= datetime(" + Table.Time.toString(mEarliest) + ") \n";
 
-            String selectQuery = "SELECT ?, ?, ?, ?\n" + // eventId, when, eventName, eventTypeName
-                    "FROM ?\n" + // event
-                    " inner join ?\n" + // eventType
-                    " on ? = ?\n" + // eventDotTypeId, eventTypeDotId
+            String selectQuery = "SELECT " + Utils.join(qualifiedUniqueColumns, ", ") + "\n" + // _Id, WHEN, NAME, EventType.NAME
+                    "FROM " + Event.TABLE_NAME + "\n" +
+                    " inner join " + EventType.TABLE_NAME + "\n" +
+                    " on " + c.EVENT.getQualifiedName(Event.TYPE_ID) + " = " + c.EVENT_TYPE.getQualifiedName(EventType._ID) + " \n" +
                     where +
-                    "  order by ? desc\n"; // when
+                    "  order by " + c.EVENT.getQualifiedName(Event.WHEN) + " desc \n";
 
-            cursor = db.rawQuery(selectQuery,
-                    new String[]{
-                            eventId,
-                            when,
-                            eventName,
-                            eventTypeName,
-                            event,
-                            eventType,
-                            eventDotTypeId,
-                            eventTypeDotId,
-                            when
-                    });
+            cursor = db.rawQuery(selectQuery, null);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
         }
 
         return cursor;
+    }
+
+    @Override
+    public String[] getResultColumns() {
+        return Table.cleanName(new String[] {
+                Event._ID,
+                Event.WHEN,
+                Event.NAME,
+                TYPE_NAME,
+        });
     }
 }

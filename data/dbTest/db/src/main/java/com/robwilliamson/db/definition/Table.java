@@ -9,6 +9,7 @@ import com.robwilliamson.db.HealthDbHelper;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -18,34 +19,26 @@ import java.util.TimeZone;
  * Details of a particular SQLite table.
  */
 public abstract class Table {
-    private final SQLiteDatabase mDb;
-
-    public static class NotWritableException extends RuntimeException {}
-
-    protected Table(SQLiteDatabase db) {
-        if (db.isReadOnly()) {
-            throw new NotWritableException();
-        }
-        mDb = db;
-    }
-
     public abstract String getName();
-    public abstract String[] getColumnNames();
 
-    public abstract void create();
-    public abstract void upgrade(int from, int to);
-
-    public void delete() {
-        db().execSQL("drop table if exists " + getName());
+    public abstract void create(SQLiteDatabase db);
+    public abstract void upgrade(SQLiteDatabase db, int from, int to);
+    public void delete(SQLiteDatabase db) {
+        db.execSQL("drop table if exists " + getName());
     }
 
-    public String getColumnName(Enum e) {
-        return getColumnNames()[e.ordinal()];
+    protected void insert(SQLiteDatabase db, ContentValues values) {
+        db.insert(getName(), null, values);
     }
 
-    public String getFullyQualifiedColumnName(Enum e) {
-        String name = getColumnName(e);
+    public static String[] cleanName(String[] names) {
+        for (int i = 0; i < names.length; i++) {
+            names[i] = cleanName(names[i]);
+        }
 
+        return names;
+    }
+    public static String cleanName(String name) {
         // Strip square brackets, if present.
         if (name.startsWith("[")) {
             name = name.substring(1);
@@ -55,27 +48,24 @@ public abstract class Table {
             name = name.substring(0, name.length() - 1);
         }
 
-        return getName() + "." + name;
+        return name;
     }
 
-    protected void insert(ContentValues values) {
-        db().insert(getName(), null, values);
+    public static String getQualifiedName(String qualifier, String name) {
+        return qualifier + "." + name;
     }
 
-    protected void put(ContentValues values, Enum e, int value) {
-        values.put(getColumnName(e), value);
+    public static String[] getQualifiedName(String qualifier, String names[], int startIndex, int endIndex) {
+        for (int i = startIndex; i < endIndex + 1; i++) {
+            String name = names[i];
+            names[i] = getQualifiedName(qualifier, name);
+        }
+
+        return names;
     }
 
-    protected void put(ContentValues values, Enum e, String value) {
-        values.put(getColumnName(e), value);
-    }
-
-    protected void put(ContentValues values, Enum e, Calendar value) {
-        values.put(getColumnName(e), Time.toString(value));
-    }
-
-    protected SQLiteDatabase db() {
-        return mDb;
+    public String getQualifiedName(String name) {
+        return getQualifiedName(getName(), name);
     }
 
     public static final class Time{
@@ -88,7 +78,7 @@ public abstract class Table {
 
         public static Calendar fromString(String string) throws ParseException {
             Calendar calendar = Calendar.getInstance();
-            calendar.setTimeZone(TimeZone.getTimeZone("utf-8"));
+            calendar.setTimeZone(TimeZone.getTimeZone("utc"));
             SimpleDateFormat format = new SimpleDateFormat(sFormat, Locale.ROOT);
             calendar.setTime(format.parse(string));
             return calendar;

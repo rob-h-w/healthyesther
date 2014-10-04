@@ -15,16 +15,15 @@ import com.robwilliamson.db.definition.Units;
  */
 public final class Contract {
     private static volatile Contract sContract = null;
-    private final SQLiteDatabase mDb;
 
-    private Contract(SQLiteDatabase db) {
-        mDb = db;
+    private static class NotInitializedException extends NullPointerException {}
 
-        EVENT = new Event(mDb);
-        EVENT_TYPE = new EventType(mDb);
-        MEAL = new Meal(mDb);
-        MEAL_EVENT = new MealEvent(mDb);
-        UNITS = new Units(mDb);
+    private Contract() {
+        EVENT = new Event();
+        EVENT_TYPE = new EventType();
+        MEAL = new Meal();
+        MEAL_EVENT = new MealEvent();
+        UNITS = new Units();
 
         TABLES = new Table[] {
                 EVENT,
@@ -35,12 +34,15 @@ public final class Contract {
         };
     }
 
-    public static synchronized Contract getInstance(SQLiteDatabase db) {
-        if (sContract == null) {
-            sContract = new Contract(db);
-        }
-
+    public static synchronized Contract getInstance() {
+        initialize();
         return sContract;
+    }
+
+    private static synchronized void initialize() {
+        if (sContract == null) {
+            sContract = new Contract();
+        }
     }
 
     public static final String NAME = "health.db3";
@@ -54,21 +56,21 @@ public final class Contract {
 
     public final Table[] TABLES;
 
-    public void create() {
+    public void create(SQLiteDatabase db) {
         for (Table table : TABLES) {
-            table.create();
+            table.create(db);
         }
     }
 
-    public void delete() {
+    public void delete(SQLiteDatabase db) {
         for (Table table : TABLES) {
-            table.delete();
+            table.delete(db);
         }
     }
 
-    public void upgrade(int from, int to) {
+    public void upgrade(SQLiteDatabase db, int from, int to) {
         for (Table table : TABLES) {
-            table.upgrade(from, to);
+            table.upgrade(db, from, to);
         }
     }
 }

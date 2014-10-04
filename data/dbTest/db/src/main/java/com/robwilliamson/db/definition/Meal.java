@@ -6,31 +6,18 @@ import android.database.sqlite.SQLiteDatabase;
  * Meal table contains all unique types of meal.
  */
 public class Meal extends Table {
-    public enum Columns {
-        _Id,
-        Name
-    }
-
-    public Meal(SQLiteDatabase db) {
-        super(db);
-    }
+    public static final String TABLE_NAME = "meal";
+    public static final String _ID = "_id";
+    public static final String NAME = "name";
 
     @Override
     public String getName() {
-        return "meal";
+        return TABLE_NAME;
     }
 
     @Override
-    public String[] getColumnNames() {
-        return new String[] {
-                "_id",
-                "name"
-        };
-    }
-
-    @Override
-    public void create() {
-        db().execSQL("CREATE TABLE meal ( \n" +
+    public void create(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE meal ( \n" +
                 "    _id  INTEGER      PRIMARY KEY AUTOINCREMENT,\n" +
                 "    name TEXT( 140 )  NOT NULL\n" +
                 "                      UNIQUE \n" +
@@ -38,7 +25,7 @@ public class Meal extends Table {
     }
 
     @Override
-    public void upgrade(int from, int to) {
+    public void upgrade(SQLiteDatabase db, int from, int to) {
 
     }
 }

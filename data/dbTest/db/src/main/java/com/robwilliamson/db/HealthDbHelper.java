@@ -33,11 +33,11 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        Contract.getInstance(sqLiteDatabase).create();
+        Contract.getInstance().create(sqLiteDatabase);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
-        Contract.getInstance(sqLiteDatabase).upgrade(from, to);
+        Contract.getInstance().upgrade(sqLiteDatabase, from, to);
     }
 }
