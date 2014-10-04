@@ -34,8 +34,8 @@ public final class Contract {
                 EVENT_TYPE,
                 MEAL_EVENT,
                 MEAL,
-                MEDICATION,
                 MEDICATION_EVENT,
+                MEDICATION,
                 UNITS,
         };
     }

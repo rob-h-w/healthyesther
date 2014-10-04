@@ -7,7 +7,6 @@ public class MedicationEvent extends Table {
     public static final String TABLE_ID = "medication_event";
     public static final String MEDICATION_ID = "medication_id";
     public static final String EVENT_ID = "event_id";
-    public static final String NAME = "name";
 
     @Override
     public String getName() {
@@ -23,8 +22,6 @@ public class MedicationEvent extends Table {
                 "    event_id       NOT NULL\n" +
                 "                   REFERENCES event ( _id ) ON DELETE CASCADE\n" +
                 "                                            ON UPDATE CASCADE,\n" +
-                "    name           REFERENCES medication_name ( name ) ON DELETE SET NULL\n" +
-                "                                                       ON UPDATE CASCADE,\n" +
                 "    PRIMARY KEY ( medication_id, event_id ) \n" +
                 ");");
     }
@@ -34,11 +31,10 @@ public class MedicationEvent extends Table {
 
     }
 
-    public void insert(SQLiteDatabase db, long medicationId, long eventId, String name) {
+    public void insert(SQLiteDatabase db, long medicationId, long eventId) {
         ContentValues values = new ContentValues();
         values.put(MEDICATION_ID, medicationId);
         values.put(EVENT_ID, eventId);
-        values.put(NAME, name);
         insert(db, values);
     }
 }
