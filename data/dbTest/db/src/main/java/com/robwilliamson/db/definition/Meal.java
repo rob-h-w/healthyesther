@@ -33,6 +33,6 @@ public class Meal extends Table {
     public long insert(SQLiteDatabase db, String name) {
         ContentValues values = new ContentValues();
         values.put(NAME, name);
-        return db.insert(getName(), null, values);
+        return insert(db, values);
     }
 }

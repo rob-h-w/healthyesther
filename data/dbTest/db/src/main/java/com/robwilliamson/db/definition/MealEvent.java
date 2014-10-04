@@ -56,6 +56,6 @@ public class MealEvent extends Table {
             values.put(UNITS_ID, units_id);
         }
 
-        db.insert(getName(), null, values);
+        insert(db, values);
     }
 }
