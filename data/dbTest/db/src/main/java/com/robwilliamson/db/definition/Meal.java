@@ -1,5 +1,6 @@
 package com.robwilliamson.db.definition;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -27,5 +28,11 @@ public class Meal extends Table {
     @Override
     public void upgrade(SQLiteDatabase db, int from, int to) {
 
+    }
+
+    public long insert(SQLiteDatabase db, String name) {
+        ContentValues values = new ContentValues();
+        values.put(NAME, name);
+        return db.insert(getName(), null, values);
     }
 }

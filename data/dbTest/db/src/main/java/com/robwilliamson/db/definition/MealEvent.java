@@ -1,5 +1,6 @@
 package com.robwilliamson.db.definition;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 /**
@@ -36,5 +37,25 @@ public class MealEvent extends Table {
     @Override
     public void upgrade(SQLiteDatabase db, int from, int to) {
 
+    }
+
+    public void insert(SQLiteDatabase db, long meal_id, long event_id) {
+        insert(db, meal_id, event_id, null, null);
+    }
+
+    public void insert(SQLiteDatabase db, long meal_id, long event_id, Double amount, Long units_id) {
+        ContentValues values = new ContentValues();
+        values.put(MEAL_ID, meal_id);
+        values.put(EVENT_ID, event_id);
+
+        if (amount != null) {
+            values.put(AMOUNT, amount);
+        }
+
+        if (units_id != null) {
+            values.put(UNITS_ID, units_id);
+        }
+
+        db.insert(getName(), null, values);
     }
 }
