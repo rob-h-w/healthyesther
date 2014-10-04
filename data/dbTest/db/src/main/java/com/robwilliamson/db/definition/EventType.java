@@ -26,7 +26,7 @@ public final class EventType extends Table {
                 "    icon TEXT \n" +
                 ");\n");
 
-        insert(db, 1, "Eat a meal", null);
+        insert(db, 1, "Meal", null);
         insert(db, 2, "Take medication", null);
     }
 
