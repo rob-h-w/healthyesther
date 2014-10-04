@@ -64,15 +64,24 @@ public class EventActivity extends DbActivity {
 
             Contract contract = Contract.getInstance();
 
-            for (int i = 0; i < 100; i++) {
-                int second = 59 - i % 60;
-                int minute = 10 * (i % 6);
-                int hour = i % 24;
-                int day = (int) (i * 0.28) + 1;
-                int type = (i % 2) + 1;
+            long pieId = contract.MEAL.insert(db, "PAH!");
+            long stewId = contract.MEAL.insert(db, "Stoo");
+
+            for (int i = 0; i < 1000; i++) {
+                int second = (31*i/10) % 60;
+                int minute = i % 60;
+                int hour = (127*i/10) % 24;
+                int day = (i/10) % 28 + 1;
+                int type = ((13*second*hour*i/10) % 2) + 1;
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(2014, Calendar.MARCH, day, hour, minute, second);
-                contract.EVENT.insert(db, calendar, type, "Event " + i);
+                long eventId = contract.EVENT.insert(db, calendar, type, "Event " + i);
+
+                if (type == 1) {
+                    contract.MEAL_EVENT.insert(db, (minute % 2 > 0) ? pieId : stewId, eventId);
+                } else {
+                    // Insert medication here.
+                }
             }
 
             db.setTransactionSuccessful();
