@@ -42,11 +42,11 @@ public class Event extends Table {
     public void upgrade(SQLiteDatabase db, int from, int to) {
     }
 
-    public void insert(SQLiteDatabase db, Calendar when, int typeId, String name) {
+    public long insert(SQLiteDatabase db, Calendar when, int typeId, String name) {
         ContentValues values = new ContentValues();
         values.put(WHEN, Time.toString(when));
         values.put(TYPE_ID, typeId);
         values.put(NAME, name);
-        insert(db, values);
+        return insert(db, values);
     }
 }
