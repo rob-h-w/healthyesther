@@ -1,32 +1,40 @@
 package com.robwilliamson.dbtest;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventType;
+import com.robwilliamson.db.use.Query;
+import com.robwilliamson.db.use.SelectEventAndType;
 
 import java.util.Calendar;
 
 
 public class EventActivity extends DbActivity {
+    private ListView mEventListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+
+        fakeData();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        fakeData();
+        mEventListView = (ListView) findViewById(R.id.eventListView);
     }
 
     @Override
@@ -79,6 +87,18 @@ public class EventActivity extends DbActivity {
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
+        }
+    }
+
+    @Override
+    protected Query getOpeningQuery() {
+        return new SelectEventAndType();
+    }
+
+    @Override
+    protected void onOpeningQueryComplete(Cursor cursor) {
+        if (mEventListView != null) {
+            ((BaseAdapter)mEventListView.getAdapter()).notifyDataSetChanged();
         }
     }
 }

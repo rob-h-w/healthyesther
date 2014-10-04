@@ -7,22 +7,44 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.robwilliamson.db.HealthDbHelper;
+import com.robwilliamson.db.use.Query;
 
 /**
  * Activities that use databases.
  */
 public abstract class DbActivity extends Activity {
+    private AsyncTask<Void, Void, Void> mOpeningQuery;
 
-    //abstract protected void openQuery(SQLiteDatabase db);
-    //abstract protected void closeTransaction(SQLiteDatabase db);
+    abstract protected Query getOpeningQuery();
+    abstract protected void onOpeningQueryComplete(Cursor cursor);
 
-    protected void queryAndClose(Intent success, Intent failure) {
-        // Do the query...
-        boolean successful = true;
-        if (successful) {
-            startActivity(success);
-        } else {
-            startActivity(failure);
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mOpeningQuery = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Query query = getOpeningQuery();
+                final Cursor cursor = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onOpeningQueryComplete(cursor);
+                    }
+                });
+                return null;
+            }
+        };
+
+        mOpeningQuery.execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mOpeningQuery != null && mOpeningQuery.getStatus() != AsyncTask.Status.FINISHED) {
+            mOpeningQuery.cancel(false); // Let it run to completion if the DB operation has started.
         }
     }
 }
