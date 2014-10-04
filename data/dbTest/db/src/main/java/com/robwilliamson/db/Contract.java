@@ -7,6 +7,7 @@ import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventType;
 import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.MealEvent;
+import com.robwilliamson.db.definition.Medication;
 import com.robwilliamson.db.definition.Table;
 import com.robwilliamson.db.definition.Units;
 
@@ -23,6 +24,7 @@ public final class Contract {
         EVENT_TYPE = new EventType();
         MEAL = new Meal();
         MEAL_EVENT = new MealEvent();
+        MEDICATION = new Medication();
         UNITS = new Units();
 
         TABLES = new Table[] {
@@ -30,6 +32,7 @@ public final class Contract {
                 EVENT_TYPE,
                 MEAL_EVENT,
                 MEAL,
+                MEDICATION,
                 UNITS,
         };
     }
@@ -52,6 +55,7 @@ public final class Contract {
     public final EventType EVENT_TYPE;
     public final Meal MEAL;
     public final MealEvent MEAL_EVENT;
+    public final Medication MEDICATION;
     public final Units UNITS;
 
     public final Table[] TABLES;
