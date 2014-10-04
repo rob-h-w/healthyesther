@@ -67,6 +67,8 @@ public class EventActivity extends DbActivity {
             long pieId = contract.MEAL.insert(db, "PAH!");
             long stewId = contract.MEAL.insert(db, "Stoo");
 
+            long paracetamolId = contract.MEDICATION.insert(db, "Paracetamol");
+
             for (int i = 0; i < 1000; i++) {
                 int second = (31*i/10) % 60;
                 int minute = i % 60;
@@ -80,7 +82,7 @@ public class EventActivity extends DbActivity {
                 if (type == 1) {
                     contract.MEAL_EVENT.insert(db, (minute % 2 > 0) ? pieId : stewId, eventId);
                 } else {
-                    // Insert medication here.
+                    contract.MEDICATION_EVENT.insert(db, paracetamolId, eventId);
                 }
             }
 
