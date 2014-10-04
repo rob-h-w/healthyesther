@@ -20,9 +20,9 @@ import java.util.TimeZone;
 public abstract class Table {
     private final SQLiteDatabase mDb;
 
-    public static class NotWritableException extends RuntimeException {};
+    public static class NotWritableException extends RuntimeException {}
 
-    public Table(SQLiteDatabase db) {
+    protected Table(SQLiteDatabase db) {
         if (db.isReadOnly()) {
             throw new NotWritableException();
         }
@@ -34,12 +34,28 @@ public abstract class Table {
 
     public abstract void create();
     public abstract void upgrade(int from, int to);
+
     public void delete() {
         db().execSQL("drop table if exists " + getName());
     }
 
-    protected String getColumnName(Enum e) {
+    public String getColumnName(Enum e) {
         return getColumnNames()[e.ordinal()];
+    }
+
+    public String getFullyQualifiedColumnName(Enum e) {
+        String name = getColumnName(e);
+
+        // Strip square brackets, if present.
+        if (name.startsWith("[")) {
+            name = name.substring(1);
+        }
+
+        if (name.endsWith("]")) {
+            name = name.substring(0, name.length() - 1);
+        }
+
+        return getName() + "." + name;
     }
 
     protected void insert(ContentValues values) {
@@ -62,8 +78,8 @@ public abstract class Table {
         return mDb;
     }
 
-    protected static final class Time{
-        private static String sFormat = "yyyy-MM-dd HH:mm:ss";
+    public static final class Time{
+        private static final String sFormat = "yyyy-MM-dd HH:mm:ss";
 
         public static String toString(Calendar calendar) {
             SimpleDateFormat format = new SimpleDateFormat(sFormat);
