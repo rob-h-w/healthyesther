@@ -27,8 +27,8 @@ public abstract class Table {
         db.execSQL("drop table if exists " + getName());
     }
 
-    protected void insert(SQLiteDatabase db, ContentValues values) {
-        db.insert(getName(), null, values);
+    protected long insert(SQLiteDatabase db, ContentValues values) {
+        return db.insert(getName(), null, values);
     }
 
     public static String[] cleanName(String[] names) {
