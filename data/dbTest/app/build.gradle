@@ -30,4 +30,5 @@ dependencies {
     androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3'
     androidTestCompile 'com.jakewharton.espresso:espresso-support-v4:1.1-r3'
     compile project(':db')
+    compile 'com.android.support:support-v4:20.0.0'
 }
