@@ -6,5 +6,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="list_element_space">10dip</dimen>
+    <dimen name="min_button_width">100dip</dimen>
 
 </resources>
