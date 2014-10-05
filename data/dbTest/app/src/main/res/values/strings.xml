@@ -14,5 +14,6 @@
     <string name="meal">Meal</string>
     <string name="medication">Medication</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="log_an_event">Log an event</string>
 
 </resources>
