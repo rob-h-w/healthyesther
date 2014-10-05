@@ -2,15 +2,12 @@
 <resources>
 
     <string name="app_name">Healthy Esther</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_home">Esther\'s Health App</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_log_events">Log events</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
+    <string name="action_add">Add</string>
     <string name="meal">Meal</string>
     <string name="medication">Medication</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>

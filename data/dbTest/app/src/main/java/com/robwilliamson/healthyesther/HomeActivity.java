@@ -4,7 +4,6 @@ import android.app.Activity;
 
 import android.app.ActionBar;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
@@ -16,7 +15,9 @@ import android.support.v4.widget.DrawerLayout;
 
 
 public class HomeActivity extends FragmentActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        HomeFragment.HomeFragmentCallbacks {
+    private static final String FRAGMENT_HOME = "fragment_home";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -27,6 +28,8 @@ public class HomeActivity extends FragmentActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+
+    private int mHomeFragmentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +47,21 @@ public class HomeActivity extends FragmentActivity
 
         if (findViewById(R.id.drawer_layout) != null) {
             if (savedInstanceState != null) {
+                mHomeFragmentId = savedInstanceState.getInt(FRAGMENT_HOME);
                 return;
             }
 
             HomeFragment homeFragment = new HomeFragment();
             homeFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction().add(R.id.drawer_layout, homeFragment).commit();
+            mHomeFragmentId = homeFragment.getId();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(FRAGMENT_HOME, mHomeFragmentId);
     }
 
     @Override
@@ -65,13 +76,7 @@ public class HomeActivity extends FragmentActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_log_events);
                 break;
         }
     }
@@ -83,6 +88,16 @@ public class HomeActivity extends FragmentActivity
         actionBar.setTitle(mTitle);
     }
 
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (!mNavigationDrawerFragment.isDrawerOpen()) {
+            menu.findItem(R.id.action_add).setEnabled(getHomeFragment().AddPossible());
+            return true;
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,10 +118,16 @@ public class HomeActivity extends FragmentActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void enableAdd(boolean enable) {
+        findViewById(R.id.action_add).setEnabled(enable);
+    }
+
+    private HomeFragment getHomeFragment() {
+        return (HomeFragment) getSupportFragmentManager().findFragmentById(mHomeFragmentId);
     }
 
     /**
@@ -137,8 +158,7 @@ public class HomeActivity extends FragmentActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_home, container, false);
         }
 
         @Override
