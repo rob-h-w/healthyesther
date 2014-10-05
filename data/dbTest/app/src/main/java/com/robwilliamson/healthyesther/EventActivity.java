@@ -1,19 +1,15 @@
-package com.robwilliamson.dbtest;
+package com.robwilliamson.healthyesther;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.HealthDbHelper;
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.EventType;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.SelectEventAndType;
 import com.robwilliamson.db.use.SelectQuery;

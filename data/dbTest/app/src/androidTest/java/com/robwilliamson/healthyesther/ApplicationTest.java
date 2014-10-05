@@ -1,4 +1,4 @@
-package com.robwilliamson.dbtest;
+package com.robwilliamson.healthyesther;
 
 import android.test.ActivityInstrumentationTestCase2;
 

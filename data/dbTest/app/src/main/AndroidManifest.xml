@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.robwilliamson.dbtest" >
+    package="com.robwilliamson.healthyesther" >
 
     <application
         android:allowBackup="true"
@@ -8,12 +8,12 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".EventActivity"
+            android:name="com.robwilliamson.healthyesther.EventActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".HomeActivity"
-            android:label="@string/title_activity_home" >
+            android:name="com.robwilliamson.healthyesther.HomeActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

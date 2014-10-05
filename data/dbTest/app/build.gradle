@@ -4,9 +4,9 @@ android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
     defaultConfig {
-        applicationId "com.robwilliamson.dbtest"
+        applicationId "com.robwilliamson.healthyesther"
         minSdkVersion 15
-        targetSdkVersion '19'
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"

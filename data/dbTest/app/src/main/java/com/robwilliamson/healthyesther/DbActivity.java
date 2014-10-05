@@ -1,9 +1,7 @@
-package com.robwilliamson.dbtest;
+package com.robwilliamson.healthyesther;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.robwilliamson.db.HealthDbHelper;
