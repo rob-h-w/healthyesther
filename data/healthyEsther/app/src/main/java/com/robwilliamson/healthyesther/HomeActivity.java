@@ -7,6 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 
+import com.robwilliamson.healthyesther.fragment.AddEventFragment;
+import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
+
 
 public class HomeActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {

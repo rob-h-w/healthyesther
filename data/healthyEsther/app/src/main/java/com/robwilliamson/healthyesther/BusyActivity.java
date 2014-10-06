@@ -2,6 +2,8 @@ package com.robwilliamson.healthyesther;
 
 import android.support.v4.app.FragmentActivity;
 
+import com.robwilliamson.healthyesther.fragment.BusyFragment;
+
 public class BusyActivity extends FragmentActivity {
     private BusyFragment mBusyFragment;
 

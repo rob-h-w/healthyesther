@@ -1,4 +1,4 @@
-package com.robwilliamson.healthyesther;
+package com.robwilliamson.healthyesther.fragment;
 
 
 import android.app.Activity;
@@ -20,6 +20,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.robwilliamson.healthyesther.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
