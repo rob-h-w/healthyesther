@@ -15,8 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 
 
 public class HomeActivity extends FragmentActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-        HomeFragment.HomeFragmentCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String FRAGMENT_HOME = "fragment_home";
 
     /**
@@ -88,17 +87,6 @@ public class HomeActivity extends FragmentActivity
         actionBar.setTitle(mTitle);
     }
 
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            menu.findItem(R.id.action_add).setEnabled(getHomeFragment().AddPossible());
-            return true;
-        }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
@@ -119,15 +107,6 @@ public class HomeActivity extends FragmentActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void enableAdd(boolean enable) {
-        findViewById(R.id.action_add).setEnabled(enable);
-    }
-
-    private HomeFragment getHomeFragment() {
-        return (HomeFragment) getSupportFragmentManager().findFragmentById(mHomeFragmentId);
     }
 
     /**

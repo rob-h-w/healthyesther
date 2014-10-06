@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.robwilliamson.healthyesther.HomeActivity" >
-    <item android:id="@+id/action_add"
+    <item android:id="@+id/action_add_event"
         android:title="@string/action_add"
         android:showAsAction="withText|ifRoom"/>
     <!--<item android:id="@+id/action_settings"
