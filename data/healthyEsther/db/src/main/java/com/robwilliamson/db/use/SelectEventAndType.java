@@ -16,7 +16,7 @@ import java.util.TimeZone;
 /**
  * List events and their types.
  */
-public class SelectEventAndType implements SelectQuery {
+public abstract class SelectEventAndType implements SelectQuery {
     private final Calendar mEarliest;
     private final String TYPE_NAME = "type_name";
 

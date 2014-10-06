@@ -21,11 +21,26 @@ public class EventActivity extends DbActivity {
     private ListView mEventListView;
     private SelectQuery mQuery;
 
+    public EventActivity() { super(false); }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
-        mQuery = new SelectEventAndType();
+
+        mQuery = new SelectEventAndType() {
+            @Override
+            public void onQueryComplete(Cursor cursor) {
+                if (mEventListView != null) {
+                    String[] allColumns = mQuery.getResultColumns();
+                    mEventListView.setAdapter(new SimpleCursorAdapter(
+                            EventActivity.this,
+                            R.layout.list_item, cursor,
+                            new String[] { allColumns[2],                allColumns[3] },
+                            new int[]    { R.id.event_list_element_name, R.id.event_list_element_type}));
+                }
+            }
+        };
 
         fakeData();
     }
@@ -101,17 +116,7 @@ public class EventActivity extends DbActivity {
     }
 
     @Override
-    protected Query getOpeningQuery() {
+    protected Query getOnResumeQuery() {
         return mQuery;
-    }
-
-    @Override
-    protected void onOpeningQueryComplete(Cursor cursor) {
-        if (mEventListView != null) {
-            String[] allColumns = mQuery.getResultColumns();
-            mEventListView.setAdapter(new SimpleCursorAdapter(this, R.layout.list_item, cursor,
-                    new String[] { allColumns[2],                allColumns[3] },
-                    new int[]    { R.id.event_list_element_name, R.id.event_list_element_type}));
-        }
     }
 }

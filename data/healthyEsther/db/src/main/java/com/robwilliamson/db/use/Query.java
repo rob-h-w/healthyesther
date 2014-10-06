@@ -8,4 +8,5 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public interface Query {
     public Cursor query(SQLiteDatabase db);
+    public void onQueryComplete(Cursor cursor);
 }
