@@ -1,19 +1,7 @@
 package com.robwilliamson.db.definition;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-
-import com.robwilliamson.db.HealthDbHelper;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Details of a particular SQLite table.
@@ -66,22 +54,5 @@ public abstract class Table {
 
     public String getQualifiedName(String name) {
         return getQualifiedName(getName(), name);
-    }
-
-    public static final class Time{
-        private static final String sFormat = "yyyy-MM-dd HH:mm:ss";
-
-        public static String toString(Calendar calendar) {
-            SimpleDateFormat format = new SimpleDateFormat(sFormat);
-            return format.format(calendar.getTime());
-        }
-
-        public static Calendar fromString(String string) throws ParseException {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeZone(TimeZone.getTimeZone("utc"));
-            SimpleDateFormat format = new SimpleDateFormat(sFormat, Locale.ROOT);
-            calendar.setTime(format.parse(string));
-            return calendar;
-        }
     }
 }

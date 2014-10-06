@@ -3,6 +3,8 @@ package com.robwilliamson.db.definition;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Utils;
+
 import java.util.Calendar;
 
 /**
@@ -44,7 +46,7 @@ public class Event extends Table {
 
     public long insert(SQLiteDatabase db, Calendar when, int typeId, String name) {
         ContentValues values = new ContentValues();
-        values.put(WHEN, Time.toString(when));
+        values.put(WHEN, Utils.Time.toString(when));
         values.put(TYPE_ID, typeId);
         values.put(NAME, name);
         return insert(db, values);
