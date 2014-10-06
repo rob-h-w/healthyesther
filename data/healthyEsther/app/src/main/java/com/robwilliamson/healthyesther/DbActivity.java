@@ -10,9 +10,8 @@ import com.robwilliamson.db.use.Query;
 /**
  * Activities that use databases.
  */
-public abstract class DbActivity extends FragmentActivity {
+public abstract class DbActivity extends BusyActivity {
     private final boolean mRunToCompletion;
-    private BusyFragment mBusyFragment;
     private volatile AsyncTask<Void, Void, Void> mOpeningQuery;
     private volatile AsyncTask<Void, Void, Void> mQuery;
 
@@ -24,7 +23,6 @@ public abstract class DbActivity extends FragmentActivity {
 
     public DbActivity(boolean runToCompletion) {
         mRunToCompletion = runToCompletion;
-        mBusyFragment = new BusyFragment();
     }
 
     @Override
@@ -80,15 +78,6 @@ public abstract class DbActivity extends FragmentActivity {
     private void cancel(AsyncTask<Void, Void, Void> task) {
         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
             task.cancel(mRunToCompletion);
-        }
-    }
-
-    private synchronized void setBusy(boolean busy) {
-        if (busy) {
-            mBusyFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(android.R.id.content, mBusyFragment).commit();
-        } else {
-            getSupportFragmentManager().beginTransaction().remove(mBusyFragment).commit();
         }
     }
 }
