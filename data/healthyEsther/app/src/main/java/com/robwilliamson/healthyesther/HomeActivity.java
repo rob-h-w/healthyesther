@@ -1,23 +1,15 @@
 package com.robwilliamson.healthyesther;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
 
 public class HomeActivity extends FragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-    private static final String FRAGMENT_HOME = "fragment_home";
-
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -47,9 +39,9 @@ public class HomeActivity extends FragmentActivity
                 return;
             }
 
-            HomeFragment homeFragment = new HomeFragment();
-            homeFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.content_frame, homeFragment).commit();
+            AddEventFragment addEventFragment = new AddEventFragment();
+            addEventFragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction().add(R.id.content_frame, addEventFragment).commit();
         }
     }
 
