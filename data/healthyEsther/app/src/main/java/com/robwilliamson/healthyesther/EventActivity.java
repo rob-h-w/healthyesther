@@ -64,7 +64,7 @@ public class EventActivity extends DbActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
     private void fakeData() {

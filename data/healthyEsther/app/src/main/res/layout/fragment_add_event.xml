@@ -11,25 +11,16 @@
             android:id="@+id/HomeFragmentEditTitle"
             style="@style/AppTheme.text.title"/>
 
-        <RadioGroup
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/createEventRadioGroup">
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/meal"
-                android:id="@+id/create_meal_event_button"
-                android:minWidth="@dimen/min_button_width"
-                android:layout_gravity="center_horizontal" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/medication"
-                android:id="@+id/create_medication_event_button"
-                android:minWidth="@dimen/min_button_width" />
-        </RadioGroup>
+            android:id="@+id/create_meal_event_button"
+            android:text="@string/meal"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/medication"
+            android:id="@+id/create_medication_event_button" />
     </LinearLayout>
 
 </LinearLayout>

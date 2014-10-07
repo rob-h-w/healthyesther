@@ -160,14 +160,7 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
         return getTypeSafeView(R.id.edit_event_name);
     }
 
-    @SuppressWarnings("unchecked")
     private <T extends View> T getTypeSafeView(int id) {
-        View view = getView();
-
-        if (view == null) {
-            return null;
-        }
-
-        return (T)view.findViewById(id);
+        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id);
     }
 }
