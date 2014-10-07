@@ -1,7 +1,5 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,6 +13,7 @@ import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePicker;
+import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
 import com.robwilliamson.healthyesther.fragment.dialog.TimePicker;
 
 import org.joda.time.DateTime;
@@ -24,7 +23,7 @@ import org.joda.time.format.DateTimeFormat;
 /**
  * Allows the user to edit an event's name and when properties.
  */
-public class EditEventFragment extends Fragment implements TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
+public class EditEventFragment extends Fragment implements DateTimePickerListener {
     private String mName;
     private DateTime mWhen;
 
@@ -85,16 +84,8 @@ public class EditEventFragment extends Fragment implements TimePickerDialog.OnTi
     }
 
     @Override
-    public void onTimeSet(android.widget.TimePicker view, int hourOfDay, int minute) {
-        DateTime local = mWhen.withZone(DateTimeZone.getDefault());
-        mWhen = local.withTime(hourOfDay, minute, 0, 0).withZone(DateTimeZone.UTC);
-        updateUi();
-    }
-
-    @Override
-    public void onDateSet(android.widget.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        DateTime local = mWhen.withZone(DateTimeZone.getDefault());
-        mWhen = local.withDate(year, monthOfYear + 1, dayOfMonth);
+    public void onDateTimeChange(DateTime dateTime) {
+        mWhen = dateTime;
         updateUi();
     }
 
