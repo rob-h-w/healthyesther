@@ -1,7 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.dialog;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 
@@ -10,9 +10,9 @@ import com.robwilliamson.db.Utils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-public class TimePicker extends FixedDialogFragment {
-    private static final String NAME = "timePicker";
-    private TimePickerDialog.OnTimeSetListener mListener;
+public class DatePicker extends FixedDialogFragment {
+    private static final String NAME = "datePicker";
+    private DatePickerDialog.OnDateSetListener mListener;
     private DateTime mDateTime;
 
     @Override
@@ -22,15 +22,19 @@ public class TimePicker extends FixedDialogFragment {
         }
 
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), mListener, mDateTime.getHourOfDay(), mDateTime.getMinuteOfHour(),
-                DateFormat.is24HourFormat(getActivity()));
+        return new DatePickerDialog(
+                getActivity(),
+                mListener,
+                mDateTime.getYear(),
+                mDateTime.getMonthOfYear() - 1,
+                mDateTime.getDayOfMonth());
 
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Utils.Time.bundle(outState, TimePicker.class.getCanonicalName(), mDateTime);
+        Utils.Time.bundle(outState, DatePicker.class.getCanonicalName(), mDateTime);
     }
 
     public void show(android.support.v4.app.FragmentManager manager, DateTime initialTime) {
@@ -38,7 +42,7 @@ public class TimePicker extends FixedDialogFragment {
         show(manager, NAME);
     }
 
-    public void setListener(TimePickerDialog.OnTimeSetListener listener) {
+    public void setListener(DatePickerDialog.OnDateSetListener listener) {
         mListener = listener;
     }
 }
