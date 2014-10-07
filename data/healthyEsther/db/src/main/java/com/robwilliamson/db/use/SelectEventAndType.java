@@ -9,15 +9,16 @@ import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventType;
 import com.robwilliamson.db.definition.Table;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.TimeZone;
 
 /**
  * List events and their types.
  */
 public abstract class SelectEventAndType implements SelectQuery {
-    private final Calendar mEarliest;
+    private final DateTime mEarliest;
     private final String TYPE_NAME = "type_name";
 
     public SelectEventAndType() {
@@ -28,9 +29,8 @@ public abstract class SelectEventAndType implements SelectQuery {
      * Show events that occurred on or later than the earliest date provided.
      * @param earliest
      */
-    public SelectEventAndType(final Calendar earliest) {
-        mEarliest = earliest;
-        mEarliest.setTimeZone(TimeZone.getTimeZone("utc"));
+    public SelectEventAndType(final DateTime earliest) {
+        mEarliest = earliest.withZone(DateTimeZone.UTC);
     }
 
     @Override
@@ -48,7 +48,7 @@ public abstract class SelectEventAndType implements SelectQuery {
             };
 
             String where = mEarliest == null ? "" :
-                    " where " + c.EVENT.getQualifiedName(Event.WHEN) + " >= datetime(" + Utils.Time.toString(mEarliest) + ") \n";
+                    " where " + c.EVENT.getQualifiedName(Event.WHEN) + " >= datetime(" + Utils.Time.toDatabaseString(mEarliest) + ") \n";
 
             String selectQuery = "SELECT " + Utils.join(qualifiedUniqueColumns, ", ") + "\n" + // _Id, WHEN, NAME, EventType.NAME
                     "FROM " + Event.TABLE_NAME + "\n" +

@@ -1,12 +1,11 @@
 package com.robwilliamson.healthyesther.fragment.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 public class TimePicker extends FixedDialogFragment
         implements TimePickerDialog.OnTimeSetListener {
@@ -15,12 +14,10 @@ public class TimePicker extends FixedDialogFragment
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+        final DateTime now = DateTime.now();
 
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
+        return new TimePickerDialog(getActivity(), this, now.getHourOfDay(), now.getMinuteOfHour(),
                 DateFormat.is24HourFormat(getActivity()));
 
     }

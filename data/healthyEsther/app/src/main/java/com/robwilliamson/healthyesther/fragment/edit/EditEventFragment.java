@@ -14,26 +14,28 @@ import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.dialog.TimePicker;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * Allows the user to edit an event's name and when properties.
  */
 public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetListener {
     private String mName;
-    private Calendar mWhen;
+    private DateTime mWhen;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            mWhen = Calendar.getInstance(Utils.Time.UTC);
+            mWhen = DateTime.now().withZone(DateTimeZone.UTC);
             mName = "";
         } else {
             Contract c = Contract.getInstance();
-            mWhen = Utils.Time.fromString(savedInstanceState.getString(c.EVENT.getQualifiedName(Event.WHEN)));
+            mWhen = Utils.Time.unBundle(savedInstanceState, c.EVENT.getQualifiedName(Event.WHEN));
             mName = savedInstanceState.getString(c.EVENT.getQualifiedName(Event.NAME));
         }
 
@@ -67,14 +69,14 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Contract c = Contract.getInstance();
-        outState.putString(c.EVENT.getQualifiedName(Event.WHEN), Utils.Time.toString(mWhen));
+        Utils.Time.bundle(outState, c.EVENT.getQualifiedName(Event.WHEN),  mWhen);
         outState.putString(c.EVENT.getQualifiedName(Event.NAME), mName);
     }
 
     @Override
     public void onTimeSet(TimePicker sender, int hourOfDay, int minute) {
-        Utils.Time.setLocalFieldOnUtc(mWhen, Calendar.HOUR_OF_DAY, hourOfDay);
-        Utils.Time.setLocalFieldOnUtc(mWhen, Calendar.MINUTE, minute);
+        DateTime local = mWhen.withZone(DateTimeZone.getDefault());
+        mWhen = local.withTime(hourOfDay, minute, 0, 0).withZone(DateTimeZone.UTC);
         updateUi();
     }
 
@@ -87,21 +89,19 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
         return mName;
     }
 
-    public void setWhen(Calendar when) {
+    public void setWhen(DateTime when) {
         mWhen = when;
         updateUi();
     }
 
-    public Calendar getWhen() {
+    public DateTime getWhen() {
         return mWhen;
     }
 
     private void updateUi() {
         if (mWhen != null) {
-            Calendar local = Utils.Time.getLocalClone(mWhen);
             if (getTimeButton() != null) {
-                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                getTimeButton().setText(format.format(local.getTime()));
+                getTimeButton().setText(Utils.Time.toLocallyFormattedString(mWhen, "HH:mm"));
             }
         }
 

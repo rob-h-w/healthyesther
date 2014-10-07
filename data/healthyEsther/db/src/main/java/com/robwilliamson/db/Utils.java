@@ -1,11 +1,17 @@
 package com.robwilliamson.db;
 
+import android.os.Bundle;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 import java.util.Locale;
-import java.util.TimeZone;
 
 public final class Utils {
     private Utils() {}
@@ -41,48 +47,36 @@ public final class Utils {
 
     public static class Time {
         private static final String FORMAT = "yyyy-MM-dd HH:mm:ss";
+        private static final DateTimeFormatter DB_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
 
-        public static class BadTimeStringFormatException extends RuntimeException {
-            BadTimeStringFormatException(String badString, ParseException e) {
-                super("Could not parse " + badString, e);
-            }
+        public static void bundle(Bundle bundle, String name, DateTime dateTime) {
+            bundle.putString(name, toString(dateTime, ISODateTimeFormat.dateTime()));
         }
 
-        public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-
-        public static Calendar getLocalClone(Calendar calendar) {
-            Calendar local = ((Calendar)calendar.clone());
-            local.setTimeZone(TimeZone.getDefault());
-            return local;
+        public static DateTime unBundle(Bundle bundle, String name) {
+            String raw = bundle.getString(name);
+            return fromString(raw, ISODateTimeFormat.dateTime());
         }
 
-        public static void setLocalFieldOnUtc(Calendar utc, int field, int value) {
-            Calendar local = getLocalClone(utc);
-            local.set(field, value);
-            local.setTimeZone(UTC);
-            utc.set(field, local.get(field));
+        public static String toDatabaseString(DateTime dateTime) {
+            return toString(dateTime, DB_FORMATTER);
         }
 
-        public static int getLocalFieldFromUtc(Calendar utc, int field) {
-            Calendar local = getLocalClone(utc);
-            return local.get(field);
+        public static DateTime dateTimeFromDatabaseString(String string) {
+            return fromString(string, DB_FORMATTER);
         }
 
-        public static String toString(Calendar calendar) {
-            SimpleDateFormat format = new SimpleDateFormat(FORMAT);
-            return format.format(calendar.getTime());
+        public static String toLocallyFormattedString(DateTime dateTime, String format) {
+            DateTime local = dateTime.withZone(DateTimeZone.getDefault());
+            return toString(local, DateTimeFormat.forPattern(format));
         }
 
-        public static Calendar fromString(String string) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeZone(TimeZone.getTimeZone("utc"));
-            SimpleDateFormat format = new SimpleDateFormat(FORMAT, Locale.ROOT);
-            try {
-                calendar.setTime(format.parse(string));
-            } catch (ParseException e) {
-                throw new BadTimeStringFormatException(string, e);
-            }
-            return calendar;
+        public static String toString(DateTime dateTime, DateTimeFormatter formatter) {
+            return formatter.print(dateTime);
+        }
+
+        public static DateTime fromString(String string, DateTimeFormatter formatter) {
+            return formatter.parseDateTime(string);
         }
     }
 }

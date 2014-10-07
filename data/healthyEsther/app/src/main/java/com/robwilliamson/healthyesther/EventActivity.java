@@ -14,7 +14,7 @@ import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.SelectEventAndType;
 import com.robwilliamson.db.use.SelectQuery;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 
 public class EventActivity extends DbActivity {
@@ -86,9 +86,10 @@ public class EventActivity extends DbActivity {
                 int hour = (127*i/10) % 24;
                 int day = (i/10) % 28 + 1;
                 int type = ((13*second*hour*i/10) % 2) + 1;
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(2014, Calendar.MARCH, day, hour, minute, second);
-                long eventId = contract.EVENT.insert(db, calendar, type, "Event " + i);
+                DateTime now = DateTime.now();
+                DateTime then = now.withTime(hour, minute, second, 0);
+                then = then.withDate(2014, 3, day);
+                long eventId = contract.EVENT.insert(db, then, type, "Event " + i);
 
                 if (type == 1) {
                     contract.MEAL_EVENT.insert(db, (minute % 2 > 0) ? pieId : stewId, eventId);

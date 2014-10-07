@@ -1,15 +1,11 @@
 package com.robwilliamson.healthyesther.add;
 
-import android.net.Uri;
 import android.os.Bundle;
 
-import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
-
-import java.util.Calendar;
 
 public class Meal extends DbActivity {
     private EditEventFragment mEditEventFragment;

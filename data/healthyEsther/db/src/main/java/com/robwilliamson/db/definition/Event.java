@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.Utils;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 /**
  * Table detailing event ids, times and types.
@@ -44,9 +44,9 @@ public class Event extends Table {
     public void upgrade(SQLiteDatabase db, int from, int to) {
     }
 
-    public long insert(SQLiteDatabase db, Calendar when, int typeId, String name) {
+    public long insert(SQLiteDatabase db, DateTime when, int typeId, String name) {
         ContentValues values = new ContentValues();
-        values.put(WHEN, Utils.Time.toString(when));
+        values.put(WHEN, Utils.Time.toDatabaseString(when));
         values.put(TYPE_ID, typeId);
         values.put(NAME, name);
         return insert(db, values);
