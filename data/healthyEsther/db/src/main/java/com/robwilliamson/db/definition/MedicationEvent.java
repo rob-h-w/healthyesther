@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 public class MedicationEvent extends Table {
+    public static final long EVENT_TYPE_ID = 2;
     public static final String TABLE_ID = "medication_event";
     public static final String MEDICATION_ID = "medication_id";
     public static final String EVENT_ID = "event_id";

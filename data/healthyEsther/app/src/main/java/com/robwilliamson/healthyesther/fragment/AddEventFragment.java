@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.add.Meal;
 
 public class AddEventFragment extends Fragment {
     @Override
@@ -31,7 +33,16 @@ public class AddEventFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_add_event) {
-            Toast.makeText(getActivity(), "TODO: implement add an entry.", Toast.LENGTH_SHORT).show();
+            switch(getCheckedRadioButtonId()) {
+                case R.id.create_meal_event_button:
+                    getActivity().startActivity(new Intent(getActivity(), Meal.class));
+                    break;
+                case R.id.create_medication_event_button:
+                    Toast.makeText(getActivity(), "TODO: implement add a medication entry.", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(getActivity(), "TODO: implement add other entry types.", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 

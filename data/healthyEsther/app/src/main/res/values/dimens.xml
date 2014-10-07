@@ -7,5 +7,10 @@
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="list_element_space">10dip</dimen>
     <dimen name="min_button_width">100dip</dimen>
+    <dimen name="border_stroke_width">2dip</dimen>
+    <dimen name="border_corner_radius">20dip</dimen>
+    <dimen name="border_margin">5dip</dimen>
+    <dimen name="content_layout_padding">15dip</dimen>
+    <dimen name="section_layout_padding">10dip</dimen>
 
 </resources>

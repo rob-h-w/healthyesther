@@ -26,8 +26,8 @@ public final class EventType extends Table {
                 "    icon TEXT \n" +
                 ");\n");
 
-        insert(db, 1, "Meal", null);
-        insert(db, 2, "Take medication", null);
+        insert(db, MealEvent.EVENT_TYPE_ID, "Meal", null);
+        insert(db, MedicationEvent.EVENT_TYPE_ID, "Take medication", null);
     }
 
     @Override
@@ -35,7 +35,7 @@ public final class EventType extends Table {
 
     }
 
-    private void insert(SQLiteDatabase db, int _id, String name, String icon) {
+    private void insert(SQLiteDatabase db, long _id, String name, String icon) {
         ContentValues values = new ContentValues();
         values.put(_ID, _id);
         values.put(NAME, name);

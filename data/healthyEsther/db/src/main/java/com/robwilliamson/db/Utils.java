@@ -40,27 +40,37 @@ public final class Utils {
     }
 
     public static class Time {
-        private static final String sFormat = "yyyy-MM-dd HH:mm:ss";
+        private static final String FORMAT = "yyyy-MM-dd HH:mm:ss";
 
         public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
-        public static void setLocalFieldOnUtc(Calendar utc, int field, int value) {
-            Calendar local = ((Calendar)utc.clone());
+        public static Calendar getLocalClone(Calendar calendar) {
+            Calendar local = ((Calendar)calendar.clone());
             local.setTimeZone(TimeZone.getDefault());
+            return local;
+        }
+
+        public static void setLocalFieldOnUtc(Calendar utc, int field, int value) {
+            Calendar local = getLocalClone(utc);
             local.set(field, value);
             local.setTimeZone(UTC);
             utc.set(field, local.get(field));
         }
 
+        public static int getLocalFieldFromUtc(Calendar utc, int field) {
+            Calendar local = getLocalClone(utc);
+            return local.get(field);
+        }
+
         public static String toString(Calendar calendar) {
-            SimpleDateFormat format = new SimpleDateFormat(sFormat);
+            SimpleDateFormat format = new SimpleDateFormat(FORMAT);
             return format.format(calendar.getTime());
         }
 
         public static Calendar fromString(String string) throws ParseException {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeZone(TimeZone.getTimeZone("utc"));
-            SimpleDateFormat format = new SimpleDateFormat(sFormat, Locale.ROOT);
+            SimpleDateFormat format = new SimpleDateFormat(FORMAT, Locale.ROOT);
             calendar.setTime(format.parse(string));
             return calendar;
         }
