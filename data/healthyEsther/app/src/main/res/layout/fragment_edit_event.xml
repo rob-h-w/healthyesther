@@ -6,42 +6,41 @@
     style="@style/AppTheme.contentLayout">
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         style="@style/AppTheme.sectionLayout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enter_event_name"
+            android:text="@string/when"
             android:layout_gravity="center_vertical" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dip"
+                android:id="@+id/edit_event_time_button" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_event_date_button" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        style="@style/AppTheme.sectionLayout">
         <AutoCompleteTextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_event_name"
-            android:hint="@string/enter_event_name"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        style="@style/AppTheme.sectionLayout">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/when"
-        android:layout_gravity="center_vertical" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_event_time_button" />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/edit_event_date_button" />
-        </LinearLayout>
+            android:hint="@string/event_name"
+            android:inputType="text|textCapSentences"
+            android:maxLines="1" />
     </LinearLayout>
 
 </LinearLayout>

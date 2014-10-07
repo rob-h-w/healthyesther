@@ -2,11 +2,15 @@ package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
@@ -69,6 +73,23 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
                 DatePicker dialog = new DatePicker();
                 dialog.setListener(EditEventFragment.this);
                 dialog.show(getFragmentManager(), mWhen);
+            }
+        });
+
+        getNameView().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mName = s.toString();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
