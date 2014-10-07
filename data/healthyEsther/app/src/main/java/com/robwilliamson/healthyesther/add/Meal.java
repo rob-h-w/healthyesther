@@ -23,9 +23,12 @@ public class Meal extends DbActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
+
+        if (savedInstanceState != null) {
+            return;
+        }
+
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, mEditEventFragment).commit();
-        // TODO: Remove this hack and populate the "when" field from a query result.
-        mEditEventFragment.setWhen(Calendar.getInstance(Utils.Time.UTC));
     }
 
     @Override

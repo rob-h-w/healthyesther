@@ -8,11 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SearchView;
 
+import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
+import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.dialog.TimePicker;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -26,8 +27,17 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+
+        if (savedInstanceState == null) {
+            mWhen = Calendar.getInstance(Utils.Time.UTC);
+            mName = "";
+        } else {
+            Contract c = Contract.getInstance();
+            mWhen = Utils.Time.fromString(savedInstanceState.getString(c.EVENT.getQualifiedName(Event.WHEN)));
+            mName = savedInstanceState.getString(c.EVENT.getQualifiedName(Event.NAME));
         }
+
+        updateUi();
     }
 
     @Override
@@ -51,6 +61,14 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
         });
 
         updateUi();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Contract c = Contract.getInstance();
+        outState.putString(c.EVENT.getQualifiedName(Event.WHEN), Utils.Time.toString(mWhen));
+        outState.putString(c.EVENT.getQualifiedName(Event.NAME), mName);
     }
 
     @Override
@@ -79,13 +97,15 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
     }
 
     private void updateUi() {
-        Calendar local = Utils.Time.getLocalClone(mWhen);
-        if (getTimeButton() != null) {
-            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-            getTimeButton().setText(format.format(local.getTime()));
+        if (mWhen != null) {
+            Calendar local = Utils.Time.getLocalClone(mWhen);
+            if (getTimeButton() != null) {
+                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                getTimeButton().setText(format.format(local.getTime()));
+            }
         }
 
-        if (getNameView() != null) {
+        if (getNameView() != null && mName != null) {
             getNameView().setQuery(mName, false);
         }
     }

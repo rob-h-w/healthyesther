@@ -42,6 +42,12 @@ public final class Utils {
     public static class Time {
         private static final String FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+        public static class BadTimeStringFormatException extends RuntimeException {
+            BadTimeStringFormatException(String badString, ParseException e) {
+                super("Could not parse " + badString, e);
+            }
+        }
+
         public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
         public static Calendar getLocalClone(Calendar calendar) {
@@ -67,11 +73,15 @@ public final class Utils {
             return format.format(calendar.getTime());
         }
 
-        public static Calendar fromString(String string) throws ParseException {
+        public static Calendar fromString(String string) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeZone(TimeZone.getTimeZone("utc"));
             SimpleDateFormat format = new SimpleDateFormat(FORMAT, Locale.ROOT);
-            calendar.setTime(format.parse(string));
+            try {
+                calendar.setTime(format.parse(string));
+            } catch (ParseException e) {
+                throw new BadTimeStringFormatException(string, e);
+            }
             return calendar;
         }
     }
