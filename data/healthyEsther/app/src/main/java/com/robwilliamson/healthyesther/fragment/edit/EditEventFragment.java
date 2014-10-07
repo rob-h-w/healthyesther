@@ -5,8 +5,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.SearchView;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
@@ -58,7 +58,7 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
             public void onClick(View v) {
                 TimePicker dialog = new TimePicker();
                 dialog.setTimeSetListener(EditEventFragment.this);
-                dialog.show(getFragmentManager());
+                dialog.show(getFragmentManager(), mWhen);
             }
         });
 
@@ -69,7 +69,7 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Contract c = Contract.getInstance();
-        Utils.Time.bundle(outState, c.EVENT.getQualifiedName(Event.WHEN),  mWhen);
+        Utils.Time.bundle(outState, c.EVENT.getQualifiedName(Event.WHEN), mWhen);
         outState.putString(c.EVENT.getQualifiedName(Event.NAME), mName);
     }
 
@@ -106,7 +106,7 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
         }
 
         if (getNameView() != null && mName != null) {
-            getNameView().setQuery(mName, false);
+            getNameView().setText(mName);
         }
     }
 
@@ -122,7 +122,7 @@ public class EditEventFragment extends Fragment implements TimePicker.OnTimeSetL
         return getTypeSafeView(id);
     }
 
-    private SearchView getNameView() {
+    private AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.edit_event_name);
     }
 

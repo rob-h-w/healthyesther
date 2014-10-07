@@ -13,14 +13,11 @@
             android:layout_height="wrap_content"
             android:text="@string/enter_event_name"
             android:layout_gravity="center_vertical" />
-
-        <SearchView
+        <AutoCompleteTextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_event_name"
-            android:inputType="text|textAutoComplete|textAutoCorrect"
-            android:queryHint="@string/enter_event_name"
-            android:gravity="fill_horizontal" />
+            android:hint="@string/enter_event_name"/>
     </LinearLayout>
 
     <LinearLayout
