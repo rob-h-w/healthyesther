@@ -7,17 +7,16 @@ import com.robwilliamson.db.use.GetAllMealsQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 public class Meal extends DbActivity {
-    private EditEventFragment mEditEventFragment;
-    private EditMealFragment mEditMealFragment;
+    private final static String MEAL_TAG = "meal";
+    private final static String EVENT_TAG = "event";
 
     public Meal() {
         super(false);
-        mEditEventFragment = new EditEventFragment();
-        mEditMealFragment = new EditMealFragment();
     }
 
     @Override
@@ -28,11 +27,9 @@ public class Meal extends DbActivity {
             return;
         }
 
-        getWindow().setBackgroundDrawableResource(R.drawable.background);
-
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.base_activity_content_layout, mEditMealFragment)
-                .add(R.id.base_activity_content_layout, mEditEventFragment).commit();
+                .add(R.id.base_activity_content_layout, new EditMealFragment(), MEAL_TAG)
+                .add(R.id.base_activity_content_layout, new EditEventFragment(), EVENT_TAG).commit();
     }
 
     @Override
@@ -40,7 +37,10 @@ public class Meal extends DbActivity {
         return new GetAllMealsQuery() {
             @Override
             public void onQueryComplete(Cursor cursor) {
-                mEditMealFragment.setCursor(cursor);
+                if (isStateLoaded()) {
+                    EditMealFragment fragment = (EditMealFragment)getSupportFragmentManager().findFragmentByTag(MEAL_TAG);
+                    fragment.setCursor(cursor);
+                }
             }
         };
     }
