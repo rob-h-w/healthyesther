@@ -13,7 +13,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 public class Meal extends DbActivity {
     private EditEventFragment mEditEventFragment;
     private EditMealFragment mEditMealFragment;
-    private Cursor mAllMeals;
 
     public Meal() {
         super(false);
@@ -41,7 +40,7 @@ public class Meal extends DbActivity {
         return new GetAllMealsQuery() {
             @Override
             public void onQueryComplete(Cursor cursor) {
-                mAllMeals = cursor;
+                mEditMealFragment.setCursor(cursor);
             }
         };
     }
