@@ -1,7 +1,9 @@
 package com.robwilliamson.healthyesther.add;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
+import com.robwilliamson.db.use.GetAllMealsQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
@@ -9,6 +11,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 
 public class Meal extends DbActivity {
     private EditEventFragment mEditEventFragment;
+    private Cursor mAllMeals;
 
     public Meal() {
         super(false);
@@ -29,6 +32,11 @@ public class Meal extends DbActivity {
 
     @Override
     protected Query getOnResumeQuery() {
-        return null;
+        return new GetAllMealsQuery() {
+            @Override
+            public void onQueryComplete(Cursor cursor) {
+                mAllMeals = cursor;
+            }
+        };
     }
 }
