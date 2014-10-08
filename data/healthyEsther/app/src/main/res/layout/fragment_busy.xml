@@ -5,8 +5,6 @@
     tools:context="com.robwilliamson.healthyesther.fragment.BusyFragment"
     android:background="@color/busy_background">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"

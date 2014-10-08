@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/create_meal_event_button"
             android:text="@string/meal"/>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

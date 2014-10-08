@@ -12,8 +12,6 @@ import com.robwilliamson.db.definition.Table;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import java.util.TimeZone;
-
 /**
  * List events and their types.
  */
