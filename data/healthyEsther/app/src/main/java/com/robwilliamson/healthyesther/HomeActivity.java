@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther;
 
 import android.app.ActionBar;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
@@ -11,7 +10,7 @@ import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
 
 
-public class HomeActivity extends FragmentActivity
+public class HomeActivity extends BaseFragmentActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -26,7 +25,6 @@ public class HomeActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -44,8 +42,13 @@ public class HomeActivity extends FragmentActivity
 
             AddEventFragment addEventFragment = new AddEventFragment();
             addEventFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.content_frame, addEventFragment).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.home_activity_content_layout, addEventFragment).commit();
         }
+    }
+
+    @Override
+    protected int getContentLayoutResourceId() {
+        return R.layout.activity_home;
     }
 
     @Override

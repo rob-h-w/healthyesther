@@ -24,15 +24,16 @@ public class Meal extends DbActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
 
         if (savedInstanceState != null) {
             return;
         }
 
+        getWindow().setBackgroundDrawableResource(R.drawable.background);
+
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.add_activity_content_layout, mEditMealFragment)
-                .add(R.id.add_activity_content_layout, mEditEventFragment).commit();
+                .add(R.id.base_activity_content_layout, mEditMealFragment)
+                .add(R.id.base_activity_content_layout, mEditEventFragment).commit();
     }
 
     @Override
