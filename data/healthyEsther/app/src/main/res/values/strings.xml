@@ -15,5 +15,7 @@
     <string name="event_name">Event name</string>
     <string name="when">When</string>
     <string name="select_date_and_time">Select date and time</string>
+    <string name="dish">Dish</string>
+    <string name="descriptive_name_for_the_dish">Please enter a name for the dish</string>
 
 </resources>
