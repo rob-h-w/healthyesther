@@ -16,9 +16,9 @@ import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.fragment.dialog.DatePicker;
+import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
-import com.robwilliamson.healthyesther.fragment.dialog.TimePicker;
+import com.robwilliamson.healthyesther.fragment.dialog.TimePickerFragment;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -30,6 +30,8 @@ import org.joda.time.format.DateTimeFormat;
 public class EditEventFragment extends Fragment implements DateTimePickerListener {
     private String mName;
     private DateTime mWhen;
+
+    public EditEventFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
         getTimeButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimePicker dialog = new TimePicker();
+                TimePickerFragment dialog = new TimePickerFragment();
                 dialog.setListener(EditEventFragment.this);
                 dialog.show(getFragmentManager(), mWhen);
             }
@@ -70,7 +72,7 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
         getDateButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePicker dialog = new DatePicker();
+                DatePickerFragment dialog = new DatePickerFragment();
                 dialog.setListener(EditEventFragment.this);
                 dialog.show(getFragmentManager(), mWhen);
             }

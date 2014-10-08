@@ -4,8 +4,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 
-public class DatePicker extends AbstractDateTimePicker
+public class DatePickerFragment extends AbstractDateTimePickerFragment
         implements DatePickerDialog.OnDateSetListener {
+    public DatePickerFragment() {}
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

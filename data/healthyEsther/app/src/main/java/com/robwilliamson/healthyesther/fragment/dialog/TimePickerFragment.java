@@ -5,8 +5,9 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 
-public class TimePicker extends AbstractDateTimePicker
+public class TimePickerFragment extends AbstractDateTimePickerFragment
         implements TimePickerDialog.OnTimeSetListener {
+    public TimePickerFragment() {}
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

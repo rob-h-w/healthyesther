@@ -7,7 +7,7 @@ import com.robwilliamson.db.Utils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-public abstract class AbstractDateTimePicker extends FixedDialogFragment {
+public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment {
     private DateTimePickerListener mListener;
     private DateTime mDateTime;
 
