@@ -41,8 +41,6 @@ public class EventActivity extends DbActivity {
                 }
             }
         };
-
-        fakeData();
     }
 
     @Override
@@ -65,55 +63,6 @@ public class EventActivity extends DbActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         return super.onOptionsItemSelected(item);
-    }
-
-    private void fakeData() {
-        SQLiteDatabase db = HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase();
-        cleanOldData(db);
-        try {
-            db.beginTransaction();
-
-            Contract contract = Contract.getInstance();
-
-            long pieId = contract.MEAL.insert(db, "PAH!");
-            long stewId = contract.MEAL.insert(db, "Stoo");
-
-            long paracetamolId = contract.MEDICATION.insert(db, "Paracetamol");
-
-            for (int i = 0; i < 1000; i++) {
-                int second = (31*i/10) % 60;
-                int minute = i % 60;
-                int hour = (127*i/10) % 24;
-                int day = (i/10) % 28 + 1;
-                int type = ((13*second*hour*i/10) % 2) + 1;
-                DateTime now = DateTime.now();
-                DateTime then = now.withTime(hour, minute, second, 0);
-                then = then.withDate(2014, 3, day);
-                long eventId = contract.EVENT.insert(db, then, type, "Event " + i);
-
-                if (type == 1) {
-                    contract.MEAL_EVENT.insert(db, (minute % 2 > 0) ? pieId : stewId, eventId);
-                } else {
-                    contract.MEDICATION_EVENT.insert(db, paracetamolId, eventId);
-                }
-            }
-
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-    private void cleanOldData(SQLiteDatabase db) {
-        try {
-            db.beginTransaction();
-            Contract contract = Contract.getInstance();
-            contract.delete(db);
-            contract.create(db);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
     }
 
     @Override
