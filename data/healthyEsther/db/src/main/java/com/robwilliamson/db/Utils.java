@@ -79,4 +79,14 @@ public final class Utils {
             return formatter.parseDateTime(string);
         }
     }
+
+    public static class Strings {
+        public static boolean validateLength(String string, int min, int max) {
+            return string != null && string.length() > min - 1 && string.length() < max + 1;
+        }
+
+        public static boolean nullOrEmpty(String string) {
+            return string == null || string.isEmpty();
+        }
+    }
 }

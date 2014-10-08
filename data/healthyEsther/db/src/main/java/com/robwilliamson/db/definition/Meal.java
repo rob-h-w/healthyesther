@@ -3,6 +3,8 @@ package com.robwilliamson.db.definition;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Utils;
+
 /**
  * Meal table contains all unique types of meal.
  */
@@ -34,5 +36,9 @@ public class Meal extends Table {
         ContentValues values = new ContentValues();
         values.put(NAME, name);
         return insert(db, values);
+    }
+
+    public boolean validateName(String name) {
+        return Utils.Strings.validateLength(name, 1, 140);
     }
 }

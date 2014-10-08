@@ -51,4 +51,8 @@ public class Event extends Table {
         values.put(NAME, name);
         return insert(db, values);
     }
+
+    public boolean validateName(String name) {
+        return Utils.Strings.validateLength(name, 1, 140);
+    }
 }

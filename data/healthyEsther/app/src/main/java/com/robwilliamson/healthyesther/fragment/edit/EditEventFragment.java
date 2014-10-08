@@ -1,12 +1,13 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
@@ -25,9 +26,13 @@ import org.joda.time.format.DateTimeFormat;
 /**
  * Allows the user to edit an event's name and when properties.
  */
-public class EditEventFragment extends Fragment implements DateTimePickerListener {
-    private String mName;
+public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> implements DateTimePickerListener {
     private DateTime mWhen;
+    private boolean mUserEditedEventName;
+
+    public interface Watcher {
+        void onFragmentUpdate(EditEventFragment fragment);
+    }
 
     public EditEventFragment() {}
 
@@ -37,11 +42,9 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
 
         if (savedInstanceState == null) {
             mWhen = DateTime.now().withZone(DateTimeZone.UTC);
-            mName = "";
         } else {
             Contract c = Contract.getInstance();
             mWhen = Utils.Time.unBundle(savedInstanceState, c.EVENT.getQualifiedName(Event.WHEN));
-            mName = savedInstanceState.getString(c.EVENT.getQualifiedName(Event.NAME));
         }
 
         updateUi();
@@ -76,6 +79,13 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
             }
         });
 
+        getNameView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setUserEditedEventName(!getNameView().getText().toString().isEmpty());
+            }
+        });
+
         getNameView().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -84,7 +94,7 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mName = s.toString();
+                updateWatcher();
             }
 
             @Override
@@ -101,7 +111,6 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
         super.onSaveInstanceState(outState);
         Contract c = Contract.getInstance();
         Utils.Time.bundle(outState, c.EVENT.getQualifiedName(Event.WHEN), mWhen);
-        outState.putString(c.EVENT.getQualifiedName(Event.NAME), mName);
     }
 
     @Override
@@ -110,13 +119,23 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
         updateUi();
     }
 
+    @Override
+    public boolean validate() {
+        return getName() == null || Contract.getInstance().EVENT.validateName(getName());
+    }
+
+    @Override
+    protected void updateWatcher(Watcher watcher) {
+
+    }
+
     public void setName(String name) {
-        mName = name;
+        getNameView().setText(name, false);
         updateUi();
     }
 
     public String getName() {
-        return mName;
+        return getNameView().getText().toString();
     }
 
     public void setWhen(DateTime when) {
@@ -128,10 +147,18 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
         return mWhen;
     }
 
+    public void setUserEditedEventName(boolean userEditedTheEventName) {
+        mUserEditedEventName = userEditedTheEventName;
+    }
+
+    public boolean getUserEditedEventName() {
+        return mUserEditedEventName;
+    }
+
     private void updateUi() {
         if (mWhen != null) {
             if (getTimeButton() != null) {
-                getTimeButton().setText(Utils.Time.toLocallyFormattedString(mWhen, "HH:mm"));
+                getTimeButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.shortTime().withZone(DateTimeZone.getDefault())));
             }
 
             if (getDateButton() != null) {
@@ -139,9 +166,7 @@ public class EditEventFragment extends Fragment implements DateTimePickerListene
             }
         }
 
-        if (getNameView() != null && mName != null) {
-            getNameView().setText(mName);
-        }
+        updateWatcher();
     }
 
     private Button getTimeButton() {

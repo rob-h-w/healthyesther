@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -36,6 +38,15 @@ public final class Utils {
             }
 
             return (T)parent.findViewById(id);
+        }
+
+        @SuppressWarnings("unchecked")
+        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, String tag) {
+            if (manager == null) {
+                return null;
+            }
+
+            return (T) manager.findFragmentByTag(tag);
         }
     }
 }
