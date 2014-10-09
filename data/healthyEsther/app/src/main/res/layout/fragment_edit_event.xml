@@ -8,6 +8,7 @@
     <LinearLayout
         android:orientation="vertical"
         style="@style/AppTheme.sectionLayout">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -18,29 +19,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="0dip"
                 android:id="@+id/edit_event_time_button" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/edit_event_date_button" />
+
         </LinearLayout>
 
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         style="@style/AppTheme.sectionLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/event_title"
+            android:layout_gravity="center_vertical" />
+
         <AutoCompleteTextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/edit_event_name"
-            android:hint="@string/event_name"
+            android:hint="@string/event_title"
             android:inputType="text|textCapSentences"
             android:maxLines="1" />
+
     </LinearLayout>
 
 </LinearLayout>
