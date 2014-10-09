@@ -1,8 +1,11 @@
 package com.robwilliamson.healthyesther.add;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.robwilliamson.db.use.GetAllMealsQuery;
 import com.robwilliamson.db.use.Query;
@@ -36,12 +39,46 @@ public class Meal extends DbActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (getMealFragment().validate() && getEventFragment().validate()) {
-            getMenuInflater().inflate(R.menu.event, menu);
+        getMenuInflater().inflate(R.menu.event, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_modify) {
+            // Write to the DB and go back.
+            query(new Query() {
+                @Override
+                public Cursor query(SQLiteDatabase db) {
+                    db.beginTransaction();
+                    try {
+                        long mealId = getMealFragment().modify(db);
+                        getEventFragment().modify(db, mealId);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    return null;
+                }
+
+                @Override
+                public void onQueryComplete(Cursor cursor) {
+                    finish();
+                }
+            });
             return true;
         }
 
-        return super.onCreateOptionsMenu(menu);
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (getMealFragment().validate() && getEventFragment().validate()) {
+            return true;
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
