@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.HealthDbHelper;
@@ -30,15 +31,25 @@ public class EventActivity extends DbActivity {
 
         mQuery = new SelectEventAndType() {
             @Override
+            public void postQueryProcessing(Cursor cursor) {
+
+            }
+
+            @Override
             public void onQueryComplete(Cursor cursor) {
                 if (mEventListView != null) {
-                    String[] allColumns = mQuery.getResultColumns();
+                    String[] allColumns = this.getResultColumns();
                     mEventListView.setAdapter(new SimpleCursorAdapter(
                             EventActivity.this,
                             R.layout.list_item, cursor,
                             new String[] { allColumns[2],                allColumns[3] },
                             new int[]    { R.id.event_list_element_name, R.id.event_list_element_type}));
                 }
+            }
+
+            @Override
+            public void onQueryFailed(Throwable error) {
+                Toast.makeText(EventActivity.this, "Waah!", Toast.LENGTH_SHORT).show();
             }
         };
     }

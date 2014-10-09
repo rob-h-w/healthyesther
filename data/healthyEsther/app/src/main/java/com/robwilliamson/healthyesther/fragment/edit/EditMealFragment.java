@@ -16,6 +16,7 @@ import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.definition.Meal;
+import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
@@ -67,6 +68,17 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
     }
 
     @Override
+    public Modification getModification() {
+        String name = getName();
+
+        if (mSuggestionIds.containsKey(name)) {
+            return new Meal.Modification(mSuggestionIds.get(name));
+        }
+
+        return new Meal.Modification(name);
+    }
+
+    @Override
     public boolean validate() {
         return Contract.getInstance().MEAL.validateName(getName());
     }
@@ -76,15 +88,8 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
         watcher.onFragmentUpdate(this);
     }
 
-    public void setCursor(final Cursor meals) {
-        mSuggestionIds = new HashMap<String, Long>(meals.getCount());
-
-        if (meals.moveToFirst()) {
-            do {
-                mSuggestionIds.put(meals.getString(meals.getColumnIndex(Meal.NAME)),
-                        meals.getLong(meals.getColumnIndex(Meal._ID)));
-            } while(meals.moveToNext());
-        }
+    public void setSuggestionIds(HashMap<String, Long> suggestionIds) {
+        mSuggestionIds = suggestionIds;
 
         Set<String> set = mSuggestionIds.keySet();
         String [] suggestions = new String[set.size()];
@@ -98,15 +103,6 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
 
     public String getName() {
         return getNameView().getText().toString();
-    }
-
-    public long modify(SQLiteDatabase db) {
-        String name = getName();
-        if (mSuggestionIds.containsKey(name)) {
-            return mSuggestionIds.get(name);
-        }
-
-        return Contract.getInstance().MEAL.insert(db, name);
     }
 
     private AutoCompleteTextView getNameView() {

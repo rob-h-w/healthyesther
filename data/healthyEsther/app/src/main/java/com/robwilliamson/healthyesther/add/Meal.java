@@ -6,7 +6,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.robwilliamson.db.definition.Event;
+import com.robwilliamson.db.definition.MealEvent;
+import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.GetAllMealsQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
@@ -14,6 +19,9 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
+
+import java.util.HashMap;
+import java.util.Set;
 
 public class Meal extends DbActivity
         implements EditMealFragment.Watcher, EditEventFragment.Watcher {
@@ -52,8 +60,10 @@ public class Meal extends DbActivity
                 public Cursor query(SQLiteDatabase db) {
                     db.beginTransaction();
                     try {
-                        long mealId = getMealFragment().modify(db);
-                        getEventFragment().modify(db, mealId);
+                        com.robwilliamson.db.definition.Meal.Modification meal = (com.robwilliamson.db.definition.Meal.Modification) getMealFragment().getModification();
+                        Event.Modification event = (Event.Modification) getEventFragment().getModification();
+                        MealEvent.Modification mealEvent = new MealEvent.Modification(meal, event, null, null);
+                        mealEvent.modify(db);
                         db.setTransactionSuccessful();
                     } finally {
                         db.endTransaction();
@@ -62,8 +72,18 @@ public class Meal extends DbActivity
                 }
 
                 @Override
+                public void postQueryProcessing(Cursor cursor) {
+
+                }
+
+                @Override
                 public void onQueryComplete(Cursor cursor) {
                     finish();
+                }
+
+                @Override
+                public void onQueryFailed(Throwable error) {
+                    Toast.makeText(Meal.this, getText(R.string.could_not_insert_meal_event), Toast.LENGTH_SHORT).show();
                 }
             });
             return true;
@@ -84,9 +104,27 @@ public class Meal extends DbActivity
     @Override
     protected Query getOnResumeQuery() {
         return new GetAllMealsQuery() {
+            HashMap<String, Long> mSuggestionIds;
+            @Override
+            public void postQueryProcessing(Cursor cursor) {
+                mSuggestionIds = new HashMap<String, Long>(cursor.getCount());
+
+                if (cursor.moveToFirst()) {
+                    do {
+                        mSuggestionIds.put(cursor.getString(cursor.getColumnIndex(com.robwilliamson.db.definition.Meal.NAME)),
+                                cursor.getLong(cursor.getColumnIndex(com.robwilliamson.db.definition.Meal._ID)));
+                    } while(cursor.moveToNext());
+                }
+            }
+
             @Override
             public void onQueryComplete(Cursor cursor) {
-                getMealFragment().setCursor(cursor);
+                getMealFragment().setSuggestionIds(mSuggestionIds);
+            }
+
+            @Override
+            public void onQueryFailed(Throwable error) {
+                Toast.makeText(Meal.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
             }
         };
     }

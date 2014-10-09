@@ -3,6 +3,7 @@ package com.robwilliamson.db.definition;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
 
 import org.joda.time.DateTime;
@@ -11,6 +12,41 @@ import org.joda.time.DateTime;
  * Table detailing event ids, times and types.
  */
 public class Event extends Table {
+    public static class Modification extends com.robwilliamson.db.definition.Modification {
+        private final DateTime mWhen;
+        private String mName;
+        private Long mTypeId;
+
+        public Modification(String name, DateTime when) {
+            if (!validateName(name)) {
+                throw new IllegalArgumentException("Name must be present and less than 141 characters.");
+            }
+
+            mName = name;
+            mWhen = when;
+        }
+
+        public void setTypeId(long id) {
+            mTypeId = id;
+        }
+
+        @Override
+        public void modify(SQLiteDatabase db) {
+            if (mTypeId == null) {
+                throw new IllegalArgumentException("An event must have a type.");
+            }
+
+            Contract c = Contract.getInstance();
+            if (isRowIdSet()) {
+                // Update an existing event
+                c.EVENT.update(db, getRowId(), mWhen, mName);
+            } else {
+                // Create a new event
+                setRowId(c.EVENT.insert(db, mWhen, mTypeId, mName));
+            }
+        }
+    }
+
     public final static String TABLE_NAME = "event";
     public final static String _ID = "_id";
     public final static String WHEN = "[when]";
@@ -18,6 +54,10 @@ public class Event extends Table {
     public final static String MODIFIED = "modified";
     public final static String TYPE_ID = "type_id";
     public final static String NAME = "name";
+
+    public static boolean validateName(String name) {
+        return Utils.Strings.validateLength(name, 1, 140);
+    }
 
     @Override
     public String getName() {
@@ -48,7 +88,11 @@ public class Event extends Table {
         ContentValues values = new ContentValues();
         values.put(WHEN, Utils.Time.toDatabaseString(when));
         values.put(TYPE_ID, typeId);
-        values.put(NAME, name);
+
+        if (name != null) {
+            values.put(NAME, name);
+        }
+
         return insert(db, values);
     }
 
@@ -56,11 +100,11 @@ public class Event extends Table {
         ContentValues values = new ContentValues();
         values.put(WHEN, Utils.Time.toDatabaseString(when));
         values.put(MODIFIED, Utils.Time.toDatabaseString(DateTime.now()));
-        values.put(NAME, name);
-        return update(db, values, id);
-    }
 
-    public boolean validateName(String name) {
-        return Utils.Strings.validateLength(name, 1, 140);
+        if (name != null) {
+            values.put(NAME, name);
+        }
+
+        return update(db, values, id);
     }
 }

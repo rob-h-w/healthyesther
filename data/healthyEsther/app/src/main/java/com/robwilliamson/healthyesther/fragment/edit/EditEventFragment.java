@@ -16,6 +16,7 @@ import android.widget.Button;
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.Event;
+import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
@@ -123,6 +124,11 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     @Override
+    public Modification getModification() {
+        return new Event.Modification(getName(), mWhen);
+    }
+
+    @Override
     public boolean validate() {
         return getName() == null || Contract.getInstance().EVENT.validateName(getName());
     }
@@ -169,19 +175,6 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     public boolean isEventIdSet() {
         return mId > 0;
-    }
-
-    public long modify(SQLiteDatabase db, long typeId) {
-        Contract c = Contract.getInstance();
-        if (isEventIdSet()) {
-            // Update an existing event
-            c.EVENT.update(db, getEventId(), getWhen(), getName());
-        } else {
-            // Create a new event
-            setEventId(c.EVENT.insert(db, getWhen(), typeId, getName()));
-        }
-
-        return getEventId();
     }
 
     private void updateUi() {

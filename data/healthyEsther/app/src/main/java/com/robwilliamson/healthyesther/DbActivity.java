@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.use.Query;
@@ -66,13 +65,29 @@ public abstract class DbActivity extends BusyActivity {
             return;
         }
 
+        final Throwable[] error = new Throwable[] { null };
+        final Cursor[] cursor = new Cursor[] { null };
         setBusy(true);
-        final Cursor cursor = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
+        try {
+            cursor[0] = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
+        } catch (Throwable e) {
+            error[0] = e;
+        }
+
+        if (error[0] == null) {
+            query.postQueryProcessing(cursor[0]);
+        }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setBusy(false);
-                query.onQueryComplete(cursor);
+
+                if (error[0] == null) {
+                    query.onQueryComplete(cursor[0]);
+                } else {
+                    query.onQueryFailed(error[0]);
+                }
             }
         });
     }

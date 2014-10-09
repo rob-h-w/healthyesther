@@ -17,5 +17,7 @@
     <string name="select_date_and_time">Select date and time</string>
     <string name="dish">Dish</string>
     <string name="descriptive_name_for_the_dish">Please enter a name for the dish</string>
+    <string name="could_not_get_autocomplete_text_for_meals">Could not get auto-completion text for meal names.</string>
+    <string name="could_not_insert_meal_event">Could not insert meal event.</string>
 
 </resources>

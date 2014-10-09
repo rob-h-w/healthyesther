@@ -2,6 +2,7 @@ package com.robwilliamson.db.definition;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 /**
  * Details of a particular SQLite table.
@@ -16,7 +17,7 @@ public abstract class Table {
     }
 
     protected long insert(SQLiteDatabase db, ContentValues values) {
-        return db.insert(getName(), null, values);
+        return db.insertOrThrow(getName(), null, values);
     }
 
     protected int update(SQLiteDatabase db, ContentValues values, long id) {
@@ -24,7 +25,21 @@ public abstract class Table {
     }
 
     protected int update(SQLiteDatabase db, ContentValues values, String idName, long id) {
-        return db.update(getName(), values, "? = ?", new String[] { idName, String.valueOf(id) });
+        return update(db, values, idName, id, 1, 1);
+    }
+
+    protected int update(SQLiteDatabase db, ContentValues values, String idName, long id, int minRows, int maxRows) {
+        int rows = db.update(getName(), values, "? = ?", new String[] { idName, String.valueOf(id) });
+
+        if (rows < minRows) {
+            throw new SQLiteException("Expected update to affect at least " + minRows + " rows, but it actually affected " + rows + " rows.");
+        }
+
+        if (rows > maxRows) {
+            throw new SQLiteException("Expected update to affect at most " + maxRows + " rows, but it actually affected " + rows + " rows.");
+        }
+
+        return rows;
     }
 
     public static String[] cleanName(String[] names) {

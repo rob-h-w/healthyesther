@@ -3,10 +3,36 @@ package com.robwilliamson.db.definition;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Contract;
+
 /**
  * Table containing details of a meal event.
  */
 public class MealEvent extends Table {
+    public static class Modification extends com.robwilliamson.db.definition.Modification {
+        private Meal.Modification mMeal;
+        private Event.Modification mEvent;
+        private Double mAmount;
+        private Long mUnitsId;
+
+        public Modification(Meal.Modification meal, Event.Modification event, Double amount, Long unitsId) {
+            mMeal = meal;
+            mEvent = event;
+            mAmount = amount;
+            mUnitsId = unitsId;
+        }
+
+        @Override
+        public void modify(SQLiteDatabase db) {
+            mEvent.setTypeId(MealEvent.EVENT_TYPE_ID);
+            mEvent.modify(db);
+            mMeal.modify(db);
+
+            Contract c = Contract.getInstance();
+            c.MEAL_EVENT.insert(db, mMeal.getRowId(), mEvent.getRowId(), mAmount, mUnitsId);
+        }
+    }
+
     public static final long EVENT_TYPE_ID = 1;
     public static final String TABLE_NAME = "meal_event";
     public static final String MEAL_ID = "meal_id";
