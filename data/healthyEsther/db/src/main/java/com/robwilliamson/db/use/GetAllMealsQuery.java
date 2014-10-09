@@ -7,27 +7,27 @@ import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.Table;
 
-public abstract class GetAllMealsQuery implements SelectQuery {
+public abstract class GetAllMealsQuery extends GetAllValuesQuery {
+    @Override
+    public String getTableName() {
+        return Meal.TABLE_NAME;
+    }
+
+    @Override
+    public String getOrderColumn() {
+        return Meal.NAME;
+    }
+
+    @Override
+    public String getOrder() {
+        return "NOCASE ASC";
+    }
+
     @Override
     public String[] getResultColumns() {
         return Table.cleanName(new String [] {
                 Meal._ID,
                 Meal.NAME
         });
-    }
-
-    @Override
-    public Cursor query(SQLiteDatabase db) {
-        Cursor cursor = null;
-        Contract c = Contract.getInstance();
-        try {
-            db.beginTransaction();
-            cursor = db.query(Meal.TABLE_NAME, getResultColumns(), null, null, null, null, Meal.NAME + " COLLATE NOCASE ASC");
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
-        return cursor;
     }
 }
