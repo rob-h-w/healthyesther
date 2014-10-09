@@ -9,21 +9,14 @@
         style="@style/AppTheme.sectionLayout">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:text="@string/dish"
-            android:id="@+id/meal_name_title" />
+            android:id="@+id/meal_name_title"
+            style="@style/AppTheme.text"/>
 
         <AutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/meal_name"
-            android:inputType="text|textCapSentences|textAutoComplete|textAutoCorrect"
             android:hint="@string/descriptive_name_for_the_dish"
-            android:singleLine="true"
-            android:completionThreshold="1"
-            android:textIsSelectable="false"
-            android:imeOptions="flagNoFullscreen|actionNext" />
+            style="@style/AppTheme.text.textEditor" />
 
     </LinearLayout>
 

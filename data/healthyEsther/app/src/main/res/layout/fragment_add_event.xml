@@ -4,11 +4,10 @@
     android:orientation="vertical">
 
     <LinearLayout
-        style="@style/AppTheme.sectionLayout"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        style="@style/AppTheme.sectionLayout">
         <TextView
             android:text="@string/log_an_event"
-            android:id="@+id/HomeFragmentEditTitle"
             style="@style/AppTheme.text.title"/>
 
         <Button

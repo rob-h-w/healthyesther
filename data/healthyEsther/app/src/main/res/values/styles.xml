@@ -34,11 +34,21 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="AppTheme.text"></style>
-
-    <style name="AppTheme.text.title">
+    <style name="AppTheme.text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AppTheme.text.textEditor">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:inputType">textCapSentences|textAutoComplete|textAutoCorrect</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:completionThreshold">1</item>
+        <item name="android:textIsSelectable">false</item>
+        <item name="android:imeOptions">flagNoFullscreen|actionNext</item>
+    </style>
+
+    <style name="AppTheme.text.title">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:layout_gravity">center</item>
     </style>
