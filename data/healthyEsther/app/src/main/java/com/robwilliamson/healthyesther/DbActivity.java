@@ -94,7 +94,7 @@ public abstract class DbActivity extends BusyActivity {
 
     private void cancel(AsyncTask<Void, Void, Void> task) {
         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
-            task.cancel(mRunToCompletion);
+            task.cancel(!mRunToCompletion);
         }
     }
 }

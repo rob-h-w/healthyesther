@@ -25,7 +25,7 @@ public class Meal extends DbActivity
     private final static String EVENT_TAG = "event";
 
     public Meal() {
-        super(false);
+        super(true);
     }
 
     @Override
