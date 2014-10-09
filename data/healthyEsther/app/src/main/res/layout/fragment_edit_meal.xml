@@ -20,10 +20,9 @@
             android:id="@+id/meal_name"
             android:inputType="text|textCapSentences|textAutoComplete|textAutoCorrect"
             android:hint="@string/descriptive_name_for_the_dish"
-            android:maxLines="1"
-            android:minLines="1"
             android:singleLine="true"
-            android:completionThreshold="1"/>
+            android:completionThreshold="1"
+            android:textIsSelectable="false" />
 
     </LinearLayout>
 
