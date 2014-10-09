@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="busy_background">#80808080</color>
-    <color name="border">#8000</color>
+    <color name="busy_background">#8fff</color>
+    <color name="border">#4000</color>
     <color name="content_background">#bfff</color>
 </resources>
