@@ -107,14 +107,9 @@ public class Meal extends DbActivity
             HashMap<String, Long> mSuggestionIds;
             @Override
             public void postQueryProcessing(Cursor cursor) {
-                mSuggestionIds = new HashMap<String, Long>(cursor.getCount());
-
-                if (cursor.moveToFirst()) {
-                    do {
-                        mSuggestionIds.put(cursor.getString(cursor.getColumnIndex(com.robwilliamson.db.definition.Meal.NAME)),
-                                cursor.getLong(cursor.getColumnIndex(com.robwilliamson.db.definition.Meal._ID)));
-                    } while(cursor.moveToNext());
-                }
+                mSuggestionIds = com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
+                        com.robwilliamson.db.definition.Meal.NAME,
+                        com.robwilliamson.db.definition.Meal._ID);
             }
 
             @Override

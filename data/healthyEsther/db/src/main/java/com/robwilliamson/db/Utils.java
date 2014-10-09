@@ -1,5 +1,6 @@
 package com.robwilliamson.db;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import java.text.ParseException;
@@ -11,6 +12,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 public final class Utils {
@@ -87,6 +89,24 @@ public final class Utils {
 
         public static boolean nullOrEmpty(String string) {
             return string == null || string.isEmpty();
+        }
+    }
+
+    public static class Db {
+        public static HashMap<String, Long> cursorToSuggestionList(Cursor cursor,
+                                                                   String suggestionColumnName,
+                                                                   String rowIdColumnName) {
+            final HashMap<String, Long> suggestionIds = new HashMap<String, Long>(cursor.getCount());
+            final int suggestionIndex = cursor.getColumnIndex(suggestionColumnName);
+            final int rowIdIndex = cursor.getColumnIndex(rowIdColumnName);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    suggestionIds.put(cursor.getString(suggestionIndex), cursor.getLong(rowIdIndex));
+                } while(cursor.moveToNext());
+            }
+
+            return suggestionIds;
         }
     }
 }
