@@ -22,7 +22,8 @@
             android:hint="@string/descriptive_name_for_the_dish"
             android:singleLine="true"
             android:completionThreshold="1"
-            android:textIsSelectable="false" />
+            android:textIsSelectable="false"
+            android:imeOptions="flagNoFullscreen|actionNext" />
 
     </LinearLayout>
 
