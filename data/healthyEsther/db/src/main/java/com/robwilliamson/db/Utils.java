@@ -3,17 +3,14 @@ package com.robwilliamson.db;
 import android.database.Cursor;
 import android.os.Bundle;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 
 public final class Utils {
     private Utils() {}

@@ -5,13 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.MealEvent;
-import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.GetAllMealsQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
@@ -21,7 +18,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.HashMap;
-import java.util.Set;
 
 public class Meal extends DbActivity
         implements EditMealFragment.Watcher, EditEventFragment.Watcher {
