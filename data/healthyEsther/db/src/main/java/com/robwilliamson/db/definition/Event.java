@@ -44,12 +44,20 @@ public class Event extends Table {
     public void upgrade(SQLiteDatabase db, int from, int to) {
     }
 
-    public long insert(SQLiteDatabase db, DateTime when, int typeId, String name) {
+    public long insert(SQLiteDatabase db, DateTime when, long typeId, String name) {
         ContentValues values = new ContentValues();
         values.put(WHEN, Utils.Time.toDatabaseString(when));
         values.put(TYPE_ID, typeId);
         values.put(NAME, name);
         return insert(db, values);
+    }
+
+    public int update(SQLiteDatabase db, long id, DateTime when, String name) {
+        ContentValues values = new ContentValues();
+        values.put(WHEN, Utils.Time.toDatabaseString(when));
+        values.put(MODIFIED, Utils.Time.toDatabaseString(DateTime.now()));
+        values.put(NAME, name);
+        return update(db, values, id);
     }
 
     public boolean validateName(String name) {

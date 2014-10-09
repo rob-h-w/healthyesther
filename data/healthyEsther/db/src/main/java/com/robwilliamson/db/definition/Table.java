@@ -19,6 +19,14 @@ public abstract class Table {
         return db.insert(getName(), null, values);
     }
 
+    protected int update(SQLiteDatabase db, ContentValues values, long id) {
+        return update(db, values, "_id", id);
+    }
+
+    protected int update(SQLiteDatabase db, ContentValues values, String idName, long id) {
+        return db.update(getName(), values, "? = ?", new String[] { idName, String.valueOf(id) });
+    }
+
     public static String[] cleanName(String[] names) {
         for (int i = 0; i < names.length; i++) {
             names[i] = cleanName(names[i]);

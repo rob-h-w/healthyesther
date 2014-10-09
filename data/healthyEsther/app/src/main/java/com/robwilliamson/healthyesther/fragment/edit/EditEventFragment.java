@@ -1,6 +1,8 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,6 +29,7 @@ import org.joda.time.format.DateTimeFormat;
  * Allows the user to edit an event's name and when properties.
  */
 public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> implements DateTimePickerListener {
+    private long mId = -1;
     private DateTime mWhen;
     private boolean mUserEditedEventName;
 
@@ -130,7 +133,8 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     public void setName(String name) {
-        getNameView().setText(name, false);
+        getNameView().getText().clear();
+        getNameView().getText().append(name);
         updateUi();
     }
 
@@ -153,6 +157,31 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     public boolean getUserEditedEventName() {
         return mUserEditedEventName;
+    }
+
+    public void setEventId(long id) {
+        mId = id;
+    }
+
+    public long getEventId() {
+        return mId;
+    }
+
+    public boolean isEventIdSet() {
+        return mId > 0;
+    }
+
+    public long modify(SQLiteDatabase db, long typeId) {
+        Contract c = Contract.getInstance();
+        if (isEventIdSet()) {
+            // Update an existing event
+            c.EVENT.update(db, getEventId(), getWhen(), getName());
+        } else {
+            // Create a new event
+            setEventId(c.EVENT.insert(db, getWhen(), typeId, getName()));
+        }
+
+        return getEventId();
     }
 
     private void updateUi() {

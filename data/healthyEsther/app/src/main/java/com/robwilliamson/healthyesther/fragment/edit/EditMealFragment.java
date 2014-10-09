@@ -3,8 +3,8 @@ package com.robwilliamson.healthyesther.fragment.edit;
 
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,7 +18,12 @@ import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.healthyesther.R;
 
+import java.util.HashMap;
+import java.util.Set;
+
 public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
+    private HashMap<String, Long> mSuggestionIds;
+
     public interface Watcher {
         void onFragmentUpdate(EditMealFragment fragment);
     }
@@ -72,23 +77,36 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
     }
 
     public void setCursor(final Cursor meals) {
-        String[] suggestions = new String [meals.getCount()];
-        long[] mealIds;
-        mealIds = new long[meals.getCount()];
+        mSuggestionIds = new HashMap<String, Long>(meals.getCount());
 
-        int i = 0;
         if (meals.moveToFirst()) {
             do {
-                suggestions[i] = meals.getString(meals.getColumnIndex(Meal.NAME));
-                mealIds[i] = meals.getLong(meals.getColumnIndex(Meal._ID));
-                i++;
+                mSuggestionIds.put(meals.getString(meals.getColumnIndex(Meal.NAME)),
+                        meals.getLong(meals.getColumnIndex(Meal._ID)));
             } while(meals.moveToNext());
         }
+
+        Set<String> set = mSuggestionIds.keySet();
+        String [] suggestions = new String[set.size()];
+        set.toArray(suggestions);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line,
                 suggestions);
         getNameView().setAdapter(adapter);
+    }
+
+    public String getName() {
+        return getNameView().getText().toString();
+    }
+
+    public long modify(SQLiteDatabase db) {
+        String name = getName();
+        if (mSuggestionIds.containsKey(name)) {
+            return mSuggestionIds.get(name);
+        }
+
+        return Contract.getInstance().MEAL.insert(db, name);
     }
 
     private AutoCompleteTextView getNameView() {
@@ -97,9 +115,5 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
 
     private <T extends View> T getTypeSafeView(int id) {
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id);
-    }
-
-    public String getName() {
-        return getNameView().getText().toString();
     }
 }
