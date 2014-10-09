@@ -22,7 +22,10 @@
             </intent-filter>
         </activity>
         <activity android:name="com.robwilliamson.healthyesther.add.Meal"
-            android:label="@string/app_name">
+            android:label="@string/log_a_meal">
+        </activity>
+        <activity android:name="com.robwilliamson.healthyesther.add.Medication"
+            android:label="@string/log_medication">
         </activity>
     </application>
 

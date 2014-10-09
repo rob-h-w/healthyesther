@@ -4,18 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.add.Meal;
+import com.robwilliamson.healthyesther.add.Medication;
 
 public class AddEventFragment extends Fragment {
     @Override
@@ -40,7 +36,8 @@ public class AddEventFragment extends Fragment {
         getCreateMedicationEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "TODO: implement add medication.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), Medication.class);
+                getActivity().startActivity(intent);
             }
         });
     }

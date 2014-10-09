@@ -9,6 +9,7 @@ import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.MealEvent;
 import com.robwilliamson.db.definition.Medication;
 import com.robwilliamson.db.definition.MedicationEvent;
+import com.robwilliamson.db.definition.MedicationName;
 import com.robwilliamson.db.definition.Table;
 import com.robwilliamson.db.definition.Units;
 
@@ -26,6 +27,7 @@ public final class Contract {
         MEAL = new Meal();
         MEAL_EVENT = new MealEvent();
         MEDICATION = new Medication();
+        MEDICATION_NAME = new MedicationName();
         MEDICATION_EVENT = new MedicationEvent();
         UNITS = new Units();
 
@@ -36,6 +38,7 @@ public final class Contract {
                 MEAL,
                 MEDICATION_EVENT,
                 MEDICATION,
+                MEDICATION_NAME,
                 UNITS,
         };
     }
@@ -59,6 +62,7 @@ public final class Contract {
     public final Meal MEAL;
     public final MealEvent MEAL_EVENT;
     public final Medication MEDICATION;
+    public final MedicationName MEDICATION_NAME;
     public final MedicationEvent MEDICATION_EVENT;
     public final Units UNITS;
 

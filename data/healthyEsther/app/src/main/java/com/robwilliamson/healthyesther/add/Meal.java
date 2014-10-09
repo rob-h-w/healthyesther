@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.add;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,11 +16,14 @@ import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Meal extends DbActivity
+public class Meal extends AbstractAddActivity
         implements EditMealFragment.Watcher, EditEventFragment.Watcher {
     private final static String MEAL_TAG = "meal";
     private final static String EVENT_TAG = "event";
@@ -29,72 +33,35 @@ public class Meal extends DbActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            return;
+    protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
+        ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(2);
+        EditFragment meal = null;
+        EditFragment event = null;
+        if (create) {
+            meal = new EditMealFragment();
+            event = new EditEventFragment();
+        } else {
+            meal = getMealFragment();
+            event = getEventFragment();
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.base_activity_content_layout, new EditMealFragment(), MEAL_TAG)
-                .add(R.id.base_activity_content_layout, new EditEventFragment(), EVENT_TAG).commit();
+        list.add(new Pair<EditFragment, String>(meal, MEAL_TAG));
+        list.add(new Pair<EditFragment, String>(event, EVENT_TAG));
+
+        return list;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.event, menu);
-        return true;
+    protected void onModifySelected(SQLiteDatabase db) {
+        com.robwilliamson.db.definition.Meal.Modification meal = (com.robwilliamson.db.definition.Meal.Modification) getMealFragment().getModification();
+        Event.Modification event = (Event.Modification) getEventFragment().getModification();
+        MealEvent.Modification mealEvent = new MealEvent.Modification(meal, event, null, null);
+        mealEvent.modify(db);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_modify) {
-            // Write to the DB and go back.
-            query(new Query() {
-                @Override
-                public Cursor query(SQLiteDatabase db) {
-                    db.beginTransaction();
-                    try {
-                        com.robwilliamson.db.definition.Meal.Modification meal = (com.robwilliamson.db.definition.Meal.Modification) getMealFragment().getModification();
-                        Event.Modification event = (Event.Modification) getEventFragment().getModification();
-                        MealEvent.Modification mealEvent = new MealEvent.Modification(meal, event, null, null);
-                        mealEvent.modify(db);
-                        db.setTransactionSuccessful();
-                    } finally {
-                        db.endTransaction();
-                    }
-                    return null;
-                }
-
-                @Override
-                public void postQueryProcessing(Cursor cursor) {
-
-                }
-
-                @Override
-                public void onQueryComplete(Cursor cursor) {
-                    finish();
-                }
-
-                @Override
-                public void onQueryFailed(Throwable error) {
-                    Toast.makeText(Meal.this, getText(R.string.could_not_insert_meal_event), Toast.LENGTH_SHORT).show();
-                }
-            });
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (getMealFragment().validate() && getEventFragment().validate()) {
-            return true;
-        }
-
-        return super.onPrepareOptionsMenu(menu);
+    protected int getModifyFailedStringId() {
+        return R.string.could_not_insert_meal_event;
     }
 
     @Override

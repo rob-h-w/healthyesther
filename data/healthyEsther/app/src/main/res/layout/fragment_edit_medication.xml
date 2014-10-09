@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment"
+    android:orientation="vertical"
+    style="@style/AppTheme.contentLayout">
+
+    <LinearLayout
+        android:orientation="vertical"
+        style="@style/AppTheme.sectionLayout">
+
+        <TextView
+            android:text="@string/medication"
+            android:id="@+id/medication_name_title"
+            style="@style/AppTheme.text"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/medication_name"
+            android:hint="@string/enter_medication_name"
+            style="@style/AppTheme.text.textEditor" />
+
+    </LinearLayout>
+
+</LinearLayout>

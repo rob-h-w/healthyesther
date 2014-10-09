@@ -56,7 +56,7 @@ public class Event extends Table {
     public final static String NAME = "name";
 
     public static boolean validateName(String name) {
-        return Utils.Strings.validateLength(name, 1, 140);
+        return name == null || Utils.Strings.validateLength(name, 0, 140);
     }
 
     @Override

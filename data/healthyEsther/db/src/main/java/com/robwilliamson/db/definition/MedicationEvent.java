@@ -3,7 +3,32 @@ package com.robwilliamson.db.definition;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Contract;
+
 public class MedicationEvent extends Table {
+    public static class Modification extends com.robwilliamson.db.definition.Modification {
+
+        private final Event.Modification mEvent;
+        private final Medication.Modification mMedication;
+
+        public Modification(Medication.Modification medication,
+                            Event.Modification event) {
+            mMedication = medication;
+            mEvent = event;
+        }
+
+        @Override
+        public void modify(SQLiteDatabase db) {
+            mMedication.modify(db);
+            mEvent.setTypeId(EVENT_TYPE_ID);
+            mEvent.modify(db);
+            Contract.getInstance().MEDICATION_EVENT.insert(
+                    db,
+                    mMedication.getRowId(),
+                    mEvent.getRowId());
+        }
+    }
+
     public static final long EVENT_TYPE_ID = 2;
     public static final String TABLE_ID = "medication_event";
     public static final String MEDICATION_ID = "medication_id";
