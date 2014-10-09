@@ -57,6 +57,8 @@ public abstract class DbActivity extends BusyActivity {
                 return null;
             }
         };
+
+        mQuery.execute();
     }
 
     private void doQuery(final Query query) {
