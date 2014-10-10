@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 

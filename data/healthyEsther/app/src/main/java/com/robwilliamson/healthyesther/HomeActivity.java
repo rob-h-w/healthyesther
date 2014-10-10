@@ -2,9 +2,9 @@ package com.robwilliamson.healthyesther;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.widget.DrawerLayout;
 
 import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;

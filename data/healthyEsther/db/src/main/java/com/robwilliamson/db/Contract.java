@@ -1,6 +1,5 @@
 package com.robwilliamson.db;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.definition.Event;

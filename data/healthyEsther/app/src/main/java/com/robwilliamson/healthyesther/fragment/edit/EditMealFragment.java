@@ -1,9 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
-
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;

@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.robwilliamson.healthyesther.fragment.BusyFragment;

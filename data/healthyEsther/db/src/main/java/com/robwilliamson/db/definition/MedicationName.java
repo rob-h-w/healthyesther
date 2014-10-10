@@ -1,6 +1,5 @@
 package com.robwilliamson.db.definition;
 
-import android.app.ActionBar;
 import android.database.sqlite.SQLiteDatabase;
 
 public class MedicationName extends Table {

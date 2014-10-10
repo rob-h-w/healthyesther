@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,13 +8,9 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.robwilliamson.db.Contract;
-import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.SelectEventAndType;
 import com.robwilliamson.db.use.SelectQuery;
-
-import org.joda.time.DateTime;
 
 
 public class EventActivity extends DbActivity {

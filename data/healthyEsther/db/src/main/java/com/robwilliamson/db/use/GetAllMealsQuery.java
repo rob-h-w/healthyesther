@@ -1,9 +1,5 @@
 package com.robwilliamson.db.use;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.Table;
 
