@@ -46,7 +46,7 @@ public abstract class SelectEventAndType implements SelectQuery {
             };
 
             String where = mEarliest == null ? "" :
-                    " where " + c.EVENT.getQualifiedName(Event.WHEN) + " >= datetime(" + Utils.Time.toDatabaseString(mEarliest) + ") \n";
+                    " where " + c.EVENT.getQualifiedName(Event.WHEN) + " >= \"" + Utils.Time.toDatabaseString(mEarliest) + "\" \n";
 
             String selectQuery = "SELECT " + Utils.join(qualifiedUniqueColumns, ", ") + "\n" + // _Id, WHEN, NAME, EventType.NAME
                     "FROM " + Event.TABLE_NAME + "\n" +

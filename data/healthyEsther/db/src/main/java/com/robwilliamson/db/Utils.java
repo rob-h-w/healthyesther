@@ -52,7 +52,7 @@ public final class Utils {
     }
 
     public static class Time {
-        private static final String FORMAT = "yyyy-MM-dd HH:mm:ss";
+        private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
         private static final DateTimeFormatter DB_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
 
         public static void bundle(Bundle bundle, String name, DateTime dateTime) {
