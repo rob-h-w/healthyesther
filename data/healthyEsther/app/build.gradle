@@ -1,6 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'test1'
+        }
+    }
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
     defaultConfig {
@@ -10,11 +15,14 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
-            runProguard true
+            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            debuggable false
         }
         debug {
             debuggable true
@@ -26,7 +34,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile 'com.jakewharton.espresso:espresso:1.1-r3'
     androidTestCompile 'com.jakewharton.espresso:espresso-support-v4:1.1-r3'
     compile project(':db')

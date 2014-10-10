@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.util.HashMap;
 
 public class ActivityGraphFragment extends Fragment {
+    private static final String LOG_TAG = ActivityGraphFragment.class.getName();
     private static final int DAYS = 7;
     private static final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
 
@@ -52,11 +54,11 @@ public class ActivityGraphFragment extends Fragment {
 
             @Override
             public void postQueryProcessing(Cursor cursor) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    for (int i = 0; i < DAYS; i++) {
-                        mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
-                    }
+                for (int i = 0; i < DAYS; i++) {
+                    mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
+                }
 
+                if (cursor != null && cursor.moveToFirst()) {
                     int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
                     do {
                         DateTime when = com.robwilliamson.db.Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
@@ -96,6 +98,8 @@ public class ActivityGraphFragment extends Fragment {
                     mGraphView = new LineGraphView(
                             ActivityGraphFragment.this.getActivity(),
                             getString(R.string.activity_last_week));
+                    mGraphView.setManualYAxisBounds(mMax, 0);
+                    mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
 
                     getLayout().addView(mGraphView);
                 } else {
@@ -105,7 +109,6 @@ public class ActivityGraphFragment extends Fragment {
                 mGraphView.addSeries(activitySeries);
                 mGraphView.setHorizontalLabels(dateStrings);
                 mGraphView.setVerticalLabels(integerStrings);
-                mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
             }
 
             @Override

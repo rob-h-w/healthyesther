@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
  */
 public final class HealthDbHelper extends SQLiteOpenHelper {
     private static volatile HealthDbHelper sInstance = null;
+    public static boolean sDebug = false;
 
     public static synchronized HealthDbHelper getInstance(Context context) {
         if (sInstance == null) {
@@ -36,7 +37,10 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Contract.getInstance().create(sqLiteDatabase);
-        fakeData(sqLiteDatabase);
+
+        if (sDebug) {
+            Utils.Db.TestData.insertFakeData(sqLiteDatabase);
+        }
     }
 
     @Override
@@ -44,23 +48,15 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         Contract.getInstance().upgrade(sqLiteDatabase, from, to);
     }
 
-    private void fakeData(SQLiteDatabase db) {
-        if (/*BuildConfig.DEBUG*/ true) {
-            Utils.Db.TestData.insertFakeData(db);
-        }
-    }
-
     public void cleanOldData(SQLiteDatabase db) {
-        if (BuildConfig.DEBUG) {
-            try {
-                db.beginTransaction();
-                Contract contract = Contract.getInstance();
-                contract.delete(db);
-                contract.create(db);
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
+        try {
+            db.beginTransaction();
+            Contract contract = Contract.getInstance();
+            contract.delete(db);
+            contract.create(db);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 }
