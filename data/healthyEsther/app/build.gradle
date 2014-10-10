@@ -32,4 +32,5 @@ dependencies {
     compile project(':db')
     compile 'com.android.support:support-v4:20.0.0'
     compile 'net.danlew:android.joda:2.4.1'
+    compile 'com.jjoe64:graphview:3.1.3'
 }
