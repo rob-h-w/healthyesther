@@ -32,7 +32,7 @@ public abstract class AbstractAddActivity extends DbActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         ArrayList<Pair<EditFragment, String>> fragments = getEditFragments(true);
         for (Pair<EditFragment, String> pair : fragments) {
-            transaction.add(R.id.base_activity_content_layout, pair.first, pair.second);
+            transaction.add(getActivityContentLayoutResourceId(), pair.first, pair.second);
         }
         transaction.commit();
     }

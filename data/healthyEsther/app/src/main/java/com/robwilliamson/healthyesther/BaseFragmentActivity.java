@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.LinearLayout;
 
 public class BaseFragmentActivity extends FragmentActivity {
     private volatile boolean mActive = false;
@@ -33,5 +34,13 @@ public class BaseFragmentActivity extends FragmentActivity {
 
     protected int getContentLayoutResourceId() {
         return R.layout.activity_base_root;
+    }
+
+    protected int getActivityContentLayoutResourceId() {
+        return R.id.base_activity_content_layout;
+    }
+
+    protected LinearLayout getActivityContentLayout() {
+        return (LinearLayout)findViewById(getActivityContentLayoutResourceId());
     }
 }

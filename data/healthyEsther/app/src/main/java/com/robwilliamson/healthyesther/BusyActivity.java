@@ -51,7 +51,7 @@ public class BusyActivity extends BaseFragmentActivity {
                 if (startBusyFragment) {
                     Fragment busyFragment = new BusyFragment();
                     busyFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(R.id.base_activity_root_layout, busyFragment, BUSY_TAG).commit();
+                    getSupportFragmentManager().beginTransaction().add(android.R.id.content, busyFragment, BUSY_TAG).commit();
                 }
 
                 if (stopBusyFragment) {
