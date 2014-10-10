@@ -86,6 +86,7 @@ public class ActivityGraphFragment extends Fragment {
                 );
                 graphView.addSeries(activitySeries);
                 graphView.setHorizontalLabels(dateStrings);
+                graphView.setScalable(true);
 
                 getLayout().addView(graphView);
             }
