@@ -24,5 +24,6 @@
     <string name="enter_medication_name">Please enter the medication\'s name</string>
     <string name="log_a_meal">Log a meal</string>
     <string name="log_medication">Log medication</string>
+    <string name="activity_last_week">Last week\'s entries</string>
 
 </resources>

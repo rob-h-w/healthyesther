@@ -17,10 +17,11 @@ import org.joda.time.DateTimeZone;
  */
 public abstract class SelectEventAndType implements SelectQuery {
     private final DateTime mEarliest;
+    private final DateTime mLatest;
     private final String TYPE_NAME = "type_name";
 
     public SelectEventAndType() {
-        mEarliest = null;
+        this(null, null);
     }
 
     /**
@@ -28,7 +29,12 @@ public abstract class SelectEventAndType implements SelectQuery {
      * @param earliest
      */
     public SelectEventAndType(final DateTime earliest) {
-        mEarliest = earliest.withZone(DateTimeZone.UTC);
+        this(earliest, null);
+    }
+
+    public SelectEventAndType(final DateTime earliest, final DateTime latest) {
+        mEarliest = earliest == null ? null : earliest.withZone(DateTimeZone.UTC);
+        mLatest = latest == null ? null : latest.withZone(DateTimeZone.UTC);
     }
 
     @Override
@@ -45,8 +51,30 @@ public abstract class SelectEventAndType implements SelectQuery {
                     c.EVENT_TYPE.getQualifiedName(EventType.NAME) + " AS " + TYPE_NAME,
             };
 
-            String where = mEarliest == null ? "" :
-                    " where " + c.EVENT.getQualifiedName(Event.WHEN) + " >= \"" + Utils.Time.toDatabaseString(mEarliest) + "\" \n";
+            String where = "";
+            String earliestTerm = "";
+            String and = "";
+            String latestTerm = "";
+            String terminator = "";
+
+            if (mEarliest != null) {
+                where = " where ";
+                earliestTerm = c.EVENT.getQualifiedName(Event.WHEN) + " >= \"" + Utils.Time.toDatabaseString(mEarliest) + "\" ";
+                terminator = "\n";
+            }
+
+            if (mLatest != null) {
+                where = " where ";
+                latestTerm = c.EVENT.getQualifiedName(Event.WHEN) + " <= \"" + Utils.Time.toDatabaseString(mLatest) + "\" ";
+                terminator = "\n";
+            }
+
+            if (!Utils.Strings.nullOrEmpty(earliestTerm) &&
+                    !Utils.Strings.nullOrEmpty(latestTerm)) {
+                and = " and ";
+            }
+
+            where = where + earliestTerm + and + latestTerm + terminator;
 
             String selectQuery = "SELECT " + Utils.join(qualifiedUniqueColumns, ", ") + "\n" + // _Id, WHEN, NAME, EventType.NAME
                     "FROM " + Event.TABLE_NAME + "\n" +
