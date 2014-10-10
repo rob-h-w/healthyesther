@@ -17,10 +17,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import java.util.ArrayList;
 
 public abstract class AbstractAddActivity extends DbActivity {
-    public AbstractAddActivity(boolean runToCompletion) {
-        super(runToCompletion);
-    }
-
     protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
     protected abstract void onModifySelected(SQLiteDatabase db);
     protected abstract int getModifyFailedStringId();

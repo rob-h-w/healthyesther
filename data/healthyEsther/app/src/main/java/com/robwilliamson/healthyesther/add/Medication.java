@@ -27,10 +27,6 @@ public class Medication extends AbstractAddActivity
 
     private final HashMap<String, Long> mSuggestionIds = new HashMap<String, Long>();
 
-    public Medication() {
-        super(true);
-    }
-
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(2);

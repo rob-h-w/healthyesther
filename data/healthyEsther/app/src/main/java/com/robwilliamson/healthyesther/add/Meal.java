@@ -23,10 +23,6 @@ public class Meal extends AbstractAddActivity
     private final static String MEAL_TAG = "meal";
     private final static String EVENT_TAG = "event";
 
-    public Meal() {
-        super(true);
-    }
-
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(2);

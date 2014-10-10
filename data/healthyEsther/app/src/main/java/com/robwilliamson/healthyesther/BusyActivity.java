@@ -12,7 +12,7 @@ public class BusyActivity extends BaseFragmentActivity {
     private static final String BUSY_TAG = "Busy";
     private volatile int mBusy = 0;
 
-    protected synchronized void setBusy(final boolean busy) {
+    protected void setBusy(final boolean busy) {
         final CountDownLatch latch = new CountDownLatch(1);
         runOnUiThread(new Runnable() {
             @Override

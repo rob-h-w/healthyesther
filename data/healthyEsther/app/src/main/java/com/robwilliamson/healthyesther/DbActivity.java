@@ -13,7 +13,6 @@ import com.robwilliamson.db.use.Query;
 public abstract class DbActivity extends BusyActivity {
     private static final String LOG_TAG = DbActivity.class.getName();
 
-    private final boolean mRunToCompletion;
     private volatile AsyncTask<Void, Void, Void> mOpeningQuery;
     private volatile AsyncTask<Void, Void, Void> mQuery;
 
@@ -23,15 +22,12 @@ public abstract class DbActivity extends BusyActivity {
      */
     abstract protected Query getOnResumeQuery();
 
-    public DbActivity(boolean runToCompletion) {
-        mRunToCompletion = runToCompletion;
-    }
-
     @Override
     protected void onPause() {
-        super.onPause();
         cancel(mOpeningQuery);
         cancel(mQuery);
+
+        super.onPause();
     }
 
     @Override
@@ -41,7 +37,7 @@ public abstract class DbActivity extends BusyActivity {
         mOpeningQuery = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                doQuery(getOnResumeQuery());
+                doQuery(getOnResumeQuery(), this);
                 mOpeningQuery = null;
                 return null;
             }
@@ -54,7 +50,7 @@ public abstract class DbActivity extends BusyActivity {
         mQuery = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                doQuery(query);
+                doQuery(query, this);
                 mQuery = null;
                 return null;
             }
@@ -63,14 +59,16 @@ public abstract class DbActivity extends BusyActivity {
         mQuery.execute();
     }
 
-    private void doQuery(final Query query) {
+    private void doQuery(final Query query, final AsyncTask task) {
         if (query == null) {
             return;
         }
 
         final Throwable[] error = new Throwable[] { null };
         final Cursor[] cursor = new Cursor[] { null };
+
         setBusy(true);
+
         try {
             cursor[0] = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
         } catch (Throwable e) {
@@ -78,14 +76,26 @@ public abstract class DbActivity extends BusyActivity {
             Log.e(LOG_TAG, "Query threw", e);
         }
 
+        if (task.isCancelled()) {
+            return;
+        }
+
         if (error[0] == null) {
             query.postQueryProcessing(cursor[0]);
+        }
+
+        if (task.isCancelled()) {
+            return;
         }
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 setBusy(false);
+
+                if (!isActive()) {
+                    return;
+                }
 
                 if (error[0] == null) {
                     query.onQueryComplete(cursor[0]);
@@ -98,7 +108,7 @@ public abstract class DbActivity extends BusyActivity {
 
     private void cancel(AsyncTask<Void, Void, Void> task) {
         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
-            task.cancel(!mRunToCompletion);
+            task.cancel(true);
         }
     }
 }

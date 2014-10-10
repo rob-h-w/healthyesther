@@ -17,8 +17,6 @@ public class EventActivity extends DbActivity {
     private ListView mEventListView;
     private SelectQuery mQuery;
 
-    public EventActivity() { super(false); }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
