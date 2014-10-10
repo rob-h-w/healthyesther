@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther;
 
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.use.Query;
@@ -10,6 +11,8 @@ import com.robwilliamson.db.use.Query;
  * Activities that use databases.
  */
 public abstract class DbActivity extends BusyActivity {
+    private static final String LOG_TAG = DbActivity.class.getName();
+
     private final boolean mRunToCompletion;
     private volatile AsyncTask<Void, Void, Void> mOpeningQuery;
     private volatile AsyncTask<Void, Void, Void> mQuery;
@@ -72,6 +75,7 @@ public abstract class DbActivity extends BusyActivity {
             cursor[0] = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
         } catch (Throwable e) {
             error[0] = e;
+            Log.e(LOG_TAG, "Query threw", e);
         }
 
         if (error[0] == null) {
