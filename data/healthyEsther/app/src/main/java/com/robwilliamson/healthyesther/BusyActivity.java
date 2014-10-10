@@ -1,29 +1,52 @@
 package com.robwilliamson.healthyesther;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.robwilliamson.healthyesther.fragment.BusyFragment;
 
 public class BusyActivity extends BaseFragmentActivity {
-    private BusyFragment mBusyFragment;
-    private volatile boolean mBusy = false;
-
-    public BusyActivity() {
-        mBusyFragment = new BusyFragment();
-    }
+    private static final String BUSY_TAG = "Busy";
+    private volatile int mBusy = 0;
 
     protected synchronized void setBusy(boolean busy) {
-        if (!isStateLoaded() || mBusy == busy) {
+        boolean startBusyFragment = false;
+        boolean stopBusyFragment = false;
+
+        if (busy) {
+            mBusy++;
+        } else {
+            if (mBusy > 0) {
+                mBusy--;
+            }
+        }
+
+        if (!isStateLoaded()) {
             return;
         }
 
-        if (busy) {
-            mBusyFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(android.R.id.content, mBusyFragment).commit();
-        } else {
-            getSupportFragmentManager().beginTransaction().remove(mBusyFragment).commit();
+        boolean busyRunning = getBusyFragment() != null;
+
+        if (!busyRunning && mBusy > 0) {
+            startBusyFragment = true;
         }
 
-        mBusy = busy;
+        if (busyRunning && mBusy == 0) {
+            stopBusyFragment = true;
+        }
+
+        if (startBusyFragment) {
+            Fragment busyFragment = new BusyFragment();
+            busyFragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content, busyFragment, BUSY_TAG).commit();
+        }
+
+        if (stopBusyFragment) {
+            getSupportFragmentManager().beginTransaction().remove(getBusyFragment()).commit();
+        }
+    }
+
+    private Fragment getBusyFragment() {
+        return getSupportFragmentManager().findFragmentByTag(BUSY_TAG);
     }
 }
