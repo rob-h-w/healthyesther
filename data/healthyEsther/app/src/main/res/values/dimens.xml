@@ -12,5 +12,6 @@
     <dimen name="border_margin">5dip</dimen>
     <dimen name="content_layout_padding">15dip</dimen>
     <dimen name="section_layout_padding">10dip</dimen>
+    <dimen name="activity_graph_minimum_height">300dip</dimen>
 
 </resources>

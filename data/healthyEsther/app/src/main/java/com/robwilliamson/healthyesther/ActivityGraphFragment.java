@@ -48,6 +48,7 @@ public class ActivityGraphFragment extends Fragment {
             private final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
             private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
             private DateTime mNow;
+            private int mMax = 0;
 
             @Override
             public void postQueryProcessing(Cursor cursor) {
@@ -59,8 +60,13 @@ public class ActivityGraphFragment extends Fragment {
                     int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
                     do {
                         DateTime when = com.robwilliamson.db.Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
-                        Integer count = mEntriesPerDay.get(FORMAT.print(when));
-                        mEntriesPerDay.put(FORMAT.print(when), count+1);
+                        Integer count = mEntriesPerDay.get(FORMAT.print(when)) + 1;
+                        mEntriesPerDay.put(FORMAT.print(when), count);
+
+                        if (count > mMax) {
+                            mMax = count;
+                        }
+
                     } while (cursor.moveToNext());
                 }
             }
@@ -69,6 +75,7 @@ public class ActivityGraphFragment extends Fragment {
             public void onQueryComplete(Cursor cursor) {// init example series data
                 GraphView.GraphViewData[] data = new GraphView.GraphViewData[DAYS];
                 String [] dateStrings = new String[DAYS];
+                String [] integerStrings = new String[mMax + 1];
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("E");
 
                 for (int i = 1; i <= DAYS; i++) {
@@ -76,6 +83,10 @@ public class ActivityGraphFragment extends Fragment {
                     String dayStr = FORMAT.print(day);
                     data[i - 1] = new GraphView.GraphViewData(i, mEntriesPerDay.get(dayStr));
                     dateStrings[i - 1] = formatter.print(day);
+                }
+
+                for (int i = 0; i < mMax + 1; i++) {
+                    integerStrings[i] = String.valueOf(mMax - i);
                 }
 
                 GraphViewSeries activitySeries = new GraphViewSeries(data);
@@ -86,7 +97,8 @@ public class ActivityGraphFragment extends Fragment {
                 );
                 graphView.addSeries(activitySeries);
                 graphView.setHorizontalLabels(dateStrings);
-                graphView.setScalable(true);
+                graphView.setVerticalLabels(integerStrings);
+                graphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
 
                 getLayout().addView(graphView);
             }
