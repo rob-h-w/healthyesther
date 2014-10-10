@@ -71,11 +71,11 @@ public class Medication extends AbstractAddActivity
                 mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
                         com.robwilliamson.db.definition.Medication.NAME,
                         com.robwilliamson.db.definition.Medication._ID));
+                getMoreNames();
             }
 
             @Override
             public void onQueryComplete(Cursor cursor) {
-                getMoreNames();
             }
 
             @Override

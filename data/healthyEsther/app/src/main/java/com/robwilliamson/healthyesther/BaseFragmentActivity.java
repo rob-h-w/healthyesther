@@ -4,13 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
 public class BaseFragmentActivity extends FragmentActivity {
-    private boolean mStateLoaded = false;
-
-    private class SetContentViewDisallowedException extends RuntimeException {
-        SetContentViewDisallowedException(String message) {
-            super(message);
-        }
-    }
+    private volatile boolean mActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,19 +14,21 @@ public class BaseFragmentActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mStateLoaded = true;
+    protected void onPause() {
+        super.onPause();
+
+        mActive = false;
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mStateLoaded = false;
+    protected void onResume() {
+        super.onResume();
+
+        mActive = true;
     }
 
-    protected boolean isStateLoaded() {
-        return mStateLoaded;
+    protected boolean isActive() {
+        return mActive;
     }
 
     protected int getContentLayoutResourceId() {

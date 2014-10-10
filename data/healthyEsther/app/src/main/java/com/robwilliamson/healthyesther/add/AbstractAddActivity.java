@@ -66,7 +66,6 @@ public abstract class AbstractAddActivity extends DbActivity {
 
                 @Override
                 public void postQueryProcessing(Cursor cursor) {
-
                 }
 
                 @Override
@@ -87,6 +86,10 @@ public abstract class AbstractAddActivity extends DbActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        if (isBusy()) {
+            return false;
+        }
+
         ArrayList<Pair<EditFragment, String>> fragments = getEditFragments(false);
         for (Pair<EditFragment, String> fragmentStringPair : fragments) {
             if (!fragmentStringPair.first.validate()) {
