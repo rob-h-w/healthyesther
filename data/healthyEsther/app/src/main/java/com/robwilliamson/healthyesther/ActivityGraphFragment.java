@@ -27,14 +27,14 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.util.HashMap;
 
 public class ActivityGraphFragment extends Fragment {
-
+    private static final int DAYS = 7;
+    private static final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
 
     private GraphView mGraphView;
 
     public ActivityGraphFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,10 +44,8 @@ public class ActivityGraphFragment extends Fragment {
     }
 
     Query getOnResumeQuery() {
-        return new SelectEventAndType(DateTime.now().minusWeeks(1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
-                DateTime.now().minusDays(1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0)) {
-            private static final int DAYS = 7;
-            private final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
+        return new SelectEventAndType(DateTime.now().minusDays(DAYS - 1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
+                DateTime.now().withZone(DateTimeZone.UTC)) {
             private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
             private DateTime mNow;
             private int mMax = 0;
@@ -55,7 +53,7 @@ public class ActivityGraphFragment extends Fragment {
             @Override
             public void postQueryProcessing(Cursor cursor) {
                 if (cursor != null && cursor.moveToFirst()) {
-                    for (int i = 1; i <= DAYS; i++) {
+                    for (int i = 0; i < DAYS; i++) {
                         mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
                     }
 
@@ -80,11 +78,12 @@ public class ActivityGraphFragment extends Fragment {
                 String [] integerStrings = new String[mMax + 1];
                 DateTimeFormatter formatter = DateTimeFormat.forPattern("E");
 
-                for (int i = 1; i <= DAYS; i++) {
-                    DateTime day = now().minusDays(i);
+                for (int i = 0; i < DAYS; i++) {
+                    int minusDays = DAYS - 1 - i; // Range from 6-0.
+                    DateTime day = now().minusDays(minusDays);
                     String dayStr = FORMAT.print(day);
-                    data[i - 1] = new GraphView.GraphViewData(i, mEntriesPerDay.get(dayStr));
-                    dateStrings[i - 1] = formatter.print(day);
+                    data[i] = new GraphView.GraphViewData(i + 1, mEntriesPerDay.get(dayStr));
+                    dateStrings[i] = formatter.print(day);
                 }
 
                 for (int i = 0; i < mMax + 1; i++) {
