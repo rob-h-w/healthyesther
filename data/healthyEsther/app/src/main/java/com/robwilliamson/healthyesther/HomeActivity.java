@@ -33,6 +33,8 @@ import java.util.HashMap;
 
 public class HomeActivity extends DbActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+    private static final String GRAPH_TAG = "graph";
+
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -63,7 +65,10 @@ public class HomeActivity extends DbActivity
 
             AddEventFragment addEventFragment = new AddEventFragment();
             addEventFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction().add(R.id.home_activity_content_layout, addEventFragment).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.home_activity_content_layout, addEventFragment)
+                    .add(R.id.home_activity_content_layout, new ActivityGraphFragment(), GRAPH_TAG)
+                    .commit();
         }
     }
 
@@ -112,66 +117,10 @@ public class HomeActivity extends DbActivity
 
     @Override
     protected Query getOnResumeQuery() {
-        return new SelectEventAndType(DateTime.now().minusWeeks(1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
-                DateTime.now().minusDays(1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0)) {
-            private static final int DAYS = 7;
-            private final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
-            private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
-            private DateTime mNow;
+        return getGraph().getOnResumeQuery();
+    }
 
-            @Override
-            public void postQueryProcessing(Cursor cursor) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    for (int i = 1; i <= DAYS; i++) {
-                        mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
-                    }
-
-                    int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
-                    do {
-                        DateTime when = Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
-                        Integer count = mEntriesPerDay.get(FORMAT.print(when));
-                        mEntriesPerDay.put(FORMAT.print(when), count+1);
-                    } while (cursor.moveToNext());
-                }
-            }
-
-            @Override
-            public void onQueryComplete(Cursor cursor) {// init example series data
-                GraphView.GraphViewData[] data = new GraphView.GraphViewData[DAYS];
-                String [] dateStrings = new String[DAYS];
-                DateTimeFormatter formatter = DateTimeFormat.shortDate();
-
-                for (int i = 1; i <= DAYS; i++) {
-                    DateTime day = now().minusDays(i);
-                    String dayStr = FORMAT.print(day);
-                    data[i - 1] = new GraphView.GraphViewData(i, mEntriesPerDay.get(dayStr));
-                    dateStrings[i - 1] = formatter.print(day);
-                }
-
-                GraphViewSeries activitySeries = new GraphViewSeries(data);
-
-                GraphView graphView = new LineGraphView(
-                        HomeActivity.this,
-                        getString(R.string.activity_last_week)
-                );
-                graphView.addSeries(activitySeries);
-                graphView.setHorizontalLabels(dateStrings);
-
-                getActivityContentLayout().addView(graphView);
-            }
-
-            @Override
-            public void onQueryFailed(Throwable error) {
-
-            }
-
-            private DateTime now() {
-                if (mNow == null) {
-                    mNow = DateTime.now().withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0);
-                }
-
-                return mNow;
-            }
-        };
+    private ActivityGraphFragment getGraph() {
+        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeFragment(getSupportFragmentManager(), GRAPH_TAG);
     }
 }

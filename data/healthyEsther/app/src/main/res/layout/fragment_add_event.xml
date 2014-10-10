@@ -5,6 +5,7 @@
     <LinearLayout
         android:orientation="vertical"
         style="@style/AppTheme.sectionLayout">
+
         <TextView
             android:text="@string/log_an_event"
             style="@style/AppTheme.text.title"/>
@@ -20,6 +21,7 @@
             android:layout_height="wrap_content"
             android:text="@string/medication"
             android:id="@+id/create_medication_event_button" />
+
     </LinearLayout>
 
 </LinearLayout>
