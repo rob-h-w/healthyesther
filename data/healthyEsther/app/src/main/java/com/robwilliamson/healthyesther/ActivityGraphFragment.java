@@ -29,6 +29,8 @@ import java.util.HashMap;
 public class ActivityGraphFragment extends Fragment {
 
 
+    private GraphView mGraphView;
+
     public ActivityGraphFragment() {
         // Required empty public constructor
     }
@@ -91,16 +93,20 @@ public class ActivityGraphFragment extends Fragment {
 
                 GraphViewSeries activitySeries = new GraphViewSeries(data);
 
-                GraphView graphView = new LineGraphView(
-                        ActivityGraphFragment.this.getActivity(),
-                        getString(R.string.activity_last_week)
-                );
-                graphView.addSeries(activitySeries);
-                graphView.setHorizontalLabels(dateStrings);
-                graphView.setVerticalLabels(integerStrings);
-                graphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
+                if (mGraphView == null) {
+                    mGraphView = new LineGraphView(
+                            ActivityGraphFragment.this.getActivity(),
+                            getString(R.string.activity_last_week));
 
-                getLayout().addView(graphView);
+                    getLayout().addView(mGraphView);
+                } else {
+                    mGraphView.removeAllSeries();
+                }
+
+                mGraphView.addSeries(activitySeries);
+                mGraphView.setHorizontalLabels(dateStrings);
+                mGraphView.setVerticalLabels(integerStrings);
+                mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
             }
 
             @Override
