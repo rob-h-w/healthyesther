@@ -3,13 +3,12 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
-
     defaultConfig {
         applicationId "com.robwilliamson.db"
         minSdkVersion 16
         targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.1"
     }
     buildTypes {
         release {
