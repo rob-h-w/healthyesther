@@ -1,34 +1,15 @@
 package com.robwilliamson.healthyesther;
 
 import android.app.ActionBar;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-import com.robwilliamson.db.*;
-import com.robwilliamson.db.Utils;
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.Table;
 import com.robwilliamson.db.use.Query;
-import com.robwilliamson.db.use.SelectEventAndType;
+import com.robwilliamson.healthyesther.fragment.ActivityGraphFragment;
 import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 public class HomeActivity extends DbActivity

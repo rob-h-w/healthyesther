@@ -1,10 +1,8 @@
-package com.robwilliamson.healthyesther;
+package com.robwilliamson.healthyesther.fragment;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +11,11 @@ import android.widget.LinearLayout;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.robwilliamson.db.*;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.Table;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.SelectEventAndType;
+import com.robwilliamson.healthyesther.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -42,10 +40,10 @@ public class ActivityGraphFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_activity_graph, container, false);
+        return inflater.inflate(com.robwilliamson.healthyesther.R.layout.fragment_activity_graph, container, false);
     }
 
-    Query getOnResumeQuery() {
+    public Query getOnResumeQuery() {
         return new SelectEventAndType(DateTime.now().minusDays(DAYS - 1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
                 DateTime.now().withZone(DateTimeZone.UTC)) {
             private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
@@ -127,6 +125,6 @@ public class ActivityGraphFragment extends Fragment {
     }
 
     private LinearLayout getLayout() {
-        return Utils.View.getTypeSafeView(getView(), R.id.activity_graph_layout);
+        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), R.id.activity_graph_layout);
     }
 }
