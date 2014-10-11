@@ -4,6 +4,9 @@ android {
     signingConfigs {
         config {
             keyAlias 'test1'
+            keyPassword System.getenv('HEALTHY_ESTHER_KEY_PASSWORD')
+            storeFile rootProject.file('fakeKeyStore/fake.jks')
+            storePassword System.getenv('HEALTHY_ESTHER_STORE_PASSWORD')
         }
     }
     compileSdkVersion 19
