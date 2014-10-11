@@ -1,7 +1,10 @@
 package com.robwilliamson.healthyesther;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 public class BaseFragmentActivity extends FragmentActivity {
@@ -12,6 +15,22 @@ public class BaseFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawableResource(R.drawable.background);
         setContentView(getContentLayoutResourceId());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.global, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
