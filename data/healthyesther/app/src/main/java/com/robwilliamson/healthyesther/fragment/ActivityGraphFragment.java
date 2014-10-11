@@ -92,17 +92,17 @@ public class ActivityGraphFragment extends Fragment {
 
                 GraphViewSeries activitySeries = new GraphViewSeries(data);
 
-                if (mGraphView == null) {
-                    mGraphView = new LineGraphView(
-                            ActivityGraphFragment.this.getActivity(),
-                            getString(R.string.activity_last_week));
-                    mGraphView.setManualYAxisBounds(mMax, 0);
-                    mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
-
-                    getLayout().addView(mGraphView);
-                } else {
-                    mGraphView.removeAllSeries();
+                if (mGraphView != null) {
+                    getLayout().removeView(mGraphView);
                 }
+
+                mGraphView = new LineGraphView(
+                        ActivityGraphFragment.this.getActivity(),
+                        getString(R.string.activity_last_week));
+                mGraphView.setManualYAxisBounds(mMax, 0);
+                mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
+
+                getLayout().addView(mGraphView);
 
                 mGraphView.addSeries(activitySeries);
                 mGraphView.setHorizontalLabels(dateStrings);
