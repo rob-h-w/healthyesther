@@ -25,7 +25,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.HashMap;
 
-public class ActivityGraphFragment extends Fragment {
+public class ActivityGraphFragment extends AbstractQueryFragment {
     private static final String LOG_TAG = ActivityGraphFragment.class.getName();
     private static final int DAYS = 7;
     private static final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
@@ -43,6 +43,7 @@ public class ActivityGraphFragment extends Fragment {
         return inflater.inflate(com.robwilliamson.healthyesther.R.layout.fragment_activity_graph, container, false);
     }
 
+    @Override
     public Query getOnResumeQuery() {
         return new SelectEventAndType(DateTime.now().minusDays(DAYS - 1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
                 DateTime.now().withZone(DateTimeZone.UTC)) {
