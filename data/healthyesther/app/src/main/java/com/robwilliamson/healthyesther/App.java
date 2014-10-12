@@ -7,6 +7,12 @@ import com.robwilliamson.db.HealthDbHelper;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 public class App extends Application {
+    private static long sUiThreadId;
+
+    public static long getUiThreadId() {
+        return sUiThreadId;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -16,5 +22,7 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             HealthDbHelper.sDebug = true;
         }
+
+        sUiThreadId = Thread.currentThread().getId();
     }
 }

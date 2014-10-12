@@ -28,6 +28,8 @@ public final class Utils {
 
     public static final class View {
 
+        public static class NonUiThreadException extends RuntimeException {}
+
         public interface RadioButtonHandler {
             /**
              * @param button
@@ -66,6 +68,12 @@ public final class Utils {
             }
 
             return (T) manager.findFragmentByTag(tag);
+        }
+
+        public static void assertIsOnUiThread() {
+            if (App.getUiThreadId() != Thread.currentThread().getId()) {
+                throw new NonUiThreadException();
+            }
         }
     }
 
