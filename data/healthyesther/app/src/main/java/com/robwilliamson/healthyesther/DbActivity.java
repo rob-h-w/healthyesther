@@ -18,8 +18,8 @@ import java.util.Iterator;
 public abstract class DbActivity extends BusyActivity {
     private static final String LOG_TAG = DbActivity.class.getName();
 
-    private volatile AsyncTask<Void, Void, Void> mQuery;
-    private Iterator<Query> mQueryIterator;
+    private volatile AsyncTask<Void, Void, Void> mQuery = null;
+    private Iterator<Query> mQueryIterator = null;
 
     /**
      * An array of query users that need to run queries every time this activity is resumed.
@@ -28,16 +28,28 @@ public abstract class DbActivity extends BusyActivity {
     abstract protected QueryUser[] getOnResumeQueryUsers();
 
     @Override
-    protected void onPause() {
+    protected void onDestroy() {
         cancel(mQuery);
+        mQuery = null;
         mQueryIterator = null;
 
-        super.onPause();
+        super.onDestroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (isBusy()) {
+            // We resumed when an operation was still pending. Let it continue.
+            return;
+        }
+
+        if (mQueryIterator != null) {
+            // We resumed after an async task completed, but there are more to do. Continue.
+            nextQuery();
+            return;
+        }
 
         ArrayList<Query> queries = new ArrayList<Query>();
 
