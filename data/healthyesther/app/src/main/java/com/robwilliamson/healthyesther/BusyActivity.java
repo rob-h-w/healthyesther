@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther;
 
+import android.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -51,10 +52,20 @@ public class BusyActivity extends BaseFragmentActivity {
                     Fragment busyFragment = new BusyFragment();
                     busyFragment.setArguments(getIntent().getExtras());
                     getSupportFragmentManager().beginTransaction().add(android.R.id.content, busyFragment, BUSY_TAG).commit();
+
+                    ActionBar actionBar = getActionBar();
+                    if (actionBar != null) {
+                        actionBar.hide();
+                    }
                 }
 
                 if (stopBusyFragment) {
                     getSupportFragmentManager().beginTransaction().remove(getBusyFragment()).commit();
+
+                    ActionBar actionBar = getActionBar();
+                    if (actionBar != null) {
+                        actionBar.show();
+                    }
                 }
 
                 invalidateOptionsMenu();
