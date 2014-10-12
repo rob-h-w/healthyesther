@@ -12,6 +12,13 @@ public class BusyActivity extends BaseFragmentActivity {
     private static final String BUSY_TAG = "Busy";
     private volatile int mBusy = 0;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateUi();
+    }
+
     protected void setBusy(final boolean busy) {
         final CountDownLatch latch = new CountDownLatch(1);
         runOnUiThread(new Runnable() {
@@ -23,9 +30,6 @@ public class BusyActivity extends BaseFragmentActivity {
             }
 
             private void doLatchProtectedWork() {
-                boolean startBusyFragment = false;
-                boolean stopBusyFragment = false;
-
                 if (busy) {
                     mBusy++;
                 } else {
@@ -38,37 +42,7 @@ public class BusyActivity extends BaseFragmentActivity {
                     return;
                 }
 
-                boolean busyRunning = getBusyFragment() != null;
-
-                if (!busyRunning && mBusy > 0) {
-                    startBusyFragment = true;
-                }
-
-                if (busyRunning && mBusy == 0) {
-                    stopBusyFragment = true;
-                }
-
-                if (startBusyFragment) {
-                    Fragment busyFragment = new BusyFragment();
-                    busyFragment.setArguments(getIntent().getExtras());
-                    getSupportFragmentManager().beginTransaction().add(android.R.id.content, busyFragment, BUSY_TAG).commit();
-
-                    ActionBar actionBar = getActionBar();
-                    if (actionBar != null) {
-                        actionBar.hide();
-                    }
-                }
-
-                if (stopBusyFragment) {
-                    getSupportFragmentManager().beginTransaction().remove(getBusyFragment()).commit();
-
-                    ActionBar actionBar = getActionBar();
-                    if (actionBar != null) {
-                        actionBar.show();
-                    }
-                }
-
-                invalidateOptionsMenu();
+                updateUi();
             }
         });
 
@@ -81,7 +55,7 @@ public class BusyActivity extends BaseFragmentActivity {
     }
 
     protected boolean isBusy() {
-        return mBusy > 0 || getBusyFragment() != null;
+        return mBusy > 0;
     }
 
     private Fragment getBusyFragment() {
@@ -92,5 +66,43 @@ public class BusyActivity extends BaseFragmentActivity {
         }
 
         return manager.findFragmentByTag(BUSY_TAG);
+    }
+
+    private boolean hasBusyFragment() {
+        return getBusyFragment() != null;
+    }
+
+    private void updateUi() {
+        Utils.View.assertIsOnUiThread();
+        FragmentManager manager = getSupportFragmentManager();
+        boolean hasBusyFragment = hasBusyFragment();
+
+        if (isBusy()) {
+            if (hasBusyFragment) {
+                return;
+            }
+
+            Fragment busyFragment = new BusyFragment();
+            busyFragment.setArguments(getIntent().getExtras());
+            manager.beginTransaction().add(android.R.id.content, busyFragment, BUSY_TAG).commit();
+
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+        } else {
+            if (!hasBusyFragment) {
+                return;
+            }
+
+            getSupportFragmentManager().beginTransaction().remove(getBusyFragment()).commit();
+
+            ActionBar actionBar = getActionBar();
+            if (actionBar != null) {
+                actionBar.show();
+            }
+        }
+
+        invalidateOptionsMenu();
     }
 }
