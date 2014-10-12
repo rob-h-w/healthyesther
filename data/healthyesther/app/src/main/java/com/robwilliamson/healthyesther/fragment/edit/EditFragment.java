@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 
 import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;

@@ -8,7 +8,6 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.db.use.SelectEventAndType;
 import com.robwilliamson.db.use.SelectQuery;

@@ -1,17 +1,11 @@
 package com.robwilliamson.healthyesther.add;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.MedicationEvent;
-import com.robwilliamson.db.definition.MedicationName;
-import com.robwilliamson.db.use.GetAllMedicationNamesQuery;
-import com.robwilliamson.db.use.GetAllMedicationsQuery;
-import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;

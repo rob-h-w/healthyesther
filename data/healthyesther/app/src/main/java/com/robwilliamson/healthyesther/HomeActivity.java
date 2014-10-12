@@ -6,7 +6,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.ActivityGraphFragment;
 import com.robwilliamson.healthyesther.fragment.AddEventFragment;

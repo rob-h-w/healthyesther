@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther;
 
-import android.content.Context;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,8 +7,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.robwilliamson.db.Contract;
-
-import java.io.File;
 
 public final class Utils {
     public static String format(Throwable e) {

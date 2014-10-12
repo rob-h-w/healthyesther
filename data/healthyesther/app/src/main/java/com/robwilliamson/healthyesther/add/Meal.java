@@ -1,14 +1,11 @@
 package com.robwilliamson.healthyesther.add;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.MealEvent;
-import com.robwilliamson.db.use.GetAllMealsQuery;
-import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
@@ -17,7 +14,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Meal extends AbstractAddActivity
         implements EditMealFragment.Watcher, EditEventFragment.Watcher {

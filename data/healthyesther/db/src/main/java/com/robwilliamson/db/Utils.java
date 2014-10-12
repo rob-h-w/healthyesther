@@ -2,9 +2,7 @@ package com.robwilliamson.db;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Path;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Pair;
 
 import org.joda.time.DateTime;
@@ -13,7 +11,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
