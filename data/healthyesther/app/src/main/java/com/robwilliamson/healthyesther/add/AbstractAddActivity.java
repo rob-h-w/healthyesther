@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 
 import java.util.ArrayList;
@@ -71,7 +72,11 @@ public abstract class AbstractAddActivity extends DbActivity {
 
                 @Override
                 public void onQueryFailed(Throwable error) {
-                    Toast.makeText(AbstractAddActivity.this, getText(getModifyFailedStringId()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            AbstractAddActivity.this,
+                            getText(getModifyFailedStringId())
+                            + "/n" + Utils.format(error),
+                            Toast.LENGTH_LONG).show();
                 }
             });
             return true;

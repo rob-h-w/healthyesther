@@ -11,6 +11,21 @@ import com.robwilliamson.db.Contract;
 import java.io.File;
 
 public final class Utils {
+    public static String format(Throwable e) {
+        StringBuilder str = new StringBuilder();
+        final String nl = "/n";
+        str.append(e.getMessage()).append(nl);
+        str.append(e.getClass()).append(nl);
+        str.append(e.getStackTrace()).append(nl);
+
+        if (e.getCause() != null) {
+            str.append("Caused by:").append(nl);
+            str.append(format(e.getCause()));
+        }
+
+        return str.toString();
+    }
+
     public static final class View {
 
         public interface RadioButtonHandler {
