@@ -9,6 +9,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.robwilliamson.db.use.Query;
+import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.db.use.SelectEventAndType;
 import com.robwilliamson.db.use.SelectQuery;
 
@@ -48,6 +49,11 @@ public class EventActivity extends DbActivity {
     }
 
     @Override
+    protected QueryUser[] getOnResumeQueryUsers() {
+        return new QueryUser[0];
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mEventListView = (ListView) findViewById(R.id.eventListView);
@@ -67,10 +73,5 @@ public class EventActivity extends DbActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected Query getOnResumeQuery() {
-        return mQuery;
     }
 }

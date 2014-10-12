@@ -12,6 +12,7 @@ import com.robwilliamson.db.definition.MedicationName;
 import com.robwilliamson.db.use.GetAllMedicationNamesQuery;
 import com.robwilliamson.db.use.GetAllMedicationsQuery;
 import com.robwilliamson.db.use.Query;
+import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -60,28 +61,6 @@ public class Medication extends AbstractAddActivity
     }
 
     @Override
-    protected Query getOnResumeQuery() {
-        return new GetAllMedicationsQuery() {
-            @Override
-            public void postQueryProcessing(Cursor cursor) {
-                mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
-                        com.robwilliamson.db.definition.Medication.NAME,
-                        com.robwilliamson.db.definition.Medication._ID));
-                getMoreNames();
-            }
-
-            @Override
-            public void onQueryComplete(Cursor cursor) {
-            }
-
-            @Override
-            public void onQueryFailed(Throwable error) {
-                Toast.makeText(Medication.this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
-    @Override
     public void onFragmentUpdate(EditMedicationFragment fragment) {
         invalidateOptionsMenu();
 
@@ -97,29 +76,13 @@ public class Medication extends AbstractAddActivity
     }
 
     @Override
-    public void onFragmentUpdate(EditEventFragment fragment) {
-        invalidateOptionsMenu();
+    public void onQueryFailed(EditMedicationFragment fragment, Throwable error) {
+        Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
     }
 
-    private void getMoreNames() {
-        query(new GetAllMedicationNamesQuery() {
-            @Override
-            public void postQueryProcessing(Cursor cursor) {
-                mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
-                        MedicationName.NAME,
-                        MedicationName.MEDICATION_ID));
-            }
-
-            @Override
-            public void onQueryComplete(Cursor cursor) {
-                getMedicationFragment().setSuggestionIds(mSuggestionIds);
-            }
-
-            @Override
-            public void onQueryFailed(Throwable error) {
-                Toast.makeText(Medication.this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
-            }
-        });
+    @Override
+    public void onFragmentUpdate(EditEventFragment fragment) {
+        invalidateOptionsMenu();
     }
 
     private EditMedicationFragment getMedicationFragment() {
@@ -128,5 +91,12 @@ public class Medication extends AbstractAddActivity
 
     private EditEventFragment getEventFragment() {
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeFragment(getSupportFragmentManager(), EVENT_TAG);
+    }
+
+    @Override
+    protected QueryUser[] getOnResumeQueryUsers() {
+        return new QueryUser[] {
+                getMedicationFragment()
+        };
     }
 }

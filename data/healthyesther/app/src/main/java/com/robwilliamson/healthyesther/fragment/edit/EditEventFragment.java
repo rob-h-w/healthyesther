@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,11 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.Modification;
+import com.robwilliamson.db.use.GetAllMealsQuery;
+import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
@@ -22,6 +26,8 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 
+import java.util.HashMap;
+
 /**
  * Allows the user to edit an event's name and when properties.
  */
@@ -29,6 +35,11 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     private long mId = -1;
     private DateTime mWhen;
     private boolean mUserEditedEventName;
+
+    @Override
+    public Query[] getQueries() {
+        return new Query[0];
+    }
 
     public interface Watcher {
         void onFragmentUpdate(EditEventFragment fragment);

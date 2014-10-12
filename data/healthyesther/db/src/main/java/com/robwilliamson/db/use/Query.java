@@ -12,7 +12,7 @@ public interface Query {
      * @param db
      * @return
      */
-    public Cursor query(SQLiteDatabase db);
+    public Cursor query(final SQLiteDatabase db);
 
     /**
      * Called after the query in the worker thread. Use this to parse the cursor output.
@@ -22,18 +22,18 @@ public interface Query {
      * handled.
      * @param cursor
      */
-    public void postQueryProcessing(Cursor cursor);
+    public void postQueryProcessing(final Cursor cursor);
 
     /**
      * Called in the UI thread after successful processing of the query.
      * @param cursor
      */
-    public void onQueryComplete(Cursor cursor);
+    public void onQueryComplete(final Cursor cursor);
 
     /**
      * Called in the UI thread after processing the query threw. It is assumed that the query was
      * rolled back.
      * @param error
      */
-    public void onQueryFailed(Throwable error);
+    public void onQueryFailed(final Throwable error);
 }

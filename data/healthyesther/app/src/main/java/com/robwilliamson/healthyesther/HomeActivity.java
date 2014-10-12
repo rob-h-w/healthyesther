@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.robwilliamson.db.use.Query;
+import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.ActivityGraphFragment;
 import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
@@ -94,12 +95,14 @@ public class HomeActivity extends DbActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected Query getOnResumeQuery() {
-        return getGraph().getOnResumeQuery();
-    }
-
     private ActivityGraphFragment getGraph() {
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeFragment(getSupportFragmentManager(), GRAPH_TAG);
+    }
+
+    @Override
+    protected QueryUser[] getOnResumeQueryUsers() {
+        return new QueryUser[] {
+                getGraph()
+        };
     }
 }

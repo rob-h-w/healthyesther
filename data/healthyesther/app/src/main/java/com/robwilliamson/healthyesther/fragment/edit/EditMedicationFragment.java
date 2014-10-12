@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -10,9 +11,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import com.robwilliamson.db.definition.Medication;
+import com.robwilliamson.db.definition.MedicationName;
 import com.robwilliamson.db.definition.Modification;
+import com.robwilliamson.db.use.GetAllMedicationNamesQuery;
+import com.robwilliamson.db.use.GetAllMedicationsQuery;
+import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 
@@ -22,9 +28,12 @@ import java.util.Set;
 public class EditMedicationFragment extends EditFragment<EditMedicationFragment.Watcher> {
     private HashMap<String, Long> mSuggestionIds;
 
-    public void setSuggestionIds(HashMap<String,Long> suggestionIds) {
-        mSuggestionIds = suggestionIds;
+    public interface Watcher {
+        void onFragmentUpdate(EditMedicationFragment fragment);
+        void onQueryFailed(EditMedicationFragment fragment, Throwable error);
+    }
 
+    private void updateSuggestionIds() {
         Set<String> set = mSuggestionIds.keySet();
         String [] suggestions = new String[set.size()];
         set.toArray(suggestions);
@@ -35,8 +44,56 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
         getNameView().setAdapter(adapter);
     }
 
-    public interface Watcher {
-        void onFragmentUpdate(EditMedicationFragment fragment);
+    @Override
+    public Query[] getQueries() {
+        return new Query[] {
+                new GetAllMedicationsQuery() {
+                    @Override
+                    public void postQueryProcessing(Cursor cursor) {
+                        mSuggestionIds = new HashMap<String, Long>();
+                        mSuggestionIds.putAll(com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
+                                com.robwilliamson.db.definition.Medication.NAME,
+                                com.robwilliamson.db.definition.Medication._ID));
+                    }
+
+                    @Override
+                    public void onQueryComplete(Cursor cursor) {
+                    }
+
+                    @Override
+                    public void onQueryFailed(final Throwable error) {
+                        callWatcher(new WatcherCaller<Watcher>() {
+                            @Override
+                            public void call(Watcher watcher) {
+                                watcher.onQueryFailed(EditMedicationFragment.this, error);
+                            }
+                        });
+                    }
+                },
+                new GetAllMedicationNamesQuery() {
+                    @Override
+                    public void postQueryProcessing(Cursor cursor) {
+                        mSuggestionIds.putAll(com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
+                                MedicationName.NAME,
+                                MedicationName.MEDICATION_ID));
+                    }
+
+                    @Override
+                    public void onQueryComplete(Cursor cursor) {
+                        EditMedicationFragment.this.updateSuggestionIds();
+                    }
+
+                    @Override
+                    public void onQueryFailed(final Throwable error) {
+                        callWatcher(new WatcherCaller<Watcher>() {
+                            @Override
+                            public void call(Watcher watcher) {
+                                watcher.onQueryFailed(EditMedicationFragment.this, error);
+                            }
+                        });
+                    }
+                }
+        };
     }
 
     @Override

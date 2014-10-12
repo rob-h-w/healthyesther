@@ -6,6 +6,11 @@ import android.util.Log;
 
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.use.Query;
+import com.robwilliamson.db.use.QueryUser;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Activities that use databases.
@@ -13,19 +18,19 @@ import com.robwilliamson.db.use.Query;
 public abstract class DbActivity extends BusyActivity {
     private static final String LOG_TAG = DbActivity.class.getName();
 
-    private volatile AsyncTask<Void, Void, Void> mOpeningQuery;
     private volatile AsyncTask<Void, Void, Void> mQuery;
+    private Iterator<Query> mQueryIterator;
 
     /**
-     * A query that is run every time this activity is resumed.
-     * @return The query to run, or null if no query is required.
+     * An array of query users that need to run queries every time this activity is resumed.
+     * @return The query users that use queries on resume, or an empty array if no query is required.
      */
-    abstract protected Query getOnResumeQuery();
+    abstract protected QueryUser[] getOnResumeQueryUsers();
 
     @Override
     protected void onPause() {
-        cancel(mOpeningQuery);
         cancel(mQuery);
+        mQueryIterator = null;
 
         super.onPause();
     }
@@ -34,29 +39,44 @@ public abstract class DbActivity extends BusyActivity {
     protected void onResume() {
         super.onResume();
 
-        mOpeningQuery = new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                doQuery(getOnResumeQuery(), this);
-                mOpeningQuery = null;
-                return null;
-            }
-        };
+        ArrayList<Query> queries = new ArrayList<Query>();
 
-        mOpeningQuery.execute();
+        QueryUser[] queryUsers = getOnResumeQueryUsers();
+
+        for (QueryUser user : queryUsers) {
+            Query[] userQueries = user.getQueries();
+            if (userQueries != null) {
+                queries.addAll(Arrays.asList(userQueries));
+            }
+        }
+
+        mQueryIterator = queries.iterator();
+
+        nextQuery();
     }
 
-    protected void query(final Query query) {
+    protected final void query(final Query query) {
         mQuery = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 doQuery(query, this);
                 mQuery = null;
+                nextQuery();
                 return null;
             }
         };
 
         mQuery.execute();
+    }
+
+    private void nextQuery() {
+        if (mQueryIterator == null || !mQueryIterator.hasNext()) {
+            mQueryIterator = null;
+            return;
+        }
+
+        Query next = mQueryIterator.next();
+        query(next);
     }
 
     private void doQuery(final Query query, final AsyncTask task) {

@@ -42,89 +42,91 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
         return inflater.inflate(com.robwilliamson.healthyesther.R.layout.fragment_activity_graph, container, false);
     }
 
-    @Override
-    public Query getOnResumeQuery() {
-        return new SelectEventAndType(DateTime.now().minusDays(DAYS - 1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
-                DateTime.now().withZone(DateTimeZone.UTC)) {
-            private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
-            private DateTime mNow;
-            private int mMax = 0;
-
-            @Override
-            public void postQueryProcessing(Cursor cursor) {
-                for (int i = 0; i < DAYS; i++) {
-                    mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
-                }
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
-                    do {
-                        DateTime when = com.robwilliamson.db.Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
-                        Integer count = mEntriesPerDay.get(FORMAT.print(when)) + 1;
-                        mEntriesPerDay.put(FORMAT.print(when), count);
-
-                        if (count > mMax) {
-                            mMax = count;
-                        }
-
-                    } while (cursor.moveToNext());
-                }
-            }
-
-            @Override
-            public void onQueryComplete(Cursor cursor) {// init example series data
-                GraphView.GraphViewData[] data = new GraphView.GraphViewData[DAYS];
-                String [] dateStrings = new String[DAYS];
-                String [] integerStrings = new String[mMax + 1];
-                DateTimeFormatter formatter = DateTimeFormat.forPattern("E");
-
-                for (int i = 0; i < DAYS; i++) {
-                    int minusDays = DAYS - 1 - i; // Range from 6-0.
-                    DateTime day = now().minusDays(minusDays);
-                    String dayStr = FORMAT.print(day);
-                    data[i] = new GraphView.GraphViewData(i + 1, mEntriesPerDay.get(dayStr));
-                    dateStrings[i] = formatter.print(day);
-                }
-
-                for (int i = 0; i < mMax + 1; i++) {
-                    integerStrings[i] = String.valueOf(mMax - i);
-                }
-
-                GraphViewSeries activitySeries = new GraphViewSeries(data);
-
-                if (mGraphView != null) {
-                    getLayout().removeView(mGraphView);
-                }
-
-                mGraphView = new LineGraphView(
-                        ActivityGraphFragment.this.getActivity(),
-                        getString(R.string.activity_last_week));
-                mGraphView.setManualYAxisBounds(mMax, 0);
-                mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
-
-                getLayout().addView(mGraphView);
-
-                mGraphView.addSeries(activitySeries);
-                mGraphView.setHorizontalLabels(dateStrings);
-                mGraphView.setVerticalLabels(integerStrings);
-            }
-
-            @Override
-            public void onQueryFailed(Throwable error) {
-
-            }
-
-            private DateTime now() {
-                if (mNow == null) {
-                    mNow = DateTime.now().withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0);
-                }
-
-                return mNow;
-            }
-        };
-    }
-
     private LinearLayout getLayout() {
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), R.id.activity_graph_layout);
+    }
+
+    @Override
+    public Query[] getQueries() {
+        return new Query[] {
+                new SelectEventAndType(DateTime.now().minusDays(DAYS - 1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
+                        DateTime.now().withZone(DateTimeZone.UTC)) {
+                    private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
+                    private DateTime mNow;
+                    private int mMax = 0;
+
+                    @Override
+                    public void postQueryProcessing(Cursor cursor) {
+                        for (int i = 0; i < DAYS; i++) {
+                            mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
+                        }
+
+                        if (cursor != null && cursor.moveToFirst()) {
+                            int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
+                            do {
+                                DateTime when = com.robwilliamson.db.Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
+                                Integer count = mEntriesPerDay.get(FORMAT.print(when)) + 1;
+                                mEntriesPerDay.put(FORMAT.print(when), count);
+
+                                if (count > mMax) {
+                                    mMax = count;
+                                }
+
+                            } while (cursor.moveToNext());
+                        }
+                    }
+
+                    @Override
+                    public void onQueryComplete(Cursor cursor) {// init example series data
+                        GraphView.GraphViewData[] data = new GraphView.GraphViewData[DAYS];
+                        String [] dateStrings = new String[DAYS];
+                        String [] integerStrings = new String[mMax + 1];
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("E");
+
+                        for (int i = 0; i < DAYS; i++) {
+                            int minusDays = DAYS - 1 - i; // Range from 6-0.
+                            DateTime day = now().minusDays(minusDays);
+                            String dayStr = FORMAT.print(day);
+                            data[i] = new GraphView.GraphViewData(i + 1, mEntriesPerDay.get(dayStr));
+                            dateStrings[i] = formatter.print(day);
+                        }
+
+                        for (int i = 0; i < mMax + 1; i++) {
+                            integerStrings[i] = String.valueOf(mMax - i);
+                        }
+
+                        GraphViewSeries activitySeries = new GraphViewSeries(data);
+
+                        if (mGraphView != null) {
+                            getLayout().removeView(mGraphView);
+                        }
+
+                        mGraphView = new LineGraphView(
+                                ActivityGraphFragment.this.getActivity(),
+                                getString(R.string.activity_last_week));
+                        mGraphView.setManualYAxisBounds(mMax, 0);
+                        mGraphView.setMinimumHeight(getActivity().getResources().getDimensionPixelSize(R.dimen.activity_graph_minimum_height));
+
+                        getLayout().addView(mGraphView);
+
+                        mGraphView.addSeries(activitySeries);
+                        mGraphView.setHorizontalLabels(dateStrings);
+                        mGraphView.setVerticalLabels(integerStrings);
+                    }
+
+                    @Override
+                    public void onQueryFailed(Throwable error) {
+
+                    }
+
+                    private DateTime now() {
+                        if (mNow == null) {
+                            mNow = DateTime.now().withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0);
+                        }
+
+                        return mNow;
+                    }
+                }
+        };
     }
 }

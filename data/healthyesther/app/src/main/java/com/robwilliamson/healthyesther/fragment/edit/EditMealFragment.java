@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +15,8 @@ import android.widget.AutoCompleteTextView;
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.Modification;
+import com.robwilliamson.db.use.GetAllMealsQuery;
+import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
@@ -24,9 +27,41 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
 
     public interface Watcher {
         void onFragmentUpdate(EditMealFragment fragment);
+        void onQueryFailed(EditMealFragment fragment, Throwable error);
     }
 
     public EditMealFragment() {}
+
+    @Override
+    public Query[] getQueries() {
+        return new Query[] {
+                new GetAllMealsQuery() {
+                    HashMap<String, Long> mSuggestionIds;
+
+                    @Override
+                    public void postQueryProcessing(Cursor cursor) {
+                        mSuggestionIds = com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
+                                com.robwilliamson.db.definition.Meal.NAME,
+                                com.robwilliamson.db.definition.Meal._ID);
+                    }
+
+                    @Override
+                    public void onQueryComplete(final Cursor cursor) {
+                        EditMealFragment.this.setSuggestionIds(mSuggestionIds);
+                    }
+
+                    @Override
+                    public void onQueryFailed(final Throwable error) {
+                        callWatcher(new WatcherCaller<Watcher>() {
+                            @Override
+                            public void call(Watcher watcher) {
+                                watcher.onQueryFailed(EditMealFragment.this, error);
+                            }
+                        });
+                    }
+                }
+        };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

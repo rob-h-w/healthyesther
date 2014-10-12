@@ -9,6 +9,7 @@ import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.MealEvent;
 import com.robwilliamson.db.use.GetAllMealsQuery;
 import com.robwilliamson.db.use.Query;
+import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
@@ -55,29 +56,6 @@ public class Meal extends AbstractAddActivity
         return R.string.could_not_insert_meal_event;
     }
 
-    @Override
-    protected Query getOnResumeQuery() {
-        return new GetAllMealsQuery() {
-            HashMap<String, Long> mSuggestionIds;
-            @Override
-            public void postQueryProcessing(Cursor cursor) {
-                mSuggestionIds = com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
-                        com.robwilliamson.db.definition.Meal.NAME,
-                        com.robwilliamson.db.definition.Meal._ID);
-            }
-
-            @Override
-            public void onQueryComplete(Cursor cursor) {
-                getMealFragment().setSuggestionIds(mSuggestionIds);
-            }
-
-            @Override
-            public void onQueryFailed(Throwable error) {
-                Toast.makeText(Meal.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
     private EditMealFragment getMealFragment() {
         return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), MEAL_TAG);
     }
@@ -102,7 +80,19 @@ public class Meal extends AbstractAddActivity
     }
 
     @Override
+    public void onQueryFailed(EditMealFragment fragment, Throwable error) {
+        Toast.makeText(Meal.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onFragmentUpdate(EditEventFragment fragment) {
         invalidateOptionsMenu();
+    }
+
+    @Override
+    protected QueryUser[] getOnResumeQueryUsers() {
+        return new QueryUser[] {
+                getMealFragment()
+        };
     }
 }
