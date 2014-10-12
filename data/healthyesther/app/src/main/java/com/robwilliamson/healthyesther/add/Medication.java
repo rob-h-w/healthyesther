@@ -62,17 +62,8 @@ public class Medication extends AbstractAddActivity
 
     @Override
     public void onFragmentUpdate(EditMedicationFragment fragment) {
+        getEventFragment().suggestEventName(fragment.getName());
         invalidateOptionsMenu();
-
-        if (getEventFragment().getUserEditedEventName()) {
-            return;
-        }
-
-        if (getEventFragment().getName().isEmpty()) {
-            getEventFragment().setUserEditedEventName(false);
-        }
-
-        getEventFragment().setName(fragment.getName());
     }
 
     @Override

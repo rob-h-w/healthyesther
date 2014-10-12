@@ -93,7 +93,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         getNameView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                setUserEditedEventName(!getNameView().getText().toString().isEmpty());
+                mUserEditedEventName = !getName().isEmpty();
             }
         });
 
@@ -145,6 +145,17 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     }
 
+    public void suggestEventName(String name) {
+
+        if (mUserEditedEventName && !getName().isEmpty()) {
+            return;
+        }
+
+        mUserEditedEventName = false;
+
+        setName(name);
+    }
+
     public void setName(String name) {
         getNameView().getText().clear();
         getNameView().getText().append(name);
@@ -162,14 +173,6 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     public DateTime getWhen() {
         return mWhen;
-    }
-
-    public void setUserEditedEventName(boolean userEditedTheEventName) {
-        mUserEditedEventName = userEditedTheEventName;
-    }
-
-    public boolean getUserEditedEventName() {
-        return mUserEditedEventName;
     }
 
     public void setEventId(long id) {
