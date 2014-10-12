@@ -2,7 +2,9 @@ package com.robwilliamson.db;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Path;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Pair;
 
 import org.joda.time.DateTime;
@@ -11,6 +13,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,14 +25,22 @@ public final class Utils {
 
     public static class StringMissingException extends RuntimeException {}
 
-    public static String join(ArrayList<? extends Object> list, String separator) {
-        return join(list.toArray(), separator);
+    public static String join(Object[] list, String separator) {
+        return join(separator, true, list);
     }
 
-    public static String join(Object[] list, String separator) {
+    public static String join(String separator, boolean joinNull, ArrayList<? extends Object> list) {
+        return join(separator, joinNull, list.toArray());
+    }
+
+    public static String join(String separator, boolean joinNull, Object... list) {
         StringBuilder str = new StringBuilder();
         String thisSeparator = "";
         for (Object item : list) {
+            if (!joinNull && item == null) {
+                continue;
+            }
+
             str.append(thisSeparator).append(item);
             thisSeparator = separator;
         }
@@ -308,6 +319,18 @@ public final class Utils {
             }
 
             return suggestionIds;
+        }
+    }
+
+    public static class File {
+        public static String join(Object... list) {
+            return Utils.join(java.io.File.separator,
+                    false,
+                    list);
+        }
+
+        public static boolean exists(String path) {
+            return (new java.io.File(path)).exists();
         }
     }
 }
