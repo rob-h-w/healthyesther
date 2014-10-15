@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'robolectric'
 
 android {
     compileSdkVersion 19
@@ -25,4 +26,5 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'net.danlew:android.joda:2.4.1'
+    androidTestCompile 'org.robolectric:robolectric:2.3'
 }
