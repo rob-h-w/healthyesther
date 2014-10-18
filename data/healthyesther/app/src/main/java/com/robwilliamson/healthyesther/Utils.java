@@ -74,39 +74,4 @@ public final class Utils {
             }
         }
     }
-
-    public static class Dropbox {
-        private static final String COM_DROPBOX_ANDROID_FILES_SCRATCH = "com.dropbox.android/files/scratch";
-        private static final String COM_ROBWILLIAMSON_HEALTHYESTHER = "com.robwilliamson.healthyesther";
-
-        public static boolean isDbFileInDropboxAppFolder() {
-            return com.robwilliamson.db.Utils.File.exists(dbFile());
-        }
-
-        public static boolean isAppFolderInDropbox() {
-            return com.robwilliamson.db.Utils.File.exists(dbFolder());
-        }
-
-        public static boolean isDropboxPresent() {
-            return com.robwilliamson.db.Utils.File.exists(folder());
-        }
-
-        private static String dbFile() {
-            return com.robwilliamson.db.Utils.File.join(
-                    dbFolder(),
-                    Contract.NAME);
-        }
-
-        private static String dbFolder() {
-            return com.robwilliamson.db.Utils.File.join(
-                    folder(),
-                    COM_ROBWILLIAMSON_HEALTHYESTHER);
-        }
-
-        private static String folder() {
-            return com.robwilliamson.db.Utils.File.join(
-                    Environment.getDataDirectory().getAbsolutePath(),
-                    COM_DROPBOX_ANDROID_FILES_SCRATCH);
-        }
-    }
 }

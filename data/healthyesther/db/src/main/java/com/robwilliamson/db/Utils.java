@@ -3,6 +3,7 @@ package com.robwilliamson.db;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Pair;
 
 import org.joda.time.DateTime;
@@ -11,6 +12,13 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -332,6 +340,60 @@ public final class Utils {
 
         public static boolean exists(String path) {
             return (new java.io.File(path)).exists();
+        }
+
+        public static void mkdirs(String directories) {
+            java.io.File dirs = new java.io.File(directories);
+            dirs.mkdirs();
+        }
+
+        public static void copy(String from, String to) throws IOException {
+            InputStream in = null;
+            OutputStream out = null;
+            try {
+                in = new FileInputStream(new java.io.File(from));
+                out = new FileOutputStream(new java.io.File(to));
+
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                if (in != null) {
+                    in.close();
+                }
+
+                if (out != null) {
+                    out.close();
+                }
+            }
+        }
+
+        public static class Dropbox {
+            private static final String ANDROID_DATA = "Android/data";
+            private static final String COM_DROPBOX_ANDROID_FILES_SCRATCH = "com.dropbox.android/files/scratch";
+
+            public static boolean isDbFileInDropboxAppFolder() {
+                return com.robwilliamson.db.Utils.File.exists(dbFile());
+            }
+
+            public static boolean isDropboxPresent() {
+                return com.robwilliamson.db.Utils.File.exists(folder());
+            }
+
+            public static String dbFile() {
+                return com.robwilliamson.db.Utils.File.join(
+                        folder(),
+                        Contract.NAME);
+            }
+
+            private static String folder() {
+                return com.robwilliamson.db.Utils.File.join(
+                        Environment.getExternalStorageDirectory().getAbsolutePath(),
+                        ANDROID_DATA,
+                        COM_DROPBOX_ANDROID_FILES_SCRATCH);
+            }
         }
     }
 }

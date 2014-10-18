@@ -1,16 +1,16 @@
 package com.robwilliamson.healthyesther;
 
-import android.app.ActionBar;
+import android.app.Dialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-
-import com.robwilliamson.healthyesther.fragment.BusyFragment;
+import android.view.Window;
 
 import java.util.concurrent.CountDownLatch;
 
 public class BusyActivity extends BaseFragmentActivity {
     private static final String BUSY_TAG = "Busy";
     private volatile int mBusy = 0;
+    private static volatile Dialog mDialog;
 
     @Override
     protected void onResume() {
@@ -74,35 +74,38 @@ public class BusyActivity extends BaseFragmentActivity {
 
     private void updateUi() {
         Utils.View.assertIsOnUiThread();
-        FragmentManager manager = getSupportFragmentManager();
-        boolean hasBusyFragment = hasBusyFragment();
+        boolean dialogNotNull = mDialog != null;
 
         if (isBusy()) {
-            if (hasBusyFragment) {
+            if (dialogNotNull) {
                 return;
             }
 
-            Fragment busyFragment = new BusyFragment();
-            busyFragment.setArguments(getIntent().getExtras());
-            manager.beginTransaction().add(android.R.id.content, busyFragment, BUSY_TAG).commit();
-
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.hide();
-            }
+            addDialog();
         } else {
-            if (!hasBusyFragment) {
+            if (!dialogNotNull) {
                 return;
             }
 
-            getSupportFragmentManager().beginTransaction().remove(getBusyFragment()).commit();
-
-            ActionBar actionBar = getActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
+            mDialog.dismiss();
+            mDialog = null;
         }
 
         invalidateOptionsMenu();
+    }
+
+    private void addDialog() {
+        mDialog = new Dialog(this);
+
+        // Making sure there's no title.
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        // Dialog cannot be cancelled.
+        mDialog.setCancelable(false);
+
+        // Setting the content using prepared XML layout file.
+        mDialog.setContentView(R.layout.dialog_busy);
+        mDialog.show();
     }
 }

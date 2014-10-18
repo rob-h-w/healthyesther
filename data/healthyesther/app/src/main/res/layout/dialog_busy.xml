@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.robwilliamson.healthyesther.fragment.BusyFragment"
-    android:background="@color/busy_background"
+    android:background="@android:color/transparent"
     android:clickable="true">
 
     <ProgressBar
@@ -12,5 +11,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/busyProgress"
         android:layout_gravity="center"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        android:background="@android:color/transparent" />
 </FrameLayout>
