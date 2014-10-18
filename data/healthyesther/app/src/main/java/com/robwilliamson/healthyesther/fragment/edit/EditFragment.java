@@ -16,6 +16,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+        //noinspection unchecked
         mWatcher = (T)activity;
     }
 
