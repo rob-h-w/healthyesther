@@ -31,7 +31,7 @@ android {
 }
 
 robolectric {
-    include '**/robolectric/**/*.class'
+    include '**/robolectric/**/*Test.class'
 }
 
 dependencies {

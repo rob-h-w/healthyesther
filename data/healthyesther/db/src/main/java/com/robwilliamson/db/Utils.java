@@ -31,6 +31,10 @@ public final class Utils {
     }
 
     public static String join(String separator, boolean joinNull, Object... list) {
+        if (list == null) {
+            return "";
+        }
+
         StringBuilder str = new StringBuilder();
         String thisSeparator = "";
         for (Object item : list) {
