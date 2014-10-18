@@ -1,6 +1,7 @@
 package robolectric.com.robwilliamson.db.utils;
 
 import com.robwilliamson.db.Utils;
+import com.robwilliamson.db.BuildConfig;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @Config(manifest = "./src/main/AndroidManifest.xml",
-        emulateSdk=16)
+        emulateSdk= BuildConfig.EMULATE_SDK)
 @RunWith(RobolectricTestRunner.class)
 public class StringUtils {
     @Test

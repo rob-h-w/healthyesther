@@ -19,6 +19,7 @@ android {
         debug {
             debuggable true
             runProguard false
+            buildConfigField 'int', 'EMULATE_SDK', '16'
         }
     }
     packagingOptions {
