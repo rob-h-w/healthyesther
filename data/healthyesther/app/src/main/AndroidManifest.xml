@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:icon="@drawable/ic_food"
             android:name="com.robwilliamson.healthyesther.add.Meal"
             android:label="@string/log_a_meal" >
         </activity>
