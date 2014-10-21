@@ -4,6 +4,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventType;
+import com.robwilliamson.db.definition.HealthScore;
+import com.robwilliamson.db.definition.HealthScoreEvent;
 import com.robwilliamson.db.definition.Meal;
 import com.robwilliamson.db.definition.MealEvent;
 import com.robwilliamson.db.definition.Medication;
@@ -23,6 +25,8 @@ public final class Contract {
     private Contract() {
         EVENT = new Event();
         EVENT_TYPE = new EventType();
+        HEALTH_SCORE = new HealthScore();
+        HEALTH_SCORE_EVENT = new HealthScoreEvent();
         MEAL = new Meal();
         MEAL_EVENT = new MealEvent();
         MEDICATION = new Medication();
@@ -33,6 +37,8 @@ public final class Contract {
         TABLES = new Table[] {
                 EVENT,
                 EVENT_TYPE,
+                HEALTH_SCORE_EVENT,
+                HEALTH_SCORE,
                 MEAL_EVENT,
                 MEAL,
                 MEDICATION_EVENT,
@@ -54,10 +60,12 @@ public final class Contract {
     }
 
     public static final String NAME = "health.db3";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     public final Event EVENT;
     public final EventType EVENT_TYPE;
+    public final HealthScore HEALTH_SCORE;
+    public final HealthScoreEvent HEALTH_SCORE_EVENT;
     public final Meal MEAL;
     public final MealEvent MEAL_EVENT;
     public final Medication MEDICATION;

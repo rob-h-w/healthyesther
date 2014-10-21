@@ -32,7 +32,9 @@ public final class EventType extends Table {
 
     @Override
     public void upgrade(SQLiteDatabase db, int from, int to) {
-
+        if (from == 1) {
+            insert(db, HealthScoreEvent.EVENT_TYPE_ID, "Health & mood", null);
+        }
     }
 
     private void insert(SQLiteDatabase db, long _id, String name, String icon) {
