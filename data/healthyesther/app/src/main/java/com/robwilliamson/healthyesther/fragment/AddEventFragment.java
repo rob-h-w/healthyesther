@@ -10,8 +10,8 @@ import android.widget.Button;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.add.Meal;
-import com.robwilliamson.healthyesther.add.Medication;
+import com.robwilliamson.healthyesther.add.MealActivity;
+import com.robwilliamson.healthyesther.add.MedicationActivity;
 
 public class AddEventFragment extends Fragment {
     @Override
@@ -28,7 +28,7 @@ public class AddEventFragment extends Fragment {
         getCreateMealEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Meal.class);
+                Intent intent = new Intent(getActivity(), MealActivity.class);
                 getActivity().startActivity(intent);
             }
         });
@@ -36,7 +36,7 @@ public class AddEventFragment extends Fragment {
         getCreateMedicationEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), Medication.class);
+                Intent intent = new Intent(getActivity(), MedicationActivity.class);
                 getActivity().startActivity(intent);
             }
         });

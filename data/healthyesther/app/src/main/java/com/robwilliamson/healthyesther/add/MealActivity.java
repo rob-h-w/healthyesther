@@ -15,7 +15,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.ArrayList;
 
-public class Meal extends AbstractAddActivity
+public class MealActivity extends AbstractAddActivity
         implements EditMealFragment.Watcher, EditEventFragment.Watcher {
     private final static String MEAL_TAG = "meal";
     private final static String EVENT_TAG = "event";
@@ -68,7 +68,7 @@ public class Meal extends AbstractAddActivity
 
     @Override
     public void onQueryFailed(EditMealFragment fragment, Throwable error) {
-        Toast.makeText(Meal.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MealActivity.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -23,11 +23,11 @@
         </activity>
         <activity
             android:icon="@drawable/ic_food"
-            android:name="com.robwilliamson.healthyesther.add.Meal"
+            android:name=".add.MealActivity"
             android:label="@string/log_a_meal" >
         </activity>
         <activity
-            android:name="com.robwilliamson.healthyesther.add.Medication"
+            android:name=".add.MedicationActivity"
             android:label="@string/log_medication" >
         </activity>
         <activity
