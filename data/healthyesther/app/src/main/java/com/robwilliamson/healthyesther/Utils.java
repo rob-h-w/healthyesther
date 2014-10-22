@@ -1,12 +1,9 @@
 package com.robwilliamson.healthyesther;
 
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
-import com.robwilliamson.db.Contract;
 
 public final class Utils {
     public static String format(Throwable e) {

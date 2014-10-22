@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther.add;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.widget.Toast;
 
