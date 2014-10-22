@@ -6,6 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import com.robwilliamson.db.Utils;
 
 public class HealthScore extends Table {
+    public static class Modification extends com.robwilliamson.db.definition.Modification {
+
+        @Override
+        public void modify(SQLiteDatabase db) {
+
+        }
+    }
     public static final int MAX = 5;
     public static final int MID = 3;
     public static final int MIN = 1;

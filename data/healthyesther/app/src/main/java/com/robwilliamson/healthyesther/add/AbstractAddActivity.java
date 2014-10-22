@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.add;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractAddActivity extends DbActivity {
     protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
@@ -30,12 +32,7 @@ public abstract class AbstractAddActivity extends DbActivity {
             return;
         }
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        ArrayList<Pair<EditFragment, String>> fragments = getEditFragments(true);
-        for (Pair<EditFragment, String> pair : fragments) {
-            transaction.add(getActivityContentLayoutResourceId(), pair.first, pair.second);
-        }
-        transaction.commit();
+        resetFragments(getEditFragments(true));
     }
 
     @Override
@@ -99,5 +96,23 @@ public abstract class AbstractAddActivity extends DbActivity {
         }
 
         return true;
+    }
+
+    protected final void resetFragments(ArrayList<Pair<EditFragment, String>> editFragments) {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if (fragments != null) {
+            for (Fragment fragment : fragments) {
+                transaction.remove(fragment);
+            }
+        }
+
+        for (Pair<EditFragment, String> pair : editFragments) {
+            transaction.add(getActivityContentLayoutResourceId(), pair.first, pair.second);
+        }
+
+        transaction.commit();
     }
 }

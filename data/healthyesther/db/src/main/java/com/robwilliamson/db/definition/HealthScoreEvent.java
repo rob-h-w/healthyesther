@@ -1,8 +1,38 @@
 package com.robwilliamson.db.definition;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Contract;
+
 public class HealthScoreEvent extends Table {
+    public static class Modification extends com.robwilliamson.db.definition.Modification {
+        private final HealthScore.Modification mScore;
+        private final Event.Modification mEvent;
+        private final int mValue;
+
+        public Modification(
+                HealthScore.Modification score,
+                Event.Modification event,
+                int value) {
+            mScore = score;
+            mEvent = event;
+            mValue = value;
+        }
+
+        @Override
+        public void modify(SQLiteDatabase db) {
+            mScore.modify(db);
+            mEvent.setTypeId(EVENT_TYPE_ID);
+            mEvent.modify(db);
+            setRowId(
+                    Contract.getInstance().HEALTH_SCORE_EVENT.insert(
+                            db,
+                            mScore.getRowId(),
+                            mEvent.getRowId(),
+                            mValue));
+        }
+    }
 
     public static final long EVENT_TYPE_ID = 3;
 
@@ -35,5 +65,13 @@ public class HealthScoreEvent extends Table {
         if (from == 1) {
             create(db);
         }
+    }
+
+    public long insert(SQLiteDatabase db, long healthScoreId, long eventId, int score) {
+        ContentValues values = new ContentValues();
+        values.put(HEALTH_SCORE_ID, healthScoreId);
+        values.put(EVENT_ID, eventId);
+        values.put(SCORE, score);
+        return insert(db, values);
     }
 }
