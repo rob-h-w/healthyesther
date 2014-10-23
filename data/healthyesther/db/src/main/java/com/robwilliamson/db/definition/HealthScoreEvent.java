@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.robwilliamson.db.Contract;
 
 public class HealthScoreEvent extends Table {
+
     public static class Modification extends com.robwilliamson.db.definition.Modification {
         private final HealthScore.Modification mScore;
         private final Event.Modification mEvent;
