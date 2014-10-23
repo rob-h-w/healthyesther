@@ -23,6 +23,10 @@ public abstract class DbActivity extends BusyActivity {
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Iterator<Query> mQueryIterator = null;
 
+    public static class Error extends RuntimeException {}
+    public static class QueriesRequestedWhileBusy extends Error {}
+    public static class QueriesRequestedWhenQueriesPending extends Error {}
+
     /**
      * An array of query users that need to run queries every time this activity is resumed.
      * @return The query users that use queries on resume, or an empty array if no query is required.
@@ -82,6 +86,18 @@ public abstract class DbActivity extends BusyActivity {
             if (userQueries != null) {
                 queries.addAll(Arrays.asList(userQueries));
             }
+        }
+
+        doQueries(queries);
+    }
+
+    protected final void doQueries(final ArrayList<Query> queries) {
+        if (isBusy()) {
+            throw new QueriesRequestedWhileBusy();
+        }
+
+        if (mQueryIterator != null) {
+            throw new QueriesRequestedWhenQueriesPending();
         }
 
         mQueryIterator = queries.iterator();
