@@ -31,6 +31,10 @@
             android:label="@string/log_medication" >
         </activity>
         <activity
+            android:name=".add.ScoreActivity"
+            android:label="@string/health_score" >
+        </activity>
+        <activity
             android:name="com.robwilliamson.healthyesther.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>

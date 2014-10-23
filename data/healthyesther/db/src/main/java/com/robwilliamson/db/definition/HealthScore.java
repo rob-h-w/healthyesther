@@ -3,14 +3,40 @@ package com.robwilliamson.db.definition;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
 
 public class HealthScore extends Table {
     public static class Modification extends com.robwilliamson.db.definition.Modification {
 
+        private String mMaxLabel;
+        private String mMinLabel;
+        private boolean mRandomQuery;
+        private String mName;
+        private int mBestValue;
+
+        public Modification(long rowId) {
+            setRowId(rowId);
+        }
+
+        public Modification(String name,
+                            int bestValue,
+                            boolean randomQuery,
+                            String minLabel,
+                            String maxLabel) {
+            mName = name;
+            mBestValue = bestValue;
+            mRandomQuery = randomQuery;
+            mMinLabel = minLabel;
+            mMaxLabel = maxLabel;
+        }
+
         @Override
         public void modify(SQLiteDatabase db) {
-
+            if (getRowId() == null) {
+                setRowId(Contract.getInstance().HEALTH_SCORE.insert(
+                        db, mName, mBestValue, mRandomQuery, mMinLabel, mMaxLabel));
+            }
         }
     }
     public static final int MAX = 5;

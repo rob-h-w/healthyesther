@@ -1,0 +1,18 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment"
+    android:orientation="vertical"
+    android:id="@+id/edit_score_layout"
+    style="@style/AppTheme.sectionLayout">
+
+    <TextView
+        android:id="@+id/score_name_title"
+        style="@style/AppTheme.text"/>
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/score_bar"
+        android:layout_gravity="center_horizontal"
+        android:isIndicator="false"/>
+</LinearLayout>
