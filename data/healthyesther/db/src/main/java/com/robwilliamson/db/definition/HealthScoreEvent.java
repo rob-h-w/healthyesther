@@ -24,8 +24,6 @@ public class HealthScoreEvent extends Table {
         @Override
         public void modify(SQLiteDatabase db) {
             mScore.modify(db);
-            mEvent.setTypeId(EVENT_TYPE_ID);
-            mEvent.modify(db);
             setRowId(
                     Contract.getInstance().HEALTH_SCORE_EVENT.insert(
                             db,

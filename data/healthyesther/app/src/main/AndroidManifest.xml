@@ -3,17 +3,16 @@
     package="com.robwilliamson.healthyesther" >
 
     <application
-        android:name="com.robwilliamson.healthyesther.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.robwilliamson.healthyesther.EventActivity"
+            android:name=".EventActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.robwilliamson.healthyesther.HomeActivity"
+            android:name=".HomeActivity"
             android:label="@string/title_activity_home" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,7 +34,7 @@
             android:label="@string/health_score" >
         </activity>
         <activity
-            android:name="com.robwilliamson.healthyesther.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
     </application>

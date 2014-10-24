@@ -3,7 +3,7 @@ apply plugin: 'robolectric'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "20.0.0"
+    buildToolsVersion "21.0.2"
     defaultConfig {
         applicationId "com.robwilliamson.db"
         minSdkVersion 16
@@ -38,8 +38,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'net.danlew:android.joda:2.4.1'
 
-    androidTestCompile 'com.google.guava:guava:18.0'
-    androidTestCompile 'com.squareup.dagger:dagger:1.1.0'
+    androidTestCompile 'com.google.guava:guava:16.0'
+    androidTestCompile 'com.squareup.dagger:dagger:1.2.1'
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
@@ -63,5 +63,7 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
-    androidTestCompile 'com.squareup:fest-android:1.0.8'
+    androidTestCompile('com.squareup:fest-android:1.0.8') {
+        exclude group: 'com.android.support'
+    }
 }

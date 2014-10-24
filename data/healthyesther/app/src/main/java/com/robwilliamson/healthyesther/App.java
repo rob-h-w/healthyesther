@@ -13,6 +13,10 @@ public class App extends Application {
         return sUiThreadId;
     }
 
+    public static void setsUiThreadId(long id) {
+        sUiThreadId = id;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();

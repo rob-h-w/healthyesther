@@ -66,7 +66,14 @@ public final class Utils {
         }
 
         public static void assertIsOnUiThread() {
-            if (App.getUiThreadId() != Thread.currentThread().getId()) {
+            long appUiThread = App.getUiThreadId();
+            Thread currentThread = Thread.currentThread();
+
+            if (appUiThread == 0 && currentThread.getName().equals("main")) {
+                App.setsUiThreadId(currentThread.getId());
+            }
+
+            if (App.getUiThreadId() != currentThread.getId()) {
                 throw new NonUiThreadException();
             }
         }

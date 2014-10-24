@@ -28,6 +28,7 @@ public final class EventType extends Table {
 
         insert(db, MealEvent.EVENT_TYPE_ID, "Meal", null);
         insert(db, MedicationEvent.EVENT_TYPE_ID, "Take medication", null);
+        insert(db, HealthScoreEvent.EVENT_TYPE_ID, "Health & mood", null);
     }
 
     @Override

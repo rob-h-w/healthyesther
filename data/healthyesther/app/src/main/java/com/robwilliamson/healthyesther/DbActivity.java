@@ -10,9 +10,11 @@ import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Deque;
+import java.util.List;
 
 /**
  * Activities that use databases.
@@ -21,11 +23,7 @@ public abstract class DbActivity extends BusyActivity {
     private static final String LOG_TAG = DbActivity.class.getName();
 
     private volatile AsyncTask<Void, Void, Void> mTask = null;
-    private Iterator<Query> mQueryIterator = null;
-
-    public static class Error extends RuntimeException {}
-    public static class QueriesRequestedWhileBusy extends Error {}
-    public static class QueriesRequestedWhenQueriesPending extends Error {}
+    private Deque<Query> mQueries = null;
 
     /**
      * An array of query users that need to run queries every time this activity is resumed.
@@ -37,7 +35,7 @@ public abstract class DbActivity extends BusyActivity {
     protected void onDestroy() {
         cancel(mTask);
         mTask = null;
-        mQueryIterator = null;
+        mQueries = null;
 
         super.onDestroy();
     }
@@ -66,20 +64,9 @@ public abstract class DbActivity extends BusyActivity {
     protected void onResume() {
         super.onResume();
 
-        if (isBusy()) {
-            // We resumed when an operation was still pending. Let it continue.
-            return;
-        }
-
-        if (mQueryIterator != null) {
-            // We resumed after an async task completed, but there are more to do. Continue.
-            nextQuery();
-            return;
-        }
+        QueryUser[] queryUsers = getOnResumeQueryUsers();
 
         ArrayList<Query> queries = new ArrayList<Query>();
-
-        QueryUser[] queryUsers = getOnResumeQueryUsers();
 
         for (QueryUser user : queryUsers) {
             Query[] userQueries = user.getQueries();
@@ -91,16 +78,12 @@ public abstract class DbActivity extends BusyActivity {
         doQueries(queries);
     }
 
-    protected final void doQueries(final ArrayList<Query> queries) {
-        if (isBusy()) {
-            throw new QueriesRequestedWhileBusy();
+    protected final void doQueries(final List<Query> queries) {
+        if (mQueries == null) {
+            mQueries = new ArrayDeque<Query>(queries);
+        } else {
+            mQueries.addAll(queries);
         }
-
-        if (mQueryIterator != null) {
-            throw new QueriesRequestedWhenQueriesPending();
-        }
-
-        mQueryIterator = queries.iterator();
 
         nextQuery();
     }
@@ -135,12 +118,12 @@ public abstract class DbActivity extends BusyActivity {
     }
 
     private void nextQuery() {
-        if (mQueryIterator == null || !mQueryIterator.hasNext()) {
-            mQueryIterator = null;
+        if (mQueries == null || mQueries.isEmpty()) {
+            mQueries = null;
             return;
         }
 
-        Query next = mQueryIterator.next();
+        Query next = mQueries.pop();
         query(next);
     }
 

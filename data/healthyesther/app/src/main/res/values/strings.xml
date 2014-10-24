@@ -25,8 +25,9 @@
     <string name="log_a_meal">Log a meal</string>
     <string name="log_medication">Log medication</string>
     <string name="activity_last_week">Last week\'s entries</string>
-    <string name="activity_backup_to_dropbox">Backup data to Dropbox</string>
+    <string name="action_backup_to_dropbox">Backup data to Dropbox</string>
     <string name="could_not_get_score_type_list">Could not get the list of score types.</string>
     <string name="health_score">Health Score</string>
+    <string name="could_not_insert_health_score_event">Could not insert health score event.</string>
 
 </resources>

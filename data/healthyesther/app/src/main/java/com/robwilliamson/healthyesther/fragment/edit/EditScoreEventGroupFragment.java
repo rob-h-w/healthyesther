@@ -55,6 +55,10 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
             @Override
             public void modify(SQLiteDatabase db) {
                 for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
+                    if (!fragment.validate()) {
+                        continue;
+                    }
+
                     HealthScore.Modification editScoreModification = (HealthScore.Modification) fragment.getModification();
                     editScoreModification.modify(db);
 
@@ -88,74 +92,78 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
 
     @Override
     public Query[] getQueries() {
-        return new Query[] {
-                new GetHealthScoresQuery() {
+        if (getEditScoreEventFragments().isEmpty()) {
+            return new Query[]{
+                    new GetHealthScoresQuery() {
 
-                    private ArrayList<EditFragment> mFragments;
-                    private ArrayList<Query> mQueries;
+                        private ArrayList<EditFragment> mFragments;
+                        private ArrayList<Query> mQueries;
 
-                    @Override
-                    public void postQueryProcessing(Cursor cursor) {
-                        mFragments = new ArrayList<EditFragment>(cursor.getCount());
-                        mQueries = new ArrayList<Query>(cursor.getCount());
+                        @Override
+                        public void postQueryProcessing(Cursor cursor) {
+                            mFragments = new ArrayList<EditFragment>(cursor.getCount());
+                            mQueries = new ArrayList<Query>(cursor.getCount());
 
-                        final int rowIdIndex = cursor.getColumnIndex(HealthScore._ID);
-                        final int nameIndex = cursor.getColumnIndex(HealthScore.NAME);
-                        final int bestValueIndex = cursor.getColumnIndex(HealthScore.BEST_VALUE);
-                        final int randomQueryIndex = cursor.getColumnIndex(HealthScore.RANDOM_QUERY);
-                        final int minLabelIndex = cursor.getColumnIndex(HealthScore.MIN_LABEL);
-                        final int maxLabelIndex = cursor.getColumnIndex(HealthScore.MAX_LABEL);
+                            final int rowIdIndex = cursor.getColumnIndex(HealthScore._ID);
+                            final int nameIndex = cursor.getColumnIndex(HealthScore.NAME);
+                            final int bestValueIndex = cursor.getColumnIndex(HealthScore.BEST_VALUE);
+                            final int randomQueryIndex = cursor.getColumnIndex(HealthScore.RANDOM_QUERY);
+                            final int minLabelIndex = cursor.getColumnIndex(HealthScore.MIN_LABEL);
+                            final int maxLabelIndex = cursor.getColumnIndex(HealthScore.MAX_LABEL);
 
-                        if (cursor.moveToFirst()) {
-                            do {
-                                EditFragment fragment = EditScoreEventFragment.newInstance(
-                                        cursor.getLong(rowIdIndex),
-                                        cursor.getString(nameIndex),
-                                        cursor.getInt(bestValueIndex),
-                                        cursor.getInt(randomQueryIndex) > 0,
-                                        cursor.getString(minLabelIndex),
-                                        cursor.getString(maxLabelIndex));
+                            if (cursor.moveToFirst()) {
+                                do {
+                                    EditFragment fragment = EditScoreEventFragment.newInstance(
+                                            cursor.getLong(rowIdIndex),
+                                            cursor.getString(nameIndex),
+                                            cursor.getInt(bestValueIndex),
+                                            cursor.getInt(randomQueryIndex) > 0,
+                                            cursor.getString(minLabelIndex),
+                                            cursor.getString(maxLabelIndex));
 
-                                mFragments.add(fragment);
+                                    mFragments.add(fragment);
 
-                                Query[] fragmentQueries = fragment.getQueries();
+                                    Query[] fragmentQueries = fragment.getQueries();
 
-                                if (fragmentQueries != null) {
-                                    mQueries.addAll(Arrays.asList(fragmentQueries));
+                                    if (fragmentQueries != null) {
+                                        mQueries.addAll(Arrays.asList(fragmentQueries));
+                                    }
+                                } while (cursor.moveToNext());
+                            }
+                        }
+
+                        @Override
+                        public void onQueryComplete(Cursor cursor) {
+                            final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                            for (EditFragment fragment : mFragments) {
+                                transaction.add(R.id.edit_score_group_layout, fragment);
+                            }
+
+                            transaction.commit();
+
+                            EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
+                                @Override
+                                public void call(EditScoreEventGroupFragment.Watcher watcher) {
+                                    watcher.furtherQueries(EditScoreEventGroupFragment.this, mQueries);
                                 }
-                            } while(cursor.moveToNext());
-                        }
-                    }
-
-                    @Override
-                    public void onQueryComplete(Cursor cursor) {
-                        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                        for (EditFragment fragment : mFragments) {
-                            transaction.add(R.id.edit_score_group_layout, fragment);
+                            });
                         }
 
-                        transaction.commit();
-
-                        EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
-                            @Override
-                            public void call(EditScoreEventGroupFragment.Watcher watcher) {
-                                watcher.furtherQueries(EditScoreEventGroupFragment.this, mQueries);
-                            }
-                        });
+                        @Override
+                        public void onQueryFailed(final Throwable error) {
+                            EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
+                                @Override
+                                public void call(EditScoreEventGroupFragment.Watcher watcher) {
+                                    watcher.onQueryFailed(EditScoreEventGroupFragment.this, error);
+                                }
+                            });
+                        }
                     }
-
-                    @Override
-                    public void onQueryFailed(final Throwable error) {
-                        EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
-                            @Override
-                            public void call(EditScoreEventGroupFragment.Watcher watcher) {
-                                watcher.onQueryFailed(EditScoreEventGroupFragment.this, error);
-                            }
-                        });
-                    }
-                }
-        };
+            };
+        } else {
+            return new Query[0];
+        }
     }
 
     private List<EditScoreEventFragment> getEditScoreEventFragments() {

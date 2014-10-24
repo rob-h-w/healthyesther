@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
 
@@ -100,9 +103,27 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        getTitle().setText(mName);
+        getMinLabel().setText(mMinLabel);
+        getMaxLabel().setText(mMaxLabel);
+        getRatingBar().setMax(HealthScore.MAX);
+        getRatingBar().setRating(mValue);
+
+        getRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                updateWatcher();
+            }
+        });
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle args) {
         super.onSaveInstanceState(args);
-        args.putInt(VALUE, mValue);
+        args.putInt(VALUE, getValue());
         args.putLong(HealthScore._ID, mId);
         args.putString(HealthScore.NAME, mName);
         args.putInt(HealthScore.BEST_VALUE, mBestValue);
@@ -123,15 +144,31 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
     @Override
     public boolean validate() {
-        return mValue != 0;
+        return getValue() != 0;
     }
 
     @Override
     protected void updateWatcher(Watcher watcher) {
-
+        watcher.onFragmentUpdate(this);
     }
 
     public int getValue() {
-        return mValue;
+        return (int) getRatingBar().getRating();
+    }
+
+    private TextView getTitle() {
+        return Utils.View.getTypeSafeView(getView(), R.id.score_name_title);
+    }
+
+    private TextView getMinLabel() {
+        return Utils.View.getTypeSafeView(getView(), R.id.score_minimum_label);
+    }
+
+    private TextView getMaxLabel() {
+        return Utils.View.getTypeSafeView(getView(), R.id.score_maximum_label);
+    }
+
+    private RatingBar getRatingBar() {
+        return Utils.View.getTypeSafeView(getView(), R.id.score_bar);
     }
 }

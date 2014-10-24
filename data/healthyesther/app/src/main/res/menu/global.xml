@@ -5,5 +5,5 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
     <item android:id="@+id/action_backup_to_dropbox"
-        android:title="@string/activity_backup_to_dropbox" />
+        android:title="@string/action_backup_to_dropbox" />
 </menu>

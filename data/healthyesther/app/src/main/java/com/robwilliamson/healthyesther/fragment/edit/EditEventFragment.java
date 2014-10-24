@@ -182,6 +182,10 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         return mId > 0;
     }
 
+    public boolean isEventNameEditedByUser() {
+        return mUserEditedEventName;
+    }
+
     private void updateUi() {
         if (mWhen != null) {
             if (getTimeButton() != null) {
