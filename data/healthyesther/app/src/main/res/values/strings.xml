@@ -29,5 +29,7 @@
     <string name="could_not_get_score_type_list">Could not get the list of score types.</string>
     <string name="health_score">Health Score</string>
     <string name="could_not_insert_health_score_event">Could not insert health score event.</string>
+    <string name="remove_score">Remove Score</string>
+    <string name="remove">Remove</string>
 
 </resources>

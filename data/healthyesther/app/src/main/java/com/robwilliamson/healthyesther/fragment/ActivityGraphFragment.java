@@ -27,7 +27,6 @@ import java.util.HashMap;
 public class ActivityGraphFragment extends AbstractQueryFragment {
     private static final String LOG_TAG = ActivityGraphFragment.class.getName();
     private static final int DAYS = 7;
-    private static final DateTimeFormatter FORMAT = ISODateTimeFormat.dateTime();
 
     private GraphView mGraphView;
 
@@ -58,15 +57,15 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         for (int i = 0; i < DAYS; i++) {
-                            mEntriesPerDay.put(FORMAT.print(now().minusDays(i)), 0);
+                            mEntriesPerDay.put(format().print(now().minusDays(i)), 0);
                         }
 
                         if (cursor != null && cursor.moveToFirst()) {
                             int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
                             do {
                                 DateTime when = com.robwilliamson.db.Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
-                                Integer count = mEntriesPerDay.get(FORMAT.print(when)) + 1;
-                                mEntriesPerDay.put(FORMAT.print(when), count);
+                                Integer count = mEntriesPerDay.get(format().print(when)) + 1;
+                                mEntriesPerDay.put(format().print(when), count);
 
                                 if (count > mMax) {
                                     mMax = count;
@@ -86,7 +85,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                         for (int i = 0; i < DAYS; i++) {
                             int minusDays = DAYS - 1 - i; // Range from 6-0.
                             DateTime day = now().minusDays(minusDays);
-                            String dayStr = FORMAT.print(day);
+                            String dayStr = format().print(day);
                             data[i] = new GraphView.GraphViewData(i + 1, mEntriesPerDay.get(dayStr));
                             dateStrings[i] = formatter.print(day);
                         }
@@ -128,5 +127,9 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                     }
                 }
         };
+    }
+
+    private static DateTimeFormatter format() {
+        return ISODateTimeFormat.dateTime();
     }
 }

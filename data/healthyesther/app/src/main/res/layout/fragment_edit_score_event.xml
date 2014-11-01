@@ -3,6 +3,7 @@
     tools:context="com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment"
     android:orientation="vertical"
     android:id="@+id/edit_score_layout"
+    android:longClickable="true"
     style="@style/AppTheme.sectionLayout">
 
     <TextView

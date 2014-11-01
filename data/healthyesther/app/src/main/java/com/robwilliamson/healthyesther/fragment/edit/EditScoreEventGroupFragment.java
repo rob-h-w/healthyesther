@@ -26,6 +26,10 @@ import java.util.List;
 
 public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGroupFragment.Watcher> {
 
+    public void removeScore(EditScoreEventFragment fragment) {
+        getFragmentManager().beginTransaction().remove(fragment).commit();
+    }
+
     public interface Watcher {
         void onFragmentUpdate(EditScoreEventGroupFragment fragment);
         void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);

@@ -53,7 +53,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
             @Override
             public void checkContent() {
-                HomeActivityAccessor.checkMenuContent(getInstrumentation().getTargetContext());
+                HomeActivityAccessor.checkMenuContent();
             }
         });
     }

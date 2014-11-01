@@ -1,9 +1,12 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -28,6 +31,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     public interface Watcher {
         void onFragmentUpdate(EditScoreEventFragment fragment);
         void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
+        void onFragmentRemoveRequest(EditScoreEventFragment fragment);
     }
 
     @Override
@@ -106,6 +110,35 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     public void onResume() {
         super.onResume();
 
+        getLayout().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(R.string.remove_score);
+                builder.setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        EditScoreEventFragment.this.callWatcher(new WatcherCaller<Watcher>() {
+                            @Override
+                            public void call(Watcher watcher) {
+                                watcher.onFragmentRemoveRequest(EditScoreEventFragment.this);
+                            }
+                        });
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                builder.create().show();
+                return true;
+            }
+        });
+
         getTitle().setText(mName);
         getMinLabel().setText(mMinLabel);
         getMaxLabel().setText(mMaxLabel);
@@ -170,5 +203,9 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
     private RatingBar getRatingBar() {
         return Utils.View.getTypeSafeView(getView(), R.id.score_bar);
+    }
+
+    private LinearLayout getLayout() {
+        return Utils.View.getTypeSafeView(getView(), R.id.edit_score_layout);
     }
 }

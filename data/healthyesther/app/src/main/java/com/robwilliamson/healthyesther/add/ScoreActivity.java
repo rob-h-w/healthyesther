@@ -91,7 +91,11 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
 
     @Override
     public void onQueryFailed(EditScoreEventFragment fragment, Throwable error) {
+    }
 
+    @Override
+    public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
+        getScoreGroupFragment().removeScore(fragment);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class HomeActivityAccessor {
         onView(medicationScoreButton()).check(matches(isClickable()));
     }
 
-    public static void checkMenuContent(Context targetContext) {
+    public static void checkMenuContent() {
         onView(MenuAccessor.backupToDropbox()).check(matches(isEnabled()));
         onView(MenuAccessor.settings()).check(matches(isEnabled()));
     }

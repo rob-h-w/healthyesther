@@ -37,7 +37,6 @@ public class Orientation {
         // Only set the orientation if necessary.
         if (initialOrientation != orientation) {
             initial.setRequestedOrientation(orientation);
-            Espresso.waitForActivityToResume(subject.getTestCase());
         }
     }
 }
