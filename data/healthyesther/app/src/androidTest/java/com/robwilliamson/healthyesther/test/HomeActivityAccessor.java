@@ -1,9 +1,12 @@
 package com.robwilliamson.healthyesther.test;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
 
 import org.hamcrest.Matcher;
 
@@ -17,6 +20,10 @@ import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMat
 public class HomeActivityAccessor {
     public static Matcher<View> healthScoreButton() {
         return withId(R.id.create_health_score_event_button);
+    }
+
+    public static void showNavigationDrawer(Boolean show, Context targetContext) {
+        PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
     }
 
     public static Matcher<View> mealScoreButton() {
