@@ -15,21 +15,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class Espresso {
-    private static ActivityLifecycleMonitor monitor(GoogleInstrumentationTestRunner instrumentation) {
-        Field lifecycleMonitor;
-        try {
-            lifecycleMonitor = GoogleInstrumentation.class.getDeclaredField("lifecycleMonitor");
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-        lifecycleMonitor.setAccessible(true);
-        try {
-            return (ActivityLifecycleMonitor)lifecycleMonitor.get(instrumentation);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static Activity waitForActivityToResume(InstrumentationTestCase testCase) {
         Collection<Activity> resumed = getResumed(testCase);
         while(resumed.isEmpty()) {
@@ -69,5 +54,20 @@ public class Espresso {
         }
 
         return (Collection<Activity>) resumed[0];
+    }
+
+    private static ActivityLifecycleMonitor monitor(GoogleInstrumentationTestRunner instrumentation) {
+        Field lifecycleMonitor;
+        try {
+            lifecycleMonitor = GoogleInstrumentation.class.getDeclaredField("lifecycleMonitor");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+        lifecycleMonitor.setAccessible(true);
+        try {
+            return (ActivityLifecycleMonitor)lifecycleMonitor.get(instrumentation);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

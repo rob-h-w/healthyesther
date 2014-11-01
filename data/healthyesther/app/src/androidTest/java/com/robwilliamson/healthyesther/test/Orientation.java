@@ -32,13 +32,12 @@ public class Orientation {
 
     private static void setOrientation(int orientation, Subject subject) {
         final Activity initial = Espresso.waitForActivityToResume(subject.getTestCase());
-        Activity terminal = null;
-        int initialOrientation = initial.getRequestedOrientation();
+        final int initialOrientation = initial.getRequestedOrientation();
 
         // Only set the orientation if necessary.
         if (initialOrientation != orientation) {
             initial.setRequestedOrientation(orientation);
-            terminal = Espresso.waitForActivityToResume(subject.getTestCase());
+            Espresso.waitForActivityToResume(subject.getTestCase());
         }
     }
 }
