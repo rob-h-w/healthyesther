@@ -28,8 +28,18 @@
     <string name="action_backup_to_dropbox">Backup data to Dropbox</string>
     <string name="could_not_get_score_type_list">Could not get the list of score types.</string>
     <string name="health_score">Health Score</string>
+    <string name="score_name">Score Name</string>
+    <string name="descriptive_name_for_the_score">Please enter a name for the score</string>
     <string name="could_not_insert_health_score_event">Could not insert health score event.</string>
     <string name="hide_score">Hide Score</string>
     <string name="hide">Hide</string>
+    <string name="general">General</string>
+    <string name="hidden_scores">Hidden Scores</string>
+    <string name="hidden_scores_summary">The following scores are currently hidden.</string>
+    <string name="show_hidden_scores">Show Hidden Scores</string>
+    <string name="scores">Scores</string>
+    <string name="hidden">Hidden</string>
+    <string name="shown">Shown</string>
+    <string name="track_another_score">Track another score</string>
 
 </resources>

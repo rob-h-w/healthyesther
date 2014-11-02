@@ -5,11 +5,13 @@
         android:bottom="@dimen/border_margin">
         <shape
             android:shape="rectangle">
+            <solid
+                android:color="@color/border_background_pressed"/>
             <corners
                 android:radius="@dimen/border_corner_radius"/>
             <stroke
                 android:width="@dimen/border_stroke_width"
-                android:color="@color/border"/>
+                android:color="@color/border_pressed"/>
         </shape>
     </item>
 </layer-list>

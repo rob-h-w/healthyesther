@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
+import android.app.Dialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -20,12 +21,16 @@ import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
+import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.dialog.AddScoreDialog;
+import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGroupFragment.Watcher> {
+    private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
 
     public void removeScore(EditScoreEventFragment fragment) {
         getFragmentManager().beginTransaction().remove(fragment).commit();
@@ -48,9 +53,58 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            return;
+        }
+
+        getFragmentManager().beginTransaction().add(R.id.edit_score_group_layout, new AddValueFragment(), ADD_VALUE_FRAGMENT).commit();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_score_event_group, container, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        AddValueFragment fragment = getAddValueFragment();
+        fragment.setTitle(R.string.track_another_score);
+        fragment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddScoreDialog dialog = new AddScoreDialog(getActivity()) {
+                    @Override
+                    protected void doQuery(final Query query) {
+                        EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<Watcher>() {
+                            @Override
+                            public void call(Watcher watcher) {
+                                ArrayList<Query> queries = new ArrayList<Query>(1);
+                                queries.add(query);
+                                watcher.furtherQueries(EditScoreEventGroupFragment.this, queries);
+                            }
+                        });
+                    }
+
+                    @Override
+                    protected void queryFailed(final Throwable error) {
+                        EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<Watcher>() {
+                            @Override
+                            public void call(Watcher watcher) {
+                                watcher.onQueryFailed(EditScoreEventGroupFragment.this, error);
+                            }
+                        });
+                    }
+                };
+
+                dialog.show();
+            }
+        });
     }
 
     @Override
@@ -108,37 +162,23 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                         public void postQueryProcessing(Cursor cursor) {
                             mFragments = new ArrayList<EditFragment>(cursor.getCount());
                             mQueries = new ArrayList<Query>(cursor.getCount());
+                            List<Score> scores = scoresFrom(cursor);
 
-                            final int rowIdIndex = cursor.getColumnIndex(HealthScore._ID);
-                            final int nameIndex = cursor.getColumnIndex(HealthScore.NAME);
-                            final int bestValueIndex = cursor.getColumnIndex(HealthScore.BEST_VALUE);
-                            final int randomQueryIndex = cursor.getColumnIndex(HealthScore.RANDOM_QUERY);
-                            final int minLabelIndex = cursor.getColumnIndex(HealthScore.MIN_LABEL);
-                            final int maxLabelIndex = cursor.getColumnIndex(HealthScore.MAX_LABEL);
+                            for (Score score: scores) {
+                                if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(score.name)){
+                                    continue;
+                                }
 
-                            if (cursor.moveToFirst()) {
-                                do {
-                                    String name = cursor.getString(nameIndex);
-                                    if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(name)){
-                                        continue;
-                                    }
+                                EditFragment fragment = EditScoreEventFragment.newInstance(score);
 
-                                    EditFragment fragment = EditScoreEventFragment.newInstance(
-                                            cursor.getLong(rowIdIndex),
-                                            name,
-                                            cursor.getInt(bestValueIndex),
-                                            cursor.getInt(randomQueryIndex) > 0,
-                                            cursor.getString(minLabelIndex),
-                                            cursor.getString(maxLabelIndex));
+                                mFragments.add(fragment);
 
-                                    mFragments.add(fragment);
+                                Query[] fragmentQueries = fragment.getQueries();
 
-                                    Query[] fragmentQueries = fragment.getQueries();
+                                if (fragmentQueries != null) {
+                                    mQueries.addAll(Arrays.asList(fragmentQueries));
+                                }
 
-                                    if (fragmentQueries != null) {
-                                        mQueries.addAll(Arrays.asList(fragmentQueries));
-                                    }
-                                } while (cursor.moveToNext());
                             }
                         }
 
@@ -187,5 +227,9 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         }
 
         return list;
+    }
+
+    private AddValueFragment getAddValueFragment() {
+        return Utils.View.getTypeSafeFragment(getFragmentManager(), ADD_VALUE_FRAGMENT);
     }
 }

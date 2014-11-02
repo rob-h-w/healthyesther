@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    style="@style/AppTheme.sectionLayout">
+
+    <TextView
+        android:id="@+id/name_title"
+        style="@style/AppTheme.text"/>
+
+    <AutoCompleteTextView
+        android:id="@+id/autocomplete_name"
+        style="@style/AppTheme.text.textEditor" />
+
+</LinearLayout>

@@ -27,11 +27,19 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="AppTheme.contentLayout.clickable">
+        <item name="android:background">@drawable/clickable_content_background</item>
+    </style>
+
     <style name="AppTheme.sectionLayout">
         <item name="android:background">@drawable/border</item>
         <item name="android:padding">@dimen/section_layout_padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AppTheme.sectionLayout.clickable">
+        <item name="android:background">@drawable/clickable_border</item>
     </style>
 
     <style name="AppTheme.text">
@@ -46,6 +54,10 @@
         <item name="android:completionThreshold">1</item>
         <item name="android:textIsSelectable">false</item>
         <item name="android:imeOptions">flagNoFullscreen|actionNext</item>
+    </style>
+
+    <style name="AppTheme.text.emphasized">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
 
     <style name="AppTheme.text.title">

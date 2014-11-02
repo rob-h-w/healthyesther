@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.definition.Modification;
+import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
@@ -50,6 +51,10 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         args.putLong(HealthScore._ID, id);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static EditScoreEventFragment newInstance(GetHealthScoresQuery.Score score) {
+        return newInstance(score._id, score.name, score.bestValue, score.randomQuery, score.minLabel, score.maxLabel);
     }
 
     public static EditScoreEventFragment newInstance(

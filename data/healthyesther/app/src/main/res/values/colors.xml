@@ -2,5 +2,9 @@
 <resources>
     <color name="busy_background">#8fff</color>
     <color name="border">#4000</color>
+    <color name="border_pressed">#e000</color>
+    <color name="border_background_selected">#866f</color>
+    <color name="border_background_pressed">#e66f</color>
     <color name="content_background">#bfff</color>
+    <color name="content_background_selected">#f66f</color>
 </resources>

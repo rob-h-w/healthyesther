@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.robwilliamson.healthyesther.fragment.AddValueFragment"
+    android:id="@+id/add_value_layout"
+    android:orientation="horizontal"
+    android:clickable="true"
+    style="@style/AppTheme.sectionLayout.clickable">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_value_text"
+        style="@style/AppTheme.text.emphasized"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_value_icon"
+        android:src="@android:drawable/ic_input_add"
+        android:layout_gravity="right" />
+
+</FrameLayout>

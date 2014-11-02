@@ -5,6 +5,8 @@
         android:bottom="@dimen/border_margin">
         <shape
             android:shape="rectangle">
+            <solid
+                android:color="@color/border_background_selected"/>
             <corners
                 android:radius="@dimen/border_corner_radius"/>
             <stroke
