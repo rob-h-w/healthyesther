@@ -7,6 +7,7 @@ import com.robwilliamson.db.HealthDbHelper;
 import net.danlew.android.joda.JodaTimeAndroid;
 
 public class App extends Application {
+    private static App sInstance = null;
     private static long sUiThreadId;
 
     public static long getUiThreadId() {
@@ -15,6 +16,10 @@ public class App extends Application {
 
     public static void setsUiThreadId(long id) {
         sUiThreadId = id;
+    }
+
+    public static App getInstance() {
+        return sInstance;
     }
 
     @Override
@@ -28,5 +33,6 @@ public class App extends Application {
         }
 
         sUiThreadId = Thread.currentThread().getId();
+        sInstance = this;
     }
 }
