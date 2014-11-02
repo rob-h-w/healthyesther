@@ -118,8 +118,8 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.remove_score);
-                builder.setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {
+                builder.setTitle(R.string.hide_score);
+                builder.setPositiveButton(R.string.hide, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
