@@ -9,6 +9,7 @@ import com.robwilliamson.db.definition.HealthScoreEvent;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -17,6 +18,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ScoreActivity extends AbstractAddActivity implements EditScoreEventGroupFragment.Watcher,
         EditScoreEventFragment.Watcher,
@@ -95,6 +97,10 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
 
     @Override
     public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
+        Settings settings = Settings.INSTANCE;
+        Set<String> exclusionList = settings.getDefaultExcludedEditScores();
+        exclusionList.add(fragment.getName());
+        Settings.INSTANCE.setDefaultEditScoreExclusionList(exclusionList);
         getScoreGroupFragment().removeScore(fragment);
     }
 

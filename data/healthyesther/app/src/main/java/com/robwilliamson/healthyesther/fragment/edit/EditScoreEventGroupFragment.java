@@ -19,6 +19,7 @@ import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Settings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,9 +118,14 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
 
                             if (cursor.moveToFirst()) {
                                 do {
+                                    String name = cursor.getString(nameIndex);
+                                    if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(name)){
+                                        continue;
+                                    }
+
                                     EditFragment fragment = EditScoreEventFragment.newInstance(
                                             cursor.getLong(rowIdIndex),
-                                            cursor.getString(nameIndex),
+                                            name,
                                             cursor.getInt(bestValueIndex),
                                             cursor.getInt(randomQueryIndex) > 0,
                                             cursor.getString(minLabelIndex),

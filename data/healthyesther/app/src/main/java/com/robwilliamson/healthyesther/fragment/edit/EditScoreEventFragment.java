@@ -28,6 +28,10 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     private String mMinLabel;
     private String mMaxLabel;
 
+    public String getName() {
+        return mName;
+    }
+
     public interface Watcher {
         void onFragmentUpdate(EditScoreEventFragment fragment);
         void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
