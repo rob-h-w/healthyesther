@@ -1,15 +1,10 @@
 package com.robwilliamson.healthyesther.add;
 
-import android.app.Activity;
-import android.app.Instrumentation;
-import android.content.pm.ActivityInfo;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
-import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
-import com.robwilliamson.healthyesther.test.UserActions;
 
 public class ScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreActivity> {
     public ScoreActivityTest() {

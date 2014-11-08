@@ -1,19 +1,12 @@
 package com.robwilliamson.healthyesther;
 
-import android.app.Activity;
-import android.app.Instrumentation;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
-import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-import static com.google.android.apps.common.testing.ui.espresso.Espresso.*;
-import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.click;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.*;
-import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.*;
+import static com.google.android.apps.common.testing.ui.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     public HomeActivityTest() {

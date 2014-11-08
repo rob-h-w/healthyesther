@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
-import android.app.Dialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventModification;
 import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.definition.HealthScoreEvent;

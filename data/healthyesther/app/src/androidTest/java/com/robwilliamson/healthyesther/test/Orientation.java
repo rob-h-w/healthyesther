@@ -1,21 +1,8 @@
 package com.robwilliamson.healthyesther.test;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.pm.ActivityInfo;
 import android.test.InstrumentationTestCase;
-import android.view.View;
-
-import com.google.android.apps.common.testing.testrunner.ActivityLifecycleMonitor;
-import com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner;
-import com.google.android.apps.common.testing.testrunner.Stage;
-
-import java.util.Collection;
-
-import static com.google.android.apps.common.testing.ui.espresso.Espresso.onView;
-import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isDisplayed;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withId;
 
 public class Orientation {
     public static interface Subject {
