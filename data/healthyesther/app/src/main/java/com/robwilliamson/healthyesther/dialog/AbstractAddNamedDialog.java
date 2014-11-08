@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.dialog;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,7 +10,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 
 import com.robwilliamson.db.use.Query;
-import com.robwilliamson.healthyesther.App;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 
@@ -21,14 +21,17 @@ public abstract class AbstractAddNamedDialog extends Dialog {
 
     public AbstractAddNamedDialog(Context context) {
         super(context);
+        initialize();
     }
 
     public AbstractAddNamedDialog(Context context, int theme) {
         super(context, theme);
+        initialize();
     }
 
     protected AbstractAddNamedDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
+        initialize();
     }
 
     @Override
@@ -47,8 +50,8 @@ public abstract class AbstractAddNamedDialog extends Dialog {
     protected void onStart() {
         super.onStart();
 
-        getNameTitle().setText(getContext().getText(R.string.health_score));
-        getNameTextView().setCompletionHint(getContext().getText(R.string.descriptive_name_for_the_score));
+        getNameTitle().setText(getContext().getText(valueNameId()));
+        getNameTextView().setCompletionHint(getContext().getText(valueCompletionHintId()));
 
         updateSuggestionAdapter();
     }
@@ -73,6 +76,14 @@ public abstract class AbstractAddNamedDialog extends Dialog {
     protected abstract void suggestionSelected(final String name, final long id);
 
     protected abstract void newNameEntered(final String name);
+
+    protected abstract int valueNameId();
+
+    protected abstract int valueCompletionHintId();
+
+    private void initialize() {
+        setContentView(R.layout.dialog_add_value);
+    }
 
     private TextView getNameTitle() {
         return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.name_title);

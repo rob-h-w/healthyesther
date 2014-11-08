@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    style="@android:style/Theme.Dialog">
+
+    <ScrollView
+        android:orientation="vertical"
+        style="@style/AppTheme.contentLayout"
+        android:id="@+id/add_value_content_area">
+
+        <include layout="@layout/enter_value_name" />
+
+    </ScrollView>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ok_button"
+        android:text="@android:string/ok"
+        style="@android:style/Widget.ActionButton"/>
+
+</LinearLayout>

@@ -59,6 +59,16 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
 
     }
 
+    @Override
+    protected int valueNameId() {
+        return R.string.health_score;
+    }
+
+    @Override
+    protected int valueCompletionHintId() {
+        return R.string.descriptive_name_for_the_score;
+    }
+
     public AddScoreDialog(Context context, int theme) {
         super(context, theme);
         initialize();
@@ -70,6 +80,6 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
     }
 
     private void initialize() {
-        setContentView(R.layout.dialog_add_score);
+        setTitle(R.string.track_another_score);
     }
 }
