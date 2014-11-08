@@ -41,5 +41,11 @@
     <string name="hidden">Hidden</string>
     <string name="shown">Shown</string>
     <string name="track_another_score">Track another score</string>
+    <string name="best_value">Best value</string>
+    <string name="ask_about_this_periodically">Ask about this value periodically?</string>
+    <string name="minimum_value_name">Minimum value name</string>
+    <string name="minimum_value_name_hint">eg. "sad"</string>
+    <string name="maximum_value_name">Minimum value name</string>
+    <string name="maximum_value_name_hint">eg. "happy"</string>
 
 </resources>

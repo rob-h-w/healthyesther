@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        style="@style/AppTheme.sectionLayout">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@string/best_value"
+                android:id="@+id/best_value_title"
+                style="@style/AppTheme.text"
+                android:layout_gravity="start"/>
+
+            <TextView
+                style="@style/AppTheme.text"
+                android:layout_gravity="end"
+                android:text="0"/>
+
+        </FrameLayout>
+
+        <SeekBar
+            android:id="@+id/best_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="5" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/AppTheme.sectionLayout">
+
+        <Switch
+            android:id="@+id/random_query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ask_about_this_periodically"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        style="@style/AppTheme.sectionLayout">
+
+        <TextView
+            style="@style/AppTheme.text"
+            android:text="@string/minimum_value_name"/>
+
+        <EditText
+            android:id="@+id/min_label"
+            style="@style/AppTheme.text.textEditor"
+            android:hint="@string/minimum_value_name_hint"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        style="@style/AppTheme.sectionLayout">
+
+        <TextView
+            style="@style/AppTheme.text"
+            android:text="@string/maximum_value_name"/>
+
+        <EditText
+            android:id="@+id/max_label"
+            style="@style/AppTheme.text.textEditor"
+            android:hint="@string/maximum_value_name_hint"/>
+
+    </LinearLayout>
+
+</merge>
