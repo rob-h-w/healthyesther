@@ -98,6 +98,11 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                             }
                         });
                     }
+
+                    @Override
+                    protected void onOk() {
+
+                    }
                 };
 
                 dialog.show();

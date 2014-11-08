@@ -69,6 +69,11 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
         return R.string.descriptive_name_for_the_score;
     }
 
+    @Override
+    protected Integer contentLayoutId() {
+        return R.layout.fragment_health_score_values;
+    }
+
     public AddScoreDialog(Context context, int theme) {
         super(context, theme);
         initialize();

@@ -1,12 +1,14 @@
 package com.robwilliamson.healthyesther.dialog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.robwilliamson.db.use.Query;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 public abstract class AbstractAddNamedDialog extends Dialog {
-    HashMap<String, Long> mSuggestions = null;
+    private HashMap<String, Long> mSuggestions = null;
 
     public AbstractAddNamedDialog(Context context) {
         super(context);
@@ -52,6 +54,19 @@ public abstract class AbstractAddNamedDialog extends Dialog {
 
         getNameTitle().setText(getContext().getText(valueNameId()));
         getNameTextView().setCompletionHint(getContext().getText(valueCompletionHintId()));
+        getOkButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOk();
+                dismiss();
+            }
+        });
+
+        if (contentLayoutId() != null) {
+            View.inflate(getContext(), contentLayoutId(), getContentArea());
+        }
+
+        setValid(false);
 
         updateSuggestionAdapter();
     }
@@ -59,6 +74,10 @@ public abstract class AbstractAddNamedDialog extends Dialog {
     protected void setSuggestions(HashMap<String, Long> suggestions) {
         mSuggestions = suggestions;
         updateSuggestionAdapter();
+    }
+
+    protected void setValid(boolean valid) {
+        getOkButton().setEnabled(valid);
     }
 
     protected HashMap<String, Long> getSuggestions() {
@@ -81,6 +100,18 @@ public abstract class AbstractAddNamedDialog extends Dialog {
 
     protected abstract int valueCompletionHintId();
 
+    protected abstract void onOk();
+
+    /**
+     * Layout id of the content of the dialog.
+     * @return Implementors should return null if no layout resource is in use.
+     */
+    protected abstract Integer contentLayoutId();
+
+    protected LinearLayout getContentArea() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.add_value_content_area);
+    }
+
     private void initialize() {
         setContentView(R.layout.dialog_add_value);
     }
@@ -91,6 +122,10 @@ public abstract class AbstractAddNamedDialog extends Dialog {
 
     private AutoCompleteTextView getNameTextView() {
         return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.autocomplete_name);
+    }
+
+    private Button getOkButton() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.ok_button);
     }
 
     private void updateSuggestionAdapter() {

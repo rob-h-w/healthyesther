@@ -6,11 +6,18 @@
     style="@android:style/Theme.Dialog">
 
     <ScrollView
-        android:orientation="vertical"
-        style="@style/AppTheme.contentLayout"
-        android:id="@+id/add_value_content_area">
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
 
-        <include layout="@layout/enter_value_name" />
+        <LinearLayout
+            android:orientation="vertical"
+            style="@style/AppTheme.contentLayout"
+            android:id="@+id/add_value_content_area">
+
+            <include layout="@layout/enter_value_name" />
+
+        </LinearLayout>
 
     </ScrollView>
 
