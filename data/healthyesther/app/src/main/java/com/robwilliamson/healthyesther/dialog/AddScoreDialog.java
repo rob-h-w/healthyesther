@@ -2,19 +2,48 @@ package com.robwilliamson.healthyesther.dialog;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 
 import java.util.HashMap;
 import java.util.List;
 
 public abstract class AddScoreDialog extends AbstractAddNamedDialog {
+    HashMap<String, GetHealthScoresQuery.Score> mScores = null;
 
     protected AddScoreDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
         initialize();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SeekBar bestValue = getBestValueWidget();
+        bestValue.setMax(HealthScore.MAX - 1); // Seek bars are 0-based
+        bestValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                updateBestValueCurrentValue();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        updateBestValueCurrentValue();
     }
 
     @Override
@@ -25,9 +54,11 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
             public void postQueryProcessing(final Cursor cursor) {
                 List<Score> scoresList = scoresFrom(cursor);
                 mSuggestions = new HashMap<String, Long>(scoresList.size());
+                mScores = new HashMap<String, Score>(scoresList.size());
 
                 for (Score score: scoresList) {
                     mSuggestions.put(score.name, score._id);
+                    mScores.put(score.name, score);
                 }
             }
 
@@ -86,5 +117,17 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
 
     private void initialize() {
         setTitle(R.string.track_another_score);
+    }
+
+    private void updateBestValueCurrentValue() {
+        getBestValueCurrentValue().setText(String.valueOf(getBestValueWidget().getProgress() + 1));
+    }
+
+    private TextView getBestValueCurrentValue() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.best_value_current_value);
+    }
+
+    private SeekBar getBestValueWidget() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.best_value);
     }
 }
