@@ -5,8 +5,8 @@ import android.util.Pair;
 
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventModification;
+import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.definition.HealthScoreEvent;
-import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
@@ -127,7 +127,7 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     @Override
-    public void onScoreModified(GetHealthScoresQuery.Score score) {
+    public void onScoreModified(HealthScore.Score score) {
         Settings.INSTANCE.showScore(score);
 
         EditScoreEventFragment fragment = getScoreGroupFragment().getEditScoreEventFragment(score);

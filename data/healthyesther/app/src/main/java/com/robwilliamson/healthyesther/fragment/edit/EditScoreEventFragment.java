@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.definition.Modification;
-import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
@@ -23,13 +22,13 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     private static final String SCORE = "score";
 
     private int mValue;
-    private GetHealthScoresQuery.Score mScore = new GetHealthScoresQuery.Score();
+    private HealthScore.Score mScore = new HealthScore.Score();
 
     public String getName() {
         return mScore.name;
     }
 
-    public void setScore(GetHealthScoresQuery.Score score) {
+    public void setScore(HealthScore.Score score) {
         mScore = score;
         updateUi();
     }
@@ -66,7 +65,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         return fragment;
     }
 
-    public static EditScoreEventFragment newInstance(GetHealthScoresQuery.Score score) {
+    public static EditScoreEventFragment newInstance(HealthScore.Score score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
         fragment.mScore = score;
         return fragment;
@@ -87,7 +86,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
         if (a != null) {
             mValue = a.getInt(VALUE);
-            mScore = GetHealthScoresQuery.Score.from(args, SCORE);
+            mScore = HealthScore.Score.from(args, SCORE);
         }
     }
 

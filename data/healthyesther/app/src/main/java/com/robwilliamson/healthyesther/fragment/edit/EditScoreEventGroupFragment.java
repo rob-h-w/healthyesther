@@ -144,9 +144,9 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                         public void postQueryProcessing(Cursor cursor) {
                             mFragments = new ArrayList<EditFragment>(cursor.getCount());
                             mQueries = new ArrayList<Query>(cursor.getCount());
-                            List<Score> scores = scoresFrom(cursor);
+                            List<HealthScore.Score> scores = scoresFrom(cursor);
 
-                            for (Score score: scores) {
+                            for (HealthScore.Score score: scores) {
                                 if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(score.name)){
                                     continue;
                                 }
@@ -227,7 +227,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         return list;
     }
 
-    public EditScoreEventFragment getEditScoreEventFragment(GetHealthScoresQuery.Score score) {
+    public EditScoreEventFragment getEditScoreEventFragment(HealthScore.Score score) {
         List<EditScoreEventFragment> fragments = getEditScoreEventFragments();
 
         for (EditScoreEventFragment fragment : fragments) {

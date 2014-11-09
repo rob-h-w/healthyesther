@@ -1,10 +1,7 @@
 package com.robwilliamson.healthyesther.dialog;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,15 +23,15 @@ import java.util.List;
 
 public class AddScoreDialog extends AbstractAddNamedDialog {
     public interface Watcher {
-        void onScoreModified(GetHealthScoresQuery.Score score);
+        void onScoreModified(HealthScore.Score score);
         void onQueryFailed(AddScoreDialog fragment, Throwable error);
         void furtherQueries(AddScoreDialog fragment, List<Query> queries);
     }
 
     private static final String SCORES = "scores";
 
-    private GetHealthScoresQuery.Score mInitialScore = null;
-    private HashMap<String, GetHealthScoresQuery.Score> mScores = null;
+    private HealthScore.Score mInitialScore = null;
+    private HashMap<String, HealthScore.Score> mScores = null;
 
     public AddScoreDialog() {
         super();
@@ -45,10 +42,10 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null && mScores == null) {
-            mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<GetHealthScoresQuery.Score>() {
+            mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<HealthScore.Score>() {
                 @Override
-                public GetHealthScoresQuery.Score get(Bundle bundle, String bundleKey) {
-                    return GetHealthScoresQuery.Score.from(bundle, bundleKey);
+                public HealthScore.Score get(Bundle bundle, String bundleKey) {
+                    return HealthScore.Score.from(bundle, bundleKey);
                 }
             });
         }
@@ -110,11 +107,11 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
             HashMap<String, Long> mSuggestions;
             @Override
             public void postQueryProcessing(final Cursor cursor) {
-                List<Score> scoresList = scoresFrom(cursor);
+                List<HealthScore.Score> scoresList = scoresFrom(cursor);
                 mSuggestions = new HashMap<String, Long>(scoresList.size());
-                mScores = new HashMap<String, Score>(scoresList.size());
+                mScores = new HashMap<String, HealthScore.Score>(scoresList.size());
 
-                for (Score score: scoresList) {
+                for (HealthScore.Score score: scoresList) {
                     mSuggestions.put(score.name, score._id);
                     mScores.put(score.name, score);
                 }
@@ -176,20 +173,20 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
 
     @Override
     protected void onOk() {
-        GetHealthScoresQuery.Score score = scoreFromUi();
+        HealthScore.Score score = scoreFromUi();
 
         if (scoreModified(score)) {
             getWatcher().onScoreModified(score);
         }
     }
 
-    private boolean scoreModified(GetHealthScoresQuery.Score score) {
-        GetHealthScoresQuery.Score listMatch = mScores.get(score.name);
+    private boolean scoreModified(HealthScore.Score score) {
+        HealthScore.Score listMatch = mScores.get(score.name);
 
         return !score.equals(listMatch);
     }
 
-    private void updateUiToMatch(GetHealthScoresQuery.Score score) {
+    private void updateUiToMatch(HealthScore.Score score) {
         setName(score.name);
         setBestValue(score.bestValue);
         setRandomQuery(score.randomQuery);
@@ -197,8 +194,8 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
         setMaxLabel(score.maxLabel);
     }
 
-    private GetHealthScoresQuery.Score scoreFromUi() {
-        GetHealthScoresQuery.Score score = new GetHealthScoresQuery.Score();
+    private HealthScore.Score scoreFromUi() {
+        HealthScore.Score score = new HealthScore.Score();
         score.name = getName();
 
         if (mScores.containsKey(score.name)) {
