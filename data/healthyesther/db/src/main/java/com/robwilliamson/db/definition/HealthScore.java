@@ -1,11 +1,15 @@
 package com.robwilliamson.db.definition;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HealthScore extends Table {
 
@@ -77,11 +81,69 @@ public class HealthScore extends Table {
                      boolean randomQuery,
                      String minLabel,
                      String maxLabel) {
+            this(null,
+                    name,
+                    bestValue,
+                    randomQuery,
+                    minLabel,
+                    maxLabel);
+        }
+
+        public Score(
+                long id,
+                String name,
+                     int bestValue,
+                     boolean randomQuery,
+                     String minLabel,
+                     String maxLabel) {
+            this(id == 0L ? null : id,
+                    name,
+                    bestValue,
+                    randomQuery,
+                    minLabel,
+                    maxLabel);
+        }
+
+        public Score(
+                Long id,
+                String name,
+                int bestValue,
+                boolean randomQuery,
+                String minLabel,
+                String maxLabel) {
+            this._id = id;
             this.name = name;
             this.bestValue = bestValue;
             this.randomQuery = randomQuery;
             this.minLabel = minLabel;
             this.maxLabel = maxLabel;
+        }
+
+        public static List<Score> scoresFrom(Cursor cursor) {
+            ArrayList<Score> scores = new ArrayList<Score>(cursor.getCount());
+
+            if (cursor.moveToFirst()) {
+                final int rowIdIndex = cursor.getColumnIndex(_ID);
+                final int nameIndex = cursor.getColumnIndex(NAME);
+                final int bestValueIndex = cursor.getColumnIndex(BEST_VALUE);
+                final int randomQueryIndex = cursor.getColumnIndex(RANDOM_QUERY);
+                final int minLabelIndex = cursor.getColumnIndex(MIN_LABEL);
+                final int maxLabelIndex = cursor.getColumnIndex(MAX_LABEL);
+
+                do {
+                    Score score = new Score(cursor.getLong(rowIdIndex),
+                            cursor.getString(nameIndex),
+                            cursor.getInt(bestValueIndex),
+                            cursor.getInt(randomQueryIndex) > 0,
+                            cursor.getString(minLabelIndex),
+                            cursor.getString(maxLabelIndex));
+
+                    scores.add(score);
+                }
+                while(cursor.moveToNext());
+            }
+
+            return scores;
         }
 
         @Override

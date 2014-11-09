@@ -144,7 +144,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                         public void postQueryProcessing(Cursor cursor) {
                             mFragments = new ArrayList<EditFragment>(cursor.getCount());
                             mQueries = new ArrayList<Query>(cursor.getCount());
-                            List<HealthScore.Score> scores = scoresFrom(cursor);
+                            List<HealthScore.Score> scores = HealthScore.Score.scoresFrom(cursor);
 
                             for (HealthScore.Score score: scores) {
                                 if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(score.name)){

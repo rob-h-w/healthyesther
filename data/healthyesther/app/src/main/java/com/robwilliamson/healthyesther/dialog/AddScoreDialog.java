@@ -107,7 +107,7 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
             HashMap<String, Long> mSuggestions;
             @Override
             public void postQueryProcessing(final Cursor cursor) {
-                List<HealthScore.Score> scoresList = scoresFrom(cursor);
+                List<HealthScore.Score> scoresList = HealthScore.Score.scoresFrom(cursor);
                 mSuggestions = new HashMap<String, Long>(scoresList.size());
                 mScores = new HashMap<String, HealthScore.Score>(scoresList.size());
 
