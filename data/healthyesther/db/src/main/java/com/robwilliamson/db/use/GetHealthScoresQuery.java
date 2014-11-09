@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class GetHealthScoresQuery extends GetAllValuesQuery {
     public static class Score {
-        public long _id;
+        public Long _id;
         public String name;
         public int bestValue;
         public boolean randomQuery;

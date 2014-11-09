@@ -4,7 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -53,7 +56,31 @@ public abstract class AbstractAddNamedDialog extends Dialog {
         super.onStart();
 
         getNameTitle().setText(getContext().getText(valueNameId()));
-        getNameTextView().setCompletionHint(getContext().getText(valueCompletionHintId()));
+
+        AutoCompleteTextView name = getNameTextView();
+        name.setCompletionHint(getContext().getText(valueCompletionHintId()));
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = s.toString();
+                AbstractAddNamedDialog.this.newNameEntered(text);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        name.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String suggestion = (String)parent.getAdapter().getItem(position);
+                AbstractAddNamedDialog.this.suggestionSelected(suggestion, mSuggestions.get(suggestion));
+            }
+        });
         getOkButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,9 +93,15 @@ public abstract class AbstractAddNamedDialog extends Dialog {
             View.inflate(getContext(), contentLayoutId(), getContentArea());
         }
 
-        setValid(false);
-
         updateSuggestionAdapter();
+    }
+
+    protected String getName() {
+        return getNameTextView().getText().toString();
+    }
+
+    protected void setName(String name) {
+        getNameTextView().setText(name);
     }
 
     protected void setSuggestions(HashMap<String, Long> suggestions) {

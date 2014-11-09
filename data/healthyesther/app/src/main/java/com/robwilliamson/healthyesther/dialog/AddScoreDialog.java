@@ -2,7 +2,9 @@ package com.robwilliamson.healthyesther.dialog;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.robwilliamson.db.definition.HealthScore;
@@ -15,12 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class AddScoreDialog extends AbstractAddNamedDialog {
-    HashMap<String, GetHealthScoresQuery.Score> mScores = null;
-
-    protected AddScoreDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-        initialize();
-    }
+    private GetHealthScoresQuery.Score mInitialScore = null;
+    private HashMap<String, GetHealthScoresQuery.Score> mScores = null;
 
     @Override
     protected void onStart() {
@@ -44,6 +42,11 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
         });
 
         updateBestValueCurrentValue();
+
+        if (mInitialScore != null) {
+            updateUiToMatch(mInitialScore);
+            mInitialScore = null;
+        }
     }
 
     @Override
@@ -77,17 +80,16 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
 
     @Override
     protected void newNameEntered(String name) {
-
+        updateValid();
     }
 
     @Override
     protected void queryComplete(Cursor result) {
-
     }
 
     @Override
     protected void suggestionSelected(String name, long id) {
-
+        updateUiToMatch(mScores.get(name));
     }
 
     @Override
@@ -105,22 +107,57 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
         return R.layout.fragment_health_score_values;
     }
 
-    public AddScoreDialog(Context context, int theme) {
-        super(context, theme);
-        initialize();
-    }
-
     public AddScoreDialog(Context context) {
         super(context);
         initialize();
+    }
+
+    public AddScoreDialog(Context context, GetHealthScoresQuery.Score score) {
+        super(context);
+        mInitialScore = score;
     }
 
     private void initialize() {
         setTitle(R.string.track_another_score);
     }
 
+    private void updateUiToMatch(GetHealthScoresQuery.Score score) {
+        setName(score.name);
+        setBestValue(score.bestValue);
+        setRandomQuery(score.randomQuery);
+        setMinLabel(score.minLabel);
+        setMaxLabel(score.maxLabel);
+    }
+
+    private GetHealthScoresQuery.Score scoreFromUi() {
+        GetHealthScoresQuery.Score score = new GetHealthScoresQuery.Score();
+        score.name = getName();
+
+        if (mScores.containsKey(score.name)) {
+            score._id = mScores.get(score.name)._id;
+        }
+
+        score.bestValue = getBestValue();
+        score.randomQuery = getRandomQuery();
+        score.minLabel = getMinLabel();
+        score.maxLabel = getMaxLabel();
+        return score;
+    }
+
     private void updateBestValueCurrentValue() {
-        getBestValueCurrentValue().setText(String.valueOf(getBestValueWidget().getProgress() + 1));
+        getBestValueCurrentValue().setText(String.valueOf(getBestValue()));
+    }
+
+    private void updateValid() {
+        setValid(!getName().isEmpty());
+    }
+
+    private int getBestValue() {
+        return getBestValueWidget().getProgress() + 1;
+    }
+
+    private void setBestValue(int value) {
+        getBestValueWidget().setProgress(value - 1);
     }
 
     private TextView getBestValueCurrentValue() {
@@ -129,5 +166,41 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
 
     private SeekBar getBestValueWidget() {
         return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.best_value);
+    }
+
+    private boolean getRandomQuery() {
+        return getRandomQueryWidget().isChecked();
+    }
+
+    private void setRandomQuery(boolean value) {
+        getRandomQueryWidget().setChecked(value);
+    }
+
+    private Switch getRandomQueryWidget() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.random_query);
+    }
+
+    private String getMinLabel() {
+        return getMinLabelWidget().getText().toString();
+    }
+
+    private void setMinLabel(String value) {
+        getMinLabelWidget().setText(value == null ? "" : value);
+    }
+
+    private EditText getMinLabelWidget() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.min_label);
+    }
+
+    private String getMaxLabel() {
+        return getMaxLabelWidget().getText().toString();
+    }
+
+    private void setMaxLabel(String value) {
+        getMaxLabelWidget().setText(value == null ? "" : value);
+    }
+
+    private EditText getMaxLabelWidget() {
+        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.max_label);
     }
 }
