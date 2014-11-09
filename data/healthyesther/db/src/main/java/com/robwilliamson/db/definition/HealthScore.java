@@ -119,7 +119,7 @@ public class HealthScore extends Table {
             this.maxLabel = maxLabel;
         }
 
-        public static List<Score> scoresFrom(Cursor cursor) {
+        public static List<Score> listFrom(Cursor cursor) {
             ArrayList<Score> scores = new ArrayList<Score>(cursor.getCount());
 
             if (cursor.moveToFirst()) {

@@ -6,11 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.robwilliamson.db.use.GetHealthScoresQuery;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public final class Utils {
