@@ -1,7 +1,14 @@
 package com.robwilliamson.healthyesther.dialog;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -13,16 +20,52 @@ import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class AddScoreDialog extends AbstractAddNamedDialog {
+public class AddScoreDialog extends AbstractAddNamedDialog {
+    public interface Watcher {
+        void onScoreModified(GetHealthScoresQuery.Score score);
+        void onQueryFailed(AddScoreDialog fragment, Throwable error);
+        void furtherQueries(AddScoreDialog fragment, List<Query> queries);
+    }
+
+    private static final String SCORES = "scores";
+
     private GetHealthScoresQuery.Score mInitialScore = null;
     private HashMap<String, GetHealthScoresQuery.Score> mScores = null;
 
+    public AddScoreDialog() {
+        super();
+    }
+
     @Override
-    protected void onStart() {
-        super.onStart();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null && mScores == null) {
+            mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<GetHealthScoresQuery.Score>() {
+                @Override
+                public GetHealthScoresQuery.Score get(Bundle bundle, String bundleKey) {
+                    return GetHealthScoresQuery.Score.from(bundle, bundleKey);
+                }
+            });
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+
+        getDialog().setTitle(R.string.track_another_score);
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         SeekBar bestValue = getBestValueWidget();
         bestValue.setMax(HealthScore.MAX - 1); // Seek bars are 0-based
@@ -47,6 +90,18 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
             updateUiToMatch(mInitialScore);
             mInitialScore = null;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Utils.Bundles.put(outState, SCORES, mScores, new Utils.Bundles.HashPutter() {
+            @Override
+            public void put(Bundle bundle, String bundleKey, String key) {
+                mScores.get(key).bundle(bundle, bundleKey);
+            }
+        });
     }
 
     @Override
@@ -79,12 +134,24 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
     }
 
     @Override
+    protected void doQuery(Query query) {
+        ArrayList<Query> queries = new ArrayList<Query>(1);
+        queries.add(query);
+        getWatcher().furtherQueries(this, queries);
+    }
+
+    @Override
     protected void newNameEntered(String name) {
         updateValid();
     }
 
     @Override
     protected void queryComplete(Cursor result) {
+    }
+
+    @Override
+    protected void queryFailed(Throwable error) {
+        getWatcher().onQueryFailed(this, error);
     }
 
     @Override
@@ -107,18 +174,19 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
         return R.layout.fragment_health_score_values;
     }
 
-    public AddScoreDialog(Context context) {
-        super(context);
-        initialize();
+    @Override
+    protected void onOk() {
+        GetHealthScoresQuery.Score score = scoreFromUi();
+
+        if (scoreModified(score)) {
+            getWatcher().onScoreModified(score);
+        }
     }
 
-    public AddScoreDialog(Context context, GetHealthScoresQuery.Score score) {
-        super(context);
-        mInitialScore = score;
-    }
+    private boolean scoreModified(GetHealthScoresQuery.Score score) {
+        GetHealthScoresQuery.Score listMatch = mScores.get(score.name);
 
-    private void initialize() {
-        setTitle(R.string.track_another_score);
+        return !score.equals(listMatch);
     }
 
     private void updateUiToMatch(GetHealthScoresQuery.Score score) {
@@ -161,11 +229,11 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
     }
 
     private TextView getBestValueCurrentValue() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.best_value_current_value);
+        return Utils.View.getTypeSafeView(getView(), R.id.best_value_current_value);
     }
 
     private SeekBar getBestValueWidget() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.best_value);
+        return Utils.View.getTypeSafeView(getView(), R.id.best_value);
     }
 
     private boolean getRandomQuery() {
@@ -177,7 +245,7 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
     }
 
     private Switch getRandomQueryWidget() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.random_query);
+        return Utils.View.getTypeSafeView(getView(), R.id.random_query);
     }
 
     private String getMinLabel() {
@@ -189,7 +257,7 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
     }
 
     private EditText getMinLabelWidget() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.min_label);
+        return Utils.View.getTypeSafeView(getView(), R.id.min_label);
     }
 
     private String getMaxLabel() {
@@ -201,6 +269,10 @@ public abstract class AddScoreDialog extends AbstractAddNamedDialog {
     }
 
     private EditText getMaxLabelWidget() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.max_label);
+        return Utils.View.getTypeSafeView(getView(), R.id.max_label);
+    }
+
+    private Watcher getWatcher() {
+        return (Watcher) getActivity();
     }
 }

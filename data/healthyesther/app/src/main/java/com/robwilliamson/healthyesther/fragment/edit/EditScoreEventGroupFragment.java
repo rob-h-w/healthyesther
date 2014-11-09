@@ -29,12 +29,13 @@ import java.util.List;
 
 public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGroupFragment.Watcher> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
+    private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 
     public void removeScore(EditScoreEventFragment fragment) {
         getFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
-    public interface Watcher {
+    public interface Watcher extends AddScoreDialog.Watcher {
         void onFragmentUpdate(EditScoreEventGroupFragment fragment);
         void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);
         void furtherQueries(EditScoreEventGroupFragment fragment, List<Query> queries);
@@ -76,36 +77,9 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         fragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddScoreDialog dialog = new AddScoreDialog(getActivity()) {
-                    @Override
-                    protected void doQuery(final Query query) {
-                        EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<Watcher>() {
-                            @Override
-                            public void call(Watcher watcher) {
-                                ArrayList<Query> queries = new ArrayList<Query>(1);
-                                queries.add(query);
-                                watcher.furtherQueries(EditScoreEventGroupFragment.this, queries);
-                            }
-                        });
-                    }
+                AddScoreDialog dialog = new AddScoreDialog();
 
-                    @Override
-                    protected void queryFailed(final Throwable error) {
-                        EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<Watcher>() {
-                            @Override
-                            public void call(Watcher watcher) {
-                                watcher.onQueryFailed(EditScoreEventGroupFragment.this, error);
-                            }
-                        });
-                    }
-
-                    @Override
-                    protected void onOk() {
-
-                    }
-                };
-
-                dialog.show();
+                dialog.show(getFragmentManager(), ADD_SCORE_FRAGMENT);
             }
         });
     }
@@ -122,6 +96,11 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                     }
 
                     HealthScore.Modification editScoreModification = (HealthScore.Modification) fragment.getModification();
+
+                    if (editScoreModification == null) {
+                        continue;
+                    }
+
                     editScoreModification.modify(db);
 
                     HealthScoreEvent.Modification eventModification = new HealthScoreEvent.Modification(
@@ -181,19 +160,12 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                                 if (fragmentQueries != null) {
                                     mQueries.addAll(Arrays.asList(fragmentQueries));
                                 }
-
                             }
                         }
 
                         @Override
                         public void onQueryComplete(Cursor cursor) {
-                            final FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                            for (EditFragment fragment : mFragments) {
-                                transaction.add(R.id.edit_score_group_layout, fragment);
-                            }
-
-                            transaction.commit();
+                            addFragments(mFragments);
 
                             EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
                                 @Override
@@ -219,6 +191,29 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         }
     }
 
+    private void addFragments(List<EditFragment> fragments) {
+        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        for (EditFragment fragment : fragments) {
+            addFragment(fragment, transaction);
+        }
+
+        transaction.commit();
+    }
+
+    public void addFragment(final EditFragment fragment, final FragmentTransaction transaction){
+        FragmentTransaction t = transaction;
+        if (transaction == null) {
+            t = getFragmentManager().beginTransaction();
+        }
+
+        t.add(R.id.edit_score_group_layout, fragment);
+
+        if (transaction == null) {
+            t.commit();
+        }
+    }
+
     private List<EditScoreEventFragment> getEditScoreEventFragments() {
         final ArrayList<EditScoreEventFragment> list = new ArrayList<EditScoreEventFragment>();
         final FragmentManager manager = getFragmentManager();
@@ -230,6 +225,18 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         }
 
         return list;
+    }
+
+    public EditScoreEventFragment getEditScoreEventFragment(GetHealthScoresQuery.Score score) {
+        List<EditScoreEventFragment> fragments = getEditScoreEventFragments();
+
+        for (EditScoreEventFragment fragment : fragments) {
+            if (fragment.getName().equals(score.name)) {
+                return fragment;
+            }
+        }
+
+        return null;
     }
 
     private AddValueFragment getAddValueFragment() {

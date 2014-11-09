@@ -5,18 +5,23 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
+import com.robwilliamson.db.use.GetHealthScoresQuery;
 
 public class HealthScore extends Table {
     public static class Modification extends com.robwilliamson.db.definition.Modification {
 
-        private String mMaxLabel;
-        private String mMinLabel;
-        private boolean mRandomQuery;
-        private String mName;
-        private int mBestValue;
+        private GetHealthScoresQuery.Score mScore;
 
         public Modification(long rowId) {
             setRowId(rowId);
+        }
+
+        public Modification(GetHealthScoresQuery.Score score) {
+            mScore = score;
+
+            if (score._id != null) {
+                setRowId(score._id);
+            }
         }
 
         public Modification(String name,
@@ -24,18 +29,20 @@ public class HealthScore extends Table {
                             boolean randomQuery,
                             String minLabel,
                             String maxLabel) {
-            mName = name;
-            mBestValue = bestValue;
-            mRandomQuery = randomQuery;
-            mMinLabel = minLabel;
-            mMaxLabel = maxLabel;
+            mScore = new GetHealthScoresQuery.Score(name,
+                    bestValue,
+                    randomQuery,
+                    minLabel,
+                    maxLabel);
         }
 
         @Override
         public void modify(SQLiteDatabase db) {
             if (getRowId() == null) {
                 setRowId(Contract.getInstance().HEALTH_SCORE.insert(
-                        db, mName, mBestValue, mRandomQuery, mMinLabel, mMaxLabel));
+                        db, mScore));
+            } else {
+                Contract.getInstance().HEALTH_SCORE.update(db, mScore);
             }
         }
     }
@@ -88,19 +95,18 @@ public class HealthScore extends Table {
             boolean randomQuery,
             String minLabel,
             String maxLabel) {
-        ContentValues values = new ContentValues();
-        values.put(NAME, name);
-        values.put(BEST_VALUE, bestValue);
-        values.put(RANDOM_QUERY, randomQuery);
+        return insert(db, new GetHealthScoresQuery.Score(name, bestValue, randomQuery, minLabel, maxLabel));
+    }
 
-        if (minLabel != null) {
-            values.put(MIN_LABEL, minLabel);
-        }
+    public long insert(
+            SQLiteDatabase db,
+            GetHealthScoresQuery.Score score) {
+        return insert(db, score.getContentValues());
+    }
 
-        if (maxLabel != null) {
-            values.put(MAX_LABEL, maxLabel);
-        }
+    public void update(SQLiteDatabase db,
+                       GetHealthScoresQuery.Score score) {
 
-        return insert(db, values);
+        update(db, score.getContentValues(), score._id);
     }
 }

@@ -20,17 +20,30 @@ import com.robwilliamson.healthyesther.Utils;
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
 
     private static final String VALUE = "value";
+    private static final String SCORE = "score";
 
     private int mValue;
-    private long mId;
-    private String mName;
-    private int mBestValue;
-    private boolean mRandomQuery;
-    private String mMinLabel;
-    private String mMaxLabel;
+    private GetHealthScoresQuery.Score mScore = new GetHealthScoresQuery.Score();
 
     public String getName() {
-        return mName;
+        return mScore.name;
+    }
+
+    public void setScore(GetHealthScoresQuery.Score score) {
+        mScore = score;
+        updateUi();
+    }
+
+    private void updateUi() {
+        if (getView() == null) {
+            return;
+        }
+
+        getTitle().setText(mScore.name);
+        getMinLabel().setText(mScore.minLabel);
+        getMaxLabel().setText(mScore.maxLabel);
+        getRatingBar().setMax(HealthScore.MAX);
+        getRatingBar().setRating(mValue);
     }
 
     public interface Watcher {
@@ -54,35 +67,9 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     public static EditScoreEventFragment newInstance(GetHealthScoresQuery.Score score) {
-        return newInstance(score._id, score.name, score.bestValue, score.randomQuery, score.minLabel, score.maxLabel);
-    }
-
-    public static EditScoreEventFragment newInstance(
-            long id,
-            String name,
-            int bestValue,
-            boolean randomQuery,
-            String minLabel,
-            String maxLabel) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
-        Bundle args = new Bundle();
-        args.putInt(VALUE, 0);
-        args.putLong(HealthScore._ID, id);
-        args.putString(HealthScore.NAME, name);
-        args.putInt(HealthScore.BEST_VALUE, bestValue);
-        args.putBoolean(HealthScore.RANDOM_QUERY, randomQuery);
-        args.putString(HealthScore.MIN_LABEL, minLabel);
-        args.putString(HealthScore.MAX_LABEL, maxLabel);
-        fragment.setArguments(args);
+        fragment.mScore = score;
         return fragment;
-    }
-
-    public static EditScoreEventFragment newInstance(String name,
-                                                     int bestValue,
-                                                     boolean randomQuery,
-                                                     String minLabel,
-                                                     String maxLabel) {
-        return newInstance(-1, name, bestValue, randomQuery, minLabel, maxLabel);
     }
 
     public EditScoreEventFragment() {
@@ -100,12 +87,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
         if (a != null) {
             mValue = a.getInt(VALUE);
-            mId = a.getLong(HealthScore._ID);
-            mName = a.getString(HealthScore.NAME);
-            mBestValue = a.getInt(HealthScore.BEST_VALUE);
-            mRandomQuery = a.getBoolean(HealthScore.RANDOM_QUERY, false);
-            mMinLabel = a.getString(HealthScore.MIN_LABEL, null);
-            mMaxLabel = a.getString(HealthScore.MAX_LABEL, null);
+            mScore = GetHealthScoresQuery.Score.from(args, SCORE);
         }
     }
 
@@ -148,11 +130,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
             }
         });
 
-        getTitle().setText(mName);
-        getMinLabel().setText(mMinLabel);
-        getMaxLabel().setText(mMaxLabel);
-        getRatingBar().setMax(HealthScore.MAX);
-        getRatingBar().setRating(mValue);
+        updateUi();
 
         getRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -166,22 +144,16 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     public void onSaveInstanceState(Bundle args) {
         super.onSaveInstanceState(args);
         args.putInt(VALUE, getValue());
-        args.putLong(HealthScore._ID, mId);
-        args.putString(HealthScore.NAME, mName);
-        args.putInt(HealthScore.BEST_VALUE, mBestValue);
-        args.putBoolean(HealthScore.RANDOM_QUERY, mRandomQuery);
-        args.putString(HealthScore.MIN_LABEL, mMinLabel);
-        args.putString(HealthScore.MAX_LABEL, mMaxLabel);
+        mScore.bundle(args, SCORE);
     }
 
     @Override
     public Modification getModification() {
-        if (mId == -1) {
-            return new HealthScore.Modification(
-                    mName, mBestValue, mRandomQuery, mMinLabel, mMaxLabel);
+        if (getModified()) {
+            return new HealthScore.Modification(mScore);
         }
 
-        return new HealthScore.Modification(mId);
+        return null;
     }
 
     @Override

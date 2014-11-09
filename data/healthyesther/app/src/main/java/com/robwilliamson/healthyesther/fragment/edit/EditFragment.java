@@ -7,6 +7,15 @@ import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
 
 public abstract class EditFragment<T> extends AbstractQueryFragment {
     private T mWatcher = null;
+    private boolean mModified;
+
+    public boolean getModified() {
+        return mModified;
+    }
+
+    public void setModified(boolean modified) {
+        mModified = modified;
+    }
 
     protected interface WatcherCaller<T> {
         public void call(T watcher);

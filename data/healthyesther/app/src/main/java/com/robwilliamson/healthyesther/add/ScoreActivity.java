@@ -6,11 +6,13 @@ import android.util.Pair;
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventModification;
 import com.robwilliamson.db.definition.HealthScoreEvent;
+import com.robwilliamson.db.use.GetHealthScoresQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.dialog.AddScoreDialog;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment;
@@ -116,11 +118,37 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
 
     @Override
     public void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error) {
-
+        // TODO Report the error.
     }
 
     @Override
     public void furtherQueries(EditScoreEventGroupFragment fragment, List<Query> queries) {
+        doQueries(queries);
+    }
+
+    @Override
+    public void onScoreModified(GetHealthScoresQuery.Score score) {
+        Settings.INSTANCE.showScore(score);
+
+        EditScoreEventFragment fragment = getScoreGroupFragment().getEditScoreEventFragment(score);
+
+        if (fragment == null) {
+            fragment = EditScoreEventFragment.newInstance(score);
+            getScoreGroupFragment().addFragment(fragment, null);
+        } else {
+            fragment.setScore(score);
+        }
+
+        fragment.setModified(true);
+    }
+
+    @Override
+    public void onQueryFailed(AddScoreDialog fragment, Throwable error) {
+        // TODO Report the error.
+    }
+
+    @Override
+    public void furtherQueries(AddScoreDialog fragment, List<Query> queries) {
         doQueries(queries);
     }
 }

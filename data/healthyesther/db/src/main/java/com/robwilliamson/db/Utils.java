@@ -112,6 +112,18 @@ public final class Utils {
         public static boolean nullOrEmpty(String string) {
             return string == null || string.isEmpty();
         }
+
+        public static boolean equals(String first, String second) {
+            if (first == second) {
+                return true;
+            }
+
+            if (first == null || second == null) {
+                return false;
+            }
+
+            return first.equals(second);
+        }
     }
 
     public static class Db {

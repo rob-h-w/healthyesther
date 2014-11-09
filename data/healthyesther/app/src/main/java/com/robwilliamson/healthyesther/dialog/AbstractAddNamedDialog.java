@@ -1,12 +1,14 @@
 package com.robwilliamson.healthyesther.dialog;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -21,26 +23,28 @@ import com.robwilliamson.healthyesther.Utils;
 import java.util.HashMap;
 import java.util.Set;
 
-public abstract class AbstractAddNamedDialog extends Dialog {
+public abstract class AbstractAddNamedDialog extends DialogFragment {
+
+    private static final String SUGGESTIONS = "suggestions";
     private HashMap<String, Long> mSuggestions = null;
 
-    public AbstractAddNamedDialog(Context context) {
-        super(context);
-        initialize();
-    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-    public AbstractAddNamedDialog(Context context, int theme) {
-        super(context, theme);
-        initialize();
-    }
-
-    protected AbstractAddNamedDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-        initialize();
+        if (savedInstanceState != null && mSuggestions == null) {
+            mSuggestions = Utils.Bundles.get(savedInstanceState, SUGGESTIONS, new Utils.Bundles.HashGetter<Long>() {
+                @Override
+                public Long get(Bundle bundle, String bundleKey) {
+                    long value = bundle.getLong(bundleKey);
+                    return value == 0L ? null : value;
+                }
+            });
+        }
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
@@ -48,17 +52,20 @@ public abstract class AbstractAddNamedDialog extends Dialog {
         }
     }
 
-    /**
-     * Called when the dialog is starting.
-     */
     @Override
-    protected void onStart() {
-        super.onStart();
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_add_value, container, false);
+        return view;
+    }
 
-        getNameTitle().setText(getContext().getText(valueNameId()));
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getNameTitle().setText(getView().getContext().getText(valueNameId()));
 
         AutoCompleteTextView name = getNameTextView();
-        name.setCompletionHint(getContext().getText(valueCompletionHintId()));
+        name.setCompletionHint(getView().getContext().getText(valueCompletionHintId()));
         name.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -77,7 +84,7 @@ public abstract class AbstractAddNamedDialog extends Dialog {
         name.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = (String)parent.getAdapter().getItem(position);
+                String suggestion = (String) parent.getAdapter().getItem(position);
                 AbstractAddNamedDialog.this.suggestionSelected(suggestion, mSuggestions.get(suggestion));
             }
         });
@@ -90,10 +97,25 @@ public abstract class AbstractAddNamedDialog extends Dialog {
         });
 
         if (contentLayoutId() != null) {
-            View.inflate(getContext(), contentLayoutId(), getContentArea());
+            View.inflate(getView().getContext(), contentLayoutId(), getContentArea());
         }
 
         updateSuggestionAdapter();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Utils.Bundles.put(outState, SUGGESTIONS, mSuggestions, new Utils.Bundles.HashPutter() {
+            @Override
+            public void put(Bundle bundle, String bundleKey, String key) {
+                Long value = mSuggestions.get(key);
+                if (value != null) {
+                    bundle.putLong(bundleKey, value);
+                }
+            }
+        });
     }
 
     protected String getName() {
@@ -142,23 +164,19 @@ public abstract class AbstractAddNamedDialog extends Dialog {
     protected abstract Integer contentLayoutId();
 
     protected LinearLayout getContentArea() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.add_value_content_area);
-    }
-
-    private void initialize() {
-        setContentView(R.layout.dialog_add_value);
+        return Utils.View.getTypeSafeView(getView(), R.id.add_value_content_area);
     }
 
     private TextView getNameTitle() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.name_title);
+        return Utils.View.getTypeSafeView(getView(), R.id.name_title);
     }
 
     private AutoCompleteTextView getNameTextView() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.autocomplete_name);
+        return Utils.View.getTypeSafeView(getView(), R.id.autocomplete_name);
     }
 
     private Button getOkButton() {
-        return Utils.View.getTypeSafeView(getWindow().getDecorView(), R.id.ok_button);
+        return Utils.View.getTypeSafeView(getView(), R.id.ok_button);
     }
 
     private void updateSuggestionAdapter() {
@@ -174,7 +192,7 @@ public abstract class AbstractAddNamedDialog extends Dialog {
         String [] suggestions = new String[set.size()];
         set.toArray(suggestions);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getView().getContext(),
                 android.R.layout.simple_dropdown_item_1line,
                 suggestions);
 

@@ -3,9 +3,10 @@
     android:orientation="vertical"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    style="@android:style/Theme.Dialog">
+    style="@android:style/Theme.DeviceDefault.Dialog.NoActionBar">
 
     <ScrollView
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="vertical">
@@ -22,6 +23,7 @@
     </ScrollView>
 
     <Button
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ok_button"

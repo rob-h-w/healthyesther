@@ -1,9 +1,17 @@
 package com.robwilliamson.healthyesther;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.robwilliamson.db.use.GetHealthScoresQuery;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public final class Utils {
     public static String format(Throwable e) {
@@ -76,6 +84,51 @@ public final class Utils {
             if (App.getUiThreadId() != currentThread.getId()) {
                 throw new NonUiThreadException();
             }
+        }
+    }
+
+    public static final class Bundles {
+        public interface HashPutter {
+            public void put(Bundle bundle, String bundleKey, String key);
+        }
+
+        public interface HashGetter <T> {
+            public T get(Bundle bundle, String bundleKey);
+        }
+
+        public static <V> void put(Bundle bundle, String bundleKey, HashMap<String, V> map, HashPutter putter) {
+            String [] keys = new String [map.keySet().size()];
+            map.keySet().toArray(keys);
+
+            bundle.putStringArray(keysName(bundleKey), keys);
+
+            for (String k : keys) {
+                putter.put(bundle, valueName(bundleKey, k), k);
+            }
+        }
+
+        public static <V> HashMap<String, V> get(Bundle bundle, String bundleKey, HashGetter<V> getter) {
+            Set<String> keySet = bundle.keySet();
+            if (!keySet.contains(keysName(bundleKey))) {
+                return null;
+            }
+
+            String [] keys = bundle.getStringArray(keysName(bundleKey));
+            HashMap<String, V> map = new HashMap<String, V>(keys.length);
+
+            for (String k : keys) {
+                map.put(k, getter.get(bundle, valueName(bundleKey, k)));
+            }
+
+            return map;
+        }
+
+        private static String keysName(String key) {
+            return key + "Keys";
+        }
+
+        private static String valueName(String bundleKey, String key) {
+            return bundleKey + "Value_" + key;
         }
     }
 }

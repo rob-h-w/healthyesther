@@ -3,6 +3,8 @@ package com.robwilliamson.healthyesther;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.robwilliamson.db.use.GetHealthScoresQuery;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +17,27 @@ public enum Settings {
 
     private Settings() {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(App.getInstance().getApplicationContext());
+    }
+
+    public void hideScore(GetHealthScoresQuery.Score score) {
+        if (score == null) {
+            return;
+        }
+
+        Set<String> hiddenScores = getDefaultExcludedEditScores();
+        hiddenScores.add(score.name);
+        setDefaultEditScoreExclusionList(hiddenScores);
+    }
+
+    public void showScore(GetHealthScoresQuery.Score score) {
+        if (score == null) {
+            return;
+        }
+
+        Set<String> hiddenScores = getDefaultExcludedEditScores();
+        if (hiddenScores.remove(score.name)) {
+            setDefaultEditScoreExclusionList(hiddenScores);
+        }
     }
 
     public Set<String> getDefaultExcludedEditScores() {
