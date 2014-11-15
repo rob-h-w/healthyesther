@@ -28,6 +28,16 @@ public final class Utils {
 
     public static class StringMissingException extends RuntimeException {}
 
+    public static void nonnull(Object... values) {
+        for (int i = 0; i < values.length; i++) {
+            Object value = values[i];
+
+            if (value == null){
+                throw new NullPointerException("Value at index " + i + " was null.");
+            }
+        }
+    }
+
     public static String join(Object[] list, String separator) {
         return join(separator, true, list);
     }
