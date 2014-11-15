@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.db.Contract;
+import com.robwilliamson.db.Utils;
 
 public class HealthScoreEvent extends Table {
 
@@ -16,6 +17,7 @@ public class HealthScoreEvent extends Table {
                 HealthScore.Modification score,
                 Event.Modification event,
                 int value) {
+            Utils.nonnull(score, event);
             mScore = score;
             mEvent = event;
             mValue = value;
