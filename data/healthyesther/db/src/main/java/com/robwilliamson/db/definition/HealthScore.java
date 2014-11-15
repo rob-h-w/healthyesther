@@ -46,7 +46,9 @@ public class HealthScore extends Table {
             if (getRowId() == null) {
                 setRowId(Contract.getInstance().HEALTH_SCORE.insert(
                         db, mScore));
+                mScore._id = getRowId();
             } else {
+                mScore._id = getRowId();
                 Contract.getInstance().HEALTH_SCORE.update(db, mScore);
             }
         }
