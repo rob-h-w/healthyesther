@@ -56,15 +56,6 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         return new Query[0];
     }
 
-    public static EditScoreEventFragment newInstance(long id){
-        EditScoreEventFragment fragment = new EditScoreEventFragment();
-        Bundle args = new Bundle();
-        args.putInt(VALUE, 0);
-        args.putLong(HealthScore._ID, id);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     public static EditScoreEventFragment newInstance(HealthScore.Score score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
         fragment.mScore = score;
