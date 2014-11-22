@@ -47,5 +47,6 @@
     <string name="minimum_value_name_hint">eg. "sad"</string>
     <string name="maximum_value_name">Maximum value name</string>
     <string name="maximum_value_name_hint">eg. "happy"</string>
+    <string name="edit">Edit</string>
 
 </resources>
