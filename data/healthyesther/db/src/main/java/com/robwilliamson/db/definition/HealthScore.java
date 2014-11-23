@@ -16,6 +16,7 @@ public class HealthScore extends Table {
     public static class Modification extends com.robwilliamson.db.definition.Modification {
 
         private Score mScore;
+        private boolean mEnabled = false;
 
         public Modification(long rowId) {
             setRowId(rowId);
@@ -27,6 +28,11 @@ public class HealthScore extends Table {
             if (score._id != null) {
                 setRowId(score._id);
             }
+        }
+
+        public Modification(Score score, boolean enabled) {
+            this(score);
+            enable(enabled);
         }
 
         public Modification(String name,
@@ -41,6 +47,10 @@ public class HealthScore extends Table {
                     maxLabel);
         }
 
+        public void enable(boolean enabled) {
+            mEnabled = enabled;
+        }
+
         @Override
         public void modify(SQLiteDatabase db) {
             if (getRowId() == null) {
@@ -48,6 +58,10 @@ public class HealthScore extends Table {
                         db, mScore));
                 mScore._id = getRowId();
             } else {
+                if (!mEnabled) {
+                    return;
+                }
+
                 mScore._id = getRowId();
                 Contract.getInstance().HEALTH_SCORE.update(db, mScore);
             }

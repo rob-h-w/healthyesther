@@ -97,10 +97,6 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
 
                     HealthScore.Modification editScoreModification = (HealthScore.Modification) fragment.getModification();
 
-                    if (editScoreModification == null) {
-                        continue;
-                    }
-
                     editScoreModification.modify(db);
 
                     HealthScoreEvent.Modification eventModification = new HealthScoreEvent.Modification(

@@ -157,11 +157,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
     @Override
     public Modification getModification() {
-        if (getModified()) {
-            return new HealthScore.Modification(mScore);
-        }
-
-        return null;
+        return new HealthScore.Modification(mScore, getModified());
     }
 
     @Override
