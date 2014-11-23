@@ -29,7 +29,7 @@ public abstract class Table {
     }
 
     protected int update(SQLiteDatabase db, ContentValues values, String idName, long id, int minRows, int maxRows) {
-        int rows = db.update(getName(), values, "? = ?", new String[] { idName, String.valueOf(id) });
+        int rows = db.update(getName(), values, idName + " = " + String.valueOf(id), null);
 
         if (rows < minRows) {
             throw new SQLiteException("Expected update to affect at least " + minRows + " rows, but it actually affected " + rows + " rows.");

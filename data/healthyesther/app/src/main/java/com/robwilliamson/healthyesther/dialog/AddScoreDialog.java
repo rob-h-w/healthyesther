@@ -33,6 +33,12 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
     private HealthScore.Score mInitialScore = null;
     private HashMap<String, HealthScore.Score> mScores = null;
 
+    public static AddScoreDialog createDialog(HealthScore.Score score) {
+        AddScoreDialog dialog = new AddScoreDialog();
+        dialog.mInitialScore = score;
+        return dialog;
+    }
+
     public AddScoreDialog() {
         super();
     }
@@ -85,7 +91,6 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
 
         if (mInitialScore != null) {
             updateUiToMatch(mInitialScore);
-            mInitialScore = null;
         }
     }
 
@@ -206,6 +211,11 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
         score.randomQuery = getRandomQuery();
         score.minLabel = getMinLabel();
         score.maxLabel = getMaxLabel();
+
+        if (mInitialScore != null && mInitialScore._id != 0) {
+            score._id = mInitialScore._id;
+        }
+
         return score;
     }
 

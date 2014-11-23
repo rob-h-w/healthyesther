@@ -1,11 +1,14 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -15,14 +18,22 @@ import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.dialog.AddScoreDialog;
 
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
+    public interface Watcher {
+        void onFragmentUpdate(EditScoreEventFragment fragment);
+        void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
+        void onFragmentRemoveRequest(EditScoreEventFragment fragment);
+    }
 
     private static final String VALUE = "value";
     private static final String SCORE = "score";
+    private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
 
     private int mValue;
     private HealthScore.Score mScore = new HealthScore.Score();
+    private ContextMenu mContextMenu;
 
     public String getName() {
         return mScore.name;
@@ -31,6 +42,10 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     public void setScore(HealthScore.Score score) {
         mScore = score;
         updateUi();
+    }
+
+    public HealthScore.Score getScore() {
+        return mScore;
     }
 
     private void updateUi() {
@@ -43,12 +58,6 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         getMaxLabel().setText(mScore.maxLabel);
         getRatingBar().setMax(HealthScore.MAX);
         getRatingBar().setRating(mValue);
-    }
-
-    public interface Watcher {
-        void onFragmentUpdate(EditScoreEventFragment fragment);
-        void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
-        void onFragmentRemoveRequest(EditScoreEventFragment fragment);
     }
 
     @Override
@@ -67,6 +76,34 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (mContextMenu == null || mContextMenu.findItem(item.getItemId()) != item) {
+            mContextMenu = null;
+            return super.onContextItemSelected(item);
+        }
+
+        mContextMenu = null;
+
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                AddScoreDialog dialog = AddScoreDialog.createDialog(mScore);
+                dialog.show(getFragmentManager(), EDIT_SCORE_FRAGMENT);
+                return true;
+            case R.id.action_hide:
+                callWatcher(new WatcherCaller<Watcher>() {
+                    @Override
+                    public void call(Watcher watcher) {
+                        watcher.onFragmentRemoveRequest(EditScoreEventFragment.this);
+                    }
+                });
+
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
     public void onCreate(Bundle args) {
         super.onCreate(args);
         Bundle a = args;
@@ -82,6 +119,15 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.score, menu);
+        mContextMenu = menu; // Remember the menu we created to check if we should handle the
+                             // callback.
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_score_event, container, false);
@@ -90,35 +136,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     @Override
     public void onResume() {
         super.onResume();
-
-        getLayout().setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(R.string.hide_score);
-                builder.setPositiveButton(R.string.hide, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        EditScoreEventFragment.this.callWatcher(new WatcherCaller<Watcher>() {
-                            @Override
-                            public void call(Watcher watcher) {
-                                watcher.onFragmentRemoveRequest(EditScoreEventFragment.this);
-                            }
-                        });
-                    }
-                });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                builder.create().show();
-                return true;
-            }
-        });
+        registerForContextMenu(getView());
 
         updateUi();
 
