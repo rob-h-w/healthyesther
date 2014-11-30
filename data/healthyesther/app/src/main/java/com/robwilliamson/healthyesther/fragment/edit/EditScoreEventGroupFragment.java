@@ -20,7 +20,7 @@ import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.dialog.AddScoreDialog;
+import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         getFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
-    public interface Watcher extends AddScoreDialog.Watcher {
+    public interface Watcher extends EditScoreDialog.Watcher {
         void onFragmentUpdate(EditScoreEventGroupFragment fragment);
         void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);
         void furtherQueries(EditScoreEventGroupFragment fragment, List<Query> queries);
@@ -77,7 +77,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         fragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddScoreDialog dialog = new AddScoreDialog();
+                EditScoreDialog dialog = new EditScoreDialog();
 
                 dialog.show(getFragmentManager(), ADD_SCORE_FRAGMENT);
             }

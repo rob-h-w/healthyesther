@@ -1,14 +1,12 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -18,7 +16,7 @@ import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.dialog.AddScoreDialog;
+import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
 
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
     public interface Watcher {
@@ -86,7 +84,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
         switch (item.getItemId()) {
             case R.id.action_edit:
-                AddScoreDialog dialog = AddScoreDialog.createDialog(mScore);
+                EditScoreDialog dialog = EditScoreDialog.createDialog(mScore);
                 dialog.show(getFragmentManager(), EDIT_SCORE_FRAGMENT);
                 return true;
             case R.id.action_hide:

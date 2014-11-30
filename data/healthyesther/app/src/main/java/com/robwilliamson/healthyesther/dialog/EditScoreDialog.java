@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AddScoreDialog extends AbstractAddNamedDialog {
+public class EditScoreDialog extends AbstractAddNamedDialog {
     public interface Watcher {
         void onScoreModified(HealthScore.Score score);
-        void onQueryFailed(AddScoreDialog fragment, Throwable error);
-        void furtherQueries(AddScoreDialog fragment, List<Query> queries);
+        void onQueryFailed(EditScoreDialog fragment, Throwable error);
+        void furtherQueries(EditScoreDialog fragment, List<Query> queries);
     }
 
     private static final String SCORES = "scores";
@@ -33,13 +33,13 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
     private HealthScore.Score mInitialScore = null;
     private HashMap<String, HealthScore.Score> mScores = null;
 
-    public static AddScoreDialog createDialog(HealthScore.Score score) {
-        AddScoreDialog dialog = new AddScoreDialog();
+    public static EditScoreDialog createDialog(HealthScore.Score score) {
+        EditScoreDialog dialog = new EditScoreDialog();
         dialog.mInitialScore = score;
         return dialog;
     }
 
-    public AddScoreDialog() {
+    public EditScoreDialog() {
         super();
     }
 
@@ -125,12 +125,12 @@ public class AddScoreDialog extends AbstractAddNamedDialog {
             @Override
             public void onQueryComplete(final Cursor cursor) {
                 setSuggestions(mSuggestions);
-                AddScoreDialog.this.queryComplete(cursor);
+                EditScoreDialog.this.queryComplete(cursor);
             }
 
             @Override
             public void onQueryFailed(final Throwable error) {
-                AddScoreDialog.this.queryFailed(error);
+                EditScoreDialog.this.queryFailed(error);
             }
         };
     }
