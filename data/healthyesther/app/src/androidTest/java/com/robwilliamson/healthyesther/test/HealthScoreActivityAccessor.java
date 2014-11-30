@@ -1,6 +1,57 @@
 package com.robwilliamson.healthyesther.test;
 
+import android.view.View;
+
+import com.robwilliamson.healthyesther.R;
+
+import org.hamcrest.Matcher;
+
+import static com.google.android.apps.common.testing.ui.espresso.Espresso.onView;
+import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.click;
+import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.longClick;
+import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
+import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isDisplayed;
+import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withChild;
+import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withId;
+import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withText;
+import static com.robwilliamson.healthyesther.test.Espresso.both;
+
 public class HealthScoreActivityAccessor {
+    public static Matcher<View> trackAnotherScoreButton() {
+        return withId(R.id.add_value_layout);
+    }
+
+    public static Matcher<View> scoreTitle(String title) {
+        return both(withId(R.id.score_name_title), withText(title));
+    }
+
+    public static Matcher<View> score(String title, String min, String max) {
+        return both(
+                withId(R.id.edit_score_layout),
+                both(
+                        withChild(scoreTitle(title)),
+                        withChild(both(
+                                withChild(both(
+                                        withId(R.id.score_minimum_label),
+                                        withText(min))),
+                                withChild(both(
+                                        withId(R.id.score_maximum_label),
+                                        withText(max)))))));
+    }
+
+    public static void editScore(String title, String min, String max) {
+        onView(HealthScoreActivityAccessor.scoreTitle(title)).perform(longClick());
+        onView(withText("Edit")).perform(click());
+    }
+
     public static void checkUnmodifiedContent() {
+        onView(trackAnotherScoreButton()).check(matches(isDisplayed()));
+        checkUnmodifiedScore("Happiness", "Sad", "Happy");
+        checkUnmodifiedScore("Energy", "Tired", "Energetic");
+        checkUnmodifiedScore("Drowsiness", "Sleepy", "Awake");
+    }
+
+    private static void checkUnmodifiedScore(String title, String min, String max) {
+        onView(score(title, min, max)).check(matches(isDisplayed()));
     }
 }
