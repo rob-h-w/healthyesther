@@ -9,12 +9,45 @@ import com.google.android.apps.common.testing.testrunner.GoogleInstrumentation;
 import com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner;
 import com.google.android.apps.common.testing.testrunner.Stage;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class Espresso {
+    static class Both<T> extends BaseMatcher<T> {
+        private final Matcher<T> mLeft;
+        private final Matcher<T> mRight;
+
+        public Both(Matcher<T> left, Matcher<T> right) {
+            mLeft = left;
+            mRight = right;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            try {
+                return mLeft.matches(o) && mRight.matches(o);
+            } catch (ClassCastException e) {
+                return false;
+            }
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendDescriptionOf(mLeft);
+            description.appendDescriptionOf(mRight);
+        }
+    }
+
+    public static <T> Matcher<T> both(Matcher<T> left, Matcher<T> right) {
+        return new Both<T>(left, right);
+    }
+
     public static Activity waitForActivityToResume(InstrumentationTestCase testCase) {
         Collection<Activity> resumed = getResumed(testCase);
         while(resumed.isEmpty()) {
