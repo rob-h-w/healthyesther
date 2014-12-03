@@ -3,6 +3,8 @@ package com.robwilliamson.healthyesther.dialog;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
+import com.robwilliamson.db.HealthDbHelper;
+import com.robwilliamson.db.Utils;
 import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.add.ScoreActivity;
 import com.robwilliamson.healthyesther.test.EditScoreDialogAccessor;
@@ -17,6 +19,8 @@ public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreA
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
 
         getActivity();
     }

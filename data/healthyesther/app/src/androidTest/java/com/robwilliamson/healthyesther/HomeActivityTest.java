@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
+import com.robwilliamson.db.*;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
@@ -18,6 +19,10 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         super.setUp();
 
         HomeActivityAccessor.showNavigationDrawer(false, getInstrumentation().getTargetContext());
+
+        com.robwilliamson.db.Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
+                getInstrumentation().getTargetContext()).getWritableDatabase());
+
         getActivity();
     }
 
