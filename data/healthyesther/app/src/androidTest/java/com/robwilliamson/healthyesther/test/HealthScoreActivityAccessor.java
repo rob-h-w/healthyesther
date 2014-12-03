@@ -39,9 +39,18 @@ public class HealthScoreActivityAccessor {
                                         withText(max)))))));
     }
 
-    public static void editScore(String title, String min, String max) {
+    public static Matcher<View> editScoreGroupLayout() {
+        return withId(R.id.edit_score_group_layout);
+    }
+
+    public static void editScore(String title) {
         onView(HealthScoreActivityAccessor.scoreTitle(title)).perform(longClick());
         onView(withText("Edit")).perform(click());
+    }
+
+    public static void hideScore(String title) {
+        onView(HealthScoreActivityAccessor.scoreTitle(title)).perform(longClick());
+        onView(withText("Hide")).perform(click());
     }
 
     public static void checkUnmodifiedContent() {

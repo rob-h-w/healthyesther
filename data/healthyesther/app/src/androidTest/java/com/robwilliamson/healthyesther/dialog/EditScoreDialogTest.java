@@ -26,7 +26,7 @@ public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreA
     }
 
     public void testOpenExisting() {
-        HealthScoreActivityAccessor.editScore("Happiness", "Sad", "Happy");
+        HealthScoreActivityAccessor.editScore("Happiness");
         final HealthScore.Score score = new HealthScore.Score("Happiness", 5, true, "Sad", "Happy");
         Orientation.check(new Orientation.Subject() {
             @Override
