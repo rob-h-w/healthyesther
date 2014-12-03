@@ -47,17 +47,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         Contract.getInstance().upgrade(sqLiteDatabase, from, to);
     }
 
-    public void cleanOldData(SQLiteDatabase db) {
-        try {
-            db.beginTransaction();
-            Contract contract = Contract.getInstance();
-            contract.delete(db);
-            contract.create(db);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-    }
     public void backupToDropbox() throws IOException {
         // Ensure the db isn't in use
         close();

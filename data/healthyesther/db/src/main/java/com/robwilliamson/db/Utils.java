@@ -144,117 +144,141 @@ public final class Utils {
             private static Pair<Integer, Integer> lunch = new Pair<Integer, Integer>(12, 15);
             private static Pair<Integer, Integer> dinner = new Pair<Integer, Integer>(16, 22);
 
-            public static void insertFakeData(SQLiteDatabase db) {
-                Contract c = Contract.getInstance();
+            public static void transactionWithDb(final SQLiteDatabase db, Runnable runnable) {
+                try {
+                    db.beginTransaction();
+                    runnable.run();
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
 
-                long[] breakfast = new long[] {
-                        c.MEAL.insert(db, "Toppas"),
-                        c.MEAL.insert(db, "Toast"),
-                        c.MEAL.insert(db, "Yoghurt"),
-                        c.MEAL.insert(db, "Melon")
-                };
+            public static void cleanOldData(final SQLiteDatabase db) {
+                transactionWithDb(db, new Runnable() {
+                    @Override
+                    public void run() {
+                        Contract contract = Contract.getInstance();
+                        contract.delete(db);
+                        contract.create(db);
+                    }
+                });
+            }
 
-                long[] lunch = new long[] {
-                        c.MEAL.insert(db, "Sandwiches"),
-                        c.MEAL.insert(db, "Soup")
-                };
+            public static void insertFakeData(final SQLiteDatabase db) {
+                transactionWithDb(db, new Runnable() {
+                    @Override
+                    public void run() {
+                        Contract c = Contract.getInstance();
 
-                long[] dinner = new long[] {
-                        c.MEAL.insert(db, "Coq au vin"),
-                        c.MEAL.insert(db, "Spaghetti bolognese"),
-                        c.MEAL.insert(db, "Beef and prune casserole"),
-                        c.MEAL.insert(db, "Frauen pizza"),
-                        c.MEAL.insert(db, "Chester Burger")
-                };
+                        long[] breakfast = new long[] {
+                                c.MEAL.insert(db, "Toppas"),
+                                c.MEAL.insert(db, "Toast"),
+                                c.MEAL.insert(db, "Yoghurt"),
+                                c.MEAL.insert(db, "Melon")
+                        };
 
-                long[] medication = new long[] {
-                        c.MEDICATION.insert(db, "Paracetamol"),
-                        c.MEDICATION.insert(db, "Ibuprofen"),
-                        c.MEDICATION.insert(db, "ACC Akut"),
-                        c.MEDICATION.insert(db, "Fluoxetine")
-                };
+                        long[] lunch = new long[] {
+                                c.MEAL.insert(db, "Sandwiches"),
+                                c.MEAL.insert(db, "Soup")
+                        };
 
-                long dailyMedicationId = medication[3];
+                        long[] dinner = new long[] {
+                                c.MEAL.insert(db, "Coq au vin"),
+                                c.MEAL.insert(db, "Spaghetti bolognese"),
+                                c.MEAL.insert(db, "Beef and prune casserole"),
+                                c.MEAL.insert(db, "Frauen pizza"),
+                                c.MEAL.insert(db, "Chester Burger"),
+                                c.MEAL.insert(db, "Männer pizza")
+                        };
 
-                Set<Integer> thirtyOneDayMonths = new HashSet<Integer>();
-                thirtyOneDayMonths.addAll(Arrays.asList(new Integer[] {
-                        1,
-                        3,
-                        5,
-                        7,
-                        8,
-                        10,
-                        12
-                }));
-                Set<Integer> thirtyDayMonths = new HashSet<Integer>();
-                thirtyDayMonths.addAll(Arrays.asList(new Integer[]{
-                        4,
-                        6,
-                        9,
-                        11
-                }));
+                        long[] medication = new long[] {
+                                c.MEDICATION.insert(db, "Paracetamol"),
+                                c.MEDICATION.insert(db, "Ibuprofen"),
+                                c.MEDICATION.insert(db, "ACC Akut"),
+                                c.MEDICATION.insert(db, "Fluoxetine"),
+                                c.MEDICATION.insert(db, "Citalopram")
+                        };
 
-                for (int year = 2013; year <= 2014; year++) {
-                    for (int month = 1; month <= 12; month++) {
-                        final int daysInMonth = thirtyDayMonths.contains(month) ? 30 :
-                                (thirtyOneDayMonths.contains(month) ? 31 : 28);
-                        for (int day = 1; day <= daysInMonth; day++) {
-                            boolean hadDailyMedication = false;
-                            boolean hadBreakfast = false;
-                            boolean hadLunch = false;
-                            boolean hadDinner = false;
-                            for (int hour = 0; hour < 24; hour++) {
-                                pseudoRandom = pseudoRandom + 31*hour*day*month*year;
-                                pseudoRandom |= pseudoRandom << 17;
-                                pseudoRandom |= pseudoRandom >> 23;
-                                pseudoRandom %= pseudoRandomMax;
+                        long dailyMedicationId = medication[3];
 
-                                if (!hadDailyMedication && haveDailyMedication(hour)) {
-                                    DateTime t = DateTime.now().withDate(year, month, day)
-                                            .withTime(hour, minute(), second(), 0);
-                                    long eventId = c.EVENT.insert(db, time(
-                                            year, month, day, hour), 2, "Daily medication");
-                                    c.MEDICATION_EVENT.insert(db, dailyMedicationId, eventId);
-                                    hadDailyMedication = true;
-                                }
+                        Set<Integer> thirtyOneDayMonths = new HashSet<Integer>();
+                        thirtyOneDayMonths.addAll(Arrays.asList(1,
+                                3,
+                                5,
+                                7,
+                                8,
+                                10,
+                                12));
+                        Set<Integer> thirtyDayMonths = new HashSet<Integer>();
+                        thirtyDayMonths.addAll(Arrays.asList(4,
+                                6,
+                                9,
+                                11));
 
-                                if (!hadBreakfast && haveBreakfast(hour)) {
-                                    insertMeal(db,
-                                            year,
-                                            month,
-                                            day,
-                                            hour,
-                                            "Breakfast",
-                                            randomId(breakfast));
-                                    hadBreakfast = true;
-                                }
+                        for (int year = 2013; year <= 2014; year++) {
+                            for (int month = 1; month <= 12; month++) {
+                                final int daysInMonth = thirtyDayMonths.contains(month) ? 30 :
+                                        (thirtyOneDayMonths.contains(month) ? 31 : 28);
+                                for (int day = 1; day <= daysInMonth; day++) {
+                                    boolean hadDailyMedication = false;
+                                    boolean hadBreakfast = false;
+                                    boolean hadLunch = false;
+                                    boolean hadDinner = false;
+                                    for (int hour = 0; hour < 24; hour++) {
+                                        pseudoRandom = pseudoRandom + 31*hour*day*month*year;
+                                        pseudoRandom |= pseudoRandom << 17;
+                                        pseudoRandom |= pseudoRandom >> 23;
+                                        pseudoRandom %= pseudoRandomMax;
 
-                                if (!hadLunch && haveLunch(hour)) {
-                                    insertMeal(db,
-                                            year, month, day, hour,
-                                            "Lunch",
-                                            randomId(lunch));
-                                    hadLunch = true;
-                                }
+                                        if (!hadDailyMedication && haveDailyMedication(hour)) {
+                                            DateTime t = DateTime.now().withDate(year, month, day)
+                                                    .withTime(hour, minute(), second(), 0);
+                                            long eventId = c.EVENT.insert(db, time(
+                                                    year, month, day, hour), 2, "Daily medication");
+                                            c.MEDICATION_EVENT.insert(db, dailyMedicationId, eventId);
+                                            hadDailyMedication = true;
+                                        }
 
-                                if (!hadDinner && haveDinner(hour)) {
-                                    insertMeal(db,
-                                            year, month, day, hour,
-                                            "Dinner",
-                                            randomId(dinner));
-                                    hadDinner = true;
-                                }
+                                        if (!hadBreakfast && haveBreakfast(hour)) {
+                                            insertMeal(db,
+                                                    year,
+                                                    month,
+                                                    day,
+                                                    hour,
+                                                    "Breakfast",
+                                                    randomId(breakfast));
+                                            hadBreakfast = true;
+                                        }
 
-                                while (inRange(rand(), randomMedicationRange)) {
-                                    insertMedication(db,
-                                            year, month, day, hour,
-                                            "Medication",
-                                            randomId(medication));
+                                        if (!hadLunch && haveLunch(hour)) {
+                                            insertMeal(db,
+                                                    year, month, day, hour,
+                                                    "Lunch",
+                                                    randomId(lunch));
+                                            hadLunch = true;
+                                        }
+
+                                        if (!hadDinner && haveDinner(hour)) {
+                                            insertMeal(db,
+                                                    year, month, day, hour,
+                                                    "Dinner",
+                                                    randomId(dinner));
+                                            hadDinner = true;
+                                        }
+
+                                        while (inRange(rand(), randomMedicationRange)) {
+                                            insertMedication(db,
+                                                    year, month, day, hour,
+                                                    "Medication",
+                                                    randomId(medication));
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                });
             }
 
             private static long randomId(long[] ids) {
