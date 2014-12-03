@@ -4,7 +4,7 @@ import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.robwilliamson.db.*;
+import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.Utils;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
@@ -20,7 +20,6 @@ import static com.google.android.apps.common.testing.ui.espresso.action.ViewActi
 import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
 import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isClickable;
 import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isDisplayed;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isEnabled;
 import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.healthScoreButton;
 import static org.hamcrest.Matchers.not;
 
