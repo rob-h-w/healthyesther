@@ -82,7 +82,16 @@ public class HomeActivity extends DbActivity
             // decide what to show in the action bar.
             restoreActionBar();
         }
-        return super.onCreateOptionsMenu(menu);
+
+        boolean returnValue = super.onCreateOptionsMenu(menu);
+
+        MenuItem backupToDropbox = menu.findItem(R.id.action_backup_to_dropbox);
+
+        if (backupToDropbox != null) {
+            backupToDropbox.setEnabled(com.robwilliamson.db.Utils.File.Dropbox.isDropboxPresent());
+        }
+
+        return returnValue;
     }
 
     @Override
