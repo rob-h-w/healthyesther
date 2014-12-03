@@ -40,10 +40,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Contract.getInstance().create(sqLiteDatabase);
-
-        if (sDebug) {
-            Utils.Db.TestData.insertFakeData(sqLiteDatabase);
-        }
     }
 
     @Override
@@ -62,7 +58,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             db.endTransaction();
         }
     }
-
     public void backupToDropbox() throws IOException {
         // Ensure the db isn't in use
         close();
