@@ -27,6 +27,7 @@ public abstract class AbstractAddNamedDialog extends DialogFragment {
 
     private static final String SUGGESTIONS = "suggestions";
     private HashMap<String, Long> mSuggestions = null;
+    private boolean mInflatedContent = false;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -96,8 +97,9 @@ public abstract class AbstractAddNamedDialog extends DialogFragment {
             }
         });
 
-        if (contentLayoutId() != null) {
+        if (contentLayoutId() != null && !mInflatedContent) {
             View.inflate(getView().getContext(), contentLayoutId(), getContentArea());
+            mInflatedContent = true;
         }
 
         updateSuggestionAdapter();

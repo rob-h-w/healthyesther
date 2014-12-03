@@ -29,6 +29,7 @@ public class EditScoreDialog extends AbstractAddNamedDialog {
     }
 
     private static final String SCORES = "scores";
+    private static final String INITIAL_SCORE = "initial_score";
 
     private HealthScore.Score mInitialScore = null;
     private HashMap<String, HealthScore.Score> mScores = null;
@@ -54,6 +55,8 @@ public class EditScoreDialog extends AbstractAddNamedDialog {
                     return HealthScore.Score.from(bundle, bundleKey);
                 }
             });
+
+            mInitialScore = HealthScore.Score.from(savedInstanceState, INITIAL_SCORE);
         }
     }
 
@@ -104,6 +107,8 @@ public class EditScoreDialog extends AbstractAddNamedDialog {
                 mScores.get(key).bundle(bundle, bundleKey);
             }
         });
+
+        mInitialScore.bundle(outState, INITIAL_SCORE);
     }
 
     @Override
