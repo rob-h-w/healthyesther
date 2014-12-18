@@ -41,7 +41,14 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
                 getInstrumentation().getTargetContext()).getWritableDatabase());
 
         if (Utils.File.exists(DROPBOX_PATH)) {
-            File file = new File(DROPBOX_PATH);
+            File file;
+
+            if (Utils.File.exists(Utils.File.Dropbox.dbFile())) {
+                file = new File(Utils.File.Dropbox.dbFile());
+                file.delete();
+            }
+
+            file = new File(DROPBOX_PATH);
             file.delete();
         }
 
