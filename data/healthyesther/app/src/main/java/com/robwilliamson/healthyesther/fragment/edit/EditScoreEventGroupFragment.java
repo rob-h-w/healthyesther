@@ -228,10 +228,12 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
 
         for (EditScoreEventFragment fragment : fragments) {
             HealthScore.Score fragmentScore = fragment.getScore();
-            boolean matchId = fragmentScore._id != 0 && fragmentScore._id == score._id;
-            boolean matchName = fragmentScore.name == score.name;
-            if (matchId || matchName) {
-                return fragment;
+            if (fragmentScore != null && fragmentScore._id != null) {
+                boolean matchId = fragmentScore._id != 0 && fragmentScore._id == score._id;
+                boolean matchName = fragmentScore.name == score.name;
+                if (matchId || matchName) {
+                    return fragment;
+                }
             }
         }
 
