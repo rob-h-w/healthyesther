@@ -93,6 +93,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
     public void testBackupToDropbox() {
         Utils.File.mkdirs(DB_PATH);
+        Assert.assertTrue(Utils.File.exists(DB_PATH));
         Assert.assertFalse(Utils.File.exists(Utils.File.Dropbox.dbFile()));
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
