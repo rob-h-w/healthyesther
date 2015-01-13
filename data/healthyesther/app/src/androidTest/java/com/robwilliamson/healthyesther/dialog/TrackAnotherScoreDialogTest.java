@@ -5,11 +5,7 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.Utils;
-import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.HomeActivity;
-import com.robwilliamson.healthyesther.add.ScoreActivity;
-import com.robwilliamson.healthyesther.test.EditScoreDialogAccessor;
-import com.robwilliamson.healthyesther.test.Espresso;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -19,7 +15,7 @@ import static com.google.android.apps.common.testing.ui.espresso.Espresso.onView
 import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.click;
 import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.typeText;
 import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isDisplayed;
+import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isEnabled;
 
 public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     public TrackAnotherScoreDialogTest() {
@@ -59,7 +55,13 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
 
                 // Check that the new content is added.
                 onView(HomeActivityAccessor.healthScoreButton()).perform(click());
-                onView(HealthScoreActivityAccessor.scoreTitle("Score 1")).check(matches(isDisplayed()));
+                onView(HealthScoreActivityAccessor.scoreTitle("Score 1")).check(matches(isEnabled()));
+
+                // Back out to the home activity.
+                com.google.android.apps.common.testing.ui.espresso.Espresso.pressBack();
+
+                // Remove Score 1 from the DB.
+                Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
             }
         });
     }

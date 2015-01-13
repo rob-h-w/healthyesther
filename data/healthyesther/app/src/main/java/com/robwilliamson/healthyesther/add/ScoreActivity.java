@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.add;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
@@ -7,6 +8,7 @@ import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.EventModification;
 import com.robwilliamson.db.definition.HealthScore;
 import com.robwilliamson.db.definition.HealthScoreEvent;
+import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
@@ -135,12 +137,37 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
 
         if (fragment == null) {
             fragment = EditScoreEventFragment.newInstance(score);
+            final Modification modification = fragment.getModification();
             getScoreGroupFragment().addFragment(fragment, null);
+            List<Query> list = new ArrayList<Query>(1);
+            list.add(new Query() {
+                @Override
+                public Cursor query(SQLiteDatabase db) {
+                    modification.modify(db);
+                    return null;
+                }
+
+                @Override
+                public void postQueryProcessing(Cursor cursor) {
+
+                }
+
+                @Override
+                public void onQueryComplete(Cursor cursor) {
+
+                }
+
+                @Override
+                public void onQueryFailed(Throwable error) {
+
+                }
+            });
+            doQueries(list);
         } else {
             fragment.setScore(score);
+            fragment.setModified(true);
         }
 
-        fragment.setModified(true);
     }
 
     @Override
