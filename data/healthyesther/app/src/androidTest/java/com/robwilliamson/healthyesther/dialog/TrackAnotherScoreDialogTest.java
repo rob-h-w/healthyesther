@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.dialog;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
+import com.google.android.apps.common.testing.ui.espresso.action.ViewActions;
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.Utils;
 import com.robwilliamson.healthyesther.HomeActivity;
@@ -12,6 +13,7 @@ import com.robwilliamson.healthyesther.test.Orientation;
 import com.robwilliamson.healthyesther.test.TrackAnotherScoreDialogAccessor;
 
 import static com.google.android.apps.common.testing.ui.espresso.Espresso.onView;
+import static com.google.android.apps.common.testing.ui.espresso.Espresso.pressBack;
 import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.click;
 import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.typeText;
 import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
@@ -40,29 +42,48 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
 
             @Override
             public void checkContent() {
-                // Open the health score activity.
                 onView(HomeActivityAccessor.healthScoreButton()).perform(click());
-
-                // Name a new score to track.
-                onView(HealthScoreActivityAccessor.trackAnotherScoreButton()).perform(click());
-                onView(TrackAnotherScoreDialogAccessor.healthScoreEditBox()).perform(typeText("Score 1"));
-
-                // Close the dialog
-                onView(TrackAnotherScoreDialogAccessor.okButton()).perform(click());
-
-                // Close the score tracker
-                com.google.android.apps.common.testing.ui.espresso.Espresso.pressBack();
-
-                // Check that the new content is added.
+                addScoreType("Score 1");
+                pressBack();
                 onView(HomeActivityAccessor.healthScoreButton()).perform(click());
-                onView(HealthScoreActivityAccessor.scoreTitle("Score 1")).check(matches(isEnabled()));
-
-                // Back out to the home activity.
-                com.google.android.apps.common.testing.ui.espresso.Espresso.pressBack();
-
-                // Remove Score 1 from the DB.
+                checkScoreIsPresent("Score 1");
+                pressBack();
                 Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
             }
         });
+    }
+
+    public void testAddMore() {
+        Orientation.check(new Orientation.Subject() {
+            @Override
+            public InstrumentationTestCase getTestCase() {
+                return TrackAnotherScoreDialogTest.this;
+            }
+
+            @Override
+            public void checkContent() {
+                onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+                addScoreType("A score");
+                addScoreType("Another score");
+                addScoreType("Yet another score");
+                pressBack();
+                onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+                checkScoreIsPresent("A score");
+                checkScoreIsPresent("Another score");
+                checkScoreIsPresent("Yet another score");
+                pressBack();
+                Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+            }
+        });
+    }
+
+    private void addScoreType(String name) {
+        onView(HealthScoreActivityAccessor.trackAnotherScoreButton()).perform(click());
+        onView(TrackAnotherScoreDialogAccessor.healthScoreEditBox()).perform(typeText(name));
+        onView(TrackAnotherScoreDialogAccessor.okButton()).perform(click());
+    }
+
+    private void checkScoreIsPresent(String name) {
+        onView(HealthScoreActivityAccessor.scoreTitle(name)).check(matches(isEnabled()));
     }
 }
