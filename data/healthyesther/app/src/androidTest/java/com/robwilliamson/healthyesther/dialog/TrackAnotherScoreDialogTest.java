@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.dialog;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.google.android.apps.common.testing.ui.espresso.action.ViewActions;
 import com.robwilliamson.db.HealthDbHelper;
 import com.robwilliamson.db.Utils;
 import com.robwilliamson.healthyesther.HomeActivity;
@@ -12,11 +11,13 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 import com.robwilliamson.healthyesther.test.TrackAnotherScoreDialogAccessor;
 
+import static com.google.android.apps.common.testing.ui.espresso.Espresso.closeSoftKeyboard;
 import static com.google.android.apps.common.testing.ui.espresso.Espresso.onView;
 import static com.google.android.apps.common.testing.ui.espresso.Espresso.pressBack;
 import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.click;
 import static com.google.android.apps.common.testing.ui.espresso.action.ViewActions.typeText;
 import static com.google.android.apps.common.testing.ui.espresso.assertion.ViewAssertions.matches;
+import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.isEnabled;
 
 public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase2<HomeActivity> {
@@ -80,10 +81,21 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
     private void addScoreType(String name) {
         onView(HealthScoreActivityAccessor.trackAnotherScoreButton()).perform(click());
         onView(TrackAnotherScoreDialogAccessor.healthScoreEditBox()).perform(typeText(name));
+        closeSoftKeyboard();
+        sleep();
+        onView(TrackAnotherScoreDialogAccessor.okButton()).check(matches(isDisplayed()));
         onView(TrackAnotherScoreDialogAccessor.okButton()).perform(click());
     }
 
     private void checkScoreIsPresent(String name) {
         onView(HealthScoreActivityAccessor.scoreTitle(name)).check(matches(isEnabled()));
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
