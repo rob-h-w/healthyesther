@@ -205,6 +205,18 @@ public class HealthScore extends Table {
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int h = super.hashCode();
+            h += _id == null ? 31 : _id;
+            h += name == null ? 31 : name.hashCode();
+            h += bestValue * 31;
+            h *= randomQuery ? 2 : 4;
+            h += minLabel == null ? 31 : minLabel.hashCode();
+            h += maxLabel == null ? 31 : maxLabel.hashCode();
+            return h;
+        }
+
         public void bundle(Bundle bundle, String bundleKey) {
             bundle.putBundle(bundleKey, asBundle());
         }
