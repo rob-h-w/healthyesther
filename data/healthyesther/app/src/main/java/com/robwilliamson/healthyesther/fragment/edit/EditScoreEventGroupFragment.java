@@ -142,7 +142,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                             mQueries = new ArrayList<Query>(cursor.getCount());
                             List<HealthScore.Score> scores = HealthScore.Score.listFrom(cursor);
 
-                            for (HealthScore.Score score: scores) {
+                            for (HealthScore.Score score : scores) {
                                 if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(score.name)){
                                     continue;
                                 }
