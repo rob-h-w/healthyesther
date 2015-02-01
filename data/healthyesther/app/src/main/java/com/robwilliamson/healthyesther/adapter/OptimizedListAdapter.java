@@ -8,26 +8,19 @@ import android.widget.ArrayAdapter;
 
 import java.util.List;
 
-public class OptimizedListAdapter<T, V extends View, D> extends ArrayAdapter<D> {
-
-    public static interface Tagger<T, V extends View, D> {
-        T getTagFor(V view);
-        void populateViewUsingTag(T tag, V view, D data);
-    }
+public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAdapter<D> {
 
     private final Activity mActivity;
     private final int mLayout;
-    private final Tagger<T, V, D> mTagger;
 
-    public OptimizedListAdapter(Activity context, int layout, Tagger<T, V, D> tagger) {
+    public OptimizedListAdapter(Activity context, int layout) {
         super(context, layout);
         mLayout = layout;
         mActivity = context;
-        mTagger = tagger;
     }
 
-    public OptimizedListAdapter(Activity context, int layout, Tagger<T, V, D> tagger, List<D> list) {
-        this(context, layout, tagger);
+    public OptimizedListAdapter(Activity context, int layout, List<D> list) {
+        this(context, layout);
         this.addAll(list);
     }
 
@@ -38,11 +31,27 @@ public class OptimizedListAdapter<T, V extends View, D> extends ArrayAdapter<D> 
         if (view == null) {
             LayoutInflater inflater = mActivity.getLayoutInflater();
             view = (V) inflater.inflate(mLayout, parent);
-            view.setTag(mTagger.getTagFor(view));
+            view.setTag(getTagFor(view));
         }
 
-        mTagger.populateViewUsingTag((T) view.getTag(), view, getItem(position));
+        populateTag((T) view.getTag(), getItem(position));
 
         return view;
     }
+
+    /**
+     * Get a tag for a view. A tag should contain references to every view modified when new data is
+     * used.
+     * @param view The view requiring a tag.
+     * @return A new tag for the view.
+     */
+    protected abstract T getTagFor(V view);
+
+    /**
+     * Use a tag to populate the features of a view. The tag will have been returned by
+     * {@link #getTagFor(V view)}.
+     * @param tag The tag to use with the view.
+     * @param data The data to populate the tag's views with.
+     */
+    protected abstract void populateTag(T tag, D data);
 }
