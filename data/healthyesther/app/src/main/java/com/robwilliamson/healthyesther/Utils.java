@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -23,6 +24,11 @@ public final class Utils {
         }
 
         return str.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T uncheckedCast(Object obj) {
+        return (T) obj;
     }
 
     public static final class View {
@@ -51,22 +57,20 @@ public final class Utils {
             }
         }
 
-        @SuppressWarnings("unchecked")
         public static <T extends android.view.View> T getTypeSafeView(android.view.View parent, int id) {
             if (parent == null) {
                 return null;
             }
 
-            return (T)parent.findViewById(id);
+            return uncheckedCast(parent.findViewById(id));
         }
 
-        @SuppressWarnings("unchecked")
         public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, String tag) {
             if (manager == null) {
                 return null;
             }
 
-            return (T) manager.findFragmentByTag(tag);
+            return uncheckedCast(manager.findFragmentByTag(tag));
         }
 
         public static void assertIsOnUiThread() {

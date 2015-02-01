@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import com.robwilliamson.healthyesther.Utils;
+
 import java.util.List;
 
 public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAdapter<D> {
@@ -26,15 +28,16 @@ public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAd
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        V view = (V) convertView;
+        V view = Utils.uncheckedCast(convertView);
 
         if (view == null) {
             LayoutInflater inflater = mActivity.getLayoutInflater();
-            view = (V) inflater.inflate(mLayout, parent);
+            view = Utils.uncheckedCast(inflater.inflate(mLayout, parent));
             view.setTag(getTagFor(view));
         }
 
-        populateTag((T) view.getTag(), getItem(position));
+        T tag = Utils.uncheckedCast(view.getTag());
+        populateTag(tag, getItem(position));
 
         return view;
     }
