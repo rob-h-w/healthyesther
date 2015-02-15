@@ -36,6 +36,10 @@ public final class EventType extends Table {
         if (from == 1) {
             insert(db, HealthScoreEvent.EVENT_TYPE_ID, "Health & mood", null);
         }
+
+        if (from == 2) {
+            insert(db, NoteEvent.EVENT_TYPE_ID, "Note", null);
+        }
     }
 
     private void insert(SQLiteDatabase db, long _id, String name, String icon) {

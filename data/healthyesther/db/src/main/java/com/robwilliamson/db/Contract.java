@@ -11,6 +11,8 @@ import com.robwilliamson.db.definition.MealEvent;
 import com.robwilliamson.db.definition.Medication;
 import com.robwilliamson.db.definition.MedicationEvent;
 import com.robwilliamson.db.definition.MedicationName;
+import com.robwilliamson.db.definition.Note;
+import com.robwilliamson.db.definition.NoteEvent;
 import com.robwilliamson.db.definition.Table;
 import com.robwilliamson.db.definition.Units;
 
@@ -32,6 +34,8 @@ public final class Contract {
         MEDICATION = new Medication();
         MEDICATION_NAME = new MedicationName();
         MEDICATION_EVENT = new MedicationEvent();
+        NOTE = new Note();
+        NOTE_EVENT = new NoteEvent();
         UNITS = new Units();
 
         TABLES = new Table[] {
@@ -44,6 +48,8 @@ public final class Contract {
                 MEDICATION_EVENT,
                 MEDICATION,
                 MEDICATION_NAME,
+                NOTE,
+                NOTE_EVENT,
                 UNITS,
         };
     }
@@ -60,7 +66,7 @@ public final class Contract {
     }
 
     public static final String NAME = "health.db3";
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     public final Event EVENT;
     public final EventType EVENT_TYPE;
@@ -71,6 +77,8 @@ public final class Contract {
     public final Medication MEDICATION;
     public final MedicationName MEDICATION_NAME;
     public final MedicationEvent MEDICATION_EVENT;
+    public final Note NOTE;
+    public final NoteEvent NOTE_EVENT;
     public final Units UNITS;
 
     public final Table[] TABLES;
