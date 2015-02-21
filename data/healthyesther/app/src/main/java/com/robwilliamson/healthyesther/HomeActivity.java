@@ -104,7 +104,7 @@ public class HomeActivity extends DbActivity
     }
 
     private ActivityGraphFragment getGraph() {
-        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeFragment(getSupportFragmentManager(), GRAPH_TAG);
+        return getFragment(GRAPH_TAG);
     }
 
     @Override
