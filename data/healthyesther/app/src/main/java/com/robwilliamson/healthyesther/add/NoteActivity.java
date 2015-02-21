@@ -5,7 +5,6 @@ import android.util.Pair;
 
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 
@@ -50,6 +49,6 @@ public class NoteActivity extends AbstractAddActivity {
     }
 
     private EditEventFragment getEventFragment() {
-        return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), EVENT_TAG);
+        return getFragment(EVENT_TAG);
     }
 }

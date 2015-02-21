@@ -13,7 +13,6 @@ import com.robwilliamson.db.use.Query;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
-import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -83,11 +82,11 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     private EditScoreEventGroupFragment getScoreGroupFragment() {
-        return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), SCORE_GROUP_TAG);
+        return getFragment(SCORE_GROUP_TAG);
     }
 
     private EditEventFragment getEventFragment() {
-        return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), EVENT_TAG);
+        return getFragment(EVENT_TAG);
     }
 
     @Override

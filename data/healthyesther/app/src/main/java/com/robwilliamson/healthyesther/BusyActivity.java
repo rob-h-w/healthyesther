@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther;
 
 import android.app.Dialog;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.Window;
 
 import java.util.concurrent.CountDownLatch;
@@ -59,13 +58,7 @@ public class BusyActivity extends BaseFragmentActivity {
     }
 
     private Fragment getBusyFragment() {
-        FragmentManager manager = getSupportFragmentManager();
-
-        if (manager == null) {
-            return null;
-        }
-
-        return manager.findFragmentByTag(BUSY_TAG);
+        return getFragment(BUSY_TAG);
     }
 
     private boolean hasBusyFragment() {

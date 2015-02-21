@@ -71,11 +71,11 @@ public class MedicationActivity extends AbstractAddActivity
     }
 
     private EditMedicationFragment getMedicationFragment() {
-        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeFragment(getSupportFragmentManager(), MEDICATION_TAG);
+        return getFragment(MEDICATION_TAG);
     }
 
     private EditEventFragment getEventFragment() {
-        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeFragment(getSupportFragmentManager(), EVENT_TAG);
+        return getFragment(EVENT_TAG);
     }
 
     @Override
