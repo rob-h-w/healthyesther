@@ -31,6 +31,15 @@ public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
         getNameView().setAdapter(adapter);
     }
 
+    protected void appendSuggestionIds(HashMap<String, Long> suggestionIds) {
+        if (null == suggestionIds) {
+            return;
+        }
+
+        mSuggestionIds.putAll(suggestionIds);
+        setSuggestionIds(mSuggestionIds);
+    }
+
     protected Long getSuggestionId(String name) {
         return mSuggestionIds == null ? null : mSuggestionIds.get(name);
     }
