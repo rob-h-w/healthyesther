@@ -34,6 +34,9 @@
             android:name=".add.ScoreActivity"
             android:label="@string/health_score" >
         </activity>
+        <activity android:name=".add.NoteActivity"
+            android:label="@string/note" >
+        </activity>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >

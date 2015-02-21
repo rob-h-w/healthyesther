@@ -12,6 +12,7 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.add.MealActivity;
 import com.robwilliamson.healthyesther.add.MedicationActivity;
+import com.robwilliamson.healthyesther.add.NoteActivity;
 import com.robwilliamson.healthyesther.add.ScoreActivity;
 
 public class AddEventFragment extends Fragment {
@@ -49,6 +50,14 @@ public class AddEventFragment extends Fragment {
                 getActivity().startActivity(intent);
             }
         });
+
+        getCreateNoteEventButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NoteActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
     }
 
     private Button getCreateMealEventButton() {
@@ -61,6 +70,10 @@ public class AddEventFragment extends Fragment {
 
     private Button getCreateHealthScoreEventButton() {
         return getTypeSafeView(R.id.create_health_score_event_button);
+    }
+
+    private Button getCreateNoteEventButton() {
+        return getTypeSafeView(R.id.create_note_event_button);
     }
 
     private <T extends View> T getTypeSafeView(int id) {

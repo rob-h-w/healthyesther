@@ -26,7 +26,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/health_score"
-            android:id="@+id/create_health_score_event_button"/>
+            android:id="@+id/create_health_score_event_button" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/note"
+            android:id="@+id/create_note_event_button" />
 
     </LinearLayout>
 
