@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
+import android.view.View;
 
 import com.robwilliamson.db.definition.Modification;
 import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
@@ -43,5 +44,9 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
         if (mWatcher != null) {
             updateWatcher(mWatcher);
         }
+    }
+
+    protected <T extends View> T getTypeSafeView(int id) {
+        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id);
     }
 }

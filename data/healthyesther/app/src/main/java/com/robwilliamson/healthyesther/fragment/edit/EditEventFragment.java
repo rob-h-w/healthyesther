@@ -215,8 +215,4 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     private AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.edit_event_name);
     }
-
-    private <T extends View> T getTypeSafeView(int id) {
-        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id);
-    }
 }

@@ -158,8 +158,4 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
     private AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.medication_name);
     }
-
-    private <T extends View> T getTypeSafeView(int id) {
-        return Utils.View.getTypeSafeView(getView(), id);
-    }
 }
