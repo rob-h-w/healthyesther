@@ -48,8 +48,8 @@ public final class Contract {
                 MEDICATION_EVENT,
                 MEDICATION,
                 MEDICATION_NAME,
-                NOTE,
                 NOTE_EVENT,
+                NOTE,
                 UNITS,
         };
     }
