@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.db.definition.Medication;
@@ -19,10 +18,8 @@ import com.robwilliamson.db.use.GetAllMedicationNamesQuery;
 import com.robwilliamson.db.use.GetAllMedicationsQuery;
 import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Utils;
 
 import java.util.HashMap;
-import java.util.Set;
 
 public class EditMedicationFragment extends SuggestionEditFragment<EditMedicationFragment.Watcher> {
 

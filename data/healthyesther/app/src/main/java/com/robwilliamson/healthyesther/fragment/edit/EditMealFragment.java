@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.db.Contract;
@@ -20,7 +19,6 @@ import com.robwilliamson.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
-import java.util.Set;
 
 public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> {
 
