@@ -22,8 +22,7 @@ import com.robwilliamson.healthyesther.R;
 import java.util.HashMap;
 import java.util.Set;
 
-public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
-    private HashMap<String, Long> mSuggestionIds;
+public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> {
 
     public interface Watcher {
         void onFragmentUpdate(EditMealFragment fragment);
@@ -103,8 +102,9 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
     public Modification getModification() {
         String name = getName();
 
-        if (mSuggestionIds.containsKey(name)) {
-            return new Meal.Modification(mSuggestionIds.get(name));
+        Long id = getSuggestionId(name);
+        if (id != null) {
+            return new Meal.Modification(id);
         }
 
         return new Meal.Modification(name);
@@ -120,24 +120,12 @@ public class EditMealFragment extends EditFragment<EditMealFragment.Watcher> {
         watcher.onFragmentUpdate(this);
     }
 
-    public void setSuggestionIds(HashMap<String, Long> suggestionIds) {
-        mSuggestionIds = suggestionIds;
-
-        Set<String> set = mSuggestionIds.keySet();
-        String [] suggestions = new String[set.size()];
-        set.toArray(suggestions);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line,
-                suggestions);
-        getNameView().setAdapter(adapter);
-    }
-
     public String getName() {
         return getNameView().getText().toString();
     }
 
-    private AutoCompleteTextView getNameView() {
+    @Override
+    protected AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.meal_name);
     }
 }

@@ -24,29 +24,18 @@ import com.robwilliamson.healthyesther.Utils;
 import java.util.HashMap;
 import java.util.Set;
 
-public class EditMedicationFragment extends EditFragment<EditMedicationFragment.Watcher> {
-    private HashMap<String, Long> mSuggestionIds;
+public class EditMedicationFragment extends SuggestionEditFragment<EditMedicationFragment.Watcher> {
 
     public interface Watcher {
         void onFragmentUpdate(EditMedicationFragment fragment);
         void onQueryFailed(EditMedicationFragment fragment, Throwable error);
     }
 
-    private void updateSuggestionIds() {
-        Set<String> set = mSuggestionIds.keySet();
-        String [] suggestions = new String[set.size()];
-        set.toArray(suggestions);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line,
-                suggestions);
-        getNameView().setAdapter(adapter);
-    }
-
     @Override
     public Query[] getQueries() {
         return new Query[] {
                 new GetAllMedicationsQuery() {
+                    HashMap<String, Long> mSuggestionIds;
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         mSuggestionIds = new HashMap<String, Long>();
@@ -57,6 +46,7 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
 
                     @Override
                     public void onQueryComplete(Cursor cursor) {
+                        EditMedicationFragment.this.setSuggestionIds(mSuggestionIds);
                     }
 
                     @Override
@@ -70,8 +60,10 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
                     }
                 },
                 new GetAllMedicationNamesQuery() {
+                    HashMap<String, Long> mSuggestionIds;
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
+                        mSuggestionIds = new HashMap<String, Long>();
                         mSuggestionIds.putAll(com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
                                 MedicationName.NAME,
                                 MedicationName.MEDICATION_ID));
@@ -79,7 +71,7 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
 
                     @Override
                     public void onQueryComplete(Cursor cursor) {
-                        EditMedicationFragment.this.updateSuggestionIds();
+                        EditMedicationFragment.this.appendSuggestionIds(mSuggestionIds);
                     }
 
                     @Override
@@ -99,8 +91,9 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
     public Modification getModification() {
         String name = getName();
 
-        if (mSuggestionIds.containsKey(name)) {
-            return new Medication.Modification(mSuggestionIds.get(name));
+        Long id = getSuggestionId(name);
+        if (id != null) {
+            return new Medication.Modification(id);
         }
 
         return new Medication.Modification(name);
@@ -155,7 +148,8 @@ public class EditMedicationFragment extends EditFragment<EditMedicationFragment.
         return getNameView().getText().toString();
     }
 
-    private AutoCompleteTextView getNameView() {
+    @Override
+    protected AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.medication_name);
     }
 }
