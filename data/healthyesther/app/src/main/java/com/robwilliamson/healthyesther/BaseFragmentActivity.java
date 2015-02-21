@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,5 +62,9 @@ public class BaseFragmentActivity extends FragmentActivity {
 
     protected LinearLayout getActivityContentLayout() {
         return (LinearLayout)findViewById(getActivityContentLayoutResourceId());
+    }
+
+    protected <T extends Fragment> T getFragment(String tag) {
+        return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), tag);
     }
 }
