@@ -8,18 +8,21 @@ import com.robwilliamson.db.Contract;
 public class NoteEvent extends Table {
     public static class Modification extends com.robwilliamson.db.definition.Modification {
 
-        private final long mNoteId;
-        private final long mEventId;
+        private final Note.Modification mNote;
+        private final Event.Modification mEvent;
 
-        public Modification(long noteId, long eventId) {
-            mNoteId = noteId;
-            mEventId = eventId;
+        public Modification(Note.Modification note, Event.Modification event) {
+            this.mNote = note;
+            mEvent = event;
         }
 
         @Override
         public void modify(SQLiteDatabase db) {
+            mEvent.setTypeId(EVENT_TYPE_ID);
+            mEvent.modify(db);
+            mNote.modify(db);
             if (getRowId() == null) {
-                setRowId(Contract.getInstance().NOTE_EVENT.insert(db, mNoteId, mEventId));
+                setRowId(Contract.getInstance().NOTE_EVENT.insert(db, mNote.getRowId(), mEvent.getRowId()));
             }
         }
     }

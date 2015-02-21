@@ -3,23 +3,31 @@ package com.robwilliamson.healthyesther.add;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import com.robwilliamson.db.definition.Event;
+import com.robwilliamson.db.definition.Note;
+import com.robwilliamson.db.definition.NoteEvent;
 import com.robwilliamson.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
 
 import java.util.ArrayList;
 
 public class NoteActivity extends AbstractAddActivity {
     private final static String EVENT_TAG = "event";
+    private final static String NOTE_TAG = "note";
 
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(1);
+        EditFragment note = null;
         EditFragment event = null;
         if (create) {
+            note = new EditNoteFragment();
             event = new EditEventFragment();
         } else {
+            note = getNoteFragment();
             event = getEventFragment();
         }
 
@@ -30,7 +38,10 @@ public class NoteActivity extends AbstractAddActivity {
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-
+        Note.Modification note = (Note.Modification)getNoteFragment().getModification();
+        Event.Modification event = (Event.Modification)getEventFragment().getModification();
+        NoteEvent.Modification noteEvent = new NoteEvent.Modification(note, event);
+        noteEvent.modify(db);
     }
 
     @Override
@@ -45,7 +56,13 @@ public class NoteActivity extends AbstractAddActivity {
      */
     @Override
     protected QueryUser[] getOnResumeQueryUsers() {
-        return new QueryUser[0];
+        return new QueryUser[] {
+                getNoteFragment()
+        };
+    }
+
+    private EditEventFragment getNoteFragment() {
+        return getFragment(NOTE_TAG);
     }
 
     private EditEventFragment getEventFragment() {
