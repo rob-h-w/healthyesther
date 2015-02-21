@@ -7,11 +7,22 @@ import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
 
 public class Note extends Table {
+    public boolean validateName(String name) {
+        return Utils.Strings.validateLength(name, 1, 140);
+    }
+    public boolean validateNote(String note) { return true; }
+
     public static class BadNameLength extends IllegalArgumentException {}
     public static class Modification extends com.robwilliamson.db.definition.Modification {
 
         private final String mName;
         private final String mNote;
+
+        public Modification(long id, String note) {
+            setRowId(id);
+            mNote = note;
+            mName = null;
+        }
 
         public Modification(String name, String note) {
             mName = name;
@@ -22,6 +33,8 @@ public class Note extends Table {
         public void modify(SQLiteDatabase db) {
             if (getRowId() == null) {
                 setRowId(Contract.getInstance().NOTE.insert(db, mName, mNote));
+            } else {
+                Contract.getInstance().NOTE.update(db, getRowId(), mNote);
             }
         }
     }
@@ -62,5 +75,11 @@ public class Note extends Table {
         values.put(NAME, name);
         values.put(NOTE, note);
         return insert(db, values);
+    }
+
+    private void update(SQLiteDatabase db, long rowId, String note) {
+        ContentValues values = new ContentValues();
+        values.put(NOTE, note);
+        update(db, values, rowId);
     }
 }

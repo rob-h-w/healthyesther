@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment"
+    android:orientation="vertical"
+    style="@style/AppTheme.contentLayout">
+
+    <LinearLayout
+        android:orientation="vertical"
+        style="@style/AppTheme.sectionLayout">
+
+        <TextView
+            android:text="@string/note"
+            android:id="@+id/note_name_title"
+            style="@style/AppTheme.text"/>
+
+        <AutoCompleteTextView
+            android:id="@+id/note_name"
+            android:hint="@string/descriptive_name_for_the_note"
+            style="@style/AppTheme.text.textEditor" />
+
+        <EditText
+            android:id="@+id/note_content"
+            android:hint="@string/descriptive_name_for_the_note_detail"
+            style="@style/AppTheme.text.textEditor.multiline" />
+
+    </LinearLayout>
 
 </LinearLayout>
