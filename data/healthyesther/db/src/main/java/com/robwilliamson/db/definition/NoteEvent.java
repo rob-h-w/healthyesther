@@ -21,13 +21,14 @@ public class NoteEvent extends Table {
             mEvent.setTypeId(EVENT_TYPE_ID);
             mEvent.modify(db);
             mNote.modify(db);
+
             if (getRowId() == null) {
                 setRowId(Contract.getInstance().NOTE_EVENT.insert(db, mNote.getRowId(), mEvent.getRowId()));
             }
         }
     }
 
-    public static final long EVENT_TYPE_ID = 5;
+    public static final long EVENT_TYPE_ID = 4;
     public static final String TABLE_NAME = "note_event";
     public static final String NOTE_ID = "note_id";
     public static final String EVENT_ID = "event_id";
