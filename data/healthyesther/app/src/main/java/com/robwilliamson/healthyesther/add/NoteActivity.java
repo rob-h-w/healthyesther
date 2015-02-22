@@ -33,6 +33,7 @@ public class NoteActivity extends AbstractAddActivity
             event = getEventFragment();
         }
 
+        list.add(new Pair<EditFragment, String>(note, NOTE_TAG));
         list.add(new Pair<EditFragment, String>(event, EVENT_TAG));
 
         return list;
@@ -63,7 +64,7 @@ public class NoteActivity extends AbstractAddActivity
         };
     }
 
-    private EditEventFragment getNoteFragment() {
+    private EditNoteFragment getNoteFragment() {
         return getFragment(NOTE_TAG);
     }
 

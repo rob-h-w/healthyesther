@@ -28,7 +28,12 @@ public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line,
                 suggestions);
-        getNameView().setAdapter(adapter);
+
+        AutoCompleteTextView nameView = getNameView();
+
+        if (nameView != null) {
+            getNameView().setAdapter(adapter);
+        }
     }
 
     protected void appendSuggestionIds(HashMap<String, Long> suggestionIds) {
