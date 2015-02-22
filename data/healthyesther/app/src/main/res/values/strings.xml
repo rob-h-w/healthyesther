@@ -22,6 +22,7 @@
     <string name="descriptive_name_for_the_note_detail">Optional note detail</string>
     <string name="could_not_get_autocomplete_text_for_meals">Could not get auto-completion text for meal names.</string>
     <string name="could_not_get_autocomplete_text_for_medication">Could not get auto-completion text for medication names.</string>
+    <string name="could_not_get_autocomplete_text_for_notes">Could not get auto-completion text for note names.</string>
     <string name="could_not_insert_meal_event">Could not insert meal event.</string>
     <string name="could_not_insert_medication_event">Could not insert medication event.</string>
     <string name="could_not_insert_note_event">Could not insert note event.</string>

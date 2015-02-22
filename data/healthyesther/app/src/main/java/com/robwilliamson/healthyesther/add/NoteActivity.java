@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.add;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.robwilliamson.db.definition.Event;
 import com.robwilliamson.db.definition.Note;
@@ -14,7 +15,8 @@ import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
 
 import java.util.ArrayList;
 
-public class NoteActivity extends AbstractAddActivity {
+public class NoteActivity extends AbstractAddActivity
+        implements EditEventFragment.Watcher, EditNoteFragment.Watcher {
     private final static String EVENT_TAG = "event";
     private final static String NOTE_TAG = "note";
 
@@ -67,5 +69,21 @@ public class NoteActivity extends AbstractAddActivity {
 
     private EditEventFragment getEventFragment() {
         return getFragment(EVENT_TAG);
+    }
+
+    @Override
+    public void onFragmentUpdate(EditNoteFragment fragment) {
+        getEventFragment().suggestEventName(fragment.getName());
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onQueryFailed(EditNoteFragment fragment, Throwable error) {
+        Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_notes), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFragmentUpdate(EditEventFragment fragment) {
+        invalidateOptionsMenu();
     }
 }
