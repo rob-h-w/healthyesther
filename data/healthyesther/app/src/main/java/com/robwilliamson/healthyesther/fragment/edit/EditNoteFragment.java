@@ -45,12 +45,13 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
     @Override
     public Modification getModification() {
         String name = getName();
+        Long id = getSuggestionId(name);
 
-        if (name == null) {
+        if (id == null) {
             return new Note.Modification(name, getNote());
         }
 
-        return new Note.Modification(getSuggestionId(name), getNote());
+        return new Note.Modification(id, getNote());
     }
 
     @Override
