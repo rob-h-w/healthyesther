@@ -23,7 +23,8 @@ public abstract class GetAllNotesQuery extends GetAllValuesQuery {
     public String[] getResultColumns() {
         return Table.cleanName(new String[] {
                 Note._ID,
-                Note.NAME
+                Note.NAME,
+                Note.NOTE
         });
     }
 }
