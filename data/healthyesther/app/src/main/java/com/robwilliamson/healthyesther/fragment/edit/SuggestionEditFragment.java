@@ -29,7 +29,7 @@ public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateWatcher();
+                onNameChanged();
             }
 
             @Override
@@ -41,9 +41,17 @@ public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
         getNameView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateWatcher();
+                onNameClicked();
             }
         });
+    }
+
+    protected void onNameChanged() {
+        updateWatcher();
+    }
+
+    protected void onNameClicked() {
+        updateWatcher();
     }
 
     protected void setSuggestionIds(HashMap<String, Long> suggestionIds) {
