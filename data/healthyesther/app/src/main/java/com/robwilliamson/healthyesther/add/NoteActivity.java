@@ -23,7 +23,7 @@ public class NoteActivity extends AbstractAddActivity
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(1);
-        EditFragment note = null;
+        EditNoteFragment note = null;
         EditFragment event = null;
         if (create) {
             note = new EditNoteFragment();
@@ -32,6 +32,8 @@ public class NoteActivity extends AbstractAddActivity
             note = getNoteFragment();
             event = getEventFragment();
         }
+
+        note.setAlwaysCreate(true);
 
         list.add(new Pair<EditFragment, String>(note, NOTE_TAG));
         list.add(new Pair<EditFragment, String>(event, EVENT_TAG));

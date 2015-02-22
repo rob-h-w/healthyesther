@@ -18,6 +18,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
     private HashMap<Long, String> mNoteContents;
     private Long mUserSelectedId = null;
     private Long mOldUserSelectedId = null;
+    private boolean mAlwaysCreate = false;
 
     @Override
     protected int getFragmentLayout() {
@@ -34,6 +35,10 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         return null;
     }
 
+    public void setAlwaysCreate(boolean alwaysCreate) {
+        mAlwaysCreate = alwaysCreate;
+    }
+
     @Override
     protected void onNameClicked() {
         mOldUserSelectedId = mUserSelectedId;
@@ -45,6 +50,10 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
     }
 
     public void suggestNote(String note) {
+        if (mAlwaysCreate) {
+            return;
+        }
+
         if (Utils.noString(note)) {
             if (mOldUserSelectedId != null
                     && getNote().equals(mNoteContents.get(mOldUserSelectedId))) {
@@ -78,7 +87,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         String name = getName();
         Long id = getSuggestionId(name);
 
-        if (id == null) {
+        if (id == null || mAlwaysCreate) {
             return new Note.Modification(name, getNote());
         }
 
