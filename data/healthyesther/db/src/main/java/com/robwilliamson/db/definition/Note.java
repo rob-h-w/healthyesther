@@ -53,8 +53,7 @@ public class Note extends Table {
     public void create(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE note ( \n" +
                 "    _id  INTEGER      PRIMARY KEY,\n" +
-                "    name TEXT( 140 )  NOT NULL\n" +
-                "                      UNIQUE,\n" +
+                "    name TEXT( 140 )  NOT NULL,\n" +
                 "    note TEXT \n" +
                 ");\n");
     }
