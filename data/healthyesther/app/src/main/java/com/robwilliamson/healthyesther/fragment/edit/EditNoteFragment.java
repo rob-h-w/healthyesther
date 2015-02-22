@@ -15,6 +15,9 @@ import com.robwilliamson.healthyesther.R;
 import java.util.HashMap;
 
 public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Watcher> {
+    private HashMap<Long, String> mNoteContents;
+    private Long mUserSelectedId = null;
+    private Long mOldUserSelectedId = null;
 
     @Override
     protected int getFragmentLayout() {
@@ -29,6 +32,34 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         }
 
         return null;
+    }
+
+    @Override
+    protected void onNameClicked() {
+        mOldUserSelectedId = mUserSelectedId;
+
+        super.onNameClicked();
+
+        mUserSelectedId = getSuggestionId(getName());
+        suggestNote(mNoteContents.get(mUserSelectedId));
+    }
+
+    public void suggestNote(String note) {
+        if (Utils.noString(note)) {
+            if (mOldUserSelectedId != null
+                    && getNote().equals(mNoteContents.get(mOldUserSelectedId))) {
+                getNoteView().setText(note);
+            }
+
+            return;
+        }
+
+        if (mUserSelectedId != null) {
+            if (Utils.noString(getNote())
+                    || getNote().equals(mNoteContents.get(mOldUserSelectedId))) {
+                getNoteView().setText(note);
+            }
+        }
     }
 
     public String getNote() {
@@ -76,6 +107,16 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
                         mSuggestionIds = Utils.Db.cursorToSuggestionList(cursor,
                                 Note.NAME,
                                 Note._ID);
+
+                        mNoteContents = new HashMap<Long, String>(cursor.getCount());
+                        final int rowIdIndex = cursor.getColumnIndex(Note._ID);
+                        final int noteIndex = cursor.getColumnIndex(Note.NOTE);
+
+                        if (cursor.moveToFirst()) {
+                            do {
+                                mNoteContents.put(cursor.getLong(rowIdIndex), cursor.getString(noteIndex));
+                            } while(cursor.moveToNext());
+                        }
                     }
 
                     @Override
