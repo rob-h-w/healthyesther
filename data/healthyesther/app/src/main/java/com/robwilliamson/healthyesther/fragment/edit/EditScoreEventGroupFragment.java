@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.robwilliamson.db.definition.EventModification;
 import com.robwilliamson.db.definition.HealthScore;
@@ -60,12 +58,6 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         }
 
         getFragmentManager().beginTransaction().add(R.id.edit_score_group_layout, new AddValueFragment(), ADD_VALUE_FRAGMENT).commit();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_edit_score_event_group, container, false);
     }
 
     @Override
@@ -221,6 +213,11 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         }
 
         return list;
+    }
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_edit_score_event_group;
     }
 
     public EditScoreEventFragment getEditScoreEventFragment(HealthScore.Score score) {

@@ -1,10 +1,6 @@
 package com.robwilliamson.healthyesther.fragment;
 
 import android.database.Cursor;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.jjoe64.graphview.GraphView;
@@ -35,10 +31,8 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(com.robwilliamson.healthyesther.R.layout.fragment_activity_graph, container, false);
+    protected int getFragmentLayout() {
+        return R.layout.fragment_activity_graph;
     }
 
     private LinearLayout getLayout() {

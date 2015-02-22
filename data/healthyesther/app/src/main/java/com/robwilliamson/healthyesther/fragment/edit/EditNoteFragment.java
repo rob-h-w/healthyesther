@@ -1,12 +1,8 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.database.Cursor;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 
 import com.robwilliamson.db.Contract;
 import com.robwilliamson.db.Utils;
@@ -19,6 +15,11 @@ import com.robwilliamson.healthyesther.R;
 import java.util.HashMap;
 
 public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Watcher> {
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_edit_note_event;
+    }
 
     public String getName() {
         AutoCompleteTextView nameView = getNameView();
@@ -40,29 +41,6 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
     }
 
     public EditNoteFragment() {}
-
-    /**
-     * Called to have the fragment instantiate its user interface view.
-     * This is optional, and non-graphical fragments can return null (which
-     * is the default implementation).  This will be called between
-     * {@link #onCreate(android.os.Bundle)} and {@link #onActivityCreated(android.os.Bundle)}.
-     * <p/>
-     * <p>If you return a View from here, you will later be called in
-     * {@link #onDestroyView} when the view is being released.
-     *
-     * @param inflater           The LayoutInflater object that can be used to inflate
-     *                           any views in the fragment,
-     * @param container          If non-null, this is the parent view that the fragment's
-     *                           UI should be attached to.  The fragment should not add the view itself,
-     *                           but this can be used to generate the LayoutParams of the view.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     *                           from a previous saved state as given here.
-     * @return Return the View for the fragment's UI, or null.
-     */
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_edit_note_event, container, false);
-    }
 
     @Override
     public Modification getModification() {
@@ -122,7 +100,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         return getTypeSafeView(R.id.note_name);
     }
 
-    private AutoCompleteTextView getNoteView() {
+    private EditText getNoteView() {
         return getTypeSafeView(R.id.note_content);
     }
 }

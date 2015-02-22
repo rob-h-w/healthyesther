@@ -3,9 +3,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
@@ -54,13 +52,6 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         }
 
         updateUi();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_event, container, false);
     }
 
     @Override
@@ -123,6 +114,11 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     public void onDateTimeChange(DateTime dateTime) {
         mWhen = dateTime;
         updateUi();
+    }
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_edit_event;
     }
 
     @Override

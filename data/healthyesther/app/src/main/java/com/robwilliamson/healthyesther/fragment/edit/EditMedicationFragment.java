@@ -1,13 +1,9 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.database.Cursor;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
@@ -26,6 +22,11 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
     public interface Watcher {
         void onFragmentUpdate(EditMedicationFragment fragment);
         void onQueryFailed(EditMedicationFragment fragment, Throwable error);
+    }
+
+    @Override
+    protected int getFragmentLayout() {
+        return R.layout.fragment_edit_medication;
     }
 
     @Override
@@ -94,12 +95,6 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
         }
 
         return new Medication.Modification(name);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(
-                R.layout.fragment_edit_medication, container, false);
     }
 
     @Override
