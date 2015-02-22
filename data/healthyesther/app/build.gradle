@@ -9,12 +9,12 @@ android {
             storePassword System.getenv('HEALTHY_ESTHER_STORE_PASSWORD')
         }
     }
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "com.robwilliamson.healthyesther"
         minSdkVersion 16
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionCode 4
         versionName "0.3"
         testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
