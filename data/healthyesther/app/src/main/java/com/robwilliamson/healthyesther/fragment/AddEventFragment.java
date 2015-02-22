@@ -15,12 +15,11 @@ import com.robwilliamson.healthyesther.add.MedicationActivity;
 import com.robwilliamson.healthyesther.add.NoteActivity;
 import com.robwilliamson.healthyesther.add.ScoreActivity;
 
-public class AddEventFragment extends Fragment {
+public class AddEventFragment extends BaseFragment {
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(
-                R.layout.fragment_add_event, container, false);
+    protected int getFragmentLayout() {
+        return R.layout.fragment_add_event;
     }
 
     @Override

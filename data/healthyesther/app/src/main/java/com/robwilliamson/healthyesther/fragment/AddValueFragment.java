@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 
-public class AddValueFragment extends Fragment {
+public class AddValueFragment extends BaseFragment {
     private View.OnClickListener mClickListener = null;
 
     public AddValueFragment() {
@@ -22,8 +22,8 @@ public class AddValueFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_add_value, container, false);
+    protected int getFragmentLayout() {
+        return R.layout.fragment_add_value;
     }
 
     @Override
