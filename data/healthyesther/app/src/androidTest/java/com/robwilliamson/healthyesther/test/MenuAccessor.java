@@ -6,7 +6,7 @@ import com.robwilliamson.healthyesther.R;
 
 import org.hamcrest.Matcher;
 
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class MenuAccessor {
 

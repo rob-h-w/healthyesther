@@ -2,12 +2,10 @@ package com.robwilliamson.healthyesther.test;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.support.test.runner.AndroidJUnitRunner;
+import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
+import android.support.test.runner.lifecycle.Stage;
 import android.test.InstrumentationTestCase;
-
-import com.google.android.apps.common.testing.testrunner.ActivityLifecycleMonitor;
-import com.google.android.apps.common.testing.testrunner.GoogleInstrumentation;
-import com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner;
-import com.google.android.apps.common.testing.testrunner.Stage;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -64,7 +62,7 @@ public class Espresso {
 
     private static Collection<Activity> getResumed(InstrumentationTestCase testCase) {
         final Instrumentation instrumentation = testCase.getInstrumentation();
-        final ActivityLifecycleMonitor monitor =  monitor((GoogleInstrumentationTestRunner) instrumentation);
+        final ActivityLifecycleMonitor monitor =  monitor((AndroidJUnitRunner) instrumentation);
         final CountDownLatch latch = new CountDownLatch(1);
         final Object[] resumed = { null };
 
@@ -89,10 +87,10 @@ public class Espresso {
         return (Collection<Activity>) resumed[0];
     }
 
-    private static ActivityLifecycleMonitor monitor(GoogleInstrumentationTestRunner instrumentation) {
+    private static ActivityLifecycleMonitor monitor(AndroidJUnitRunner instrumentation) {
         Field lifecycleMonitor;
         try {
-            lifecycleMonitor = GoogleInstrumentation.class.getDeclaredField("lifecycleMonitor");
+            lifecycleMonitor = android.support.test.runner.MonitoringInstrumentation.class.getDeclaredField("mLifecycleMonitor");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }

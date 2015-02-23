@@ -6,7 +6,7 @@ import com.robwilliamson.healthyesther.R;
 
 import org.hamcrest.Matcher;
 
-import static com.google.android.apps.common.testing.ui.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class TrackAnotherScoreDialogAccessor {
     public static Matcher<View> healthScoreEditBox() {
