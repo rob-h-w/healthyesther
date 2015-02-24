@@ -2,6 +2,7 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:buttonStyle">@style/button</item>
     </style>
 
     <style name="AppTheme.rootScrollView">
@@ -73,6 +74,48 @@
 
     <style name="AppTheme.text.small">
         <item name="android:textSize">5pt</item>
+    </style>
+
+    <style name="AppTheme.gradient">
+        <item name="android:startColor">@color/gradient_enabled_1</item>
+        <item name="android:centerColor">@color/gradient_enabled_2</item>
+        <item name="android:endColor">@color/gradient_enabled_1</item>
+        <item name="android:angle">90</item>
+    </style>
+
+    <style name="AppTheme.gradient.disabled">
+        <item name="android:startColor">@color/gradient_disabled_1</item>
+        <item name="android:centerColor">@color/gradient_disabled_2</item>
+        <item name="android:endColor">@color/gradient_disabled_1</item>
+        <item name="android:angle">90</item>
+    </style>
+
+    <style name="AppTheme.gradient.focused">
+        <item name="android:startColor">@color/gradient_focused_1</item>
+        <item name="android:centerColor">@color/gradient_focused_2</item>
+        <item name="android:endColor">@color/gradient_focused_1</item>
+        <item name="android:angle">90</item>
+    </style>
+
+    <style name="AppTheme.gradient.pressed">
+        <item name="android:startColor">@color/gradient_pressed_1</item>
+        <item name="android:centerColor">@color/gradient_pressed_2</item>
+        <item name="android:endColor">@color/gradient_pressed_1</item>
+        <item name="android:angle">90</item>
+    </style>
+
+    <style name="button" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">#FF000000</item>
+        <item name="android:shadowColor">#FF000000</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">-1</item>
+        <item name="android:shadowRadius">0.2</item>
+        <item name="android:textSize">16dip</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/button</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
     </style>
 
 </resources>
