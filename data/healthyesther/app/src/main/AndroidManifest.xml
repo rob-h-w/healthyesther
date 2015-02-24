@@ -27,6 +27,7 @@
             android:label="@string/log_a_meal" >
         </activity>
         <activity
+            android:icon="@mipmap/ic_medication"
             android:name=".add.MedicationActivity"
             android:label="@string/log_medication" >
         </activity>
