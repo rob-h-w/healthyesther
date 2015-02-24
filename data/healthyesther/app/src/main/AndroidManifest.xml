@@ -32,13 +32,17 @@
             android:label="@string/log_medication" >
         </activity>
         <activity
+            android:icon="@mipmap/ic_health"
             android:name=".add.ScoreActivity"
             android:label="@string/health_score" >
         </activity>
-        <activity android:name=".add.NoteActivity"
+        <activity
+            android:icon="@mipmap/ic_note"
+            android:name=".add.NoteActivity"
             android:label="@string/note" >
         </activity>
         <activity
+            android:icon="@mipmap/ic_settings"
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
