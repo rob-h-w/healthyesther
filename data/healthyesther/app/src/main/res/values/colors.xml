@@ -15,7 +15,7 @@
     <color name="gradient_focused_2">#fffefa</color>
     <color name="gradient_pressed_1">#809d9e65</color>
     <color name="gradient_pressed_2">#bfbfa2</color>
-    <color name="button_text">#7000</color>
+    <color name="button_text">#000</color>
     <color name="button_text_shadow">#fff</color>
     <color name="button_stroke_disabled">#8fff</color>
     <color name="button_stroke_enabled">#fff</color>

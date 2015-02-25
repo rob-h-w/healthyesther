@@ -11,12 +11,12 @@
     <dimen name="border_corner_radius">20dip</dimen>
     <dimen name="border_margin">5dip</dimen>
     <dimen name="content_layout_padding">15dip</dimen>
-    <dimen name="section_layout_padding">10dip</dimen>
+    <dimen name="section_layout_padding">20dip</dimen>
     <dimen name="activity_graph_minimum_height">300dip</dimen>
 
     <!-- Button values -->
     <dimen name="button_text_size">16dip</dimen>
-    <dimen name="button_corner_radius">4dip</dimen>
+    <dimen name="button_corner_radius">6dip</dimen>
     <dimen name="button_stroke_width">2dip</dimen>
     <dimen name="button_padding">7dip</dimen>
     <!-- End Button values -->
