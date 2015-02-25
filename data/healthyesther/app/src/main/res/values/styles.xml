@@ -80,42 +80,61 @@
         <item name="android:startColor">@color/gradient_enabled_1</item>
         <item name="android:centerColor">@color/gradient_enabled_2</item>
         <item name="android:endColor">@color/gradient_enabled_1</item>
-        <item name="android:angle">90</item>
+        <item name="android:angle">135</item>
     </style>
 
-    <style name="AppTheme.gradient.disabled">
+    <style name="AppTheme.gradient.disabled" parent="AppTheme.gradient">
         <item name="android:startColor">@color/gradient_disabled_1</item>
         <item name="android:centerColor">@color/gradient_disabled_2</item>
         <item name="android:endColor">@color/gradient_disabled_1</item>
-        <item name="android:angle">90</item>
     </style>
 
-    <style name="AppTheme.gradient.focused">
+    <style name="AppTheme.gradient.focused" parent="AppTheme.gradient">
         <item name="android:startColor">@color/gradient_focused_1</item>
         <item name="android:centerColor">@color/gradient_focused_2</item>
         <item name="android:endColor">@color/gradient_focused_1</item>
-        <item name="android:angle">90</item>
     </style>
 
-    <style name="AppTheme.gradient.pressed">
+    <style name="AppTheme.gradient.pressed" parent="AppTheme.gradient">
         <item name="android:startColor">@color/gradient_pressed_1</item>
         <item name="android:centerColor">@color/gradient_pressed_2</item>
         <item name="android:endColor">@color/gradient_pressed_1</item>
-        <item name="android:angle">90</item>
     </style>
 
     <style name="button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
-        <item name="android:textColor">#FF000000</item>
-        <item name="android:shadowColor">#FF000000</item>
-        <item name="android:shadowDx">0</item>
-        <item name="android:shadowDy">-1</item>
-        <item name="android:shadowRadius">0.2</item>
-        <item name="android:textSize">16dip</item>
+        <item name="android:textColor">@color/button_text</item>
+        <item name="android:shadowColor">@color/button_text_shadow</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">5</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/button</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
+        <item name="android:padding">@dimen/button_padding</item>
+    </style>
+
+    <style name="button.corners">
+        <item name="android:radius">@dimen/button_corner_radius</item>
+    </style>
+
+    <style name="button.stroke">
+        <item name="android:color">@color/button_stroke_enabled</item>
+        <item name="android:width">@dimen/button_stroke_width</item>
+    </style>
+
+    <style name="button.stroke.disabled" parent="button.stroke">
+        <item name="android:color">@color/button_stroke_disabled</item>
+    </style>
+
+    <style name="button.stroke.focused" parent="button.stroke">
+        <item name="android:color">@color/button_stroke_focused</item>
+    </style>
+
+    <style name="button.stroke.pressed" parent="button.stroke">
+        <item name="android:color">@color/button_stroke_pressed</item>
     </style>
 
 </resources>

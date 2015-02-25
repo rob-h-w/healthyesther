@@ -5,15 +5,10 @@
     <gradient
         style="@style/AppTheme.gradient"/>
 
-    <padding android:left="7dp"
-        android:top="7dp"
-        android:right="7dp"
-        android:bottom="7dp" />
-
     <stroke
-        android:width="2dip"
-        android:color="#FFFFFF" />
+        style="@style/button.stroke" />
 
-    <corners android:radius="@dimen/border_corner_radius" />
+    <corners
+        style="@style/button.corners"/>
 
 </shape>

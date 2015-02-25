@@ -9,10 +9,16 @@
     <color name="content_background_selected">#f66f</color>
     <color name="gradient_disabled_1">#80F2F2F2</color>
     <color name="gradient_disabled_2">#80A4A4A4</color>
-    <color name="gradient_enabled_1">#d2d387</color>
-    <color name="gradient_enabled_2">#ffffd8</color>
+    <color name="gradient_enabled_1">#4f5b2d</color>
+    <color name="gradient_enabled_2">#d1ddb5</color>
     <color name="gradient_focused_1">#d2938a</color>
     <color name="gradient_focused_2">#fffefa</color>
     <color name="gradient_pressed_1">#9d9e65</color>
     <color name="gradient_pressed_2">#bfbfa2</color>
+    <color name="button_text">#7000</color>
+    <color name="button_text_shadow">#fff</color>
+    <color name="button_stroke_disabled">#8fff</color>
+    <color name="button_stroke_enabled">#fff</color>
+    <color name="button_stroke_focused">#fff</color>
+    <color name="button_stroke_pressed">#000</color>
 </resources>
