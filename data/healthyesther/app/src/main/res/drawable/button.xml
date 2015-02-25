@@ -7,17 +7,18 @@
         android:drawable="@drawable/button_disabled" />
 
     <item
-        android:state_enabled="true"
-        android:drawable="@drawable/button_enabled" />
+        android:state_pressed="true"
+        android:drawable="@drawable/button_pressed" />
 
     <item
         android:state_focused="true"
-        android:state_enabled="true"
         android:drawable="@drawable/button_focused" />
 
     <item
-        android:state_pressed="true"
-        android:state_enabled="true"
-        android:drawable="@drawable/button_pressed" />
+        android:state_hovered="true"
+        android:drawable="@drawable/button_focused" />
+
+    <item
+        android:drawable="@drawable/button_enabled" />
 
 </selector>
