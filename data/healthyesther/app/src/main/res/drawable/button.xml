@@ -32,10 +32,7 @@
         <shape android:shape="rectangle">
 
             <gradient
-                android:type="radial"
-                android:gradientRadius="1000"
-                android:centerX="0.1"
-                android:centerY="0.5"
+                android:type="linear"
                 android:startColor="#8fff"
                 android:endColor="#0fff"/>
 
@@ -51,12 +48,10 @@
         <shape android:shape="rectangle">
 
             <gradient
-                android:type="radial"
-                android:gradientRadius="3000"
-                android:centerX="2.0"
-                android:centerY="2.0"
-                android:startColor="#f88"
-                android:endColor="#0fff"/>
+                android:type="linear"
+                android:startColor="#0f88"
+                android:endColor="#5f88"
+                android:angle="270"/>
 
             <corners
                 style="@style/button.corners"/>
