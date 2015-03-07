@@ -33,8 +33,8 @@
 
             <gradient
                 android:type="linear"
-                android:startColor="#8fff"
-                android:endColor="#0fff"/>
+                android:startColor="@color/button_overlay_gradient_1_start"
+                android:endColor="@color/button_overlay_gradient_1_end"/>
 
             <corners
                 style="@style/button.corners"/>
@@ -49,8 +49,8 @@
 
             <gradient
                 android:type="linear"
-                android:startColor="#0f88"
-                android:endColor="#5f88"
+                android:startColor="@color/button_overlay_gradient_2_start"
+                android:endColor="@color/button_overlay_gradient_2_end"
                 android:angle="270"/>
 
             <corners

@@ -76,35 +76,6 @@
         <item name="android:textSize">5pt</item>
     </style>
 
-    <style name="AppTheme.gradient">
-        <item name="android:type">linear</item>
-        <item name="android:gradientRadius">20</item>
-        <item name="android:centerX">.5</item>
-        <item name="android:centerY">.5</item>
-        <item name="android:startColor">@color/gradient_enabled_1</item>
-        <item name="android:endColor">@color/gradient_enabled_1</item>
-        <item name="android:centerColor">@color/gradient_enabled_2</item>
-        <!--<item name="android:angle">135</item>-->
-    </style>
-
-    <style name="AppTheme.gradient.disabled" parent="AppTheme.gradient">
-        <item name="android:startColor">@color/gradient_disabled_1</item>
-        <item name="android:centerColor">@color/gradient_disabled_2</item>
-        <item name="android:endColor">@color/gradient_disabled_1</item>
-    </style>
-
-    <style name="AppTheme.gradient.focused" parent="AppTheme.gradient">
-        <item name="android:startColor">@color/gradient_focused_1</item>
-        <item name="android:centerColor">@color/gradient_focused_2</item>
-        <item name="android:endColor">@color/gradient_focused_1</item>
-    </style>
-
-    <style name="AppTheme.gradient.pressed" parent="AppTheme.gradient">
-        <item name="android:startColor">@color/gradient_pressed_1</item>
-        <item name="android:centerColor">@color/gradient_pressed_2</item>
-        <item name="android:endColor">@color/gradient_pressed_1</item>
-    </style>
-
     <style name="button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">@color/button_text</item>
