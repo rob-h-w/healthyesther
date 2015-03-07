@@ -7,14 +7,21 @@
     <color name="border_background_pressed">#e66f</color>
     <color name="content_background">#bfff</color>
     <color name="content_background_selected">#f66f</color>
-    <color name="gradient_disabled_1">#80F2F2F2</color>
-    <color name="gradient_disabled_2">#80A4A4A4</color>
-    <color name="gradient_enabled_1">#804f5b2d</color>
-    <color name="gradient_enabled_2">#d1ddb5</color>
-    <color name="gradient_focused_1">#80d2938a</color>
-    <color name="gradient_focused_2">#fffefa</color>
-    <color name="gradient_pressed_1">#809d9e65</color>
-    <color name="gradient_pressed_2">#bfbfa2</color>
+
+    <!-- button -->
+    <color name="button_disabled">#80f2f2f2</color>
+    <color name="button_enabled">#866f</color>
+    <color name="button_focused">#6666ff</color>
+    <color name="button_pressed">#e66f</color>
+
+    <color name="gradient_disabled_1">#80f2f2f2</color>
+    <color name="gradient_disabled_2">#80ffffff</color>
+    <color name="gradient_enabled_1">#866f</color>
+    <color name="gradient_enabled_2">#afff</color>
+    <color name="gradient_focused_1">#ff6666ff</color>
+    <color name="gradient_focused_2">#afff</color>
+    <color name="gradient_pressed_1">#e66f</color>
+    <color name="gradient_pressed_2">#afff</color>
     <color name="button_text">#000</color>
     <color name="button_text_shadow">#fff</color>
     <color name="button_stroke_disabled">#8fff</color>

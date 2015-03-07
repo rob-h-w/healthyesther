@@ -1,24 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <selector>
 
-    <item
-        android:state_enabled="false"
-        android:drawable="@drawable/button_disabled" />
+            <item
+                android:state_enabled="false"
+                android:drawable="@drawable/button_disabled" />
 
-    <item
-        android:state_pressed="true"
-        android:drawable="@drawable/button_pressed" />
+            <item
+                android:state_pressed="true"
+                android:drawable="@drawable/button_pressed" />
 
-    <item
-        android:state_focused="true"
-        android:drawable="@drawable/button_focused" />
+            <item
+                android:state_focused="true"
+                android:drawable="@drawable/button_focused" />
 
-    <item
-        android:state_hovered="true"
-        android:drawable="@drawable/button_focused" />
+            <item
+                android:state_hovered="true"
+                android:drawable="@drawable/button_focused" />
 
-    <item
-        android:drawable="@drawable/button_enabled" />
+            <item
+                android:drawable="@drawable/button_enabled" />
 
-</selector>
+        </selector>
+
+    </item>
+
+    <item>
+
+        <shape android:shape="rectangle">
+
+            <gradient
+                android:type="radial"
+                android:gradientRadius="1000"
+                android:centerX="0.1"
+                android:centerY="0.5"
+                android:startColor="#8fff"
+                android:endColor="#0fff"/>
+
+            <corners
+                style="@style/button.corners"/>
+
+        </shape>
+
+    </item>
+
+    <item>
+
+        <shape android:shape="rectangle">
+
+            <gradient
+                android:type="radial"
+                android:gradientRadius="3000"
+                android:centerX="2.0"
+                android:centerY="2.0"
+                android:startColor="#f88"
+                android:endColor="#0fff"/>
+
+            <corners
+                style="@style/button.corners"/>
+
+        </shape>
+    </item>
+</layer-list>

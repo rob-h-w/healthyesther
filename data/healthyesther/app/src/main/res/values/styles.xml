@@ -77,10 +77,14 @@
     </style>
 
     <style name="AppTheme.gradient">
+        <item name="android:type">linear</item>
+        <item name="android:gradientRadius">20</item>
+        <item name="android:centerX">.5</item>
+        <item name="android:centerY">.5</item>
         <item name="android:startColor">@color/gradient_enabled_1</item>
-        <item name="android:centerColor">@color/gradient_enabled_2</item>
         <item name="android:endColor">@color/gradient_enabled_1</item>
-        <item name="android:angle">135</item>
+        <item name="android:centerColor">@color/gradient_enabled_2</item>
+        <!--<item name="android:angle">135</item>-->
     </style>
 
     <style name="AppTheme.gradient.disabled" parent="AppTheme.gradient">
