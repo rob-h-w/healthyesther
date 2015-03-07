@@ -11,6 +11,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -61,6 +62,6 @@ public class HealthScoreActivityAccessor {
     }
 
     private static void checkUnmodifiedScore(String title, String min, String max) {
-        onView(score(title, min, max)).check(matches(isDisplayed()));
+        onView(score(title, min, max)).check(matches(isEnabled()));
     }
 }
