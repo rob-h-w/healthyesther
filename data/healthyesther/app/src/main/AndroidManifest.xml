@@ -2,12 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.robwilliamson.healthyesther" >
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name=".App">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".EventActivity"
             android:label="@string/app_name" >
@@ -22,32 +25,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:icon="@drawable/ic_food"
             android:name=".add.MealActivity"
+            android:icon="@drawable/ic_food"
             android:label="@string/log_a_meal" >
         </activity>
         <activity
-            android:icon="@mipmap/ic_medication"
             android:name=".add.MedicationActivity"
+            android:icon="@mipmap/ic_medication"
             android:label="@string/log_medication" >
         </activity>
         <activity
-            android:icon="@mipmap/ic_health"
             android:name=".add.ScoreActivity"
+            android:icon="@mipmap/ic_health"
             android:label="@string/health_score" >
         </activity>
         <activity
-            android:icon="@mipmap/ic_note"
             android:name=".add.NoteActivity"
+            android:icon="@mipmap/ic_note"
             android:label="@string/note" >
         </activity>
         <activity
-            android:icon="@mipmap/ic_settings"
             android:name=".SettingsActivity"
+            android:icon="@mipmap/ic_settings"
             android:label="@string/title_activity_settings" >
         </activity>
+
+        <receiver android:name=".reminder.ServiceAutoStarter" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.PACKAGE_FIRST_LAUNCH" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".reminder.ReminderIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>
