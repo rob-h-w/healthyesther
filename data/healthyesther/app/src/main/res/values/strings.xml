@@ -54,4 +54,8 @@
     <string name="maximum_value_name_hint">eg. "happy"</string>
     <string name="edit">Edit</string>
 
+    <string name="reminder_content_title">Healthy Esther</string>
+    <string name="reminder_content">How are you feeling? Have you eaten? Taken medication?</string>
+    <string name="reminder_ticker">How are you?</string>
+
 </resources>

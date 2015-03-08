@@ -26,11 +26,11 @@ public class ReminderIntentService extends IntentService {
             Intent reminderIntent = new Intent(getBaseContext(), HomeActivity.class);
             PendingIntent reminderPendingIntent = PendingIntent.getActivity(getBaseContext(), 0, reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             Notification notification = new Notification.Builder(getBaseContext())
-                    .setContentTitle("Wassup?")
-                    .setContentText("Content text.")
+                    .setContentTitle(getBaseContext().getString(R.string.reminder_content_title))
+                    .setContentText(getBaseContext().getString(R.string.reminder_content))
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentIntent(reminderPendingIntent)
-                    .setTicker("ReminderIntentService finished.")
+                    .setTicker(getBaseContext().getString(R.string.reminder_ticker))
                     .setAutoCancel(true)
                     .build();
 
