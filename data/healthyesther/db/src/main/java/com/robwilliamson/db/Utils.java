@@ -80,6 +80,7 @@ public final class Utils {
     public static class Time {
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
         private static final DateTimeFormatter DB_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
+        public static final DateTimeFormatter UTC_FORMATTER = DB_FORMATTER;
 
         public static void bundle(Bundle bundle, String name, DateTime dateTime) {
             bundle.putString(name, toString(dateTime, ISODateTimeFormat.dateTime()));
@@ -88,6 +89,14 @@ public final class Utils {
         public static DateTime unBundle(Bundle bundle, String name) {
             String raw = bundle.getString(name);
             return fromString(raw, ISODateTimeFormat.dateTime());
+        }
+
+        public static String toUtcString(DateTime dateTime) {
+            return toString(dateTime, UTC_FORMATTER);
+        }
+
+        public static DateTime fromUtcString(String string) {
+            return fromString(string, UTC_FORMATTER);
         }
 
         public static String toDatabaseString(DateTime dateTime) {

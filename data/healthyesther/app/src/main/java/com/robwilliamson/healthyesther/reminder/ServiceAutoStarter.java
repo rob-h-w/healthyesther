@@ -7,6 +7,6 @@ import android.content.Intent;
 public class ServiceAutoStarter extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        TimingManager.INSTANCE.next(context);
+        TimingManager.INSTANCE.start(context);
     }
 }
