@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.robwilliamson.db.use.Query;
+import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;

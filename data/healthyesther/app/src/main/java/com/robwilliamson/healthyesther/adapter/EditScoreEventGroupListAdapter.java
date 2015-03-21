@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.robwilliamson.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 

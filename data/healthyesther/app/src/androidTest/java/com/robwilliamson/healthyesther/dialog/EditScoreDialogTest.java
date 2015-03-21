@@ -3,9 +3,9 @@ package com.robwilliamson.healthyesther.dialog;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.robwilliamson.db.HealthDbHelper;
-import com.robwilliamson.db.Utils;
-import com.robwilliamson.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.add.ScoreActivity;
 import com.robwilliamson.healthyesther.test.EditScoreDialogAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;

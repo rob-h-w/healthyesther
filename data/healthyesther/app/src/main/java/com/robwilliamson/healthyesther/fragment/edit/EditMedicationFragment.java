@@ -7,12 +7,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
-import com.robwilliamson.db.definition.Medication;
-import com.robwilliamson.db.definition.MedicationName;
-import com.robwilliamson.db.definition.Modification;
-import com.robwilliamson.db.use.GetAllMedicationNamesQuery;
-import com.robwilliamson.db.use.GetAllMedicationsQuery;
-import com.robwilliamson.db.use.Query;
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.definition.Medication;
+import com.robwilliamson.healthyesther.db.definition.MedicationName;
+import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.use.GetAllMedicationNamesQuery;
+import com.robwilliamson.healthyesther.db.use.GetAllMedicationsQuery;
+import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
@@ -37,9 +38,9 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         mSuggestionIds = new HashMap<String, Long>();
-                        mSuggestionIds.putAll(com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
-                                com.robwilliamson.db.definition.Medication.NAME,
-                                com.robwilliamson.db.definition.Medication._ID));
+                        mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
+                                com.robwilliamson.healthyesther.db.definition.Medication.NAME,
+                                com.robwilliamson.healthyesther.db.definition.Medication._ID));
                     }
 
                     @Override
@@ -62,7 +63,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         mSuggestionIds = new HashMap<String, Long>();
-                        mSuggestionIds.putAll(com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
+                        mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
                                 MedicationName.NAME,
                                 MedicationName.MEDICATION_ID));
                     }

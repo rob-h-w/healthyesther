@@ -7,11 +7,11 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
-import com.robwilliamson.db.Contract;
-import com.robwilliamson.db.Utils;
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.Modification;
-import com.robwilliamson.db.use.Query;
+import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;

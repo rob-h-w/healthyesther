@@ -1,6 +1,6 @@
 package com.robwilliamson.healthyesther.test;
 
-import com.robwilliamson.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.R;
 
 import static android.support.test.espresso.Espresso.onView;

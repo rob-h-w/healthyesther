@@ -8,9 +8,9 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.robwilliamson.db.use.QueryUser;
-import com.robwilliamson.db.use.SelectEventAndType;
-import com.robwilliamson.db.use.SelectQuery;
+import com.robwilliamson.healthyesther.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.use.SelectEventAndType;
+import com.robwilliamson.healthyesther.db.use.SelectQuery;
 
 
 public class EventActivity extends DbActivity {

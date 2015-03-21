@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.robwilliamson.db.HealthDbHelper;
-import com.robwilliamson.db.use.Query;
-import com.robwilliamson.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.db.use.QueryUser;
 
 import java.io.IOException;
 import java.util.ArrayDeque;

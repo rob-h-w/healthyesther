@@ -3,7 +3,7 @@ package com.robwilliamson.healthyesther;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.robwilliamson.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.definition.HealthScore;
 
 import java.util.HashSet;
 import java.util.Set;

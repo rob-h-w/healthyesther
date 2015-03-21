@@ -6,7 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.robwilliamson.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.ActivityGraphFragment;
 import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
@@ -88,7 +88,7 @@ public class HomeActivity extends DbActivity
         MenuItem backupToDropbox = menu.findItem(R.id.action_backup_to_dropbox);
 
         if (backupToDropbox != null) {
-            backupToDropbox.setEnabled(com.robwilliamson.db.Utils.File.Dropbox.isDropboxPresent());
+            backupToDropbox.setEnabled(com.robwilliamson.healthyesther.db.Utils.File.Dropbox.isDropboxPresent());
         }
 
         return returnValue;

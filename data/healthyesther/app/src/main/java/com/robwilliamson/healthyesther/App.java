@@ -2,12 +2,11 @@ package com.robwilliamson.healthyesther;
 
 import android.app.Application;
 
-import com.robwilliamson.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.reminder.TimingManager;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.util.TimeZone;

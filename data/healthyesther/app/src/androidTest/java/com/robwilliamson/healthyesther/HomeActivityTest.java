@@ -4,8 +4,8 @@ import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.robwilliamson.db.HealthDbHelper;
-import com.robwilliamson.db.Utils;
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -37,7 +37,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         HomeActivityAccessor.showNavigationDrawer(false, getInstrumentation().getTargetContext());
 
-        com.robwilliamson.db.Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
+        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
                 getInstrumentation().getTargetContext()).getWritableDatabase());
 
         if (Utils.File.exists(DROPBOX_PATH)) {

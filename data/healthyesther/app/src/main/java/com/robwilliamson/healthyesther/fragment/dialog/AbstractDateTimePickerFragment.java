@@ -2,7 +2,7 @@ package com.robwilliamson.healthyesther.fragment.dialog;
 
 import android.os.Bundle;
 
-import com.robwilliamson.db.Utils;
+import com.robwilliamson.healthyesther.db.Utils;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

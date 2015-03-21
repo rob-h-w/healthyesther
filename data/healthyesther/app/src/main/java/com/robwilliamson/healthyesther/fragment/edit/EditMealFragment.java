@@ -8,11 +8,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
-import com.robwilliamson.db.Contract;
-import com.robwilliamson.db.definition.Meal;
-import com.robwilliamson.db.definition.Modification;
-import com.robwilliamson.db.use.GetAllMealsQuery;
-import com.robwilliamson.db.use.Query;
+import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.definition.Meal;
+import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.use.GetAllMealsQuery;
+import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
@@ -39,9 +40,9 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
-                        mSuggestionIds = com.robwilliamson.db.Utils.Db.cursorToSuggestionList(cursor,
-                                com.robwilliamson.db.definition.Meal.NAME,
-                                com.robwilliamson.db.definition.Meal._ID);
+                        mSuggestionIds = Utils.Db.cursorToSuggestionList(cursor,
+                                com.robwilliamson.healthyesther.db.definition.Meal.NAME,
+                                com.robwilliamson.healthyesther.db.definition.Meal._ID);
                     }
 
                     @Override

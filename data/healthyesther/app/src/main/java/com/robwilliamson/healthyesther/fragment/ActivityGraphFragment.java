@@ -6,10 +6,11 @@ import android.widget.LinearLayout;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.Table;
-import com.robwilliamson.db.use.Query;
-import com.robwilliamson.db.use.SelectEventAndType;
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.definition.Table;
+import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.db.use.SelectEventAndType;
 import com.robwilliamson.healthyesther.R;
 
 import org.joda.time.DateTime;
@@ -57,7 +58,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                         if (cursor != null && cursor.moveToFirst()) {
                             int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
                             do {
-                                DateTime when = com.robwilliamson.db.Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
+                                DateTime when = Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
                                 Integer count = mEntriesPerDay.get(format().print(when)) + 1;
                                 mEntriesPerDay.put(format().print(when), count);
 

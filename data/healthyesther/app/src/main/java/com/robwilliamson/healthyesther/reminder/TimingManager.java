@@ -7,14 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.robwilliamson.db.Utils;
+import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.BuildConfig;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
-import org.joda.time.Interval;
-import org.joda.time.Period;
 
 public enum TimingManager {
     INSTANCE;

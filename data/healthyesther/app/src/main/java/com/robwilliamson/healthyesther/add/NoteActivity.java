@@ -4,10 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.Note;
-import com.robwilliamson.db.definition.NoteEvent;
-import com.robwilliamson.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.definition.Note;
+import com.robwilliamson.healthyesther.db.definition.NoteEvent;
+import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;

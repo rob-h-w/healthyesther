@@ -4,9 +4,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.MedicationEvent;
-import com.robwilliamson.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.definition.MedicationEvent;
+import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -43,7 +43,7 @@ public class MedicationActivity extends AbstractAddActivity
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        com.robwilliamson.db.definition.Medication.Modification medication = (com.robwilliamson.db.definition.Medication.Modification) getMedicationFragment().getModification();
+        com.robwilliamson.healthyesther.db.definition.Medication.Modification medication = (com.robwilliamson.healthyesther.db.definition.Medication.Modification) getMedicationFragment().getModification();
         Event.Modification event = (Event.Modification) getEventFragment().getModification();
         MedicationEvent.Modification medicationEvent = new MedicationEvent.Modification(medication, event);
         medicationEvent.modify(db);

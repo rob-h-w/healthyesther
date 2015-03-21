@@ -4,9 +4,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.robwilliamson.db.definition.Event;
-import com.robwilliamson.db.definition.MealEvent;
-import com.robwilliamson.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.definition.MealEvent;
+import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -40,7 +40,7 @@ public class MealActivity extends AbstractAddActivity
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        com.robwilliamson.db.definition.Meal.Modification meal = (com.robwilliamson.db.definition.Meal.Modification) getMealFragment().getModification();
+        com.robwilliamson.healthyesther.db.definition.Meal.Modification meal = (com.robwilliamson.healthyesther.db.definition.Meal.Modification) getMealFragment().getModification();
         Event.Modification event = (Event.Modification) getEventFragment().getModification();
         MealEvent.Modification mealEvent = new MealEvent.Modification(meal, event, null, null);
         mealEvent.modify(db);

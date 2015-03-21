@@ -4,12 +4,12 @@ import android.database.Cursor;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
-import com.robwilliamson.db.Contract;
-import com.robwilliamson.db.Utils;
-import com.robwilliamson.db.definition.Modification;
-import com.robwilliamson.db.definition.Note;
-import com.robwilliamson.db.use.GetAllNotesQuery;
-import com.robwilliamson.db.use.Query;
+import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.definition.Note;
+import com.robwilliamson.healthyesther.db.use.GetAllNotesQuery;
+import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
