@@ -8,9 +8,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.robwilliamson.db.Utils;
+import com.robwilliamson.healthyesther.BuildConfig;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 
@@ -20,59 +22,85 @@ public enum TimingManager {
     private static final int MILLISECONDS_IN_SECOND = 1000;
     private static final int SECONDS_IN_MINUTE = 60;
     private static final int MINUTES_IN_HOUR = 60;
-    private static final int PERIOD = 2 * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND;
-    private static final int MULTIPLE_NOTIFICATION_THRESHOLD_S = 5;
+    //private static final int PERIOD = 2 * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND;
+    private static final int PERIOD = 10000;
+    private static final int MULTIPLE_NOTIFICATION_THRESHOLD_S = 60;
+    private static final int FUTURE_OFFSET_S = 5;
 
     private static final String PREFERENCES_NAME =
             "com.robwilliamson.healthyesther.reminder.TimingManager";
     private static final String NEXT_REMINDER = "next_reminder";
     private static final String PREVIOUS_REMINDER = "previous_reminder";
+    private static final String REQUEST_CODE = "request_code";
 
     private static final String LOG_TAG = TimingManager.class.getSimpleName();
 
     private Context mContext;
+    private Long mLastRequest = null;
+    private int mPeriodMillis = PERIOD;
 
-    public void applicationCreated(Context context) {
-        alarmElapsed(context);
+    public void setPeriodMillis(int periodMillis) {
+        mPeriodMillis = periodMillis;
     }
 
-    public void alarmElapsed(Context context) {
+    public void resetPeriodMillis() {
+        setPeriodMillis(PERIOD);
+    }
+
+    public void applicationCreated(Context context) {
+        log("applicationCreated");
         setContext(context);
-        String previousReminderString = getPreferences().getString(PREVIOUS_REMINDER, null);
-        String nextReminderString = getPreferences().getString(NEXT_REMINDER, null);
+        if (getNextReminderTime() == null) {
+            start(context);
+        }
+    }
 
-        if (previousReminderString != null && nextReminderString != null) {
-            // Check we're not getting a cluster of alarms elapsed at once.
-            DateTime previousReminder = Utils.Time.fromUtcString(previousReminderString);
-            DateTime nextReminder = Utils.Time.fromUtcString(nextReminderString);
+    public void alarmElapsed(Context context, Intent intent) {
+        log("alarmElapsed");
+        setContext(context);
+        if (mLastRequest == null || intent.getLongExtra(REQUEST_CODE, -1) == mLastRequest) {
+            start(context);
+        }
+    }
 
-            if (nextReminder.minusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S).isAfterNow() &&
-                    previousReminder.plusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S).isBeforeNow()) {
-                // Ignore this elapsed event.
-                return;
-            }
+    public boolean notifyNow(Context context) {
+        setContext(context);
+        DateTime lastReminder = getPreviousReminderTime();
+
+        if (lastReminder == null) {
+            return isNowWithinNotificationRange();
         }
 
-        getPreferences().edit().remove(NEXT_REMINDER).
-                putString(PREVIOUS_REMINDER, Utils.Time.toUtcString(DateTime.now())).commit();
+        return isNowWithinNotificationRange() &&
+                lastReminder.plusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S).isAfterNow() &&
+                lastReminder.minusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S).isAfterNow();
+    }
+
+    public void notificationMade(Context context) {
+        log("notificationMade");
+        setContext(context);
+        setPreviousReminderTimeNow();
+        setNextReminderTime(null);
         start(context);
+        log("last reminder time is now " + getPreviousReminderTime());
     }
 
     public void start(Context context) {
+        log("start");
         setContext(context);
-        DateTime nextDateTime = getNextTimeToSet();
 
-        if (nextDateTime != null) {
+        if (getNextReminderTime() == null) {
+            DateTime nextDateTime = getNextTimeToSet();
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            long millisUntil = nextDateTime.getMillis() - DateTime.now().getMillis();
+            long millisUntil = nextDateTime.getMillis() - Utils.Time.localNow().getMillis();
 
-            Log.d(LOG_TAG, "setting new notification in " + millisUntil + "ms, expected to trigger at " + nextDateTime);
+            log("setting new notification in " + millisUntil + "ms, expected to trigger at " + nextDateTime);
+            DateTime prev = getPreviousReminderTime();
+            log("previous notification was " + (prev == null ? "not sent." : " sent at " + prev + "."));
 
             alarmManager.set(AlarmManager.ELAPSED_REALTIME, millisUntil, getOperation());
 
-            getPreferences().edit().
-                    putString(NEXT_REMINDER, Utils.Time.toUtcString(nextDateTime)).
-                    putString(PREVIOUS_REMINDER, Utils.Time.toUtcString(DateTime.now())).commit();
+            setNextReminderTime(nextDateTime);
         }
     }
 
@@ -81,46 +109,73 @@ public enum TimingManager {
     }
 
     private DateTime getNextTimeToSet() {
-        SharedPreferences preferences = getPreferences();
-        String lastTime = preferences.getString(NEXT_REMINDER, null);
-
-        if (lastTime != null) {
-            Log.d(LOG_TAG, "time read from preferences = " + lastTime);
-            DateTime next = Utils.Time.fromUtcString(lastTime);
-
-            if (next.isAfterNow()) {
-                Log.d(LOG_TAG, "time is in the future; not setting another alarm.");
-                // Already set.
-                return null;
-            }
+        if (!isNowWithinNotificationRange()) {
+            return getRangeEarliestTomorrow(Utils.Time.localNow());
         }
 
-        return DateTime.now().plusMillis(getMillis());
+        if (getPreviousReminderTime() == null) {
+            return Utils.Time.localNow().plusSeconds(1);
+        }
+
+        DateTime proposedNextTime = Utils.Time.localNow().plusMillis(mPeriodMillis);
+        DateTime nextThreshold = Utils.Time.localNow().plusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S);
+
+        if (proposedNextTime.isBefore(nextThreshold)) {
+            proposedNextTime = nextThreshold;
+        }
+
+        if (isWithinNotificationRange(proposedNextTime)) {
+            return proposedNextTime;
+        }
+
+        return getRangeLatest(proposedNextTime);
     }
 
     private PendingIntent getOperation() {
         Intent intent = new Intent(getContext(), ReminderIntentService.class);
+
+        if (mLastRequest == null) {
+            mLastRequest = 0L;
+        } else {
+            mLastRequest++;
+        }
+
+        intent.putExtra(REQUEST_CODE, mLastRequest);
+
         return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private int getMillis() {
-        DateTime now = DateTime.now().withZone(DateTimeZone.getDefault());
-        DateTime earliest = DateTime.now().withHourOfDay(8).withMinuteOfHour(0);
-        DateTime latest = DateTime.now().withHourOfDay(22).withMinuteOfHour(0);
+    private boolean isNowWithinNotificationRange() {
+        return isWithinNotificationRange(Utils.Time.localNow());
+    }
 
-        int next = PERIOD;
+    private boolean isWithinNotificationRange(DateTime time) {
+        DateTime earliest = getRangeEarliest(time);
+        DateTime earliestTomorrow = getRangeEarliestTomorrow(time);
+        DateTime latest = getRangeLatest(time);
 
-        if (now.isAfter(latest)) {
-            // Move earliest until tomorrow.
-            earliest = earliest.plus(Period.days(1));
-        }
+        return ((time.isEqual(earliest) || time.isAfter(earliest)) &&
+                (time.isEqual(latest) || time.isBefore(latest))) ||
+                (time.isAfter(latest) && time.isAfter(earliestTomorrow));
+    }
 
-        if (now.isBefore(earliest) || now.isAfter(latest)) {
-            Interval waitInterval = new Interval(now, earliest);
-            next = (int) waitInterval.getEndMillis();
-        }
+    private boolean isWithinRange(DateTime time, DateTime rangeCentre, Duration sigma) {
+        DateTime min = rangeCentre.minus(sigma);
+        DateTime max = rangeCentre.plus(sigma);
+        return (time.isEqual(min) || time.isAfter(min)) &&
+                (time.isEqual(max) || time.isBefore(max));
+    }
 
-        return next;
+    private DateTime getRangeEarliest(DateTime time) {
+        return time.withHourOfDay(8).withMinuteOfHour(0);
+    }
+
+    private DateTime getRangeEarliestTomorrow(DateTime time) {
+        return getRangeEarliest(time).withDurationAdded(Duration.standardDays(1), 1);
+    }
+
+    private DateTime getRangeLatest(DateTime time) {
+        return time.withHourOfDay(22).withMinuteOfHour(0);
     }
 
     private void setContext(Context context) {
@@ -129,5 +184,45 @@ public enum TimingManager {
 
     private Context getContext() {
         return mContext;
+    }
+
+    private DateTime getNextReminderTime() {
+        return getTime(NEXT_REMINDER);
+    }
+
+    private void setNextReminderTime(DateTime time) {
+        setTime(NEXT_REMINDER, time);
+    }
+
+    private DateTime getPreviousReminderTime() {
+        return getTime(PREVIOUS_REMINDER);
+    }
+
+    private void setPreviousReminderTimeNow() {
+        setTime(PREVIOUS_REMINDER, Utils.Time.localNow());
+    }
+
+    private DateTime getTime(String key) {
+        String timeString = getPreferences().getString(key, null);
+
+        if (timeString == null) {
+            return null;
+        }
+
+        return Utils.Time.fromLocalString(timeString);
+    }
+
+    private void setTime(String key, DateTime time) {
+        if (time == null) {
+            getPreferences().edit().remove(key).commit();
+        } else {
+            getPreferences().edit().putString(key, Utils.Time.toLocalString(time)).commit();
+        }
+    }
+
+    private static void log(String message) {
+        if (BuildConfig.DEBUG) {
+            Log.d(LOG_TAG, message);
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.R;
 
@@ -27,7 +28,7 @@ public class ReminderIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            TimingManager.INSTANCE.alarmElapsed(getBaseContext());
+            TimingManager.INSTANCE.alarmElapsed(getBaseContext(), intent);
 
             Intent reminderIntent = new Intent(getBaseContext(), HomeActivity.class);
             PendingIntent reminderPendingIntent = PendingIntent.getActivity(getBaseContext(), 0, reminderIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -43,8 +44,17 @@ public class ReminderIntentService extends IntentService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(
                     Context.NOTIFICATION_SERVICE);
 
-            notificationManager.notify(1, notification);
-            Log.d(LOG_TAG, "notification made");
+            if (TimingManager.INSTANCE.notifyNow(getBaseContext())) {
+                notificationManager.notify(1, notification);
+                TimingManager.INSTANCE.notificationMade(getBaseContext());
+            }
+
+        }
+    }
+
+    private static void log(String message) {
+        if (BuildConfig.DEBUG) {
+            Log.d(LOG_TAG, message);
         }
     }
 }
