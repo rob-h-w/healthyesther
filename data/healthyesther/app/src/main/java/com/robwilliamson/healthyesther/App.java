@@ -33,7 +33,7 @@ public class App extends Application {
         super.onCreate();
 
         JodaTimeAndroid.init(this);
-        DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        DateTimeZone.setDefault(DateTimeZone.forOffsetMillis(TimeZone.getDefault().getRawOffset()));
 
         if (BuildConfig.DEBUG) {
             HealthDbHelper.sDebug = true;
