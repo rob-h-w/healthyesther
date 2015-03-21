@@ -78,7 +78,9 @@ public final class Utils {
     }
 
     public static class Time {
+        private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss Z";
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+        private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormat.forPattern(TZ_FORMAT);
         private static final DateTimeFormatter DB_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
         public static final DateTimeFormatter UTC_FORMATTER = DB_FORMATTER;
 
@@ -89,6 +91,18 @@ public final class Utils {
         public static DateTime unBundle(Bundle bundle, String name) {
             String raw = bundle.getString(name);
             return fromString(raw, ISODateTimeFormat.dateTime());
+        }
+
+        public static DateTime localNow() {
+            return DateTime.now().withZone(DateTimeZone.getDefault());
+        }
+
+        public static String toLocalString(DateTime dateTime) {
+            return toString(dateTime, LOCAL_FORMATTER);
+        }
+
+        public static DateTime fromLocalString(String string) {
+            return fromString(string, LOCAL_FORMATTER);
         }
 
         public static String toUtcString(DateTime dateTime) {
@@ -107,10 +121,7 @@ public final class Utils {
             return fromString(string, DB_FORMATTER);
         }
 
-        public static String toLocallyFormattedString(DateTime dateTime, String format) {
-            DateTime local = dateTime.withZone(DateTimeZone.getDefault());
-            return toString(local, DateTimeFormat.forPattern(format));
-        }
+
 
         public static String toString(DateTime dateTime, DateTimeFormatter formatter) {
             return formatter.print(dateTime);
