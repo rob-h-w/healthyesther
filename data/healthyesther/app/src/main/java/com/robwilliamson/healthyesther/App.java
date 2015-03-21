@@ -7,6 +7,11 @@ import com.robwilliamson.healthyesther.reminder.TimingManager;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
+import java.util.TimeZone;
+
 public class App extends Application {
     private static App sInstance = null;
     private static long sUiThreadId;
@@ -28,6 +33,7 @@ public class App extends Application {
         super.onCreate();
 
         JodaTimeAndroid.init(this);
+        DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getDefault()));
 
         if (BuildConfig.DEBUG) {
             HealthDbHelper.sDebug = true;
