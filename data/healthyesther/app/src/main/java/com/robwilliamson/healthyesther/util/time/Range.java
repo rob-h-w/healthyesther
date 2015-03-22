@@ -29,6 +29,10 @@ public class Range {
         this.to = centre.plus(sigma);
     }
 
+    public Range starting(DateTime time) {
+        return new Range(time, time.plus(sigma).plus(sigma));
+    }
+
     public boolean overlaps(Range range) {
         return overlaps(range, Comparison.INCLUSIVE);
     }

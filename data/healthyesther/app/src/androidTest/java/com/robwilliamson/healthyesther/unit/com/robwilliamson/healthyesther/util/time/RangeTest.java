@@ -97,6 +97,15 @@ public class RangeTest extends AndroidTestCase {
         assertFalse(mSubject.overlaps(TO_EDGE_RANGE, Range.Comparison.EXCLUSIVE));
     }
 
+    public void testStarting() {
+        Duration difference = Duration.millis(TO.getMillis() - FROM.getMillis());
+        Range subject = mSubject.starting(TO);
+        assertIsEqual(TO, subject.from);
+        assertIsEqual(TO.plus(difference), subject.to);
+        assertIsEqual(CENTRE.plus(difference), subject.centre);
+        assertEquals(SIGMA, subject.sigma);
+    }
+
     private void checkTimingIsCorrect(Range subject) {
         assertIsEqual(FROM, subject.from);
         assertIsEqual(TO, subject.to);
