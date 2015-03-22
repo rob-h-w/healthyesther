@@ -29,6 +29,14 @@ public class Range {
         this.to = centre.plus(sigma);
     }
 
+    public boolean contains(Range range) {
+        return contains(range, Comparison.INCLUSIVE);
+    }
+
+    public boolean contains(Range range, Comparison comparison) {
+        return contains(range.from, comparison) && contains(range.to, comparison);
+    }
+
     public boolean contains(ReadableInstant time) {
         return contains(time, Comparison.INCLUSIVE);
     }
