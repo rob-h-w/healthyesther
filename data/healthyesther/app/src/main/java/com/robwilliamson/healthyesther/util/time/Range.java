@@ -29,6 +29,26 @@ public class Range {
         this.to = centre.plus(sigma);
     }
 
+    public boolean overlaps(Range range) {
+        return overlaps(range, Comparison.INCLUSIVE);
+    }
+
+    public boolean overlaps(Range range, Comparison comparison) {
+        if (contains(range, comparison)) {
+            return true;
+        }
+
+        if (contains(range.from, comparison) || contains(range.to, comparison)) {
+            return true;
+        }
+
+        if (comparison == Comparison.EXCLUSIVE) {
+            return false;
+        }
+
+        return to.isEqual(range.from) || from.isEqual(range.to);
+    }
+
     public boolean contains(Range range) {
         return contains(range, Comparison.INCLUSIVE);
     }

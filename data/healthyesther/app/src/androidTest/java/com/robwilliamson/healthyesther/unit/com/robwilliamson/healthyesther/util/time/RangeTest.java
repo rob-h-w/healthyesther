@@ -20,6 +20,8 @@ public class RangeTest extends AndroidTestCase {
     private static final Range SMALL_FROM_RANGE = new Range(FROM, SMALL_SIGMA);
     private static final Range SMALL_CENTRE_RANGE = new Range(CENTRE, SMALL_SIGMA);
     private static final Range SMALL_TO_RANGE = new Range(TO, SMALL_SIGMA);
+    private static final Range FROM_EDGE_RANGE = new Range(FROM.minus(SMALL_SIGMA), FROM);
+    private static final Range TO_EDGE_RANGE = new Range(TO, TO.plus(SMALL_SIGMA));
 
     private Range mSubject;
 
@@ -69,6 +71,30 @@ public class RangeTest extends AndroidTestCase {
         assertFalse(mSubject.contains(SMALL_FROM_RANGE, Range.Comparison.EXCLUSIVE));
         assertTrue(mSubject.contains(SMALL_CENTRE_RANGE, Range.Comparison.EXCLUSIVE));
         assertFalse(mSubject.contains(SMALL_TO_RANGE, Range.Comparison.EXCLUSIVE));
+    }
+
+    public void testRangeOverlaps() {
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE));
+        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE));
+        assertTrue(mSubject.overlaps(FROM_EDGE_RANGE));
+        assertTrue(mSubject.overlaps(TO_EDGE_RANGE));
+    }
+
+    public void testRangeOverlapsInclusive() {
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(FROM_EDGE_RANGE, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(TO_EDGE_RANGE, Range.Comparison.INCLUSIVE));
+    }
+
+    public void testRangeOverlapsExclusive() {
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.EXCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Range.Comparison.EXCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.EXCLUSIVE));
+        assertFalse(mSubject.overlaps(FROM_EDGE_RANGE, Range.Comparison.EXCLUSIVE));
+        assertFalse(mSubject.overlaps(TO_EDGE_RANGE, Range.Comparison.EXCLUSIVE));
     }
 
     private void checkTimingIsCorrect(Range subject) {
