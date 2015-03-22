@@ -16,12 +16,41 @@ public class RangeTest extends AndroidTestCase {
     private static final DateTime CENTRE = new DateTime(2010, 4, 19, 13, 30, 0, 0, DateTimeZone.UTC);
     private static final Duration SIGMA = Duration.standardMinutes(30);
 
+    private Range mSubject;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        mSubject = new Range(FROM, TO);
+    }
+
     public void testFromToConstructor() {
         checkTimingIsCorrect(new Range(FROM, TO));
     }
 
     public void testCentreSigmaConstructor() {
         checkTimingIsCorrect(new Range(CENTRE, SIGMA));
+    }
+
+    public void testInRangeDefault() {
+        assertTrue(mSubject.contains(FROM));
+        assertTrue(mSubject.contains(TO));
+    }
+
+    public void testInRange() {
+        assertTrue(mSubject.contains(CENTRE));
+    }
+
+    public void testInRangeInclusive() {
+        assertTrue(mSubject.contains(FROM, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(TO, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(CENTRE, Range.Comparison.INCLUSIVE));
+    }
+
+    public void testInRangeExclusive() {
+        assertFalse(mSubject.contains(FROM, Range.Comparison.EXCLUSIVE));
+        assertFalse(mSubject.contains(TO, Range.Comparison.EXCLUSIVE));
+        assertTrue(mSubject.contains(CENTRE, Range.Comparison.EXCLUSIVE));
     }
 
     private void checkTimingIsCorrect(Range subject) {

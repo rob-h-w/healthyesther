@@ -2,12 +2,18 @@ package com.robwilliamson.healthyesther.util.time;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.ReadableInstant;
 
 public class Range {
     public final DateTime from;
     public final DateTime to;
     public final DateTime centre;
     public final Duration sigma;
+
+    public enum Comparison {
+        INCLUSIVE,
+        EXCLUSIVE
+    }
 
     public Range(DateTime from, DateTime to) {
         this.from = from.isBefore(to) ? from : to;
@@ -21,5 +27,21 @@ public class Range {
         this.sigma = sigma;
         this.from = centre.minus(sigma);
         this.to = centre.plus(sigma);
+    }
+
+    public boolean contains(ReadableInstant time) {
+        return contains(time, Comparison.INCLUSIVE);
+    }
+
+    public boolean contains(ReadableInstant time, Comparison comparison) {
+        if (time.isAfter(from) && time.isBefore(to)) {
+            return true;
+        }
+
+        if (comparison == Comparison.EXCLUSIVE) {
+            return false;
+        }
+
+        return time.isEqual(from) || time.isEqual(to);
     }
 }
