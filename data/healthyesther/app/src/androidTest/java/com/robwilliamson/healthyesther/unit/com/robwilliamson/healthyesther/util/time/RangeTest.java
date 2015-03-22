@@ -28,6 +28,10 @@ public class RangeTest extends AndroidTestCase {
         checkTimingIsCorrect(new Range(FROM, TO));
     }
 
+    public void testTransposedFromToConstructor() {
+        checkTimingIsCorrect(new Range(TO, FROM));
+    }
+
     public void testCentreSigmaConstructor() {
         checkTimingIsCorrect(new Range(CENTRE, SIGMA));
     }
