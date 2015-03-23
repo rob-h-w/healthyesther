@@ -38,7 +38,8 @@ public class Range extends TimeRegion {
             return true;
         }
 
-        return false;
+        return region.contains(from, Comparison.INCLUSIVE) &&
+                region.contains(to, Comparison.INCLUSIVE);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.uti
 import android.test.AndroidTestCase;
 
 import com.robwilliamson.healthyesther.util.time.Range;
+import com.robwilliamson.healthyesther.util.time.TimeRegion.Comparison;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -54,23 +55,23 @@ public class RangeTest extends AndroidTestCase {
     }
 
     public void testInRangeInclusive() {
-        assertTrue(mSubject.contains(FROM, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.contains(TO, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.contains(CENTRE, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.contains(mSubject, Range.Comparison.INCLUSIVE));
-        assertFalse(mSubject.contains(SMALL_FROM_RANGE, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.contains(SMALL_CENTRE_RANGE, Range.Comparison.INCLUSIVE));
-        assertFalse(mSubject.contains(SMALL_TO_RANGE, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(FROM, Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(TO, Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(CENTRE, Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(mSubject, Comparison.INCLUSIVE));
+        assertFalse(mSubject.contains(SMALL_FROM_RANGE, Comparison.INCLUSIVE));
+        assertTrue(mSubject.contains(SMALL_CENTRE_RANGE, Comparison.INCLUSIVE));
+        assertFalse(mSubject.contains(SMALL_TO_RANGE, Comparison.INCLUSIVE));
     }
 
     public void testInRangeExclusive() {
-        assertFalse(mSubject.contains(FROM, Range.Comparison.EXCLUSIVE));
-        assertFalse(mSubject.contains(TO, Range.Comparison.EXCLUSIVE));
-        assertTrue(mSubject.contains(CENTRE, Range.Comparison.EXCLUSIVE));
-        assertFalse(mSubject.contains(mSubject, Range.Comparison.EXCLUSIVE));
-        assertFalse(mSubject.contains(SMALL_FROM_RANGE, Range.Comparison.EXCLUSIVE));
-        assertTrue(mSubject.contains(SMALL_CENTRE_RANGE, Range.Comparison.EXCLUSIVE));
-        assertFalse(mSubject.contains(SMALL_TO_RANGE, Range.Comparison.EXCLUSIVE));
+        assertFalse(mSubject.contains(FROM, Comparison.EXCLUSIVE));
+        assertFalse(mSubject.contains(TO, Comparison.EXCLUSIVE));
+        assertTrue(mSubject.contains(CENTRE, Comparison.EXCLUSIVE));
+        assertFalse(mSubject.contains(mSubject, Comparison.EXCLUSIVE));
+        assertFalse(mSubject.contains(SMALL_FROM_RANGE, Comparison.EXCLUSIVE));
+        assertTrue(mSubject.contains(SMALL_CENTRE_RANGE, Comparison.EXCLUSIVE));
+        assertFalse(mSubject.contains(SMALL_TO_RANGE, Comparison.EXCLUSIVE));
     }
 
     public void testRangeOverlaps() {
@@ -82,19 +83,20 @@ public class RangeTest extends AndroidTestCase {
     }
 
     public void testRangeOverlapsInclusive() {
-        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.overlaps(FROM_EDGE_RANGE, Range.Comparison.INCLUSIVE));
-        assertTrue(mSubject.overlaps(TO_EDGE_RANGE, Range.Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(FROM_EDGE_RANGE, Comparison.INCLUSIVE));
+        assertTrue(mSubject.overlaps(TO_EDGE_RANGE, Comparison.INCLUSIVE));
     }
 
     public void testRangeOverlapsExclusive() {
-        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.EXCLUSIVE));
-        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Range.Comparison.EXCLUSIVE));
-        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Range.Comparison.EXCLUSIVE));
-        assertFalse(mSubject.overlaps(FROM_EDGE_RANGE, Range.Comparison.EXCLUSIVE));
-        assertFalse(mSubject.overlaps(TO_EDGE_RANGE, Range.Comparison.EXCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Comparison.EXCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Comparison.EXCLUSIVE));
+        assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Comparison.EXCLUSIVE));
+        assertFalse(mSubject.overlaps(FROM_EDGE_RANGE, Comparison.EXCLUSIVE));
+        assertFalse(mSubject.overlaps(TO_EDGE_RANGE, Comparison.EXCLUSIVE));
+        assertTrue(mSubject.overlaps(new Range(FROM, TO.plus(SIGMA)), Comparison.EXCLUSIVE));
     }
 
     public void testStarting() {
