@@ -47,6 +47,12 @@ public class RangeSet extends TimeRegion {
 
     @Override
     protected boolean isIn(TimeRegion region, Comparison comparison) {
-        return false;
+        for (TimeRegion subRegion : mTimeRegions) {
+            if (!region.contains(subRegion, comparison)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
