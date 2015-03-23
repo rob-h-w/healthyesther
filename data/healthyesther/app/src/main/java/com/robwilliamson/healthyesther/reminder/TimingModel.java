@@ -9,40 +9,46 @@ public class TimingModel {
     private static final Duration SIGMA = Duration.standardMinutes(1);
     private final Environment mEnvironment;
     private final Duration mMinTimeBetweenNotifications;
-    private final Range mDisallowedNotificationTimes;
+    private final Range mAllowedNotificationTimes;
     private final Duration mPeriod;
 
     public static interface Environment {
+        public DateTime getNow();
         public void setLastNotifiedTime(DateTime time);
         public DateTime getLastNotifiedTime();
         public DateTime getNextNotificationTime();
         public boolean appInForeground();
         public void setAlarm(DateTime alarmTime);
+        public void sendReminder();
     }
 
     public TimingModel(Environment environment,
                        Duration period,
                        Duration minTimeBetweenNotifications,
-                       Range disallowedNotificationTimes) {
+                       Range allowedNotificationTimes) {
         mEnvironment = environment;
         mPeriod = period;
         mMinTimeBetweenNotifications = minTimeBetweenNotifications;
-        mDisallowedNotificationTimes = disallowedNotificationTimes;
+        mAllowedNotificationTimes = allowedNotificationTimes;
     }
 
     public void onAlarmExpired() {
         if (shouldSkipNotification()) {
             mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNextNotificationTime()));
+            return;
         }
+
+        mEnvironment.sendReminder();
+        mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
     }
 
     public void onNotified() {
-        mEnvironment.setLastNotifiedTime(DateTime.now());
+        mEnvironment.setLastNotifiedTime(mEnvironment.getNow());
     }
 
     public boolean shouldNotify() {
         if (hasNotifiedBefore()) {
-            if (cooloffPeriod().contains(DateTime.now())) {
+            if (cooloffPeriod().contains(mEnvironment.getNow())) {
                 return false;
             }
         }
@@ -54,13 +60,13 @@ public class TimingModel {
 
     private DateTime getNextNotificationAfter(DateTime before) {
         if (before == null) {
-            before = DateTime.now();
+            before = mEnvironment.getNow();
         }
 
         DateTime next = before.plus(mPeriod);
 
-        if (disallowed(next).contains(next, Range.Comparison.EXCLUSIVE)) {
-            next = disallowed(next).to;
+        if (!allowed(next).contains(next, Range.Comparison.EXCLUSIVE)) {
+            next = allowed(next).to;
         }
 
         return next;
@@ -83,12 +89,12 @@ public class TimingModel {
     }
 
     private Range now() {
-        return new Range(DateTime.now(), SIGMA);
+        return new Range(mEnvironment.getNow(), SIGMA);
     }
 
-    private Range disallowed(DateTime day) {
-        return mDisallowedNotificationTimes.starting(
-                mDisallowedNotificationTimes.from.withDate(
+    private Range allowed(DateTime day) {
+        return mAllowedNotificationTimes.starting(
+                mAllowedNotificationTimes.from.withDate(
                         day.getYear(), day.getMonthOfYear(), day.getDayOfMonth()));
     }
 }
