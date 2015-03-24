@@ -44,6 +44,7 @@ public enum TimingManager {
         @Override
         public void setLastNotifiedTime(DateTime time) {
             setTime(PREVIOUS_REMINDER, time);
+            log("setLastNotifiedTime " + time);
         }
 
         @Override
