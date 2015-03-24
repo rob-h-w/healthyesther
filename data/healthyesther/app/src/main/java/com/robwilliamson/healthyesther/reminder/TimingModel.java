@@ -57,7 +57,7 @@ public class TimingModel {
             }
         }
 
-        if (mAllowedNotificationTimes.contains(mEnvironment.getNow())) {
+        if (allowedTimes().contains(mEnvironment.getNow())) {
             return !mEnvironment.appInForeground();
         }
 
@@ -95,6 +95,7 @@ public class TimingModel {
     }
 
     private RangeSet allowedTimes() {
-        return mAllowedNotificationTimes;
+        DateTime yesterday = mEnvironment.getNow().minus(Duration.standardDays(1));
+        return mAllowedNotificationTimes.startingFrom(yesterday.getYear(), yesterday.getMonthOfYear(), yesterday.getDayOfMonth());
     }
 }
