@@ -13,7 +13,7 @@ public class RangeSet extends TimeRegion {
 
     public RangeSet(TimeRegion... timeRegions) {
         super(getFrom(timeRegions), getTo(timeRegions));
-        mTimeRegions = new HashSet<TimeRegion>(Arrays.asList(timeRegions));
+        mTimeRegions = new HashSet<>(Arrays.asList(timeRegions));
     }
 
     @Override
@@ -69,9 +69,9 @@ public class RangeSet extends TimeRegion {
             if (subRegion instanceof RangeSet) {
                 nextEdge = ((RangeSet) subRegion).getEdgeAfter(instant);
             } else {
-                if (subRegion.from.isAfter(instant)) {
+                if (afterOrEqualTo(subRegion.from, instant)) {
                     nextEdge = subRegion.from;
-                } else if (subRegion.to.isAfter(instant)) {
+                } else if (afterOrEqualTo(subRegion.to, instant)) {
                     nextEdge = subRegion.to;
                 }
             }
@@ -123,5 +123,9 @@ public class RangeSet extends TimeRegion {
         }
 
         return to;
+    }
+
+    private static boolean afterOrEqualTo(ReadableInstant lhs, ReadableInstant rhs) {
+        return lhs.isAfter(rhs) || lhs.isEqual(rhs);
     }
 }
