@@ -64,7 +64,16 @@ public enum TimingManager {
 
         @Override
         public void setAlarm(DateTime alarmTime) {
+            AlarmManager alarmManager =
+                    (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            long millisUntil = alarmTime.getMillis() - getNow().getMillis();
+
+            log("setting new notification in " + millisUntil + "ms, expected to trigger at " + alarmTime);
+
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME, millisUntil, getOperation());
+
             setTime(NEXT_REMINDER, alarmTime);
+
         }
 
         @Override
