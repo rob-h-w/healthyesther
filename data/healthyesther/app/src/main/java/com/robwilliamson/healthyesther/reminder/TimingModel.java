@@ -71,6 +71,16 @@ public class TimingModel {
 
         DateTime next = before.plus(mPeriod);
 
+        if (allowedTimes().contains(next)) {
+            return next;
+        }
+
+        next = allowedTimes().getEdgeAfter(next);
+
+        if (next == null) {
+            next = allowedTimes().to;
+        }
+
         return next;
     }
 

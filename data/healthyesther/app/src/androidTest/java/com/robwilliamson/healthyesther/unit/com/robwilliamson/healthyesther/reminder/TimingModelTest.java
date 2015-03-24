@@ -15,9 +15,9 @@ public class TimingModelTest extends AndroidTestCase {
     private static final DateTime MORNING_8AM_21 = new DateTime(2015, 3, 21, 8, 0).withZone(DateTimeZone.UTC);
     private static final DateTime MORNING_21 = new DateTime(2015, 3, 21, 7, 0);
     private static final DateTime MIDDAY_21 = new DateTime(2015, 3, 21, 12, 0);
-    private static final DateTime EVENING_20 = new DateTime(2015, 3, 20, 22, 0);
+    private static final DateTime EVENING_21 = new DateTime(2015, 3, 21, 22, 0);
     private static final DateTime MIDNIGHT_21 = new DateTime(2015, 3, 21, 0, 0);
-    private static final Range DISALLOWED = new Range(EVENING_20, MORNING_21);
+    private static final Range ALLOWED = new Range(MORNING_21, EVENING_21);
     private static final Duration PERIOD = Duration.standardHours(1);
     private static final Duration MIN_NOTIFICATION_SEPARATION = Duration.standardMinutes(30);
 
@@ -86,7 +86,7 @@ public class TimingModelTest extends AndroidTestCase {
                 mEnvironment,
                 PERIOD,
                 MIN_NOTIFICATION_SEPARATION,
-                DISALLOWED);
+                ALLOWED);
     }
 
     public void testOnNotified() {
@@ -97,7 +97,7 @@ public class TimingModelTest extends AndroidTestCase {
     public void testOnAlarmExpired_inDisallowedRange() {
         mEnvironment.now = MIDNIGHT_21;
         mSubject.onAlarmExpired();
-        assertIsEqual(MORNING_21.withDayOfMonth(22), mEnvironment.setAlarmParams.alarmTime);
+        assertIsEqual(MORNING_21, mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
     }
 }
