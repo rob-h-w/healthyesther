@@ -1,14 +1,19 @@
 package com.robwilliamson.healthyesther.reminder;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.robwilliamson.healthyesther.HomeActivity;
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.BuildConfig;
+import com.robwilliamson.healthyesther.util.time.Range;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -16,13 +21,10 @@ import org.joda.time.Duration;
 public enum TimingManager {
     INSTANCE;
 
-    private static final int MILLISECONDS_IN_SECOND = 1000;
-    private static final int SECONDS_IN_MINUTE = 60;
-    private static final int MINUTES_IN_HOUR = 60;
-    //private static final int PERIOD = 2 * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MILLISECONDS_IN_SECOND;
-    private static final int PERIOD = 10000;
-    private static final int MULTIPLE_NOTIFICATION_THRESHOLD_S = 60;
-    private static final int FUTURE_OFFSET_S = 5;
+    private static final Duration PERIOD = Duration.standardSeconds(10);
+    private static final Duration MULTIPLE_NOTIFICATION_THRESHOLD = Duration.standardMinutes(1);
+    private static final Range ALLOWED_NOTIFICATION_RANGE = new Range(DateTime.now().withTime(7, 0, 0, 0),
+            DateTime.now().withTime(22, 0, 0, 0));
 
     private static final String PREFERENCES_NAME =
             "com.robwilliamson.healthyesther.reminder.TimingManager";
@@ -32,72 +34,78 @@ public enum TimingManager {
 
     private static final String LOG_TAG = TimingManager.class.getSimpleName();
 
+    private class Environment implements TimingModel.Environment {
+
+        @Override
+        public DateTime getNow() {
+            return DateTime.now();
+        }
+
+        @Override
+        public void setLastNotifiedTime(DateTime time) {
+            setTime(PREVIOUS_REMINDER, time);
+        }
+
+        @Override
+        public DateTime getLastNotifiedTime() {
+            return getTime(PREVIOUS_REMINDER);
+        }
+
+        @Override
+        public DateTime getNextNotificationTime() {
+            return getTime(NEXT_REMINDER);
+        }
+
+        @Override
+        public boolean appInForeground() {
+            return false;
+        }
+
+        @Override
+        public void setAlarm(DateTime alarmTime) {
+            setTime(NEXT_REMINDER, alarmTime);
+        }
+
+        @Override
+        public void sendReminder() {
+            PendingIntent reminderPendingIntent = getOperation();
+            Notification notification = new Notification.Builder(getContext())
+                    .setContentTitle(getContext().getString(R.string.reminder_content_title))
+                    .setContentText(getContext().getString(R.string.reminder_content))
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentIntent(reminderPendingIntent)
+                    .setTicker(getContext().getString(R.string.reminder_ticker))
+                    .setAutoCancel(true)
+                    .build();
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.notify(1, notification);
+
+            mTimingModel.onNotified();
+        }
+    }
+
     private Context mContext;
-    private Long mLastRequest = null;
-    private int mPeriodMillis = PERIOD;
-
-    public void setPeriodMillis(int periodMillis) {
-        mPeriodMillis = periodMillis;
-    }
-
-    public void resetPeriodMillis() {
-        setPeriodMillis(PERIOD);
-    }
+    private Environment mModelEnvironment = new Environment();
+    private TimingModel mTimingModel = null;
 
     public void applicationCreated(Context context) {
         log("applicationCreated");
         setContext(context);
-        if (getNextReminderTime() == null) {
-            start(context);
-        }
+        getTimingModel().onApplicationCreated();
     }
 
     public void alarmElapsed(Context context, Intent intent) {
+        setContext(context);
         log("alarmElapsed");
-        setContext(context);
-        if (mLastRequest == null || intent.getLongExtra(REQUEST_CODE, -1) == mLastRequest) {
-            start(context);
-        }
-    }
+        long alarmId = getAlarmId();
+        boolean useAlarm = alarmId == -1 ||
+                alarmId == intent.getLongExtra(REQUEST_CODE, -1L);
 
-    public boolean notifyNow(Context context) {
-        setContext(context);
-        DateTime lastReminder = getPreviousReminderTime();
-
-        if (lastReminder == null) {
-            return isNowWithinNotificationRange();
-        }
-
-        return isNowWithinNotificationRange() &&
-                lastReminder.plusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S).isAfterNow() &&
-                lastReminder.minusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S).isAfterNow();
-    }
-
-    public void notificationMade(Context context) {
-        log("notificationMade");
-        setContext(context);
-        setPreviousReminderTimeNow();
-        setNextReminderTime(null);
-        start(context);
-        log("last reminder time is now " + getPreviousReminderTime());
-    }
-
-    public void start(Context context) {
-        log("start");
-        setContext(context);
-
-        if (getNextReminderTime() == null) {
-            DateTime nextDateTime = getNextTimeToSet();
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            long millisUntil = nextDateTime.getMillis() - Utils.Time.localNow().getMillis();
-
-            log("setting new notification in " + millisUntil + "ms, expected to trigger at " + nextDateTime);
-            DateTime prev = getPreviousReminderTime();
-            log("previous notification was " + (prev == null ? "not sent." : " sent at " + prev + "."));
-
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME, millisUntil, getOperation());
-
-            setNextReminderTime(nextDateTime);
+        if (useAlarm) {
+            getTimingModel().onAlarmExpired();
         }
     }
 
@@ -105,74 +113,15 @@ public enum TimingManager {
         return getContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
-    private DateTime getNextTimeToSet() {
-        if (!isNowWithinNotificationRange()) {
-            return getRangeEarliestTomorrow(Utils.Time.localNow());
-        }
-
-        if (getPreviousReminderTime() == null) {
-            return Utils.Time.localNow().plusSeconds(1);
-        }
-
-        DateTime proposedNextTime = Utils.Time.localNow().plusMillis(mPeriodMillis);
-        DateTime nextThreshold = Utils.Time.localNow().plusSeconds(MULTIPLE_NOTIFICATION_THRESHOLD_S);
-
-        if (proposedNextTime.isBefore(nextThreshold)) {
-            proposedNextTime = nextThreshold;
-        }
-
-        if (isWithinNotificationRange(proposedNextTime)) {
-            return proposedNextTime;
-        }
-
-        return getRangeLatest(proposedNextTime);
-    }
-
     private PendingIntent getOperation() {
         Intent intent = new Intent(getContext(), ReminderIntentService.class);
 
-        if (mLastRequest == null) {
-            mLastRequest = 0L;
-        } else {
-            mLastRequest++;
-        }
+        long alarmId = getAlarmId();
 
-        intent.putExtra(REQUEST_CODE, mLastRequest);
+        intent.putExtra(REQUEST_CODE, alarmId++);
+        setAlarmId(alarmId);
 
         return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private boolean isNowWithinNotificationRange() {
-        return isWithinNotificationRange(Utils.Time.localNow());
-    }
-
-    private boolean isWithinNotificationRange(DateTime time) {
-        DateTime earliest = getRangeEarliest(time);
-        DateTime earliestTomorrow = getRangeEarliestTomorrow(time);
-        DateTime latest = getRangeLatest(time);
-
-        return ((time.isEqual(earliest) || time.isAfter(earliest)) &&
-                (time.isEqual(latest) || time.isBefore(latest))) ||
-                (time.isAfter(latest) && time.isAfter(earliestTomorrow));
-    }
-
-    private boolean isWithinRange(DateTime time, DateTime rangeCentre, Duration sigma) {
-        DateTime min = rangeCentre.minus(sigma);
-        DateTime max = rangeCentre.plus(sigma);
-        return (time.isEqual(min) || time.isAfter(min)) &&
-                (time.isEqual(max) || time.isBefore(max));
-    }
-
-    private DateTime getRangeEarliest(DateTime time) {
-        return time.withHourOfDay(8).withMinuteOfHour(0);
-    }
-
-    private DateTime getRangeEarliestTomorrow(DateTime time) {
-        return getRangeEarliest(time).withDurationAdded(Duration.standardDays(1), 1);
-    }
-
-    private DateTime getRangeLatest(DateTime time) {
-        return time.withHourOfDay(22).withMinuteOfHour(0);
     }
 
     private void setContext(Context context) {
@@ -181,22 +130,6 @@ public enum TimingManager {
 
     private Context getContext() {
         return mContext;
-    }
-
-    private DateTime getNextReminderTime() {
-        return getTime(NEXT_REMINDER);
-    }
-
-    private void setNextReminderTime(DateTime time) {
-        setTime(NEXT_REMINDER, time);
-    }
-
-    private DateTime getPreviousReminderTime() {
-        return getTime(PREVIOUS_REMINDER);
-    }
-
-    private void setPreviousReminderTimeNow() {
-        setTime(PREVIOUS_REMINDER, Utils.Time.localNow());
     }
 
     private DateTime getTime(String key) {
@@ -211,10 +144,26 @@ public enum TimingManager {
 
     private void setTime(String key, DateTime time) {
         if (time == null) {
-            getPreferences().edit().remove(key).commit();
+            getPreferences().edit().remove(key).apply();
         } else {
-            getPreferences().edit().putString(key, Utils.Time.toLocalString(time)).commit();
+            getPreferences().edit().putString(key, Utils.Time.toLocalString(time)).apply();
         }
+    }
+
+    private long getAlarmId() {
+        return getPreferences().getLong(REQUEST_CODE, -1);
+    }
+
+    private void setAlarmId(long id) {
+        getPreferences().edit().putLong(REQUEST_CODE, id).apply();
+    }
+
+    private synchronized TimingModel getTimingModel() {
+        if (mTimingModel == null) {
+            mTimingModel = new TimingModel(mModelEnvironment, PERIOD, MULTIPLE_NOTIFICATION_THRESHOLD, ALLOWED_NOTIFICATION_RANGE);
+        }
+
+        return mTimingModel;
     }
 
     private static void log(String message) {
