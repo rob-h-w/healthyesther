@@ -9,6 +9,7 @@ import com.robwilliamson.healthyesther.util.time.TimeRegion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.joda.time.ReadableInstant;
 
 public class RangeSetTest extends AndroidTestCase {
     private static final DateTime FROM = new DateTime(2010, 4, 19, 13, 0, 0, 0, DateTimeZone.UTC);
@@ -56,5 +57,16 @@ public class RangeSetTest extends AndroidTestCase {
         RangeSet subject = new RangeSet(HUGE_RANGE).startingFrom(2015, 4, 18);
         assertFalse(subject.contains(FROM));
         assertTrue(subject.contains(FROM.withDate(2015, 4, 18)));
+    }
+
+    public void testNextEdge(ReadableInstant fromNow) {
+        ReadableInstant nextEdge = SMALL_RANGES.getEdgeAfter(TO.plus(Duration.standardDays(1)));
+        assertNull(nextEdge);
+
+        nextEdge = SMALL_RANGES.getEdgeAfter(SMALL_RANGES.to);
+        assertEquals(SMALL_RANGES.to, nextEdge);
+
+        nextEdge = SMALL_RANGES.getEdgeAfter(TO);
+        assertEquals(SMALL_RANGES.to, nextEdge);
     }
 }
