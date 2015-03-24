@@ -46,6 +46,16 @@ public class TimingModel {
         mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
     }
 
+    public void onApplicationCreated() {
+        if (shouldNotify()) {
+            mEnvironment.sendReminder();
+        }
+
+        if (mEnvironment.getNextNotificationTime() == null) {
+            mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
+        }
+    }
+
     public void onNotified() {
         mEnvironment.setLastNotifiedTime(mEnvironment.getNow());
     }

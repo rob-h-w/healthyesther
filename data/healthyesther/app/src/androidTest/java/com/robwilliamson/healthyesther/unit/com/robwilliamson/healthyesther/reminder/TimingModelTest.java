@@ -100,4 +100,12 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MORNING_21, mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
     }
+
+    public void testOnApplicationCreated_nightNoNotificationsSet() {
+        mEnvironment.now = MIDDAY_21;
+        mSubject.onApplicationCreated();
+
+        // Should set an alarm for the morning.
+        assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
+    }
 }
