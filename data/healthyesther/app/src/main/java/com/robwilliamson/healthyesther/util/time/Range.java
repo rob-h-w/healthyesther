@@ -5,27 +5,31 @@ import org.joda.time.Duration;
 import org.joda.time.ReadableInstant;
 
 public class Range extends TimeRegion {
-    public final DateTime from;
-    public final DateTime to;
     public final DateTime centre;
     public final Duration sigma;
 
     public Range(DateTime from, DateTime to) {
-        this.from = from.isBefore(to) ? from : to;
-        this.to = to.isAfter(from) ? to : from;
+        super(from, to);
         this.sigma = Duration.millis((this.to.getMillis() - this.from.getMillis()) / 2);
         this.centre = this.from.plus(this.sigma);
     }
 
     public Range(DateTime centre, Duration sigma) {
+        super(centre.minus(sigma), centre.plus(sigma));
         this.centre = centre;
         this.sigma = sigma;
-        this.from = centre.minus(sigma);
-        this.to = centre.plus(sigma);
     }
 
-    public Range starting(DateTime time) {
+    public Range startingFrom(DateTime time) {
         return new Range(time, time.plus(sigma).plus(sigma));
+    }
+
+    public Range startingTomorrow() {
+        return startingFrom(from.plus(Duration.standardDays(1)));
+    }
+
+    public Range startingYesterday() {
+        return startingFrom(from.minus(Duration.standardDays(1)));
     }
 
     @Override
@@ -58,6 +62,11 @@ public class Range extends TimeRegion {
         }
 
         return instant.isEqual(from) || instant.isEqual(to);
+    }
+
+    @Override
+    public TimeRegion startingFrom(int year, int monthOfYear, int dayOfMonth) {
+        return startingFrom(from.withDate(year, monthOfYear, dayOfMonth));
     }
 
     @Override

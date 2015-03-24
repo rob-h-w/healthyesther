@@ -26,9 +26,9 @@ public class RangeSetTest extends AndroidTestCase {
 
     private static final RangeSet SMALL_RANGES = new RangeSet(SMALL_FROM_RANGE, SMALL_CENTRE_RANGE, SMALL_TO_RANGE);
     private static final RangeSet SMALL_RANGES_FUTURE_EDGES = new RangeSet(
-            SMALL_FROM_RANGE.starting(SMALL_FROM_RANGE.to),
-            SMALL_CENTRE_RANGE.starting(SMALL_CENTRE_RANGE.to),
-            SMALL_TO_RANGE.starting(SMALL_TO_RANGE.to));
+            SMALL_FROM_RANGE.startingFrom(SMALL_FROM_RANGE.to),
+            SMALL_CENTRE_RANGE.startingFrom(SMALL_CENTRE_RANGE.to),
+            SMALL_TO_RANGE.startingFrom(SMALL_TO_RANGE.to));
 
     public void testOverlaps() {
         assertTrue(SMALL_RANGES.overlaps(SMALL_RANGES));
@@ -50,5 +50,11 @@ public class RangeSetTest extends AndroidTestCase {
 
     public void testIsIn() {
         assertTrue(HUGE_RANGE.contains(SMALL_RANGES));
+    }
+
+    public void testStartingFromDate() {
+        RangeSet subject = new RangeSet(HUGE_RANGE).startingFrom(2015, 4, 18);
+        assertFalse(subject.contains(FROM));
+        assertTrue(subject.contains(FROM.withDate(2015, 4, 18)));
     }
 }

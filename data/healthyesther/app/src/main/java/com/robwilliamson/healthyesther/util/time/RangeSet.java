@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.util.time;
 
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.ReadableInstant;
 
 import java.util.Arrays;
@@ -10,6 +12,7 @@ public class RangeSet extends TimeRegion {
     private final Set<TimeRegion> mTimeRegions;
 
     public RangeSet(TimeRegion... timeRegions) {
+        super(getFrom(timeRegions), getTo(timeRegions));
         mTimeRegions = new HashSet<TimeRegion>(Arrays.asList(timeRegions));
     }
 
@@ -46,6 +49,19 @@ public class RangeSet extends TimeRegion {
     }
 
     @Override
+    public RangeSet startingFrom(int year, int monthOfYear, int dayOfMonth) {
+        Duration shift = Duration.millis(from.withDate(year, monthOfYear, dayOfMonth).getMillis() - from.getMillis());
+        Set<TimeRegion> regions = new HashSet<>(mTimeRegions.size());
+
+        for(TimeRegion region : mTimeRegions) {
+            DateTime newFrom = region.from.plus(shift);
+            regions.add(region.startingFrom(newFrom.getYear(), newFrom.getMonthOfYear(), newFrom.getDayOfMonth()));
+        }
+
+        return new RangeSet(regions.toArray(new TimeRegion[] {}));
+    }
+
+    @Override
     protected boolean isIn(TimeRegion region, Comparison comparison) {
         for (TimeRegion subRegion : mTimeRegions) {
             if (!region.contains(subRegion, comparison)) {
@@ -54,5 +70,29 @@ public class RangeSet extends TimeRegion {
         }
 
         return true;
+    }
+
+    private static DateTime getFrom(TimeRegion... timeRegions) {
+        DateTime from = null;
+
+        for (TimeRegion region : timeRegions) {
+            if (from == null || region.from.isBefore(from)) {
+                from = region.from;
+            }
+        }
+
+        return from;
+    }
+
+    private static DateTime getTo(TimeRegion... timeRegions) {
+        DateTime to = null;
+
+        for (TimeRegion region : timeRegions) {
+            if (to == null || region.to.isAfter(to)) {
+                to = region.to;
+            }
+        }
+
+        return to;
     }
 }

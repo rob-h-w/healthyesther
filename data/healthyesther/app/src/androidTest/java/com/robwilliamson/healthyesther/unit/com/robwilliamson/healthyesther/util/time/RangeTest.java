@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.uti
 import android.test.AndroidTestCase;
 
 import com.robwilliamson.healthyesther.util.time.Range;
+import com.robwilliamson.healthyesther.util.time.TimeRegion;
 import com.robwilliamson.healthyesther.util.time.TimeRegion.Comparison;
 
 import org.joda.time.DateTime;
@@ -101,11 +102,28 @@ public class RangeTest extends AndroidTestCase {
 
     public void testStarting() {
         Duration difference = Duration.millis(TO.getMillis() - FROM.getMillis());
-        Range subject = mSubject.starting(TO);
+        Range subject = mSubject.startingFrom(TO);
         assertIsEqual(TO, subject.from);
         assertIsEqual(TO.plus(difference), subject.to);
         assertIsEqual(CENTRE.plus(difference), subject.centre);
         assertEquals(SIGMA, subject.sigma);
+    }
+
+    public void testStartingYesterday() {
+        Range subject = mSubject.startingYesterday();
+        assertIsEqual(FROM.minus(Duration.standardDays(1)), subject.from);
+        assertIsEqual(TO.minus(Duration.standardDays(1)), subject.to);
+    }
+
+    public void testStartingTomorrow() {
+        Range subject = mSubject.startingTomorrow();
+        assertIsEqual(FROM.plus(Duration.standardDays(1)), subject.from);
+        assertIsEqual(TO.plus(Duration.standardDays(1)), subject.to);
+    }
+
+    public void testStartingFromDate() {
+        TimeRegion subject = mSubject.startingFrom(2016, 7, 13);
+        assertTrue(subject.contains(FROM.withDate(2016, 7, 13)));
     }
 
     private void checkTimingIsCorrect(Range subject) {

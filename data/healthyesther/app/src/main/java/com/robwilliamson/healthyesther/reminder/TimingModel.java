@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.reminder;
 
 import com.robwilliamson.healthyesther.util.time.Range;
+import com.robwilliamson.healthyesther.util.time.RangeSet;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -9,7 +10,7 @@ public class TimingModel {
     private static final Duration SIGMA = Duration.standardMinutes(1);
     private final Environment mEnvironment;
     private final Duration mMinTimeBetweenNotifications;
-    private final Range mAllowedNotificationTimes;
+    private final RangeSet mAllowedNotificationTimes;
     private final Duration mPeriod;
 
     public static interface Environment {
@@ -29,7 +30,10 @@ public class TimingModel {
         mEnvironment = environment;
         mPeriod = period;
         mMinTimeBetweenNotifications = minTimeBetweenNotifications;
-        mAllowedNotificationTimes = allowedNotificationTimes;
+        mAllowedNotificationTimes = new RangeSet(
+                allowedNotificationTimes.startingYesterday(),
+                allowedNotificationTimes,
+                allowedNotificationTimes.startingTomorrow());
     }
 
     public void onAlarmExpired() {
@@ -53,9 +57,11 @@ public class TimingModel {
             }
         }
 
-        return !mEnvironment.appInForeground() &&
-                (!hasNotifiedBefore() ||
-                        now().contains(mEnvironment.getNextNotificationTime()));
+        if (mAllowedNotificationTimes.contains(mEnvironment.getNow())) {
+            return !mEnvironment.appInForeground();
+        }
+
+        return false;
     }
 
     private DateTime getNextNotificationAfter(DateTime before) {
@@ -64,10 +70,6 @@ public class TimingModel {
         }
 
         DateTime next = before.plus(mPeriod);
-
-        if (!allowed(next).contains(next, Range.Comparison.EXCLUSIVE)) {
-            next = allowed(next).to;
-        }
 
         return next;
     }
@@ -92,9 +94,7 @@ public class TimingModel {
         return new Range(mEnvironment.getNow(), SIGMA);
     }
 
-    private Range allowed(DateTime day) {
-        return mAllowedNotificationTimes.starting(
-                mAllowedNotificationTimes.from.withDate(
-                        day.getYear(), day.getMonthOfYear(), day.getDayOfMonth()));
+    private RangeSet allowedTimes() {
+        return mAllowedNotificationTimes;
     }
 }
