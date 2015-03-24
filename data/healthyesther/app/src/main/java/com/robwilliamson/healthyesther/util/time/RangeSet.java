@@ -61,19 +61,17 @@ public class RangeSet extends TimeRegion {
         return new RangeSet(regions.toArray(new TimeRegion[] {}));
     }
 
-    public ReadableInstant getEdgeAfter(ReadableInstant instant) {
-        ReadableInstant edge = null;
+    public DateTime getEdgeAfter(DateTime instant) {
+        DateTime edge = null;
 
         for (TimeRegion subRegion : mTimeRegions) {
-            ReadableInstant nextEdge = null;
+            DateTime nextEdge = null;
             if (subRegion instanceof RangeSet) {
                 nextEdge = ((RangeSet) subRegion).getEdgeAfter(instant);
             } else {
                 if (subRegion.from.isAfter(instant)) {
                     nextEdge = subRegion.from;
-                }
-
-                if (subRegion.to.isAfter(instant)) {
+                } else if (subRegion.to.isAfter(instant)) {
                     nextEdge = subRegion.to;
                 }
             }

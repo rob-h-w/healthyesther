@@ -59,7 +59,7 @@ public class RangeSetTest extends AndroidTestCase {
         assertTrue(subject.contains(FROM.withDate(2015, 4, 18)));
     }
 
-    public void testNextEdge(ReadableInstant fromNow) {
+    public void testNextEdge() {
         ReadableInstant nextEdge = SMALL_RANGES.getEdgeAfter(TO.plus(Duration.standardDays(1)));
         assertNull(nextEdge);
 
@@ -68,5 +68,8 @@ public class RangeSetTest extends AndroidTestCase {
 
         nextEdge = SMALL_RANGES.getEdgeAfter(TO);
         assertEquals(SMALL_RANGES.to, nextEdge);
+
+        nextEdge = SMALL_RANGES.getEdgeAfter(SMALL_TO_RANGE.from.minus(Duration.standardSeconds(1)));
+        assertEquals(SMALL_TO_RANGE.from, nextEdge);
     }
 }
