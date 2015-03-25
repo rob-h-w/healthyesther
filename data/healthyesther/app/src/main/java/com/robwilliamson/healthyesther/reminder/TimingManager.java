@@ -53,11 +53,6 @@ public enum TimingManager {
         }
 
         @Override
-        public DateTime getNextNotificationTime() {
-            return getTime(NEXT_REMINDER);
-        }
-
-        @Override
         public boolean appInForeground() {
             return App.getInForeGround();
         }
@@ -116,10 +111,12 @@ public enum TimingManager {
 
     public void onBootCompleted(Context context) {
         setContext(context);
+        getTimingModel().onBootCompleted();
     }
 
     public void onScreenOn(Context context) {
         setContext(context);
+        getTimingModel().onScreenOn();
     }
 
     private SharedPreferences getPreferences() {

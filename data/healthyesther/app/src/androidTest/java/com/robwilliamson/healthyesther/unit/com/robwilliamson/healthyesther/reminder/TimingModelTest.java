@@ -57,11 +57,6 @@ public class TimingModelTest extends AndroidTestCase {
         }
 
         @Override
-        public DateTime getNextNotificationTime() {
-            return null;
-        }
-
-        @Override
         public boolean appInForeground() {
             return appInForeground;
         }
@@ -89,11 +84,6 @@ public class TimingModelTest extends AndroidTestCase {
                 ALLOWED);
     }
 
-    public void testOnNotified() {
-        mSubject.onNotified();
-        assertIsEqual(MORNING_8AM_21, Duration.standardSeconds(1), mEnvironment.setLastNotifiedTimeParams.time);
-    }
-
     public void testOnAlarmElapsed_inDisallowedRange() {
         mEnvironment.now = MIDNIGHT_21;
         mSubject.onAlarmElapsed();
@@ -112,7 +102,29 @@ public class TimingModelTest extends AndroidTestCase {
         mEnvironment.now = MIDDAY_21;
         mSubject.onApplicationCreated();
 
-        // Should set an alarm for the morning.
+        assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
+    }
+
+    public void testOnBootCompleted() {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
+        mSubject.onBootCompleted();
+
+        assertEquals(1, mEnvironment.sendReminderCallCount);
+        assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
+    }
+
+    public void testOnNotified() {
+        mSubject.onNotified();
+        assertIsEqual(MORNING_8AM_21, Duration.standardSeconds(1), mEnvironment.setLastNotifiedTimeParams.time);
+    }
+
+    public void testOnScreenOn() {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
+        mSubject.onBootCompleted();
+
+        assertEquals(1, mEnvironment.sendReminderCallCount);
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
 }

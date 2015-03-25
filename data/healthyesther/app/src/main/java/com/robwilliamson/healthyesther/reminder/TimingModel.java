@@ -17,7 +17,6 @@ public class TimingModel {
         public DateTime getNow();
         public void setLastNotifiedTime(DateTime time);
         public DateTime getLastNotifiedTime();
-        public DateTime getNextNotificationTime();
         public boolean appInForeground();
         public void setAlarm(DateTime alarmTime);
         public void sendReminder();
@@ -37,28 +36,17 @@ public class TimingModel {
     }
 
     public void onAlarmElapsed() {
-        if (shouldSkipNotification()) {
-            mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNextNotificationTime()));
-            return;
-        }
-
-        mEnvironment.sendReminder();
-        mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
+        notifyIfAppropriate();
+        ensureNotificationIsPending();
     }
 
     public void onApplicationCreated() {
-        DateTime nextNotificationTime = mEnvironment.getNextNotificationTime();
-        DateTime now = mEnvironment.getNow();
+        ensureNotificationIsPending();
+    }
 
-        if (nextNotificationTime == null || nextNotificationTime.isBefore(now)) {
-            DateTime after = mEnvironment.getLastNotifiedTime();
-
-            if (after == null) {
-                after = now;
-            }
-
-            mEnvironment.setAlarm(getNextNotificationAfter(after));
-        }
+    public void onBootCompleted() {
+        notifyIfAppropriate();
+        ensureNotificationIsPending();
     }
 
     public void onNotified() {
@@ -67,7 +55,12 @@ public class TimingModel {
         mEnvironment.setAlarm(getNextNotificationAfter(now));
     }
 
-    public boolean shouldNotify() {
+    public void onScreenOn() {
+        notifyIfAppropriate();
+        ensureNotificationIsPending();
+    }
+
+    private boolean shouldNotify() {
         if (hasNotifiedBefore()) {
             if (cooloffPeriod().contains(mEnvironment.getNow())) {
                 return false;
@@ -79,6 +72,23 @@ public class TimingModel {
         }
 
         return false;
+    }
+
+    private void notifyIfAppropriate() {
+        if (shouldNotify()) {
+            mEnvironment.sendReminder();
+        }
+    }
+
+    private void ensureNotificationIsPending() {
+        DateTime now = mEnvironment.getNow();
+        DateTime after = mEnvironment.getLastNotifiedTime();
+
+        if (after == null || after.plus(mPeriod).isBefore(now)) {
+            after = now;
+        }
+
+        mEnvironment.setAlarm(getNextNotificationAfter(after));
     }
 
     private DateTime getNextNotificationAfter(DateTime before) {
@@ -101,24 +111,12 @@ public class TimingModel {
         return next;
     }
 
-    private boolean shouldSkipNotification() {
-        return !shouldNotify();
-    }
-
     private boolean hasNotifiedBefore() {
         return mEnvironment.getLastNotifiedTime() != null;
     }
 
-    private boolean hasSetAlarmBefore() {
-        return mEnvironment.getNextNotificationTime() != null;
-    }
-
     private Range cooloffPeriod() {
         return new Range(mEnvironment.getLastNotifiedTime(), mMinTimeBetweenNotifications);
-    }
-
-    private Range now() {
-        return new Range(mEnvironment.getNow(), SIGMA);
     }
 
     private RangeSet allowedTimes() {
