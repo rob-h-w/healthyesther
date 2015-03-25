@@ -31,7 +31,6 @@ public enum TimingManager {
             "com.robwilliamson.healthyesther.reminder.TimingManager";
     private static final String NEXT_REMINDER = "next_reminder";
     private static final String PREVIOUS_REMINDER = "previous_reminder";
-    private static final String REQUEST_CODE = "request_code";
 
     private static final String LOG_TAG = TimingManager.class.getSimpleName();
 
@@ -112,14 +111,7 @@ public enum TimingManager {
 
     public void alarmElapsed(Context context, Intent intent) {
         setContext(context);
-        long alarmId = getAlarmId();
-        boolean useAlarm = alarmId == -1 ||
-                alarmId == intent.getLongExtra(REQUEST_CODE, -1L);
-
-        log("alarmElapsed, alarmId expected was " + alarmId + ". Received was " + intent.getLongExtra(REQUEST_CODE, -1L));
-        if (useAlarm) {
-            getTimingModel().onAlarmExpired();
-        }
+        getTimingModel().onAlarmExpired();
     }
 
     private SharedPreferences getPreferences() {
@@ -128,11 +120,6 @@ public enum TimingManager {
 
     private PendingIntent getOperation() {
         Intent intent = new Intent(getContext(), ReminderIntentService.class);
-
-        long alarmId = getAlarmId();
-
-        intent.putExtra(REQUEST_CODE, ++alarmId);
-        setAlarmId(alarmId);
 
         return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -169,14 +156,6 @@ public enum TimingManager {
         } else {
             getPreferences().edit().putString(key, Utils.Time.toLocalString(time)).apply();
         }
-    }
-
-    private long getAlarmId() {
-        return getPreferences().getLong(REQUEST_CODE, -1);
-    }
-
-    private void setAlarmId(long id) {
-        getPreferences().edit().putLong(REQUEST_CODE, id).apply();
     }
 
     private synchronized TimingModel getTimingModel() {

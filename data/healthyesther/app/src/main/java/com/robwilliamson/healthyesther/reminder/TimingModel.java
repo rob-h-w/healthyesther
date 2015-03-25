@@ -47,17 +47,24 @@ public class TimingModel {
     }
 
     public void onApplicationCreated() {
-        if (shouldNotify()) {
-            mEnvironment.sendReminder();
-        }
+        DateTime nextNotificationTime = mEnvironment.getNextNotificationTime();
+        DateTime now = mEnvironment.getNow();
 
-        if (mEnvironment.getNextNotificationTime() == null) {
-            mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
+        if (nextNotificationTime == null || nextNotificationTime.isBefore(now)) {
+            DateTime after = mEnvironment.getLastNotifiedTime();
+
+            if (after == null) {
+                after = now;
+            }
+
+            mEnvironment.setAlarm(getNextNotificationAfter(after));
         }
     }
 
     public void onNotified() {
-        mEnvironment.setLastNotifiedTime(mEnvironment.getNow());
+        DateTime now = mEnvironment.getNow();
+        mEnvironment.setLastNotifiedTime(now);
+        mEnvironment.setAlarm(getNextNotificationAfter(now));
     }
 
     public boolean shouldNotify() {
