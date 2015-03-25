@@ -9,10 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.robwilliamson.healthyesther.App;
+import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.util.time.Range;
 
 import org.joda.time.DateTime;
@@ -59,7 +60,7 @@ public enum TimingManager {
 
         @Override
         public boolean appInForeground() {
-            return false;
+            return App.getInForeGround();
         }
 
         @Override

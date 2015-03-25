@@ -39,6 +39,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         super.onPause();
 
         mActive = false;
+        App.setInForeground(true);
     }
 
     @Override
@@ -46,6 +47,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         super.onResume();
 
         mActive = true;
+        App.setInForeground(false);
     }
 
     protected boolean isActive() {

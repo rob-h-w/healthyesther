@@ -14,6 +14,7 @@ import java.util.TimeZone;
 public class App extends Application {
     private static App sInstance = null;
     private static long sUiThreadId;
+    private static volatile boolean sInForeground = false;
 
     public static long getUiThreadId() {
         return sUiThreadId;
@@ -25,6 +26,14 @@ public class App extends Application {
 
     public static App getInstance() {
         return sInstance;
+    }
+
+    public static synchronized void setInForeground(boolean inForeground) {
+        sInForeground = inForeground;
+    }
+
+    public static synchronized boolean getInForeGround() {
+        return sInForeground;
     }
 
     @Override
