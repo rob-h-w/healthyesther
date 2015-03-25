@@ -21,8 +21,8 @@ import org.joda.time.Duration;
 public enum TimingManager {
     INSTANCE;
 
-    private static final Duration PERIOD = Duration.standardSeconds(10);
-    private static final Duration MULTIPLE_NOTIFICATION_THRESHOLD = Duration.standardMinutes(1);
+    private static final Duration PERIOD = Duration.standardHours(1);
+    private static final Duration MULTIPLE_NOTIFICATION_THRESHOLD = Duration.standardMinutes(20);
     private static final Range ALLOWED_NOTIFICATION_RANGE = new Range(DateTime.now().withTime(7, 0, 0, 0),
             DateTime.now().withTime(22, 0, 0, 0));
 
