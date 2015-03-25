@@ -78,7 +78,8 @@ public enum TimingManager {
 
         @Override
         public void sendReminder() {
-            PendingIntent reminderPendingIntent = getOperation();
+            Intent intent = new Intent(getContext(), HomeActivity.class);
+            PendingIntent reminderPendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             Notification notification = new Notification.Builder(getContext())
                     .setContentTitle(getContext().getString(R.string.reminder_content_title))
                     .setContentText(getContext().getString(R.string.reminder_content))
@@ -94,12 +95,13 @@ public enum TimingManager {
             notificationManager.notify(1, notification);
 
             mTimingModel.onNotified();
+            log("Reminder sent");
         }
     }
 
     private Context mContext;
     private Environment mModelEnvironment = new Environment();
-    private TimingModel mTimingModel = null;
+    private volatile TimingModel mTimingModel = null;
 
     public void applicationCreated(Context context) {
         log("applicationCreated");
@@ -109,11 +111,11 @@ public enum TimingManager {
 
     public void alarmElapsed(Context context, Intent intent) {
         setContext(context);
-        log("alarmElapsed");
         long alarmId = getAlarmId();
         boolean useAlarm = alarmId == -1 ||
                 alarmId == intent.getLongExtra(REQUEST_CODE, -1L);
 
+        log("alarmElapsed, alarmId expected was " + alarmId + ". Received was " + intent.getLongExtra(REQUEST_CODE, -1L));
         if (useAlarm) {
             getTimingModel().onAlarmExpired();
         }
@@ -128,7 +130,7 @@ public enum TimingManager {
 
         long alarmId = getAlarmId();
 
-        intent.putExtra(REQUEST_CODE, alarmId++);
+        intent.putExtra(REQUEST_CODE, ++alarmId);
         setAlarmId(alarmId);
 
         return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
