@@ -152,7 +152,15 @@ public enum TimingManager {
             return null;
         }
 
-        return Utils.Time.fromLocalString(timeString);
+        try {
+            return Utils.Time.fromLocalString(timeString);
+        } catch (IllegalArgumentException exception) {
+            log("Couldn't get time from " + timeString, exception);
+
+            // Remove the invalid value.
+            setTime(key, null);
+            return null;
+        }
     }
 
     private void setTime(String key, DateTime time) {
@@ -182,6 +190,12 @@ public enum TimingManager {
     private static void log(String message) {
         if (BuildConfig.DEBUG) {
             Log.d(LOG_TAG, message);
+        }
+    }
+
+    private static void log(String message, Throwable e) {
+        if (BuildConfig.DEBUG) {
+            Log.d(LOG_TAG, message, e);
         }
     }
 }
