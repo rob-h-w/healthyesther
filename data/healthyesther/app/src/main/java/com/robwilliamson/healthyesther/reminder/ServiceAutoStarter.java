@@ -5,8 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 
 public class ServiceAutoStarter extends BroadcastReceiver {
+    private static final String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
+    private static final String SCREEN_ON = "android.intent.action.SCREEN_ON";
     @Override
     public void onReceive(Context context, Intent intent) {
-        TimingManager.INSTANCE.alarmElapsed(context, intent);
+        final String action = intent.getAction();
+
+        if (action.equals(BOOT_COMPLETED)) {
+            TimingManager.INSTANCE.onBootCompleted(context);
+        }
+
+        if (action.equals(SCREEN_ON)) {
+            TimingManager.INSTANCE.onScreenOn(context);
+        }
     }
 }

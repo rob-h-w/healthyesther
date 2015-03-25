@@ -109,9 +109,17 @@ public enum TimingManager {
         getTimingModel().onApplicationCreated();
     }
 
-    public void alarmElapsed(Context context, Intent intent) {
+    public void onAlarmElapsed(Context context) {
         setContext(context);
-        getTimingModel().onAlarmExpired();
+        getTimingModel().onAlarmElapsed();
+    }
+
+    public void onBootCompleted(Context context) {
+        setContext(context);
+    }
+
+    public void onScreenOn(Context context) {
+        setContext(context);
     }
 
     private SharedPreferences getPreferences() {

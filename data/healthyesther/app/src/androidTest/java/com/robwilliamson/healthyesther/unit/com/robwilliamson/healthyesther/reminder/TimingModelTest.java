@@ -94,11 +94,18 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MORNING_8AM_21, Duration.standardSeconds(1), mEnvironment.setLastNotifiedTimeParams.time);
     }
 
-    public void testOnAlarmExpired_inDisallowedRange() {
+    public void testOnAlarmElapsed_inDisallowedRange() {
         mEnvironment.now = MIDNIGHT_21;
-        mSubject.onAlarmExpired();
+        mSubject.onAlarmElapsed();
         assertIsEqual(MORNING_21, mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
+    }
+
+    public void testOnAlarmElapsed_inAllowedRange() {
+        mEnvironment.now = MORNING_21;
+        mSubject.onAlarmElapsed();
+        assertIsEqual(MORNING_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
+        assertEquals(1, mEnvironment.sendReminderCallCount);
     }
 
     public void testOnApplicationCreated_nightNoNotificationsSet() {

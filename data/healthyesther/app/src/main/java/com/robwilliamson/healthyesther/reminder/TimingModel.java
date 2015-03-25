@@ -36,7 +36,7 @@ public class TimingModel {
                 allowedNotificationTimes.startingTomorrow());
     }
 
-    public void onAlarmExpired() {
+    public void onAlarmElapsed() {
         if (shouldSkipNotification()) {
             mEnvironment.setAlarm(getNextNotificationAfter(mEnvironment.getNextNotificationTime()));
             return;

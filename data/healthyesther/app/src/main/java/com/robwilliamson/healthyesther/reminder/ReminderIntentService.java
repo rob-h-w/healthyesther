@@ -18,8 +18,7 @@ public class ReminderIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            TimingManager.INSTANCE.alarmElapsed(getBaseContext(), intent);
-
+            TimingManager.INSTANCE.onAlarmElapsed(getBaseContext());
         }
     }
 }
