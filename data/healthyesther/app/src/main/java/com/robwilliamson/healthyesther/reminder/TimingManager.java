@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 import com.robwilliamson.healthyesther.App;
@@ -33,6 +34,10 @@ public enum TimingManager {
     private static final String PREVIOUS_REMINDER = "previous_reminder";
 
     private static final String LOG_TAG = TimingManager.class.getSimpleName();
+
+    private static final long BIP = 75;
+    private static final long GAP = 150;
+    private static final long MINI_GAP = 75;
 
     private class Environment implements TimingModel.Environment {
 
@@ -73,6 +78,7 @@ public enum TimingManager {
 
         @Override
         public void sendReminder() {
+            Uri soundToBugEsther = Uri.parse("android.resource://com.robwilliamson.healthyesther/" + R.raw.hello );
             Intent intent = new Intent(getContext(), HomeActivity.class);
             PendingIntent reminderPendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             Notification notification = new Notification.Builder(getContext())
@@ -82,6 +88,13 @@ public enum TimingManager {
                     .setContentIntent(reminderPendingIntent)
                     .setTicker(getContext().getString(R.string.reminder_ticker))
                     .setAutoCancel(true)
+                    .setVibrate(new long[]{
+                            0, BIP, GAP, BIP, GAP, BIP, GAP, BIP,
+                            MINI_GAP, BIP, MINI_GAP, BIP,
+                            GAP, BIP, GAP, BIP
+                    })
+                    .setStyle(new Notification.InboxStyle())
+                    .setSound(soundToBugEsther)
                     .build();
 
             NotificationManager notificationManager =
