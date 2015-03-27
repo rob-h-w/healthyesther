@@ -27,6 +27,7 @@ public class TimingModelTest extends AndroidTestCase {
     private static class MockTimingModelEnvironment implements TimingModel.Environment {
         public DateTime now = MORNING_8AM_21;
         public boolean appInForeground = false;
+        public DateTime lastNotifiedTime = null;
 
         public SetLastNotifiedTimeParams setLastNotifiedTimeParams = null;
         public SetAlarmParams setAlarmParams = null;
@@ -53,6 +54,10 @@ public class TimingModelTest extends AndroidTestCase {
 
         @Override
         public DateTime getLastNotifiedTime() {
+            if (lastNotifiedTime != null) {
+                return lastNotifiedTime;
+            }
+
             return setLastNotifiedTimeParams == null ? null : setLastNotifiedTimeParams.time;
         }
 
@@ -96,6 +101,17 @@ public class TimingModelTest extends AndroidTestCase {
         mSubject.onAlarmElapsed();
         assertIsEqual(MORNING_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(1, mEnvironment.sendReminderCallCount);
+    }
+
+    public void testOnAlarmElapsed_setNextNextAfterElapsed() {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.lastNotifiedTime = MIDDAY_21.minus(MIN_NOTIFICATION_SEPARATION);
+        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed();
+        assertIsEqual(MIDDAY_21.plus(PERIOD).minus(MIN_NOTIFICATION_SEPARATION), mEnvironment.setAlarmParams.alarmTime);
+        assertEquals(0, mEnvironment.sendReminderCallCount);
+        assertNull(mEnvironment.setLastNotifiedTimeParams);
     }
 
     public void testOnApplicationCreated_nightNoNotificationsSet() {

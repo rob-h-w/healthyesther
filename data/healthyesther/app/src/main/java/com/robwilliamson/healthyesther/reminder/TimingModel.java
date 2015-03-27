@@ -61,14 +61,26 @@ public class TimingModel {
     }
 
     private boolean shouldNotify() {
-        if (hasNotifiedBefore()) {
-            if (cooloffPeriod().contains(mEnvironment.getNow())) {
-                return false;
-            }
+        DateTime now = mEnvironment.getNow();
+        boolean notificationAllowed = allowedTimes().contains(now) &&
+                !mEnvironment.appInForeground();
+
+        if (!notificationAllowed) {
+            return false;
         }
 
-        if (allowedTimes().contains(mEnvironment.getNow())) {
-            return !mEnvironment.appInForeground();
+        if (hasNotifiedBefore()) {
+            if (cooloffPeriod().contains(now)) {
+                return false;
+            }
+
+            DateTime nextNotification = mEnvironment.getLastNotifiedTime().plus(mPeriod);
+            if (new Range(now, SIGMA).contains(nextNotification) ||
+                    nextNotification.isBefore(now)) {
+                return true;
+            }
+        } else {
+            return true;
         }
 
         return false;
