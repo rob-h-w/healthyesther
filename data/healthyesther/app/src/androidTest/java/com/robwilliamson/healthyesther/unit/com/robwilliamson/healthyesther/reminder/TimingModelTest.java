@@ -122,7 +122,7 @@ public class TimingModelTest extends AndroidTestCase {
     public void testOnScreenOn() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
-        mSubject.onBootCompleted();
+        mSubject.onScreenOn();
 
         assertEquals(1, mEnvironment.sendReminderCallCount);
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
