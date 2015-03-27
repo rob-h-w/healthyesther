@@ -133,6 +133,7 @@ public class TimingModelTest extends AndroidTestCase {
     public void testOnNotified() {
         mSubject.onNotified();
         assertIsEqual(MORNING_8AM_21, Duration.standardSeconds(1), mEnvironment.setLastNotifiedTimeParams.time);
+        assertIsEqual(MORNING_8AM_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
 
     public void testOnScreenOn() {
