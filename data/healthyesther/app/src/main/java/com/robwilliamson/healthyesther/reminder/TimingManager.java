@@ -58,6 +58,16 @@ public enum TimingManager {
         }
 
         @Override
+        public void setNextNotificationTime(DateTime time) {
+            setTime(NEXT_REMINDER, time);
+        }
+
+        @Override
+        public DateTime getNextNotificationTime() {
+            return getTime(NEXT_REMINDER);
+        }
+
+        @Override
         public boolean appInForeground() {
             return App.getInForeGround();
         }
@@ -71,9 +81,6 @@ public enum TimingManager {
             log("setting new notification in " + millisUntil + "ms, expected to trigger at " + alarmTime);
 
             alarmManager.set(AlarmManager.ELAPSED_REALTIME, millisUntil, getOperation());
-
-            setTime(NEXT_REMINDER, alarmTime);
-
         }
 
         @Override

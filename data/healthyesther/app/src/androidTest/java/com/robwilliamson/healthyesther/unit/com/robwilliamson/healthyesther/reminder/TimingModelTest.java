@@ -19,6 +19,7 @@ public class TimingModelTest extends AndroidTestCase {
     private static final DateTime MIDNIGHT_21 = new DateTime(2015, 3, 21, 0, 0);
     private static final Range ALLOWED = new Range(MORNING_21, EVENING_21);
     private static final Duration PERIOD = Duration.standardHours(1);
+    private static final Duration HALF_PERIOD = Duration.standardMinutes(30);
     private static final Duration MIN_NOTIFICATION_SEPARATION = Duration.standardMinutes(30);
 
     private MockTimingModelEnvironment mEnvironment;
@@ -28,13 +29,19 @@ public class TimingModelTest extends AndroidTestCase {
         public DateTime now = MORNING_8AM_21;
         public boolean appInForeground = false;
         public DateTime lastNotifiedTime = null;
+        public DateTime nextNotificationTime = null;
 
         public SetLastNotifiedTimeParams setLastNotifiedTimeParams = null;
+        public SetNextNotificationTimeParams setNextNotificationTimeParams = null;
         public SetAlarmParams setAlarmParams = null;
         public int sendReminderCallCount = 0;
 
         public static class SetLastNotifiedTimeParams {
             public DateTime time;
+        }
+
+        public static class SetNextNotificationTimeParams {
+            public DateTime alarmTime;
         }
 
         public static class SetAlarmParams {
@@ -59,6 +66,21 @@ public class TimingModelTest extends AndroidTestCase {
             }
 
             return setLastNotifiedTimeParams == null ? null : setLastNotifiedTimeParams.time;
+        }
+
+        @Override
+        public void setNextNotificationTime(DateTime time) {
+            setNextNotificationTimeParams = new SetNextNotificationTimeParams();
+            setNextNotificationTimeParams.alarmTime = time;
+        }
+
+        @Override
+        public DateTime getNextNotificationTime() {
+            if (nextNotificationTime != null) {
+                return nextNotificationTime;
+            }
+
+            return setNextNotificationTimeParams == null ? null : setNextNotificationTimeParams.alarmTime;
         }
 
         @Override
@@ -103,13 +125,12 @@ public class TimingModelTest extends AndroidTestCase {
         assertEquals(1, mEnvironment.sendReminderCallCount);
     }
 
-    public void testOnAlarmElapsed_setNextNextAfterElapsed() {
+    public void testOnAlarmElapsed_doesNotSetNextAfterPrematureElapsed() {
         mEnvironment.now = MIDDAY_21;
-        mEnvironment.lastNotifiedTime = MIDDAY_21.minus(MIN_NOTIFICATION_SEPARATION);
+        mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
+        mEnvironment.lastNotifiedTime = MIDDAY_21.minus(HALF_PERIOD);
         mSubject.onAlarmElapsed();
-        mSubject.onAlarmElapsed();
-        mSubject.onAlarmElapsed();
-        assertIsEqual(MIDDAY_21.plus(PERIOD).minus(MIN_NOTIFICATION_SEPARATION), mEnvironment.setAlarmParams.alarmTime);
+        assertNull(mEnvironment.setAlarmParams);
         assertEquals(0, mEnvironment.sendReminderCallCount);
         assertNull(mEnvironment.setLastNotifiedTimeParams);
     }
