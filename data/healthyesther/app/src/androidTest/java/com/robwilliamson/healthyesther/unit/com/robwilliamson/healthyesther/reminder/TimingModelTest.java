@@ -9,6 +9,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import static com.robwilliamson.healthyesther.unit.Assert.assertIsEqual;
 
 public class TimingModelTest extends AndroidTestCase {
@@ -154,6 +157,37 @@ public class TimingModelTest extends AndroidTestCase {
         assertNull(mEnvironment.setLastNotifiedTimeParams);
     }
 
+    public void testEnsureNotificationIsPending_nextIsSet() throws Exception {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.nextNotificationTime = MIDDAY_21.plus(Duration.standardMinutes(1));
+        ensureNotificationIsPending(mSubject);
+
+        assertIsEqual(mEnvironment.nextNotificationTime, mEnvironment.setNextNotificationTimeParams.alarmTime);
+    }
+
+    public void testEnsureNotificationIsPending_nextIsNull() throws Exception {
+        mEnvironment.now = MIDDAY_21;
+        ensureNotificationIsPending(mSubject);
+
+        assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setNextNotificationTimeParams.alarmTime);
+    }
+
+    public void testEnsureNotificationIsPending_nextIsTooFarInTheFuture() throws Exception {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.nextNotificationTime = MIDDAY_21.withYear(2016);
+        ensureNotificationIsPending(mSubject);
+
+        assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setNextNotificationTimeParams.alarmTime);
+    }
+
+    public void testEnsureNotificationIsPending_nextIsInThePast() throws Exception {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.nextNotificationTime = MIDDAY_21.minus(HALF_PERIOD);
+        ensureNotificationIsPending(mSubject);
+
+        assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setNextNotificationTimeParams.alarmTime);
+    }
+
     public void testOnApplicationCreated_nightNoNotificationsSet() {
         mEnvironment.now = MIDDAY_21;
         mSubject.onApplicationCreated();
@@ -192,5 +226,11 @@ public class TimingModelTest extends AndroidTestCase {
         mSubject.onUserEntry();
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
+    }
+
+    private void ensureNotificationIsPending(TimingModel model) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Method method = TimingModel.class.getDeclaredMethod("ensureNotificationIsPending");
+        method.setAccessible(true);
+        method.invoke(model);
     }
 }
