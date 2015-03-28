@@ -63,6 +63,10 @@ public class TimingModel {
         ensureNotificationIsPending();
     }
 
+    public void onUserEntry() {
+        setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
+    }
+
     private boolean shouldNotify() {
         DateTime now = mEnvironment.getNow();
         boolean notificationAllowed = allowedTimes().contains(now) &&

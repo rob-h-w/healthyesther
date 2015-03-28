@@ -139,6 +139,11 @@ public enum TimingManager {
         getTimingModel().onScreenOn();
     }
 
+    public void onUserEntry(Context context) {
+        setContext(context);
+        getTimingModel().onUserEntry();
+    }
+
     private SharedPreferences getPreferences() {
         return getContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
     }

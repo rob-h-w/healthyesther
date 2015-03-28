@@ -15,6 +15,7 @@ import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
+import com.robwilliamson.healthyesther.reminder.TimingManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,7 @@ public abstract class AbstractAddActivity extends DbActivity {
                     } finally {
                         db.endTransaction();
                     }
+                    TimingManager.INSTANCE.onUserEntry(getApplicationContext());
                     return null;
                 }
 
