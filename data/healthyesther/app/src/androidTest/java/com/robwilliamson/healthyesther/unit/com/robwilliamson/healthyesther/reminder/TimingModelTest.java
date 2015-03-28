@@ -125,12 +125,31 @@ public class TimingModelTest extends AndroidTestCase {
         assertEquals(1, mEnvironment.sendReminderCallCount);
     }
 
-    public void testOnAlarmElapsed_doesNotSetNextAfterPrematureElapsed() {
+    public void testOnAlarmElapsed_doesNotChangeNextAfterPrematureElapsed() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
         mEnvironment.lastNotifiedTime = MIDDAY_21.minus(HALF_PERIOD);
         mSubject.onAlarmElapsed();
-        assertNull(mEnvironment.setAlarmParams);
+        assertIsEqual(MIDDAY_21.plus(HALF_PERIOD), mEnvironment.setAlarmParams.alarmTime);
+        assertEquals(0, mEnvironment.sendReminderCallCount);
+        assertNull(mEnvironment.setLastNotifiedTimeParams);
+    }
+
+    public void testOnAlarmElapsed_isIdempotent() {
+        mEnvironment.now = MIDDAY_21;
+        mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
+        mEnvironment.lastNotifiedTime = MIDDAY_21.minus(HALF_PERIOD);
+        mSubject.onAlarmElapsed();
+
+        assertIsEqual(MIDDAY_21.plus(HALF_PERIOD), mEnvironment.setAlarmParams.alarmTime);
+        assertEquals(0, mEnvironment.sendReminderCallCount);
+        assertNull(mEnvironment.setLastNotifiedTimeParams);
+
+        mEnvironment.now = MIDDAY_21.plus(Duration.standardMinutes(1));
+        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed();
+
+        assertIsEqual(MIDDAY_21.plus(HALF_PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
         assertNull(mEnvironment.setLastNotifiedTimeParams);
     }

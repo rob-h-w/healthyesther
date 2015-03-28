@@ -108,6 +108,8 @@ public class TimingModel {
                 || next.isBefore(now)
                 || next.minus(mPeriod).isAfter(now)) {
             setAlarm(getNextNotificationAfter(now));
+        } else {
+            setAlarm(next);
         }
     }
 
