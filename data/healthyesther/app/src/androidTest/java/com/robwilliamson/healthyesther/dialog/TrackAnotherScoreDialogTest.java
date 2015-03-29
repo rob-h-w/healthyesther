@@ -43,10 +43,11 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
 
             @Override
             public void checkContent() {
-                onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+                HomeActivityAccessor.AddMode.start();
+                onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
                 addScoreType("Score 1");
                 pressBack();
-                onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+                onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
                 checkScoreIsPresent("Score 1");
                 pressBack();
                 Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
@@ -63,12 +64,13 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
 
             @Override
             public void checkContent() {
-                onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+                HomeActivityAccessor.AddMode.start();
+                onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
                 addScoreType("A score");
                 addScoreType("Another score");
                 addScoreType("Yet another score");
                 pressBack();
-                onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+                onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
                 checkScoreIsPresent("A score");
                 checkScoreIsPresent("Another score");
                 checkScoreIsPresent("Yet another score");

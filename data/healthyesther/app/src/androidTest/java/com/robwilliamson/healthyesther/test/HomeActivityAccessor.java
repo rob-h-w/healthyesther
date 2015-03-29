@@ -10,32 +10,43 @@ import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class HomeActivityAccessor {
-    public static Matcher<View> healthScoreButton() {
-        return withId(R.id.create_health_score_event_button);
+    public static class AddMode {
+        public static void start() {
+            onView(withContentDescription("Esther's Health App, Open navigation drawer")).perform(click());
+            onView(withText(R.string.title_log_events)).perform(click());
+        }
+
+        public static Matcher<View> healthScoreButton() {
+            return withId(R.id.create_health_score_event_button);
+        }
+
+        public static Matcher<View> mealScoreButton() {
+            return withId(R.id.create_meal_event_button);
+        }
+
+        public static Matcher<View> medicationScoreButton() {
+            return withId(R.id.create_medication_event_button);
+        }
+
+        public static void checkUnmodifiedContent() {
+            onView(healthScoreButton()).check(matches(isClickable()));
+            onView(mealScoreButton()).check(matches(isClickable()));
+            onView(medicationScoreButton()).check(matches(isClickable()));
+        }
+
     }
 
     public static void showNavigationDrawer(Boolean show, Context targetContext) {
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
-    }
-
-    public static Matcher<View> mealScoreButton() {
-        return withId(R.id.create_meal_event_button);
-    }
-
-    public static Matcher<View> medicationScoreButton() {
-        return withId(R.id.create_medication_event_button);
-    }
-
-    public static void checkUnmodifiedContent() {
-        onView(healthScoreButton()).check(matches(isClickable()));
-        onView(mealScoreButton()).check(matches(isClickable()));
-        onView(medicationScoreButton()).check(matches(isClickable()));
     }
 
     public static void checkMenuContent() {

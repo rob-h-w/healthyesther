@@ -20,7 +20,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.healthScoreButton;
+import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.AddMode.healthScoreButton;
 import static org.hamcrest.Matchers.not;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
@@ -55,7 +55,8 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         getActivity();
     }
 
-    public void testActivityContents() {
+    public void testAddModeContents() {
+        HomeActivityAccessor.AddMode.start();
         Orientation.check(new Orientation.Subject() {
             @Override
             public InstrumentationTestCase getTestCase() {
@@ -64,7 +65,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
             @Override
             public void checkContent() {
-                HomeActivityAccessor.checkUnmodifiedContent();
+                HomeActivityAccessor.AddMode.checkUnmodifiedContent();
             }
         });
     }

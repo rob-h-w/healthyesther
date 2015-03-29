@@ -5,6 +5,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 
 public class UserActions {
     public static void openAddHealthScore() {
-        onView(HomeActivityAccessor.healthScoreButton()).perform(click());
+        HomeActivityAccessor.AddMode.start();
+        onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
     }
 }
