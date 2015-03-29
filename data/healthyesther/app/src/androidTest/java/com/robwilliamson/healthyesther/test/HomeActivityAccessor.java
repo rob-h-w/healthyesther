@@ -21,7 +21,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class HomeActivityAccessor {
     public static class AddMode {
         public static void start() {
-            onView(withContentDescription("Esther's Health App, Open navigation drawer")).perform(click());
+            openNavigationDrawer();
             onView(withText(R.string.title_log_events)).perform(click());
         }
 
@@ -45,7 +45,11 @@ public class HomeActivityAccessor {
 
     }
 
-    public static void showNavigationDrawer(Boolean show, Context targetContext) {
+    public static void openNavigationDrawer() {
+        onView(withContentDescription("Esther's Health App, Open navigation drawer")).perform(click());
+    }
+
+    public static void setShowNavigationDrawer(Boolean show, Context targetContext) {
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
     }
 

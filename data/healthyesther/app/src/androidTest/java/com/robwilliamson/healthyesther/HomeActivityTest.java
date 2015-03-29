@@ -35,7 +35,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     protected void setUp() throws Exception {
         super.setUp();
 
-        HomeActivityAccessor.showNavigationDrawer(false, getInstrumentation().getTargetContext());
+        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
 
         Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
                 getInstrumentation().getTargetContext()).getWritableDatabase());
