@@ -22,7 +22,7 @@ public class HomeActivityAccessor {
     public static class AddMode {
         public static void start() {
             openNavigationDrawer();
-            onView(withText(R.string.title_log_events)).perform(click());
+            onView(withText(NavigationDrawerFragment.NavigationDrawerMode.ADD.stringId)).perform(click());
         }
 
         public static Matcher<View> healthScoreButton() {
@@ -42,7 +42,13 @@ public class HomeActivityAccessor {
             onView(mealScoreButton()).check(matches(isClickable()));
             onView(medicationScoreButton()).check(matches(isClickable()));
         }
+    }
 
+    public static class EditMode {
+        public static void start() {
+            openNavigationDrawer();
+            onView(withText(NavigationDrawerFragment.NavigationDrawerMode.EDIT.stringId)).perform(click());
+        }
     }
 
     public static void openNavigationDrawer() {
