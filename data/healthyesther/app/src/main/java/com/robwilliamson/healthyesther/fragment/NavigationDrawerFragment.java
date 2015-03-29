@@ -21,7 +21,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.R;
+
+import java.util.ArrayList;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -29,6 +32,31 @@ import com.robwilliamson.healthyesther.R;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
+
+    public static enum NavigationDrawerMode {
+        ADD(R.string.title_log_events, 0),
+        EDIT(R.string.title_review_events, 1);
+
+        public final int stringId;
+        public final int index;
+
+        NavigationDrawerMode(int stringId, int index) {
+            this.stringId = stringId;
+            this.index = index;
+        }
+
+        public NavigationDrawerMode fromIndex(int index) {
+            switch (index) {
+                case 0:
+                    return ADD;
+                case 1:
+                    return EDIT;
+                default:
+                    throw new IllegalArgumentException(
+                            "There is no NavigationDrawerMode at index " + index);
+            }
+        }
+    }
 
     /**
      * Remember the position of the selected item.
@@ -98,13 +126,20 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+
+        // Build supported navigation modes.
+        ArrayList<String> navigationModes = new ArrayList<>(NavigationDrawerMode.values().length);
+        for (NavigationDrawerMode mode : NavigationDrawerMode.values()) {
+            navigationModes.add(mode.index, getString(mode.stringId));
+        }
+
+        String[] modeTitles = new String[navigationModes.size()];
+
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_log_events),
-                }));
+                navigationModes.toArray(modeTitles)));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
