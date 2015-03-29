@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.util.Pair;
 
 import org.joda.time.DateTime;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 public final class Utils {
     private Utils() {}
@@ -94,7 +96,7 @@ public final class Utils {
         }
 
         public static DateTime localNow() {
-            return DateTime.now().withZone(DateTimeZone.getDefault());
+            return DateTime.now().withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
         }
 
         public static String toLocalString(DateTime dateTime) {
@@ -129,6 +131,12 @@ public final class Utils {
 
         public static DateTime fromString(String string, DateTimeFormatter formatter) {
             return formatter.parseDateTime(string);
+        }
+
+        public static long toBootRealTimeElapsedMillis(DateTime time) {
+            long bootOffsetMillis = SystemClock.elapsedRealtime();
+            long bootTimeMillis = DateTime.now().getMillis() - bootOffsetMillis;
+            return time.getMillis() - bootTimeMillis;
         }
     }
 

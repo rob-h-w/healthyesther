@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.db.utils;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.test.AndroidTestCase;
 
 import com.robwilliamson.healthyesther.db.Utils;
@@ -34,8 +35,8 @@ public class TimeTest extends AndroidTestCase {
 
     public void testLocalNow() {
         DateTime localNow = Utils.Time.localNow();
-        Assert.assertEquals(localNow.getZone(), DateTimeZone.forOffsetMillis(
-                TimeZone.getDefault().getRawOffset()));
+        Assert.assertEquals(localNow.getZone(), DateTimeZone.forTimeZone(
+                TimeZone.getDefault()));
     }
 
     public void testToLocalStringUtc() {
@@ -58,5 +59,10 @@ public class TimeTest extends AndroidTestCase {
         DateTime actual = Utils.Time.fromLocalString(string);
         Assert.assertEquals(actual.getZone(), DateTimeZone.getDefault());
         Assert.assertTrue(actual.isEqual(expected));
+    }
+
+    public void testToBootRealTimeElapsedMillis() {
+        long millisTime = SystemClock.elapsedRealtime();
+        assertEquals(millisTime, Utils.Time.toBootRealTimeElapsedMillis(DateTime.now()), 1000);
     }
 }
