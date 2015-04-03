@@ -34,27 +34,13 @@ import java.util.ArrayList;
 public class NavigationDrawerFragment extends Fragment {
 
     public static enum NavigationDrawerMode {
-        ADD(R.string.title_log_events, 0),
-        EDIT(R.string.title_review_events, 1);
+        ADD(R.string.title_log_events),
+        EDIT(R.string.title_review_events);
 
         public final int stringId;
-        public final int index;
 
-        NavigationDrawerMode(int stringId, int index) {
+        NavigationDrawerMode(int stringId) {
             this.stringId = stringId;
-            this.index = index;
-        }
-
-        public NavigationDrawerMode fromIndex(int index) {
-            switch (index) {
-                case 0:
-                    return ADD;
-                case 1:
-                    return EDIT;
-                default:
-                    throw new IllegalArgumentException(
-                            "There is no NavigationDrawerMode at index " + index);
-            }
         }
     }
 
@@ -130,7 +116,7 @@ public class NavigationDrawerFragment extends Fragment {
         // Build supported navigation modes.
         ArrayList<String> navigationModes = new ArrayList<>(NavigationDrawerMode.values().length);
         for (NavigationDrawerMode mode : NavigationDrawerMode.values()) {
-            navigationModes.add(mode.index, getString(mode.stringId));
+            navigationModes.add(mode.ordinal(), getString(mode.stringId));
         }
 
         String[] modeTitles = new String[navigationModes.size()];
