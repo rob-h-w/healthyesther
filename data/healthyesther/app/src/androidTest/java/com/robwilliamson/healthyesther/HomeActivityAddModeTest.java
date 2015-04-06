@@ -23,11 +23,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.AddMode.healthScoreButton;
 import static org.hamcrest.Matchers.not;
 
-public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
             "/Android/data/com.dropbox.android";
     private static final String DB_PATH = DROPBOX_PATH + "/files/scratch";
-    public HomeActivityTest() {
+    public HomeActivityAddModeTest() {
         super(HomeActivity.class);
     }
 
@@ -40,50 +40,22 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
                 getInstrumentation().getTargetContext()).getWritableDatabase());
 
-        if (Utils.File.exists(DROPBOX_PATH)) {
-            File file;
-
-            if (Utils.File.exists(Utils.File.Dropbox.dbFile())) {
-                file = new File(Utils.File.Dropbox.dbFile());
-                file.delete();
-            }
-
-            file = new File(DROPBOX_PATH);
-            file.delete();
-        }
-
         getActivity();
+
+        HomeActivityAccessor.AddMode.start();
     }
 
-    public void testMenuContents() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-
+    public void testAddModeContents() {
         Orientation.check(new Orientation.Subject() {
             @Override
             public InstrumentationTestCase getTestCase() {
-                return HomeActivityTest.this;
+                return HomeActivityAddModeTest.this;
             }
 
             @Override
             public void checkContent() {
-                HomeActivityAccessor.checkMenuContent();
+                HomeActivityAccessor.AddMode.checkUnmodifiedContent();
             }
         });
-    }
-
-    public void testBackupToDropboxDisabled() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(MenuAccessor.backupToDropbox()).check(matches(isDisplayed()));
-        onView(MenuAccessor.backupToDropbox()).check(matches(not(isClickable())));
-    }
-
-    public void testBackupToDropbox() {
-        Utils.File.mkdirs(DB_PATH);
-        Assert.assertTrue(Utils.File.exists(DB_PATH));
-        Assert.assertFalse(Utils.File.exists(Utils.File.Dropbox.dbFile()));
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(MenuAccessor.backupToDropbox()).perform(click());
-        onView(healthScoreButton()).check(matches(isDisplayed()));
-        Assert.assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
     }
 }
