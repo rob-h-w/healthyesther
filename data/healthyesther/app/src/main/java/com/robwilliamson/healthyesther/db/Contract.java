@@ -66,7 +66,7 @@ public final class Contract {
     }
 
     public static final String NAME = "health.db3";
-    public static final int VERSION = 3;
+    public static final int VERSION = 4;
 
     public final Event EVENT;
     public final EventType EVENT_TYPE;
