@@ -49,6 +49,14 @@ public class HomeActivityAccessor {
             openNavigationDrawer();
             onView(withText(NavigationDrawerFragment.NavigationDrawerMode.EDIT.stringId)).perform(click());
         }
+
+        public static Matcher<View> activityGraph() {
+            return withId(R.id.activity_graph_layout);
+        }
+
+        public static void checkUnmodifiedContent() {
+            onView(activityGraph()).check(matches(isEnabled()));
+        }
     }
 
     public static void openNavigationDrawer() {
