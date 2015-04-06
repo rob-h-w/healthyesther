@@ -225,10 +225,11 @@ public final class Utils {
                                 c.MEDICATION.insert(db, "Ibuprofen"),
                                 c.MEDICATION.insert(db, "ACC Akut"),
                                 c.MEDICATION.insert(db, "Fluoxetine"),
-                                c.MEDICATION.insert(db, "Citalopram")
+                                c.MEDICATION.insert(db, "Citalopram"),
+                                c.MEDICATION.insert(db, "Escitalopram")
                         };
 
-                        long dailyMedicationId = medication[3];
+                        long dailyMedicationId = medication[5];
 
                         Set<Integer> thirtyOneDayMonths = new HashSet<Integer>();
                         thirtyOneDayMonths.addAll(Arrays.asList(1,
