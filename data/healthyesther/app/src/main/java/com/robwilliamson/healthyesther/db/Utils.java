@@ -1,11 +1,15 @@
 package com.robwilliamson.healthyesther.db;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Pair;
+
+import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.definition.MealEvent;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -126,6 +130,10 @@ public final class Utils {
 
 
         public static String toString(DateTime dateTime, DateTimeFormatter formatter) {
+            if (dateTime == null) {
+                return null;
+            }
+
             return formatter.print(dateTime);
         }
 
@@ -384,6 +392,37 @@ public final class Utils {
                 pseudoRandom *= 43;
                 pseudoRandom %= pseudoRandomMax;
                 return pseudoRandom;
+            }
+
+            public static void insertV3FakeData(final SQLiteDatabase db) {
+                transactionWithDb(db, new Runnable() {
+                    @Override
+                    public void run() {
+                        Contract c = Contract.getInstance();
+
+                        final long gruelId = c.MEAL.insert(db, "gruel");
+
+                        for (int i = 0; i < 10; i++) {
+                            insertMeal(time(2015, 01, rand() % 28, rand() % 24), gruelId);
+                        }
+                    }
+
+                    private void insertMeal(DateTime time, long mealId) {
+                        ContentValues eventValues = new ContentValues();
+                        String utcTime = Utils.Time.toUtcString(time);
+                        eventValues.put(Event.CREATED, utcTime);
+                        eventValues.put(Event.WHEN, utcTime);
+                        eventValues.put(Event.TYPE_ID, MealEvent.EVENT_TYPE_ID);
+
+                        long eventId = db.insert(Event.TABLE_NAME, null, eventValues);
+
+                        ContentValues mealEventValues = new ContentValues();
+                        mealEventValues.put(MealEvent.MEAL_ID, mealId);
+                        mealEventValues.put(MealEvent.EVENT_ID, eventId);
+
+                        db.insert(MealEvent.TABLE_NAME, null, mealEventValues);
+                    }
+                });
             }
         }
 

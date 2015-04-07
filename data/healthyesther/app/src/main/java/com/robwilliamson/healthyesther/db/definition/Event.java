@@ -1,12 +1,16 @@
 package com.robwilliamson.healthyesther.db.definition;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
+import java.util.TimeZone;
 
 /**
  * Table detailing event ids, times and types.
@@ -82,6 +86,9 @@ public class Event extends Table {
 
     @Override
     public void upgrade(SQLiteDatabase db, int from, int to) {
+        if (from < 4 && to == 4) {
+            replaceUtcWithCurrentLocale(db);
+        }
     }
 
     public long insert(SQLiteDatabase db, DateTime when, long typeId, String name) {
@@ -106,5 +113,40 @@ public class Event extends Table {
         }
 
         return update(db, values, id);
+    }
+
+    private void replaceUtcWithCurrentLocale(SQLiteDatabase db) {
+        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            final int idIndex = c.getColumnIndex(_ID);
+            final int whenIndex = c.getColumnIndex(Table.cleanName(WHEN));
+            final int createdIndex = c.getColumnIndex(CREATED);
+            final int modifiedIndex = c.getColumnIndex(MODIFIED);
+
+            do {
+                long id = c.getLong(idIndex);
+                DateTime when = toLocalTime(c.getString(whenIndex));
+                DateTime created = toLocalTime(c.getString(createdIndex));
+                DateTime modified = toLocalTime(c.getString(modifiedIndex));
+
+                ContentValues values = new ContentValues();
+
+                values.put(WHEN, Utils.Time.toLocalString(when));
+                values.put(CREATED, Utils.Time.toLocalString(created));
+                values.put(MODIFIED, Utils.Time.toLocalString(modified));
+
+                update(db, values, id);
+            } while (c.moveToNext());
+        }
+    }
+
+    private static DateTime toLocalTime(String utcTime) {
+        if (utcTime == null) {
+            return null;
+        }
+
+        return Utils.Time.fromUtcString(utcTime).
+                withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
     }
 }
