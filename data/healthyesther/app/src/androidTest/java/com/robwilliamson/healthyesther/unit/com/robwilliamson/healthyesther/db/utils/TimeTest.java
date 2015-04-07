@@ -6,8 +6,6 @@ import android.test.AndroidTestCase;
 
 import com.robwilliamson.healthyesther.db.Utils;
 
-import junit.framework.Assert;
-
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -28,23 +26,45 @@ public class TimeTest extends AndroidTestCase {
         System.out.println(input.getZone());
         Utils.Time.bundle(bundle, name, input);
         DateTime output = Utils.Time.unBundle(bundle, name);
-        Assert.assertTrue(input.isEqual(output));
-        Assert.assertEquals(input.getZone(), output.getZone());
-        Assert.assertTrue(input.getZone().equals(output.getZone()));
+        assertTrue(input.isEqual(output));
+        assertEquals(input.getZone(), output.getZone());
+        assertTrue(input.getZone().equals(output.getZone()));
     }
 
     public void testLocalNow() {
         DateTime localNow = Utils.Time.localNow();
-        Assert.assertEquals(localNow.getZone(), DateTimeZone.forTimeZone(
+        assertEquals(localNow.getZone(), DateTimeZone.forTimeZone(
                 TimeZone.getDefault()));
     }
 
     public void testToLocalStringUtc() {
-        Assert.assertEquals(UTC_STRING, Utils.Time.toLocalString(UTC));
+        assertEquals(UTC_STRING, Utils.Time.toLocalString(UTC));
     }
 
     public void testToLocalStringCet() {
-        Assert.assertEquals(CET_STRING, Utils.Time.toLocalString(CET));
+        assertEquals(CET_STRING, Utils.Time.toLocalString(CET));
+    }
+
+    public void testToDatabaseStringUTC() {
+        assertEquals(UTC_STRING, Utils.Time.toDatabaseString(UTC));
+    }
+
+    public void testToDatabaseStringCet() {
+        assertEquals(CET_STRING, Utils.Time.toDatabaseString(CET));
+    }
+
+    public void testFromDatabaseStringUtc() {
+        fromDatabaseString(UTC_STRING, UTC);
+    }
+
+    public void testFromDatabaseStringCet() {
+        fromDatabaseString(CET_STRING, CET);
+    }
+
+    private void fromDatabaseString(String string, DateTime expected) {
+        DateTime actual = Utils.Time.fromDatabaseString(string);
+        assertEquals(DateTimeZone.getDefault(), actual.getZone());
+        assertTrue("Expect " + expected + " to equal " + actual, actual.isEqual(expected));
     }
 
     public void testFromLocalStringUtc() {
@@ -57,8 +77,8 @@ public class TimeTest extends AndroidTestCase {
 
     private void fromLocalString(String string, DateTime expected) {
         DateTime actual = Utils.Time.fromLocalString(string);
-        Assert.assertEquals(actual.getZone(), DateTimeZone.getDefault());
-        Assert.assertTrue(actual.isEqual(expected));
+        assertEquals(DateTimeZone.getDefault(), actual.getZone());
+        assertTrue("Expect " + expected + " to equal " + actual, actual.isEqual(expected));
     }
 
     public void testToBootRealTimeElapsedMillis() {

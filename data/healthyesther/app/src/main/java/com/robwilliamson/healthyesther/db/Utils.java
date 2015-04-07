@@ -87,8 +87,8 @@ public final class Utils {
         private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
         private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormat.forPattern(TZ_FORMAT);
-        private static final DateTimeFormatter DB_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
-        public static final DateTimeFormatter UTC_FORMATTER = DB_FORMATTER;
+        private static final DateTimeFormatter DB_FORMATTER = LOCAL_FORMATTER;
+        public static final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
 
         public static void bundle(Bundle bundle, String name, DateTime dateTime) {
             bundle.putString(name, toString(dateTime, ISODateTimeFormat.dateTime()));
@@ -123,11 +123,9 @@ public final class Utils {
             return toString(dateTime, DB_FORMATTER);
         }
 
-        public static DateTime dateTimeFromDatabaseString(String string) {
+        public static DateTime fromDatabaseString(String string) {
             return fromString(string, DB_FORMATTER);
         }
-
-
 
         public static String toString(DateTime dateTime, DateTimeFormatter formatter) {
             if (dateTime == null) {

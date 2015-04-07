@@ -58,7 +58,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                         if (cursor != null && cursor.moveToFirst()) {
                             int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
                             do {
-                                DateTime when = Utils.Time.dateTimeFromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
+                                DateTime when = Utils.Time.fromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
                                 Integer count = mEntriesPerDay.get(format().print(when)) + 1;
                                 mEntriesPerDay.put(format().print(when), count);
 
