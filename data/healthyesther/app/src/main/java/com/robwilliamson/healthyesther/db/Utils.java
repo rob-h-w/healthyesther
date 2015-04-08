@@ -86,7 +86,7 @@ public final class Utils {
     public static class Time {
         private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-        private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormat.forPattern(TZ_FORMAT);
+        private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormat.forPattern(TZ_FORMAT).withOffsetParsed();
         private static final DateTimeFormatter DB_FORMATTER = LOCAL_FORMATTER;
         public static final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
 

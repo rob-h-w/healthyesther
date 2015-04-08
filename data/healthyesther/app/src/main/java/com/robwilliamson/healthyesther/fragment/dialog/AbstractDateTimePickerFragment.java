@@ -7,6 +7,8 @@ import com.robwilliamson.healthyesther.db.Utils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.util.TimeZone;
+
 public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment {
     private DateTimePickerListener mListener;
     private DateTime mDateTime;
@@ -37,7 +39,7 @@ public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment
     }
 
     public void setDateTime(DateTime dateTime) {
-        mDateTime = dateTime.withZone(DateTimeZone.getDefault());
+        mDateTime = dateTime.withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
     }
 
     protected abstract String getName();
@@ -47,6 +49,6 @@ public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment
     }
 
     protected void callCallback() {
-        getListener().onDateTimeChange(getLocalDateTime().withZone(DateTimeZone.UTC));
+        getListener().onDateTimeChange(getLocalDateTime());
     }
 }

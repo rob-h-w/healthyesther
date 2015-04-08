@@ -63,21 +63,21 @@ public class TimeTest extends AndroidTestCase {
 
     private void fromDatabaseString(String string, DateTime expected) {
         DateTime actual = Utils.Time.fromDatabaseString(string);
-        assertEquals(DateTimeZone.getDefault(), actual.getZone());
+        assertEquals(expected.getZone(), actual.getZone());
         assertTrue("Expect " + expected + " to equal " + actual, actual.isEqual(expected));
     }
 
     public void testFromLocalStringUtc() {
-        fromLocalString(UTC_STRING, UTC);
+        checkFromLocalString(UTC_STRING, UTC);
     }
 
     public void testFromLocalStringCet() {
-        fromLocalString(CET_STRING, CET);
+        checkFromLocalString(CET_STRING, CET);
     }
 
-    private void fromLocalString(String string, DateTime expected) {
+    private void checkFromLocalString(String string, DateTime expected) {
         DateTime actual = Utils.Time.fromLocalString(string);
-        assertEquals(DateTimeZone.getDefault(), actual.getZone());
+        assertEquals(expected.getZone(), actual.getZone());
         assertTrue("Expect " + expected + " to equal " + actual, actual.isEqual(expected));
     }
 

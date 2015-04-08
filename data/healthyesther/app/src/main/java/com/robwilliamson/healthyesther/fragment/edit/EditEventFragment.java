@@ -45,7 +45,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            mWhen = DateTime.now().withZone(DateTimeZone.UTC);
+            mWhen = Utils.Time.localNow();
         } else {
             Contract c = Contract.getInstance();
             mWhen = Utils.Time.unBundle(savedInstanceState, c.EVENT.getQualifiedName(Event.WHEN));
@@ -185,11 +185,11 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     private void updateUi() {
         if (mWhen != null) {
             if (getTimeButton() != null) {
-                getTimeButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.shortTime().withZone(DateTimeZone.getDefault())));
+                getTimeButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.shortTime()));
             }
 
             if (getDateButton() != null) {
-                getDateButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.mediumDate().withZone(DateTimeZone.getDefault())));
+                getDateButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.mediumDate()));
             }
         }
 

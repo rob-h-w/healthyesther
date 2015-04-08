@@ -14,7 +14,6 @@ import com.robwilliamson.healthyesther.db.use.SelectEventAndType;
 import com.robwilliamson.healthyesther.R;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -43,20 +42,20 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
     @Override
     public Query[] getQueries() {
         return new Query[] {
-                new SelectEventAndType(DateTime.now().minusDays(DAYS - 1).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0),
-                        DateTime.now().withZone(DateTimeZone.UTC)) {
-                    private HashMap<String, Integer> mEntriesPerDay = new HashMap<String, Integer>(DAYS); // 7 days.
+                new SelectEventAndType(today().minusDays(DAYS - 1).withTime(0, 0, 0, 0),
+                        Utils.Time.localNow()) {
+                    private HashMap<String, Integer> mEntriesPerDay = new HashMap<>(DAYS); // 7 days.
                     private DateTime mNow;
                     private int mMax = 0;
 
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         for (int i = 0; i < DAYS; i++) {
-                            mEntriesPerDay.put(format().print(now().minusDays(i)), 0);
+                            mEntriesPerDay.put(format().print(today().minusDays(i)), 0);
                         }
 
                         if (cursor != null && cursor.moveToFirst()) {
-                            int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
+                            final int whenIndex = cursor.getColumnIndex(Table.cleanName(Event.WHEN));
                             do {
                                 DateTime when = Utils.Time.fromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
                                 Integer count = mEntriesPerDay.get(format().print(when)) + 1;
@@ -79,7 +78,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
 
                         for (int i = 0; i < DAYS; i++) {
                             int minusDays = DAYS - 1 - i; // Range from 6-0.
-                            DateTime day = now().minusDays(minusDays);
+                            DateTime day = today().minusDays(minusDays);
                             String dayStr = format().print(day);
                             data[i] = new GraphView.GraphViewData(i + 1, mEntriesPerDay.get(dayStr));
                             dateStrings[i] = formatter.print(day);
@@ -113,15 +112,19 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
 
                     }
 
-                    private DateTime now() {
+                    private DateTime today() {
                         if (mNow == null) {
-                            mNow = DateTime.now().withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0);
+                            mNow = ActivityGraphFragment.today();
                         }
 
                         return mNow;
                     }
                 }
         };
+    }
+
+    private static DateTime today() {
+        return Utils.Time.localNow().withTime(0, 0, 0, 0);
     }
 
     private static DateTimeFormatter format() {

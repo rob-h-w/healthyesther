@@ -33,8 +33,8 @@ public abstract class SelectEventAndType implements SelectQuery {
     }
 
     public SelectEventAndType(final DateTime earliest, final DateTime latest) {
-        mEarliest = earliest == null ? null : earliest.withZone(DateTimeZone.UTC);
-        mLatest = latest == null ? null : latest.withZone(DateTimeZone.UTC);
+        mEarliest = earliest;
+        mLatest = latest;
     }
 
     @Override
