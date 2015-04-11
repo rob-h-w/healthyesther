@@ -34,7 +34,6 @@ public class SettingsActivity extends PreferenceActivity {
      */
     private static final boolean ALWAYS_SIMPLE_PREFS = false;
 
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -59,33 +58,29 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.pref_general);
 
         MultiSelectListPreference hiddenScores = new MultiSelectListPreference(this);
-        updateExcludedScoresPreference(hiddenScores, Settings.INSTANCE.getDefaultExcludedEditScores());
+        hiddenScores.setKey(getString(R.string.pref_default_edit_score_exclusion_list));
+        hiddenScores.setTitle(R.string.hidden_scores);
+        hiddenScores.setSummary(R.string.hidden_scores_summary);
+        hiddenScores.setDefaultValue(new HashSet<String>());
+        hiddenScores.setPersistent(false);
+        updateExcludedScoresPreference(hiddenScores);
 
         hiddenScores.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                HashSet<String> hashSet = (HashSet<String>) newValue;
+                Set<String> modifiedValues = (Set<String>) newValue;
+
                 final String hidden = getString(R.string.hidden);
 
-                boolean removed = true;
-                while(removed) {
-                    removed = false;
-                    for (String value : hashSet) {
-                        if (value.startsWith(hidden)) {
-                            String realValue = value.substring(hidden.length());
-                            hashSet.remove(realValue);
-                            hashSet.remove(value);
-                            removed = true;
-                            break;
-                        }
-                    }
+                for (String value : modifiedValues) {
+                    String title = value.substring(hidden.length());
+                    Settings.INSTANCE.showScore(title);
                 }
 
                 MultiSelectListPreference hiddenScores = (MultiSelectListPreference) preference;
-                updateExcludedScoresPreference(hiddenScores, hashSet);
+                updateExcludedScoresPreference(hiddenScores);
 
-                Settings.INSTANCE.setDefaultEditScoreExclusionList(hashSet);
-                return true;
+                return false;
             }
         });
 
@@ -101,24 +96,22 @@ public class SettingsActivity extends PreferenceActivity {
         return isXLargeTablet(this) && !isSimplePreferences(this);
     }
 
-    private void updateExcludedScoresPreference(final MultiSelectListPreference hiddenScores, final Set<String> values) {
-        String [] scoreTitles = {};
-        scoreTitles = values.toArray(scoreTitles);
-        final String hidden = getString(R.string.hidden);
-        final String [] entryValues = new String[scoreTitles.length];
+    private void updateExcludedScoresPreference(final MultiSelectListPreference hiddenScores) {
+        Set<String> values = Settings.INSTANCE.getDefaultExcludedEditScores();
+        String [] entries = new String[values.size()];
+        String [] entryValues = new String[values.size()];
+        entries = values.toArray(entries);
 
-        for (int i = 0; i < entryValues.length; i++) {
-            entryValues[i] = hidden + scoreTitles[i];
+        final String hidden = getString(R.string.hidden);
+
+        for (int i = 0; i < values.size(); i++) {
+            entryValues[i] = hidden + entries[i];
         }
-        hiddenScores.setKey(getString(R.string.pref_default_edit_score_exclusion_list));
-        hiddenScores.setEnabled(!(scoreTitles.length == 0));
-        hiddenScores.setTitle(R.string.hidden_scores);
-        hiddenScores.setSummary(R.string.hidden_scores_summary);
+
+        hiddenScores.setEnabled(!(entries.length == 0));
         hiddenScores.setDialogTitle(R.string.show_hidden_scores);
-        hiddenScores.setEntries(scoreTitles);
+        hiddenScores.setEntries(entries);
         hiddenScores.setEntryValues(entryValues);
-        hiddenScores.setDefaultValue(new HashSet<String>());
-        hiddenScores.setValues(values);
     }
 
     /**

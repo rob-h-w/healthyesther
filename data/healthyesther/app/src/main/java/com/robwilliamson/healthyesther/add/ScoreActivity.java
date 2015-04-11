@@ -101,9 +101,7 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     @Override
     public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
         Settings settings = Settings.INSTANCE;
-        Set<String> exclusionList = settings.getDefaultExcludedEditScores();
-        exclusionList.add(fragment.getName());
-        settings.setDefaultEditScoreExclusionList(exclusionList);
+        settings.hideScore(fragment.getScore());
         getScoreGroupFragment().removeScore(fragment);
         invalidateOptionsMenu();
     }

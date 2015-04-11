@@ -13,11 +13,8 @@ public enum Settings {
 
     private static final int DEFAULT_EDIT_SCORE_EXCLUSION_LIST = R.string.pref_default_edit_score_exclusion_list;
 
-    private SharedPreferences mPreferences;
-
-    private Settings() {
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(App.getInstance().getApplicationContext());
-    }
+    private Object mLock = new Object();
+    private volatile SharedPreferences mPreferences;
 
     public void hideScore(HealthScore.Score score) {
         if (score == null) {
@@ -26,6 +23,12 @@ public enum Settings {
 
         Set<String> hiddenScores = getDefaultExcludedEditScores();
         hiddenScores.add(score.name);
+        setDefaultEditScoreExclusionList(hiddenScores);
+    }
+
+    public void hideScore(String scoreName) {
+        Set<String> hiddenScores = getDefaultExcludedEditScores();
+        hiddenScores.add(scoreName);
         setDefaultEditScoreExclusionList(hiddenScores);
     }
 
@@ -40,15 +43,42 @@ public enum Settings {
         }
     }
 
-    public Set<String> getDefaultExcludedEditScores() {
-        return mPreferences.getStringSet(string(DEFAULT_EDIT_SCORE_EXCLUSION_LIST), new HashSet<String>());
+    public void showScore(String scoreName) {
+        Set<String> hiddenScores = getDefaultExcludedEditScores();
+        hiddenScores.remove(scoreName);
+        setDefaultEditScoreExclusionList(hiddenScores);
     }
 
-    public void setDefaultEditScoreExclusionList(Set<String> exclusionList) {
-        mPreferences.edit().putStringSet(string(DEFAULT_EDIT_SCORE_EXCLUSION_LIST), exclusionList).apply();
+    public Set<String> getDefaultExcludedEditScores() {
+        Set<String> exclusionSet = new HashSet<>(
+                getPreferences().getStringSet(
+                        string(DEFAULT_EDIT_SCORE_EXCLUSION_LIST),
+                        new HashSet<String>()));
+        return exclusionSet;
+    }
+
+    public void resetExclusionList() {
+        setDefaultEditScoreExclusionList(new HashSet<String>());
+    }
+
+    private void setDefaultEditScoreExclusionList(Set<String> exclusionList) {
+        SharedPreferences.Editor edit = getPreferences().edit();
+        final String key = string(DEFAULT_EDIT_SCORE_EXCLUSION_LIST);
+        edit.remove(key);
+        edit.putStringSet(key, exclusionList).apply();
     }
 
     private String string(int id) {
         return App.getInstance().getString(id);
+    }
+
+    private SharedPreferences getPreferences() {
+        synchronized (mLock) {
+            if (mPreferences == null) {
+                mPreferences = PreferenceManager.getDefaultSharedPreferences(App.getInstance());
+            }
+
+            return mPreferences;
+        }
     }
 }

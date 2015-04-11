@@ -26,7 +26,7 @@ public class NoteActivityTest extends ActivityInstrumentationTestCase2<NoteActiv
         super.setUp();
 
         Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
-        Settings.INSTANCE.setDefaultEditScoreExclusionList(new HashSet<String>());
+        Settings.INSTANCE.resetExclusionList();
 
         getActivity();
     }

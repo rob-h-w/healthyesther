@@ -28,7 +28,7 @@ public class ScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreAct
         super.setUp();
 
         Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
-        Settings.INSTANCE.setDefaultEditScoreExclusionList(new HashSet<String>());
+        Settings.INSTANCE.resetExclusionList();
 
         getActivity();
     }

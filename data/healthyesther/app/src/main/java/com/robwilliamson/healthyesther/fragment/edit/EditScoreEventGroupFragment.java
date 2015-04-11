@@ -24,6 +24,7 @@ import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGroupFragment.Watcher> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
@@ -133,9 +134,10 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                             mFragments = new ArrayList<EditFragment>(cursor.getCount());
                             mQueries = new ArrayList<Query>(cursor.getCount());
                             List<HealthScore.Score> scores = HealthScore.Score.listFrom(cursor);
+                            Set<String> excludedEditScoreTitles = Settings.INSTANCE.getDefaultExcludedEditScores();
 
                             for (HealthScore.Score score : scores) {
-                                if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(score.name)){
+                                if (excludedEditScoreTitles.contains(score.name)){
                                     continue;
                                 }
 
