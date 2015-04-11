@@ -11,15 +11,13 @@ import com.robwilliamson.healthyesther.test.Orientation;
 
 import junit.framework.Assert;
 
-import java.util.HashSet;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static org.hamcrest.Matchers.not;
 
-public class ScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreActivity> {
-    public ScoreActivityTest() {
+public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreActivity> {
+    public HealthScoreActivityTest() {
         super(ScoreActivity.class);
     }
 
@@ -37,7 +35,7 @@ public class ScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreAct
         Orientation.check(new Orientation.Subject() {
             @Override
             public InstrumentationTestCase getTestCase() {
-                return ScoreActivityTest.this;
+                return HealthScoreActivityTest.this;
             }
 
             @Override
@@ -52,5 +50,16 @@ public class ScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreAct
         onView(HealthScoreActivityAccessor.editScoreGroupLayout()).check(matches(
                 not(withChild(HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy")))));
         Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Happiness"));
+    }
+
+    public void testHideMultipleScores() {
+        HealthScoreActivityAccessor.hideScore("Happiness");
+        HealthScoreActivityAccessor.hideScore("Energy");
+        onView(HealthScoreActivityAccessor.editScoreGroupLayout()).check(matches(
+                not(withChild(HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy")))));
+        onView(HealthScoreActivityAccessor.editScoreGroupLayout()).check(matches(
+                not(withChild(HealthScoreActivityAccessor.score("Energy", "Tired", "Energetic")))));
+        Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Happiness"));
+        Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Energy"));
     }
 }
