@@ -38,7 +38,7 @@ public enum TimingManager {
 
     private static final String LOG_TAG = TimingManager.class.getSimpleName();
 
-    private static final long BIP = 75;
+    private static final long BIP = 50;
     private static final long GAP = 150;
     private static final long MINI_GAP = 75;
 
