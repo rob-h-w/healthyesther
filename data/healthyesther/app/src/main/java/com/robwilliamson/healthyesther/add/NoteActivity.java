@@ -4,11 +4,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Note;
 import com.robwilliamson.healthyesther.db.definition.NoteEvent;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
@@ -60,7 +60,7 @@ public class NoteActivity extends AbstractAddActivity
      * @return The query users that use queries on resume, or an empty array if no query is required.
      */
     @Override
-    protected QueryUser[] getOnResumeQueryUsers() {
+    public QueryUser[] getQueryUsers() {
         return new QueryUser[] {
                 getNoteFragment()
         };

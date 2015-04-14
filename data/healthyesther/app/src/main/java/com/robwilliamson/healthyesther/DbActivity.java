@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -19,17 +20,11 @@ import java.util.List;
 /**
  * Activities that use databases.
  */
-public abstract class DbActivity extends BusyActivity {
+public abstract class DbActivity extends BusyActivity implements QueryUserProvider {
     private static final String LOG_TAG = DbActivity.class.getName();
 
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
-
-    /**
-     * An array of query users that need to run queries every time this activity is resumed.
-     * @return The query users that use queries on resume, or an empty array if no query is required.
-     */
-    abstract protected QueryUser[] getOnResumeQueryUsers();
 
     @Override
     protected void onDestroy() {
@@ -64,9 +59,9 @@ public abstract class DbActivity extends BusyActivity {
     protected void onResume() {
         super.onResume();
 
-        QueryUser[] queryUsers = getOnResumeQueryUsers();
+        QueryUser[] queryUsers = getQueryUsers();
 
-        ArrayList<Query> queries = new ArrayList<Query>();
+        ArrayList<Query> queries = new ArrayList<>();
 
         for (QueryUser user : queryUsers) {
             Query[] userQueries = user.getQueries();
@@ -80,7 +75,7 @@ public abstract class DbActivity extends BusyActivity {
 
     protected final void doQueries(final List<Query> queries) {
         if (mQueries == null) {
-            mQueries = new ArrayDeque<Query>(queries);
+            mQueries = new ArrayDeque<>(queries);
         } else {
             mQueries.addAll(queries);
         }

@@ -7,21 +7,7 @@ import android.test.InstrumentationTestCase;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
-import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
-
-import junit.framework.Assert;
-
-import java.io.File;
-
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.AddMode.healthScoreButton;
-import static org.hamcrest.Matchers.not;
 
 public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +

@@ -48,7 +48,7 @@ public class EventActivity extends DbActivity {
     }
 
     @Override
-    protected QueryUser[] getOnResumeQueryUsers() {
+    public QueryUser[] getQueryUsers() {
         return new QueryUser[0];
     }
 

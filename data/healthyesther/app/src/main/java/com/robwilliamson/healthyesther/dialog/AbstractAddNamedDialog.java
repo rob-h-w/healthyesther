@@ -16,9 +16,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.use.Query;
 
 import java.util.HashMap;
 import java.util.Set;

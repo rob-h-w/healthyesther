@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Medication;
 import com.robwilliamson.healthyesther.db.definition.MedicationName;
@@ -14,7 +15,6 @@ import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.GetAllMedicationNamesQuery;
 import com.robwilliamson.healthyesther.db.use.GetAllMedicationsQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
 

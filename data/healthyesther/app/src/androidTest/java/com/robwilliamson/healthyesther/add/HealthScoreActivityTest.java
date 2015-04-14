@@ -3,9 +3,9 @@ package com.robwilliamson.healthyesther.add;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
+import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 

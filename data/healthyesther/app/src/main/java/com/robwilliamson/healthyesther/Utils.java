@@ -72,6 +72,14 @@ public final class Utils {
             return uncheckedCast(manager.findFragmentByTag(tag));
         }
 
+        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, int id) {
+            if (manager == null) {
+                return null;
+            }
+
+            return uncheckedCast(manager.findFragmentById(id));
+        }
+
         public static void assertIsOnUiThread() {
             long appUiThread = App.getUiThreadId();
             Thread currentThread = Thread.currentThread();

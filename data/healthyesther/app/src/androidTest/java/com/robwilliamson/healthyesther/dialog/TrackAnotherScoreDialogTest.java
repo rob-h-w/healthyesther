@@ -3,9 +3,9 @@ package com.robwilliamson.healthyesther.dialog;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
+import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;

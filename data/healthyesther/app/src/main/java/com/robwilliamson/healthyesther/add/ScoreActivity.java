@@ -4,6 +4,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
@@ -11,8 +13,6 @@ import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -21,7 +21,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ScoreActivity extends AbstractAddActivity implements EditScoreEventGroupFragment.Watcher,
         EditScoreEventFragment.Watcher,
@@ -75,7 +74,7 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     @Override
-    protected QueryUser[] getOnResumeQueryUsers() {
+    public QueryUser[] getQueryUsers() {
         return new QueryUser[] {
                 getScoreGroupFragment()
         };

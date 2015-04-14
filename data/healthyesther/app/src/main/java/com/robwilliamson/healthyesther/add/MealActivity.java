@@ -4,10 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.widget.Toast;
 
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
@@ -76,7 +76,7 @@ public class MealActivity extends AbstractAddActivity
     }
 
     @Override
-    protected QueryUser[] getOnResumeQueryUsers() {
+    public QueryUser[] getQueryUsers() {
         return new QueryUser[] {
                 getMealFragment()
         };

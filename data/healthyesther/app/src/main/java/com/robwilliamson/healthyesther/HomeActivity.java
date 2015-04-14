@@ -7,14 +7,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.fragment.ActivityGraphFragment;
-import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
+import com.robwilliamson.healthyesther.fragment.home.AbstractHomeFragment;
 
 
 public class HomeActivity extends DbActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
-    private static final String GRAPH_TAG = "graph";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -44,13 +42,24 @@ public class HomeActivity extends DbActivity
                 return;
             }
 
-            AddEventFragment addEventFragment = new AddEventFragment();
-            addEventFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.home_activity_content_layout, addEventFragment)
-                    .add(R.id.home_activity_content_layout, new ActivityGraphFragment(), GRAPH_TAG)
-                    .commit();
+            handleModeChange();
         }
+    }
+
+    private void handleModeChange() {
+        if (mNavigationDrawerFragment == null) {
+            return;
+        }
+
+        NavigationDrawerFragment.NavigationDrawerMode mode = mNavigationDrawerFragment.getMode();
+
+        AbstractHomeFragment fragment = mode.getFragment(getSupportFragmentManager());
+
+        if (fragment.getArguments() == null && getIntent().getExtras() != null) {
+            fragment.setArguments(getIntent().getExtras());
+        }
+
+        mode.replace(R.id.home_activity_content_layout, getSupportFragmentManager());
     }
 
     @Override
@@ -65,6 +74,7 @@ public class HomeActivity extends DbActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        handleModeChange();
     }
 
     public void restoreActionBar() {
@@ -103,14 +113,8 @@ public class HomeActivity extends DbActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private ActivityGraphFragment getGraph() {
-        return getFragment(GRAPH_TAG);
-    }
-
     @Override
-    protected QueryUser[] getOnResumeQueryUsers() {
-        return new QueryUser[] {
-                getGraph()
-        };
+    public QueryUser[] getQueryUsers() {
+        return mNavigationDrawerFragment.getMode().getFragment(getSupportFragmentManager()).getQueryUsers();
     }
 }

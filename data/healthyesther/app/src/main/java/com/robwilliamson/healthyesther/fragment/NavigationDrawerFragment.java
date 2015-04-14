@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -21,8 +22,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.fragment.home.AbstractHomeFragment;
+import com.robwilliamson.healthyesther.fragment.home.AddFragment;
+import com.robwilliamson.healthyesther.fragment.home.EditFragment;
 
 import java.util.ArrayList;
 
@@ -33,14 +36,45 @@ import java.util.ArrayList;
  */
 public class NavigationDrawerFragment extends Fragment {
 
+    private NavigationDrawerMode mMode = NavigationDrawerMode.ADD;
+
     public static enum NavigationDrawerMode {
-        ADD(R.string.title_log_events),
-        EDIT(R.string.title_review_events);
+        ADD(R.string.title_log_events, AddFragment.class),
+        EDIT(R.string.title_review_events, EditFragment.class);
+
+        public static class DrawerModeException extends RuntimeException {
+            DrawerModeException(Throwable t) {
+                super(t);
+            }
+        };
 
         public final int stringId;
+        public final Class<?>  fragmentClass;
 
-        NavigationDrawerMode(int stringId) {
+        <T extends AbstractHomeFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
             this.stringId = stringId;
+            this.fragmentClass = fragmentClass;
+        }
+
+        public AbstractHomeFragment getFragment(FragmentManager manager) {
+            Fragment fragment = manager.findFragmentByTag(name());
+            if (fragment == null) {
+                try {
+                    return (AbstractHomeFragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException | IllegalAccessException e) {
+                    throw new DrawerModeException(e);
+                }
+            }
+
+            return (AbstractHomeFragment) fragment;
+        }
+
+        public void replace (int containerId, FragmentManager manager) {
+            manager.beginTransaction().replace(containerId, getFragment(manager), name()).commit();
+        }
+
+        public static NavigationDrawerMode fromInt(int index) {
+            return values()[index];
         }
     }
 
@@ -74,6 +108,14 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     public NavigationDrawerFragment() {
+    }
+
+    public NavigationDrawerMode getMode() {
+        return mMode;
+    }
+
+    private void setMode(NavigationDrawerMode mode) {
+        mMode = mode;
     }
 
     @Override
@@ -121,7 +163,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         String[] modeTitles = new String[navigationModes.size()];
 
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(
+        mDrawerListView.setAdapter(new ArrayAdapter<>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
@@ -210,6 +252,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
+        setMode(NavigationDrawerMode.fromInt(position));
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
         }
@@ -262,11 +305,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     /**

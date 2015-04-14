@@ -8,11 +8,12 @@
     style="@style/AppTheme.rootLayout">
     <ScrollView
         style="@style/AppTheme.rootScrollView">
+
         <LinearLayout
+            android:id="@+id/home_activity_content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/home_activity_content_layout">
+            android:orientation="vertical">
 
         </LinearLayout>
 

@@ -8,13 +8,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Meal;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.GetAllMealsQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.R;
 
 import java.util.HashMap;
 

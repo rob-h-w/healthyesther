@@ -6,12 +6,12 @@ import android.widget.LinearLayout;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Table;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.SelectEventAndType;
-import com.robwilliamson.healthyesther.R;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

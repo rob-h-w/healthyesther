@@ -9,15 +9,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 
+import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Settings;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Settings;
-import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 

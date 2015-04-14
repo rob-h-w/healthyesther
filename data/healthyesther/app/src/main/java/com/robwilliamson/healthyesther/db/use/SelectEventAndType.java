@@ -10,7 +10,6 @@ import com.robwilliamson.healthyesther.db.definition.EventType;
 import com.robwilliamson.healthyesther.db.definition.Table;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 /**
  * List events and their types.

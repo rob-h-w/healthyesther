@@ -11,11 +11,11 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
