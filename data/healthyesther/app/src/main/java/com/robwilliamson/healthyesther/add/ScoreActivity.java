@@ -40,9 +40,9 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
 
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
-        ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(2);
-        EditFragment scoreGroup = null;
-        EditFragment event = null;
+        ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);
+        EditFragment scoreGroup;
+        EditFragment event;
         if (create) {
             scoreGroup = new EditScoreEventGroupFragment();
             event = new EditEventFragment();
@@ -51,8 +51,8 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
             event = getEventFragment();
         }
 
-        list.add(new Pair<EditFragment, String>(scoreGroup, SCORE_GROUP_TAG));
-        list.add(new Pair<EditFragment, String>(event, EVENT_TAG));
+        list.add(new Pair<>(scoreGroup, SCORE_GROUP_TAG));
+        list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
     }
@@ -121,11 +121,6 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     @Override
-    public void furtherQueries(EditScoreEventGroupFragment fragment, List<Query> queries) {
-        doQueries(queries);
-    }
-
-    @Override
     public void onScoreModified(HealthScore.Score score) {
         Settings.INSTANCE.showScore(score);
 
@@ -135,7 +130,7 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
             fragment = EditScoreEventFragment.newInstance(score);
             final Modification modification = fragment.getModification();
             getScoreGroupFragment().addFragment(fragment, null);
-            List<Query> list = new ArrayList<Query>(1);
+            List<Query> list = new ArrayList<>(1);
             list.add(new Query() {
                 @Override
                 public Cursor query(SQLiteDatabase db) {
@@ -169,10 +164,5 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     @Override
     public void onQueryFailed(EditScoreDialog fragment, Throwable error) {
         // TODO Report the error.
-    }
-
-    @Override
-    public void furtherQueries(EditScoreDialog fragment, List<Query> queries) {
-        doQueries(queries);
     }
 }

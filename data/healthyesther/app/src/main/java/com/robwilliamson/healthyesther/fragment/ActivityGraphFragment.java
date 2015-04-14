@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.fragment;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.widget.LinearLayout;
 
@@ -11,6 +12,7 @@ import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Table;
 import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 import com.robwilliamson.healthyesther.db.use.SelectEventAndType;
 
 import org.joda.time.DateTime;
@@ -18,6 +20,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class ActivityGraphFragment extends AbstractQueryFragment {
@@ -25,6 +28,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
     private static final int DAYS = 7;
 
     private GraphView mGraphView;
+    private QueuedQueryExecutor mWatcher = null;
 
     public ActivityGraphFragment() {
         // Required empty public constructor
@@ -35,8 +39,31 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
         return R.layout.fragment_activity_graph;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        //noinspection unchecked
+        mWatcher = (QueuedQueryExecutor)activity;
+    }
+
     private LinearLayout getLayout() {
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), R.id.activity_graph_layout);
+    }
+
+    /**
+     * Called when the fragment is visible to the user and actively running.
+     * This is generally
+     * tied to {@link Activity#onResume() Activity.onResume} of the containing
+     * Activity's lifecycle.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mWatcher != null) {
+            mWatcher.enqueueQueries(Arrays.asList(getQueries()));
+        }
     }
 
     @Override

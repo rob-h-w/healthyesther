@@ -37,7 +37,6 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     public interface Watcher extends EditScoreDialog.Watcher {
         void onFragmentUpdate(EditScoreEventGroupFragment fragment);
         void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);
-        void furtherQueries(EditScoreEventGroupFragment fragment, List<Query> queries);
     }
 
     public static EditScoreEventGroupFragment newInstance() {
@@ -160,7 +159,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                             EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
                                 @Override
                                 public void call(EditScoreEventGroupFragment.Watcher watcher) {
-                                    watcher.furtherQueries(EditScoreEventGroupFragment.this, mQueries);
+                                    watcher.enqueueQueries(mQueries);
                                 }
                             });
                         }

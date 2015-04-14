@@ -16,16 +16,16 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class EditScoreDialog extends AbstractAddNamedDialog {
-    public interface Watcher {
+    public interface Watcher extends QueuedQueryExecutor {
         void onScoreModified(HealthScore.Score score);
         void onQueryFailed(EditScoreDialog fragment, Throwable error);
-        void furtherQueries(EditScoreDialog fragment, List<Query> queries);
     }
 
     private static final String SCORES = "scores";
@@ -144,7 +144,7 @@ public class EditScoreDialog extends AbstractAddNamedDialog {
     protected void doQuery(Query query) {
         ArrayList<Query> queries = new ArrayList<Query>(1);
         queries.add(query);
-        getWatcher().furtherQueries(this, queries);
+        getWatcher().enqueueQueries(queries);
     }
 
     @Override

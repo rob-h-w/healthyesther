@@ -9,6 +9,7 @@ import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
+import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -20,11 +21,16 @@ import java.util.List;
 /**
  * Activities that use databases.
  */
-public abstract class DbActivity extends BusyActivity implements QueryUserProvider {
+public abstract class DbActivity extends BusyActivity implements QueuedQueryExecutor, QueryUserProvider {
     private static final String LOG_TAG = DbActivity.class.getName();
 
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
+
+    @Override
+    public void enqueueQueries(List<Query> queries) {
+        doQueries(queries);
+    }
 
     @Override
     protected void onDestroy() {
