@@ -93,15 +93,7 @@ public class HomeActivity extends DbActivity
             restoreActionBar();
         }
 
-        boolean returnValue = super.onCreateOptionsMenu(menu);
-
-        MenuItem backupToDropbox = menu.findItem(R.id.action_backup_to_dropbox);
-
-        if (backupToDropbox != null) {
-            backupToDropbox.setEnabled(com.robwilliamson.healthyesther.db.Utils.File.Dropbox.isDropboxPresent());
-        }
-
-        return returnValue;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

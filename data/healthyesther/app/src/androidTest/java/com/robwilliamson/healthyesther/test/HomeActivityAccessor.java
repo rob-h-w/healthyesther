@@ -2,6 +2,8 @@ package com.robwilliamson.healthyesther.test;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.test.espresso.*;
+import android.support.test.espresso.Espresso;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
@@ -10,6 +12,7 @@ import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -18,6 +21,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.not;
 
 public class HomeActivityAccessor {
     public static class AddMode {
@@ -69,8 +73,11 @@ public class HomeActivityAccessor {
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
     }
 
-    public static void checkMenuContent() {
+    public static void checkUnmodifiedMenuContent(Context context) {
+        openActionBarOverflowOrOptionsMenu(context);
         onView(MenuAccessor.backupToDropbox()).check(matches(isEnabled()));
+        onView(MenuAccessor.restoreFromDropbox()).check(matches(not(isEnabled())));
         onView(MenuAccessor.settings()).check(matches(isEnabled()));
+        Espresso.pressBack();
     }
 }

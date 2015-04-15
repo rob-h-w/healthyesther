@@ -32,6 +32,7 @@
     <string name="log_medication">Log medication</string>
     <string name="activity_last_week">Last week\'s entries</string>
     <string name="action_backup_to_dropbox">Backup data to Dropbox</string>
+    <string name="action_restore_from_dropbox">Restore data from Dropbox</string>
     <string name="could_not_get_score_type_list">Could not get the list of score types.</string>
     <string name="health_score">Health Score</string>
     <string name="score_name">Score Name</string>

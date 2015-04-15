@@ -6,17 +6,17 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.test.Database;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
-
-import junit.framework.Assert;
 
 import java.io.File;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -56,8 +56,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     public void testMenuContents() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-
         Orientation.check(new Orientation.Subject() {
             @Override
             public InstrumentationTestCase getTestCase() {
@@ -66,7 +64,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
             @Override
             public void checkContent() {
-                HomeActivityAccessor.checkMenuContent();
+                HomeActivityAccessor.checkUnmodifiedMenuContent(getInstrumentation().getTargetContext());
             }
         });
     }
@@ -79,11 +77,51 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
     public void testBackupToDropbox() {
         Utils.File.mkdirs(DB_PATH);
-        Assert.assertTrue(Utils.File.exists(DB_PATH));
-        Assert.assertFalse(Utils.File.exists(Utils.File.Dropbox.dbFile()));
+        assertTrue(Utils.File.exists(DB_PATH));
+        assertFalse(Utils.File.exists(Utils.File.Dropbox.dbFile()));
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
         onView(healthScoreButton()).check(matches(isDisplayed()));
-        Assert.assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
+        assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
+    }
+
+    public void testRestoreFromDropboxDisabled() {
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.restoreFromDropbox()).check(matches(isDisplayed()));
+        onView(MenuAccessor.restoreFromDropbox()).check(matches(not(isClickable())));
+    }
+
+    public void testRestoreFromDropbox() throws Exception {
+        Utils.File.mkdirs(DB_PATH);
+
+        // Create some fake data
+        Utils.Db.TestData.insertFakeData(
+                HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+
+        // Check that we have some entries.
+        final int expectedCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertTrue("expected " + expectedCount + " to be greater than 0.", expectedCount > 0);
+
+        // Put it in the dropbox folder.
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.backupToDropbox()).perform(click());
+
+        // Check that worked.
+        assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
+
+        // Remove it from current use.
+        Database.deleteDatabase(getInstrumentation().getTargetContext());
+
+        // Check there are no entries.
+        final int emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertEquals(0, emptyCount);
+
+        // Restore from Dropbox.
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.restoreFromDropbox()).perform(click());
+
+        // Check we have the same number of entries as before.
+        final int finalCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertEquals(expectedCount, finalCount);
     }
 }

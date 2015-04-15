@@ -11,16 +11,19 @@ import java.io.IOException;
  */
 public final class HealthDbHelper extends SQLiteOpenHelper {
     private static volatile HealthDbHelper sInstance = null;
+    private static final Object sSync = new Object();
     public static boolean sDebug = false;
 
     private final Context mContext;
 
-    public static synchronized HealthDbHelper getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new HealthDbHelper(context.getApplicationContext());
-        }
+    public static HealthDbHelper getInstance(Context context) {
+        synchronized (sSync) {
+            if (sInstance == null) {
+                sInstance = new HealthDbHelper(context.getApplicationContext());
+            }
 
-        return sInstance;
+            return sInstance;
+        }
     }
 
     private HealthDbHelper(Context context) {
@@ -29,29 +32,51 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public synchronized void onConfigure(SQLiteDatabase sqLiteDatabase) {
-        super.onConfigure(sqLiteDatabase);
+    public void onConfigure(SQLiteDatabase sqLiteDatabase) {
+        synchronized (sSync) {
+            super.onConfigure(sqLiteDatabase);
 
-        if (!sqLiteDatabase.isReadOnly()) {
-            sqLiteDatabase.execSQL("PRAGMA foreign_keys = ON;");
+            if (!sqLiteDatabase.isReadOnly()) {
+                sqLiteDatabase.execSQL("PRAGMA foreign_keys = ON;");
+            }
         }
     }
 
     @Override
-    public synchronized void onCreate(SQLiteDatabase sqLiteDatabase) {
-        Contract.getInstance().create(sqLiteDatabase);
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        synchronized (sSync) {
+            Contract.getInstance().create(sqLiteDatabase);
+        }
     }
 
     @Override
-    public synchronized void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
-        Contract.getInstance().upgrade(sqLiteDatabase, from, to);
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
+        synchronized (sSync) {
+            Contract.getInstance().upgrade(sqLiteDatabase, from, to);
+        }
     }
 
-    public synchronized void backupToDropbox() throws IOException {
-        // Ensure the db isn't in use
-        close();
+    public void backupToDropbox() throws IOException {
+        synchronized (sSync) {
+            // Ensure the db isn't in use
+            close();
 
-        Utils.File.copy(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath(),
-                Utils.File.Dropbox.dbFile());
+            Utils.File.copy(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath(),
+                    Utils.File.Dropbox.dbFile());
+        }
+    }
+
+    public void restoreFromDropbox() throws IOException {
+        synchronized (sSync) {
+            // Ensure the db isn't in use
+            close();
+
+            Utils.File.copy(Utils.File.Dropbox.dbFile(),
+                    mContext.getDatabasePath(getDatabaseName()).getAbsolutePath());
+
+            // We'll need to be re-created after this event in case the dropbox version is different
+            // from this one.
+            sInstance = null;
+        }
     }
 }

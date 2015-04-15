@@ -3,9 +3,11 @@ package com.robwilliamson.healthyesther;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.*;
+import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
@@ -58,7 +60,46 @@ public abstract class DbActivity extends BusyActivity implements QueuedQueryExec
             return true;
         }
 
+        if (item.getItemId() == R.id.action_restore_from_dropbox) {
+            runAsTask(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HealthDbHelper.getInstance(DbActivity.this).restoreFromDropbox();
+                    } catch (IOException e) {
+                        // TODO: Do some error handling UI.
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return true;
+        }
+
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean returnValue = super.onCreateOptionsMenu(menu);
+
+        setEnabled(
+                menu,
+                R.id.action_backup_to_dropbox,
+                Utils.File.Dropbox.isDropboxPresent());
+        setEnabled(
+                menu,
+                R.id.action_restore_from_dropbox,
+                Utils.File.Dropbox.isDbFileInDropboxAppFolder());
+
+        return returnValue;
+    }
+
+    private static void setEnabled(Menu menu, int itemId, boolean enabled) {
+        MenuItem item = menu.findItem(itemId);
+
+        if (item != null) {
+            item.setEnabled(enabled);
+        }
     }
 
     @Override

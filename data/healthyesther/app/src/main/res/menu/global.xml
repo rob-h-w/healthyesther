@@ -6,4 +6,6 @@
         app:showAsAction="never" />
     <item android:id="@+id/action_backup_to_dropbox"
         android:title="@string/action_backup_to_dropbox" />
+    <item android:id="@+id/action_restore_from_dropbox"
+        android:title="@string/action_restore_from_dropbox" />
 </menu>
