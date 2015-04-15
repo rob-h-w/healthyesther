@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther.test;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.support.test.espresso.*;
 import android.support.test.espresso.Espresso;
 import android.view.View;
 
