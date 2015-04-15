@@ -69,9 +69,9 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
         }
 
         public void assertIsNullOrLocal() {
-            assertIsNullOrLocal(when);
-            assertIsNullOrLocal(created);
-            assertIsNullOrLocal(modified);
+            assertIsNullOrLocal(when, TimeZone.getDefault());
+            assertIsNullOrLocal(created, DateTimeZone.UTC.toTimeZone());
+            assertIsNullOrLocal(modified, DateTimeZone.UTC.toTimeZone());
         }
 
         private int hash(String str) {
@@ -82,15 +82,15 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
             return str.hashCode();
         }
 
-        private void assertIsNullOrLocal(String dateString) {
+        private void assertIsNullOrLocal(String dateString, TimeZone expectedTimeZone) {
             if (dateString == null) {
                 return;
             }
 
             DateTime dateTime = Utils.Time.fromLocalString(dateString);
             assertTrue(
-                    "Expect " + dateString + " to use timezone " + TimeZone.getDefault() + ".",
-                    dateTime.getZone().toTimeZone().getRawOffset() == TimeZone.getDefault().getRawOffset());
+                    "Expect " + dateString + " to use timezone " + expectedTimeZone + ".",
+                    dateTime.getZone().toTimeZone().getRawOffset() == expectedTimeZone.getRawOffset());
         }
 
         private void assertIsNullOrUtc(String dateString) {

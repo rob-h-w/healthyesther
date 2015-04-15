@@ -29,7 +29,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onConfigure(SQLiteDatabase sqLiteDatabase) {
+    public synchronized void onConfigure(SQLiteDatabase sqLiteDatabase) {
         super.onConfigure(sqLiteDatabase);
 
         if (!sqLiteDatabase.isReadOnly()) {
@@ -38,16 +38,16 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    public synchronized void onCreate(SQLiteDatabase sqLiteDatabase) {
         Contract.getInstance().create(sqLiteDatabase);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
+    public synchronized void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
         Contract.getInstance().upgrade(sqLiteDatabase, from, to);
     }
 
-    public void backupToDropbox() throws IOException {
+    public synchronized void backupToDropbox() throws IOException {
         // Ensure the db isn't in use
         close();
 

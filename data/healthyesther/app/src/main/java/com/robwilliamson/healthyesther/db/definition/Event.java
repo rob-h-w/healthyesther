@@ -14,6 +14,8 @@ import java.util.TimeZone;
 
 /**
  * Table detailing event ids, times and types.
+ *
+ * Note that internal times are in UTC, while user-displayed or analytical times use the local TZ.
  */
 public class Event extends Table {
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
@@ -53,9 +55,9 @@ public class Event extends Table {
 
     public final static String TABLE_NAME = "event";
     public final static String _ID = "_id";
-    public final static String WHEN = "[when]";
-    public final static String CREATED = "created";
-    public final static String MODIFIED = "modified";
+    public final static String WHEN = "[when]";         // This is in the local time zone.
+    public final static String CREATED = "created";     // This is in UTC.
+    public final static String MODIFIED = "modified";   // This is in UTC or absent.
     public final static String TYPE_ID = "type_id";
     public final static String NAME = "name";
 
@@ -126,9 +128,9 @@ public class Event extends Table {
 
             do {
                 long id = c.getLong(idIndex);
-                DateTime when = toLocalTime(c.getString(whenIndex));
-                DateTime created = toLocalTime(c.getString(createdIndex));
-                DateTime modified = toLocalTime(c.getString(modifiedIndex));
+                DateTime when = utcToLocalTime(c.getString(whenIndex));
+                DateTime created = utcToUtcTime(c.getString(createdIndex));
+                DateTime modified = utcToUtcTime(c.getString(modifiedIndex));
 
                 ContentValues values = new ContentValues();
 
@@ -141,12 +143,23 @@ public class Event extends Table {
         }
     }
 
-    private static DateTime toLocalTime(String utcTime) {
+    private static DateTime utcToLocalTime(String utcTime) {
+        return utcToZoneTime(utcTime, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+    }
+
+    private static DateTime utcToUtcTime(String utcTime) {
+        return utcToZoneTime(utcTime, DateTimeZone.UTC);
+    }
+
+    private static DateTime utcToZoneTime(String utcTime, DateTimeZone zone) {
         if (utcTime == null) {
             return null;
         }
 
-        return Utils.Time.fromUtcString(utcTime).
-                withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        try {
+            return Utils.Time.fromUtcString(utcTime).withZone(zone);
+        } catch (IllegalArgumentException ignored) {
+            return Utils.Time.fromDatabaseDefaultString(utcTime).withZone(zone);
+        }
     }
 }

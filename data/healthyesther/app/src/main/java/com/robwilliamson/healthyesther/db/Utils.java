@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.db.definition.Event;
@@ -84,11 +85,14 @@ public final class Utils {
     }
 
     public static class Time {
+        private static final String LOG_TAG = Time.class.getSimpleName();
         private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+        private static final String DB_DEFAULT_FORMAT = "yyyy-MM-dd' 'HH:mm:ss";
         private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormat.forPattern(TZ_FORMAT).withOffsetParsed();
         private static final DateTimeFormatter DB_FORMATTER = LOCAL_FORMATTER;
-        public static final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
+        private static final DateTimeFormatter DB_DEFAULT_FORMATTER = DateTimeFormat.forPattern(DB_DEFAULT_FORMAT).withZoneUTC();
+        private static final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
 
         public static void bundle(Bundle bundle, String name, DateTime dateTime) {
             bundle.putString(name, toString(dateTime, ISODateTimeFormat.dateTime()));
@@ -123,8 +127,25 @@ public final class Utils {
             return toString(dateTime, DB_FORMATTER);
         }
 
+        /**
+         * We write to the database using a format with the zone offset, even if this is UTC.
+         * The database's default time format does not provide a zone offset, and assumes UTC. For
+         * this reason, we must be able to parse 2 string formats when reading DateTimes from the
+         * database.
+         * @param string The DB String representation of the DateTime.
+         * @return The JodaTime DateTime.
+         */
         public static DateTime fromDatabaseString(String string) {
-            return fromString(string, DB_FORMATTER);
+            try {
+                return fromString(string, DB_FORMATTER);
+            } catch (IllegalArgumentException e) {
+                Log.w(LOG_TAG, e);
+                return fromDatabaseDefaultString(string);
+            }
+        }
+
+        public static DateTime fromDatabaseDefaultString(String string) {
+            return fromString(string, DB_DEFAULT_FORMATTER);
         }
 
         public static String toString(DateTime dateTime, DateTimeFormatter formatter) {
@@ -458,25 +479,27 @@ public final class Utils {
         }
 
         public static void copy(String from, String to) throws IOException {
-            InputStream in = null;
-            OutputStream out = null;
+            InputStream in = new FileInputStream(new java.io.File(from));
+
             try {
-                in = new FileInputStream(new java.io.File(from));
-                out = new FileOutputStream(new java.io.File(to));
+                copy(in, to);
+            } finally {
+                in.close();
+            }
+        }
+
+        public static void copy (InputStream from, String to) throws IOException {
+            OutputStream out = new FileOutputStream(new java.io.File(to));
+
+            try {
 
                 byte[] buf = new byte[1024];
                 int len;
-                while ((len = in.read(buf)) > 0) {
+                while ((len = from.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
             } finally {
-                if (in != null) {
-                    in.close();
-                }
-
-                if (out != null) {
-                    out.close();
-                }
+                out.close();
             }
         }
 
