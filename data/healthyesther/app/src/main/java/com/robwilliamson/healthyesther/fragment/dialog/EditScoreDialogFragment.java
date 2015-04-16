@@ -1,4 +1,4 @@
-package com.robwilliamson.healthyesther.dialog;
+package com.robwilliamson.healthyesther.fragment.dialog;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class EditScoreDialog extends AbstractAddNamedDialog {
+public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     public interface Watcher extends QueuedQueryExecutor {
         void onScoreModified(HealthScore.Score score);
-        void onQueryFailed(EditScoreDialog fragment, Throwable error);
+        void onQueryFailed(EditScoreDialogFragment fragment, Throwable error);
     }
 
     private static final String SCORES = "scores";
@@ -34,13 +34,13 @@ public class EditScoreDialog extends AbstractAddNamedDialog {
     private HealthScore.Score mInitialScore = null;
     private HashMap<String, HealthScore.Score> mScores = null;
 
-    public static EditScoreDialog createDialog(HealthScore.Score score) {
-        EditScoreDialog dialog = new EditScoreDialog();
+    public static EditScoreDialogFragment createDialog(HealthScore.Score score) {
+        EditScoreDialogFragment dialog = new EditScoreDialogFragment();
         dialog.mInitialScore = score;
         return dialog;
     }
 
-    public EditScoreDialog() {
+    public EditScoreDialogFragment() {
         super();
     }
 
@@ -130,12 +130,12 @@ public class EditScoreDialog extends AbstractAddNamedDialog {
             @Override
             public void onQueryComplete(final Cursor cursor) {
                 setSuggestions(mSuggestions);
-                EditScoreDialog.this.queryComplete(cursor);
+                EditScoreDialogFragment.this.queryComplete(cursor);
             }
 
             @Override
             public void onQueryFailed(final Throwable error) {
-                EditScoreDialog.this.queryFailed(error);
+                EditScoreDialogFragment.this.queryFailed(error);
             }
         };
     }

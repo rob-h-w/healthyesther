@@ -1,4 +1,4 @@
-package com.robwilliamson.healthyesther.dialog;
+package com.robwilliamson.healthyesther.fragment.dialog;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -23,7 +23,7 @@ import com.robwilliamson.healthyesther.db.use.Query;
 import java.util.HashMap;
 import java.util.Set;
 
-public abstract class AbstractAddNamedDialog extends DialogFragment {
+public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
 
     private static final String SUGGESTIONS = "suggestions";
     private HashMap<String, Long> mSuggestions = null;
@@ -75,7 +75,7 @@ public abstract class AbstractAddNamedDialog extends DialogFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = s.toString();
-                AbstractAddNamedDialog.this.newNameEntered(text);
+                AbstractAddNamedDialogFragment.this.newNameEntered(text);
             }
 
             @Override
@@ -86,7 +86,7 @@ public abstract class AbstractAddNamedDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String suggestion = (String) parent.getAdapter().getItem(position);
-                AbstractAddNamedDialog.this.suggestionSelected(suggestion, mSuggestions.get(suggestion));
+                AbstractAddNamedDialogFragment.this.suggestionSelected(suggestion, mSuggestions.get(suggestion));
             }
         });
         getOkButton().setOnClickListener(new View.OnClickListener() {

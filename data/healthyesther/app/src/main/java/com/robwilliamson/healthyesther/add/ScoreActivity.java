@@ -13,7 +13,7 @@ import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
+import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment;
@@ -162,7 +162,7 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     @Override
-    public void onQueryFailed(EditScoreDialog fragment, Throwable error) {
+    public void onQueryFailed(EditScoreDialogFragment fragment, Throwable error) {
         // TODO Report the error.
     }
 }

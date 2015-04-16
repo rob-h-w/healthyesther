@@ -14,7 +14,7 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.dialog.EditScoreDialog;
+import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
     public interface Watcher {
@@ -82,7 +82,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
         switch (item.getItemId()) {
             case R.id.action_edit:
-                EditScoreDialog dialog = EditScoreDialog.createDialog(mScore);
+                EditScoreDialogFragment dialog = EditScoreDialogFragment.createDialog(mScore);
                 dialog.show(getFragmentManager(), EDIT_SCORE_FRAGMENT);
                 return true;
             case R.id.action_hide:
