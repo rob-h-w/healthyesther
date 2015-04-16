@@ -5,7 +5,6 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -183,9 +182,5 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
     private RatingBar getRatingBar() {
         return Utils.View.getTypeSafeView(getView(), R.id.score_bar);
-    }
-
-    private LinearLayout getLayout() {
-        return Utils.View.getTypeSafeView(getView(), R.id.edit_score_layout);
     }
 }
