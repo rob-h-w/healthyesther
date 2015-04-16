@@ -118,8 +118,8 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
             @Override
             public void postQueryProcessing(final Cursor cursor) {
                 List<HealthScore.Score> scoresList = HealthScore.Score.listFrom(cursor);
-                mSuggestions = new HashMap<String, Long>(scoresList.size());
-                mScores = new HashMap<String, HealthScore.Score>(scoresList.size());
+                mSuggestions = new HashMap<>(scoresList.size());
+                mScores = new HashMap<>(scoresList.size());
 
                 for (HealthScore.Score score: scoresList) {
                     mSuggestions.put(score.name, score._id);
@@ -142,7 +142,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
     @Override
     protected void doQuery(Query query) {
-        ArrayList<Query> queries = new ArrayList<Query>(1);
+        ArrayList<Query> queries = new ArrayList<>(1);
         queries.add(query);
         getWatcher().enqueueQueries(queries);
     }

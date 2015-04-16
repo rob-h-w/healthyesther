@@ -18,8 +18,8 @@ import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
+import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
