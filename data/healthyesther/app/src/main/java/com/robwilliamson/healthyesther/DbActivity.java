@@ -12,6 +12,7 @@ import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
 import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
+import com.robwilliamson.healthyesther.fragment.dialog.ConfirmationDialogFragment;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -23,8 +24,10 @@ import java.util.List;
 /**
  * Activities that use databases.
  */
-public abstract class DbActivity extends BusyActivity implements QueuedQueryExecutor, QueryUserProvider {
+public abstract class DbActivity extends BusyActivity
+        implements QueuedQueryExecutor, QueryUserProvider, ConfirmationDialogFragment.Observer {
     private static final String LOG_TAG = DbActivity.class.getName();
+    private static final String CONFIRMATION_DIALOG =  "CONFIRMATION_DIALOG";
 
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
@@ -32,6 +35,22 @@ public abstract class DbActivity extends BusyActivity implements QueuedQueryExec
     @Override
     public void enqueueQueries(List<Query> queries) {
         doQueries(queries);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean returnValue = super.onCreateOptionsMenu(menu);
+
+        setEnabled(
+                menu,
+                R.id.action_backup_to_dropbox,
+                Utils.File.Dropbox.isDropboxPresent());
+        setEnabled(
+                menu,
+                R.id.action_restore_from_dropbox,
+                Utils.File.Dropbox.isDbFileInDropboxAppFolder());
+
+        return returnValue;
     }
 
     @Override
@@ -61,17 +80,11 @@ public abstract class DbActivity extends BusyActivity implements QueuedQueryExec
         }
 
         if (item.getItemId() == R.id.action_restore_from_dropbox) {
-            runAsTask(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        HealthDbHelper.getInstance(DbActivity.this).restoreFromDropbox();
-                    } catch (IOException e) {
-                        // TODO: Do some error handling UI.
-                        e.printStackTrace();
-                    }
-                }
-            });
+            ConfirmationDialogFragment dialogFragment = ConfirmationDialogFragment.
+                    create(
+                            R.string.action_restore_from_dropbox,
+                            R.string.confirm_restore_from_dropbox_message);
+            dialogFragment.show(getSupportFragmentManager(), CONFIRMATION_DIALOG);
             return true;
         }
 
@@ -79,27 +92,18 @@ public abstract class DbActivity extends BusyActivity implements QueuedQueryExec
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        boolean returnValue = super.onCreateOptionsMenu(menu);
-
-        setEnabled(
-                menu,
-                R.id.action_backup_to_dropbox,
-                Utils.File.Dropbox.isDropboxPresent());
-        setEnabled(
-                menu,
-                R.id.action_restore_from_dropbox,
-                Utils.File.Dropbox.isDbFileInDropboxAppFolder());
-
-        return returnValue;
-    }
-
-    private static void setEnabled(Menu menu, int itemId, boolean enabled) {
-        MenuItem item = menu.findItem(itemId);
-
-        if (item != null) {
-            item.setEnabled(enabled);
-        }
+    public void onDialogOk(ConfirmationDialogFragment dialogFragment) {
+        runAsTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    HealthDbHelper.getInstance(DbActivity.this).restoreFromDropbox();
+                } catch (IOException e) {
+                    // TODO: Do some error handling UI.
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -215,6 +219,14 @@ public abstract class DbActivity extends BusyActivity implements QueuedQueryExec
     private void cancel(AsyncTask<Void, Void, Void> task) {
         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
             task.cancel(true);
+        }
+    }
+
+    private static void setEnabled(Menu menu, int itemId, boolean enabled) {
+        MenuItem item = menu.findItem(itemId);
+
+        if (item != null) {
+            item.setEnabled(enabled);
         }
     }
 }

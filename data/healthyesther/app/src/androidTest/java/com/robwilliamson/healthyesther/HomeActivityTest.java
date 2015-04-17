@@ -6,6 +6,7 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.test.ConfirmationDialogAccessor;
 import com.robwilliamson.healthyesther.test.Database;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
@@ -91,6 +92,71 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     public void testRestoreFromDropbox() throws Exception {
+        final int expectedCount = enableRestoreDropbox();
+
+        // Remove it from current use.
+        Database.deleteDatabase(getInstrumentation().getTargetContext());
+
+        // Check there are no entries.
+        final int emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertEquals(0, emptyCount);
+
+        // Restore from Dropbox.
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.restoreFromDropbox()).perform(click());
+
+        // Confirm.
+        onView(ConfirmationDialogAccessor.okButton()).perform(click());
+
+        // Check we have the same number of entries as before.
+        final int finalCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertEquals(expectedCount, finalCount);
+    }
+
+    public void testConfirmationDialogOrientation() {
+        enableRestoreDropbox();
+
+        // Open the dialog.
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.restoreFromDropbox()).perform(click());
+
+        Orientation.check(new Orientation.Subject() {
+            @Override
+            public InstrumentationTestCase getTestCase() {
+                return HomeActivityTest.this;
+            }
+
+            @Override
+            public void checkContent() {
+                ConfirmationDialogAccessor.checkUnmodifiedContent(
+                        R.string.confirm_restore_from_dropbox_message);
+            }
+        });
+    }
+
+    public void testConfirmationDialogCancel() throws Exception {
+        enableRestoreDropbox();
+
+        // Remove it from current use.
+        Database.deleteDatabase(getInstrumentation().getTargetContext());
+
+        // Check there are no entries.
+        int emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertEquals(0, emptyCount);
+
+        // Restore from Dropbox.
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.restoreFromDropbox()).perform(click());
+
+        // Cancel.
+        onView(ConfirmationDialogAccessor.cancelButton()).perform(click());
+
+        // Check there are still no entries.
+        emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        assertEquals(0, emptyCount);
+    }
+
+    private int enableRestoreDropbox() {
         Utils.File.mkdirs(DB_PATH);
 
         // Create some fake data
@@ -108,19 +174,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // Check that worked.
         assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
 
-        // Remove it from current use.
-        Database.deleteDatabase(getInstrumentation().getTargetContext());
-
-        // Check there are no entries.
-        final int emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
-        assertEquals(0, emptyCount);
-
-        // Restore from Dropbox.
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(MenuAccessor.restoreFromDropbox()).perform(click());
-
-        // Check we have the same number of entries as before.
-        final int finalCount = Database.countEntries(getInstrumentation().getTargetContext());
-        assertEquals(expectedCount, finalCount);
+        return expectedCount;
     }
 }
