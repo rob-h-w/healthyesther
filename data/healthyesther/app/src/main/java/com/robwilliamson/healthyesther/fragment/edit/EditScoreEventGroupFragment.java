@@ -133,10 +133,10 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                         public void postQueryProcessing(Cursor cursor) {
                             mFragments = new ArrayList<EditFragment>(cursor.getCount());
                             mQueries = new ArrayList<Query>(cursor.getCount());
-                            List<HealthScore.Score> scores = DataAbstraction.listFrom(cursor, HealthScore.Score.class);
+                            List<HealthScore.Value> scores = DataAbstraction.listFrom(cursor, HealthScore.Value.class);
                             Set<String> excludedEditScoreTitles = Settings.INSTANCE.getDefaultExcludedEditScores();
 
-                            for (HealthScore.Score score : scores) {
+                            for (HealthScore.Value score : scores) {
                                 if (excludedEditScoreTitles.contains(score.name)){
                                     continue;
                                 }
@@ -222,11 +222,11 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         return R.layout.fragment_edit_score_event_group;
     }
 
-    public EditScoreEventFragment getEditScoreEventFragment(HealthScore.Score score) {
+    public EditScoreEventFragment getEditScoreEventFragment(HealthScore.Value score) {
         List<EditScoreEventFragment> fragments = getEditScoreEventFragments();
 
         for (EditScoreEventFragment fragment : fragments) {
-            HealthScore.Score fragmentScore = fragment.getScore();
+            HealthScore.Value fragmentScore = fragment.getScore();
             if (fragmentScore != null && fragmentScore._id != null) {
                 boolean matchId = fragmentScore._id != 0 && fragmentScore._id == score._id;
                 boolean matchName = fragmentScore.name == score.name;

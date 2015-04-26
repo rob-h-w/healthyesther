@@ -9,21 +9,18 @@ import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class HealthScore extends Table {
 
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
 
-        private Score mScore;
+        private Value mScore;
         private boolean mEnabled = false;
 
         public Modification(long rowId) {
             setRowId(rowId);
         }
 
-        public Modification(Score score) {
+        public Modification(Value score) {
             mScore = score;
 
             if (score._id != null) {
@@ -31,7 +28,7 @@ public class HealthScore extends Table {
             }
         }
 
-        public Modification(Score score, boolean enabled) {
+        public Modification(Value score, boolean enabled) {
             this(score);
             enable(enabled);
         }
@@ -41,7 +38,7 @@ public class HealthScore extends Table {
                             boolean randomQuery,
                             String minLabel,
                             String maxLabel) {
-            mScore = new Score(name,
+            mScore = new Value(name,
                     bestValue,
                     randomQuery,
                     minLabel,
@@ -69,7 +66,7 @@ public class HealthScore extends Table {
         }
     }
 
-    public static class Score extends DataAbstraction {
+    public static class Value extends DataAbstraction {
         public Long _id;
         public String name;
         public int bestValue;
@@ -77,9 +74,9 @@ public class HealthScore extends Table {
         public String minLabel;
         public String maxLabel;
 
-        public Score() {}
+        public Value() {}
 
-        public Score(String name,
+        public Value(String name,
                      int bestValue,
                      boolean randomQuery,
                      String minLabel,
@@ -92,13 +89,13 @@ public class HealthScore extends Table {
                     maxLabel);
         }
 
-        public Score(
+        public Value(
                 long id,
                 String name,
-                     int bestValue,
-                     boolean randomQuery,
-                     String minLabel,
-                     String maxLabel) {
+                int bestValue,
+                boolean randomQuery,
+                String minLabel,
+                String maxLabel) {
             this(id == 0L ? null : id,
                     name,
                     bestValue,
@@ -107,7 +104,7 @@ public class HealthScore extends Table {
                     maxLabel);
         }
 
-        public Score(
+        public Value(
                 Long id,
                 String name,
                 int bestValue,
@@ -132,11 +129,11 @@ public class HealthScore extends Table {
                 return false;
             }
 
-            if (!(o instanceof Score)) {
+            if (!(o instanceof Value)) {
                 return false;
             }
 
-            Score other = (Score)o;
+            Value other = (Value)o;
 
             if (
                     _id != other._id &&
@@ -294,17 +291,17 @@ public class HealthScore extends Table {
             boolean randomQuery,
             String minLabel,
             String maxLabel) {
-        return insert(db, new Score(name, bestValue, randomQuery, minLabel, maxLabel));
+        return insert(db, new Value(name, bestValue, randomQuery, minLabel, maxLabel));
     }
 
     public long insert(
             SQLiteDatabase db,
-            Score score) {
+            Value score) {
         return insert(db, score.asContentValues());
     }
 
     public void update(SQLiteDatabase db,
-                       Score score) {
+                       Value score) {
 
         update(db, score.asContentValues(), score._id);
     }

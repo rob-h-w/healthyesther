@@ -25,17 +25,17 @@ import java.util.List;
 
 public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     public interface Watcher extends QueuedQueryExecutor {
-        void onScoreModified(HealthScore.Score score);
+        void onScoreModified(HealthScore.Value score);
         void onQueryFailed(EditScoreDialogFragment fragment, Throwable error);
     }
 
     private static final String SCORES = "scores";
     private static final String INITIAL_SCORE = "initial_score";
 
-    private HealthScore.Score mInitialScore = null;
-    private HashMap<String, HealthScore.Score> mScores = null;
+    private HealthScore.Value mInitialScore = null;
+    private HashMap<String, HealthScore.Value> mScores = null;
 
-    public static EditScoreDialogFragment createDialog(HealthScore.Score score) {
+    public static EditScoreDialogFragment createDialog(HealthScore.Value score) {
         EditScoreDialogFragment dialog = new EditScoreDialogFragment();
         dialog.mInitialScore = score;
         return dialog;
@@ -50,14 +50,14 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null && mScores == null) {
-            mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<HealthScore.Score>() {
+            mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<HealthScore.Value>() {
                 @Override
-                public HealthScore.Score get(Bundle bundle, String bundleKey) {
-                    return DataAbstraction.from(bundle.getBundle(bundleKey), HealthScore.Score.class);
+                public HealthScore.Value get(Bundle bundle, String bundleKey) {
+                    return DataAbstraction.from(bundle.getBundle(bundleKey), HealthScore.Value.class);
                 }
             });
 
-            mInitialScore = DataAbstraction.from(savedInstanceState.getBundle(INITIAL_SCORE), HealthScore.Score.class);
+            mInitialScore = DataAbstraction.from(savedInstanceState.getBundle(INITIAL_SCORE), HealthScore.Value.class);
         }
     }
 
@@ -118,11 +118,11 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
             HashMap<String, Long> mSuggestions;
             @Override
             public void postQueryProcessing(final Cursor cursor) {
-                List<HealthScore.Score> scoresList = DataAbstraction.listFrom(cursor, HealthScore.Score.class);
+                List<HealthScore.Value> scoresList = DataAbstraction.listFrom(cursor, HealthScore.Value.class);
                 mSuggestions = new HashMap<>(scoresList.size());
                 mScores = new HashMap<>(scoresList.size());
 
-                for (HealthScore.Score score: scoresList) {
+                for (HealthScore.Value score: scoresList) {
                     mSuggestions.put(score.name, score._id);
                     mScores.put(score.name, score);
                 }
@@ -184,20 +184,20 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
     @Override
     protected void onOk() {
-        HealthScore.Score score = scoreFromUi();
+        HealthScore.Value score = scoreFromUi();
 
         if (scoreModified(score)) {
             getWatcher().onScoreModified(score);
         }
     }
 
-    private boolean scoreModified(HealthScore.Score score) {
-        HealthScore.Score listMatch = mScores.get(score.name);
+    private boolean scoreModified(HealthScore.Value score) {
+        HealthScore.Value listMatch = mScores.get(score.name);
 
         return !score.equals(listMatch);
     }
 
-    private void updateUiToMatch(HealthScore.Score score) {
+    private void updateUiToMatch(HealthScore.Value score) {
         setName(score.name);
         setBestValue(score.bestValue);
         setRandomQuery(score.randomQuery);
@@ -205,8 +205,8 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
         setMaxLabel(score.maxLabel);
     }
 
-    private HealthScore.Score scoreFromUi() {
-        HealthScore.Score score = new HealthScore.Score();
+    private HealthScore.Value scoreFromUi() {
+        HealthScore.Value score = new HealthScore.Value();
         score.name = getName();
 
         if (mScores.containsKey(score.name)) {

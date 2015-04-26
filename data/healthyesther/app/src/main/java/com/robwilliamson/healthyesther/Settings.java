@@ -16,7 +16,7 @@ public enum Settings {
     private Object mLock = new Object();
     private volatile SharedPreferences mPreferences;
 
-    public void hideScore(HealthScore.Score score) {
+    public void hideScore(HealthScore.Value score) {
         if (score == null) {
             return;
         }
@@ -32,7 +32,7 @@ public enum Settings {
         setDefaultEditScoreExclusionList(hiddenScores);
     }
 
-    public void showScore(HealthScore.Score score) {
+    public void showScore(HealthScore.Value score) {
         if (score == null) {
             return;
         }

@@ -13,7 +13,7 @@ import com.robwilliamson.healthyesther.db.definition.HealthScore;
 
 import java.util.List;
 
-public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditScoreEventGroupListAdapter.Tag, View, Pair<HealthScore.Score, Integer>> {
+public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditScoreEventGroupListAdapter.Tag, View, Pair<HealthScore.Value, Integer>> {
 
     protected static class Tag {
         public TextView title;
@@ -27,7 +27,7 @@ public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditSco
         super(context, R.layout.fragment_edit_score_event);
     }
 
-    public EditScoreEventGroupListAdapter(Activity context, List<Pair<HealthScore.Score, Integer>> list) {
+    public EditScoreEventGroupListAdapter(Activity context, List<Pair<HealthScore.Value, Integer>> list) {
         super(context, R.layout.fragment_edit_score_event, list);
     }
 
@@ -45,7 +45,7 @@ public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditSco
     }
 
     @Override
-    protected void populateTag(Tag tag, Pair<HealthScore.Score, Integer> data) {
+    protected void populateTag(Tag tag, Pair<HealthScore.Value, Integer> data) {
         tag.title.setText(data.first.name);
         tag.minLabel.setText(data.first.minLabel);
         tag.maxLabel.setText(data.first.maxLabel);

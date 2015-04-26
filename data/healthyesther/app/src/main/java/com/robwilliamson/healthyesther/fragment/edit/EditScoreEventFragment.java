@@ -28,19 +28,19 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
 
     private int mValue;
-    private HealthScore.Score mScore = new HealthScore.Score();
+    private HealthScore.Value mScore = new HealthScore.Value();
     private ContextMenu mContextMenu;
 
     public String getName() {
         return mScore.name;
     }
 
-    public void setScore(HealthScore.Score score) {
+    public void setScore(HealthScore.Value score) {
         mScore = score;
         updateUi();
     }
 
-    public HealthScore.Score getScore() {
+    public HealthScore.Value getScore() {
         return mScore;
     }
 
@@ -61,7 +61,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         return new Query[0];
     }
 
-    public static EditScoreEventFragment newInstance(HealthScore.Score score) {
+    public static EditScoreEventFragment newInstance(HealthScore.Value score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
         fragment.mScore = score;
         return fragment;
@@ -110,7 +110,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
         if (a != null) {
             mValue = a.getInt(VALUE);
-            mScore = DataAbstraction.from(args.getBundle(SCORE), HealthScore.Score.class);
+            mScore = DataAbstraction.from(args.getBundle(SCORE), HealthScore.Value.class);
         }
     }
 

@@ -121,7 +121,7 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     @Override
-    public void onScoreModified(HealthScore.Score score) {
+    public void onScoreModified(HealthScore.Value score) {
         Settings.INSTANCE.showScore(score);
 
         EditScoreEventFragment fragment = getScoreGroupFragment().getEditScoreEventFragment(score);
