@@ -24,9 +24,7 @@ public class Event extends Table {
         private Long mTypeId;
 
         public Modification(String name, DateTime when) {
-            if (!validateName(name)) {
-                throw new IllegalArgumentException("Name must be present and less than 141 characters.");
-            }
+            assertValidName(name);
 
             mName = name;
             mWhen = when;
@@ -63,6 +61,12 @@ public class Event extends Table {
 
     public static boolean validateName(String name) {
         return name == null || Utils.Strings.validateLength(name, 0, 140);
+    }
+
+    private static void assertValidName(String name) {
+        if (!validateName(name)) {
+            throw new IllegalArgumentException("Name must be present and less than 141 characters.");
+        }
     }
 
     @Override
