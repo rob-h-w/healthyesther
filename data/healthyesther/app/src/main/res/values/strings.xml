@@ -61,5 +61,7 @@
     <string name="reminder_content_title">Healthy Esther</string>
     <string name="reminder_content">How are you feeling? Have you eaten? Taken medication?</string>
     <string name="reminder_ticker">How are you?</string>
+    <string name="get_more">Get more</string>
+    <string name="getting_more">Getting more...</string>
 
 </resources>
