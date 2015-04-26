@@ -3,8 +3,10 @@ package com.robwilliamson.healthyesther.db.definition;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.Utils;
 
 import org.joda.time.DateTime;
@@ -48,6 +50,136 @@ public class Event extends Table {
                 // Create a new event
                 setRowId(c.EVENT.insert(db, mWhen, mTypeId, mName));
             }
+        }
+    }
+
+    public static class Value extends DataAbstraction {
+        public Long _id;
+        public DateTime when;
+        public DateTime created;
+        public DateTime modified;
+        public long typeId;
+        public String name;
+
+        public Value() {}
+
+        public Value(
+                DateTime when,
+                DateTime created,
+                DateTime modified,
+                long typeId,
+                String name) {
+            this(
+                    null,
+                    when,
+                    created,
+                    modified,
+                    typeId,
+                    name);
+        }
+
+        public Value(
+                Long _id,
+                DateTime when,
+                DateTime created,
+                DateTime modified,
+                long typeId,
+                String name) {
+            this._id = _id == 0L ? null : _id;
+            this.when = when;
+            this.created = created;
+            this.modified = modified;
+            this.typeId = typeId;
+            this.name = name;
+        }
+
+        @Override
+        public Bundle asBundle() {
+            Bundle bundle = new Bundle();
+            if (_id != null) {
+                bundle.putLong(_ID, _id);
+            }
+
+            bundle.putString(WHEN, Utils.Time.toDatabaseString(when));
+
+            if (created != null) {
+                bundle.putString(CREATED, Utils.Time.toDatabaseString(created));
+            }
+
+            if (modified != null) {
+                bundle.putString(MODIFIED, Utils.Time.toDatabaseString(modified));
+            }
+
+            bundle.putLong(TYPE_ID, typeId);
+            bundle.putString(NAME, name);
+            return bundle;
+        }
+
+        @Override
+        public ContentValues asContentValues() {
+            ContentValues values = new ContentValues();
+            values.put(_ID, _id);
+            values.put(WHEN, Utils.Time.toDatabaseString(when));
+
+            if (created == null) {
+                values.put(CREATED, Utils.Time.toDatabaseString(Utils.Time.localNow()));
+            } else {
+                values.put(CREATED, Utils.Time.toDatabaseString(created));
+            }
+
+            if (modified != null) {
+                values.put(MODIFIED, Utils.Time.toDatabaseString(modified));
+            } else if (created != null) {
+                values.put(MODIFIED, Utils.Time.toDatabaseString(Utils.Time.localNow()));
+            }
+
+            values.put(TYPE_ID, typeId);
+            values.put(NAME, name);
+
+            return values;
+        }
+
+        @Override
+        protected void populateFrom(Cursor cursor) {
+            final int rowIdIndex = cursor.getColumnIndex(_ID);
+            final int whenIndex = cursor.getColumnIndex(Table.cleanName(WHEN));
+            final int createdIndex = cursor.getColumnIndex(CREATED);
+            final int modifiedIndex = cursor.getColumnIndex(MODIFIED);
+            final int typeIdIndex = cursor.getColumnIndex(TYPE_ID);
+            final int nameIndex = cursor.getColumnIndex(NAME);
+
+            this._id = cursor.getLong(rowIdIndex);
+            this.when = Utils.Time.fromDatabaseString(cursor.getString(whenIndex));
+            this.created = Utils.Time.fromDatabaseString(cursor.getString(createdIndex));
+            this.modified = Utils.Time.fromDatabaseString(cursor.getString(modifiedIndex));
+            this.typeId = cursor.getLong(typeIdIndex);
+            this.name = cursor.getString(nameIndex);
+        }
+
+        @Override
+        protected void populateFrom(Bundle bundle) {
+            if (bundle.containsKey(_ID)) {
+                _id = bundle.getLong(_ID);
+            } else {
+                _id = null;
+            }
+
+            when = Utils.Time.fromDatabaseString(bundle.getString(WHEN));
+
+            if (bundle.containsKey(CREATED)) {
+                created = Utils.Time.fromDatabaseString(bundle.getString(CREATED));
+            } else {
+                created = null;
+            }
+
+            if (bundle.containsKey(MODIFIED)) {
+                modified = Utils.Time.fromDatabaseString(bundle.getString(MODIFIED));
+            } else {
+                modified = null;
+            }
+
+            typeId = bundle.getLong(TYPE_ID);
+            name = bundle.getString(NAME);
         }
     }
 
