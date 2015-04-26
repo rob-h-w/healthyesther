@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.Query;
@@ -109,7 +110,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
         if (a != null) {
             mValue = a.getInt(VALUE);
-            mScore = HealthScore.Score.from(args, SCORE);
+            mScore = DataAbstraction.from(args.getBundle(SCORE), HealthScore.Score.class);
         }
     }
 

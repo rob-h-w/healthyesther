@@ -12,6 +12,7 @@ import android.view.View;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
@@ -132,7 +133,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                         public void postQueryProcessing(Cursor cursor) {
                             mFragments = new ArrayList<EditFragment>(cursor.getCount());
                             mQueries = new ArrayList<Query>(cursor.getCount());
-                            List<HealthScore.Score> scores = HealthScore.Score.listFrom(cursor);
+                            List<HealthScore.Score> scores = DataAbstraction.listFrom(cursor, HealthScore.Score.class);
                             Set<String> excludedEditScoreTitles = Settings.INSTANCE.getDefaultExcludedEditScores();
 
                             for (HealthScore.Score score : scores) {

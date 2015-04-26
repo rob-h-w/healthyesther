@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.Utils;
 
 import java.util.ArrayList;
@@ -68,27 +69,13 @@ public class HealthScore extends Table {
         }
     }
 
-    public static class Score {
+    public static class Score extends DataAbstraction {
         public Long _id;
         public String name;
         public int bestValue;
         public boolean randomQuery;
         public String minLabel;
         public String maxLabel;
-
-        private static String keysName(String key) {
-            return key + "Keys";
-        }
-
-        private static String valueName(String bundleKey, String key) {
-            return bundleKey + "Value_" + key;
-        }
-
-        public static Score from(Bundle bundle, String bundleKey) {
-            Score score = new Score();
-            score.fromBundle(bundle.getBundle(bundleKey));
-            return score;
-        }
 
         public Score() {}
 
@@ -135,33 +122,6 @@ public class HealthScore extends Table {
             this.maxLabel = maxLabel;
         }
 
-        public static List<Score> listFrom(Cursor cursor) {
-            ArrayList<Score> scores = new ArrayList<Score>(cursor.getCount());
-
-            if (cursor.moveToFirst()) {
-                final int rowIdIndex = cursor.getColumnIndex(_ID);
-                final int nameIndex = cursor.getColumnIndex(NAME);
-                final int bestValueIndex = cursor.getColumnIndex(BEST_VALUE);
-                final int randomQueryIndex = cursor.getColumnIndex(RANDOM_QUERY);
-                final int minLabelIndex = cursor.getColumnIndex(MIN_LABEL);
-                final int maxLabelIndex = cursor.getColumnIndex(MAX_LABEL);
-
-                do {
-                    Score score = new Score(cursor.getLong(rowIdIndex),
-                            cursor.getString(nameIndex),
-                            cursor.getInt(bestValueIndex),
-                            cursor.getInt(randomQueryIndex) > 0,
-                            cursor.getString(minLabelIndex),
-                            cursor.getString(maxLabelIndex));
-
-                    scores.add(score);
-                }
-                while(cursor.moveToNext());
-            }
-
-            return scores;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (o == this) {
@@ -178,7 +138,10 @@ public class HealthScore extends Table {
 
             Score other = (Score)o;
 
-            if (_id != other._id) {
+            if (
+                    _id != other._id &&
+                            (_id == null ||
+                            !_id.equals(other._id))) {
                 return false;
             }
 
@@ -221,7 +184,8 @@ public class HealthScore extends Table {
             bundle.putBundle(bundleKey, asBundle());
         }
 
-        private Bundle asBundle() {
+        @Override
+        public Bundle asBundle() {
             Bundle bundle = new Bundle();
             if (_id != null) {
                 bundle.putLong(_ID, _id);
@@ -235,17 +199,8 @@ public class HealthScore extends Table {
             return bundle;
         }
 
-        private void fromBundle(Bundle bundle) {
-            long id = bundle.getLong(_ID);
-            _id = id == 0L ? null : id;
-            name = bundle.getString(NAME);
-            bestValue = bundle.getInt(BEST_VALUE);
-            randomQuery = bundle.getBoolean(RANDOM_QUERY, false);
-            minLabel = bundle.getString(MIN_LABEL, null);
-            maxLabel = bundle.getString(MAX_LABEL, null);
-        }
-
-        public ContentValues getContentValues() {
+        @Override
+        public ContentValues asContentValues() {
             ContentValues values = new ContentValues();
             values.put(NAME, name);
             values.put(BEST_VALUE, bestValue);
@@ -259,6 +214,34 @@ public class HealthScore extends Table {
                 values.put(MAX_LABEL, maxLabel);
             }
             return values;
+        }
+
+        @Override
+        protected void populateFrom(Cursor cursor) {
+            final int rowIdIndex = cursor.getColumnIndex(_ID);
+            final int nameIndex = cursor.getColumnIndex(NAME);
+            final int bestValueIndex = cursor.getColumnIndex(BEST_VALUE);
+            final int randomQueryIndex = cursor.getColumnIndex(RANDOM_QUERY);
+            final int minLabelIndex = cursor.getColumnIndex(MIN_LABEL);
+            final int maxLabelIndex = cursor.getColumnIndex(MAX_LABEL);
+
+            this._id = cursor.getLong(rowIdIndex);
+            this.name = cursor.getString(nameIndex);
+            this.bestValue = cursor.getInt(bestValueIndex);
+            this.randomQuery = cursor.getInt(randomQueryIndex) > 0;
+            this.minLabel = cursor.getString(minLabelIndex);
+            this.maxLabel = cursor.getString(maxLabelIndex);
+        }
+
+        @Override
+        protected void populateFrom(Bundle bundle) {
+            long id = bundle.getLong(_ID);
+            _id = id == 0L ? null : id;
+            name = bundle.getString(NAME);
+            bestValue = bundle.getInt(BEST_VALUE);
+            randomQuery = bundle.getBoolean(RANDOM_QUERY, false);
+            minLabel = bundle.getString(MIN_LABEL, null);
+            maxLabel = bundle.getString(MAX_LABEL, null);
         }
     }
 
@@ -317,12 +300,12 @@ public class HealthScore extends Table {
     public long insert(
             SQLiteDatabase db,
             Score score) {
-        return insert(db, score.getContentValues());
+        return insert(db, score.asContentValues());
     }
 
     public void update(SQLiteDatabase db,
                        Score score) {
 
-        update(db, score.getContentValues(), score._id);
+        update(db, score.asContentValues(), score._id);
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
@@ -52,11 +53,11 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
             mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<HealthScore.Score>() {
                 @Override
                 public HealthScore.Score get(Bundle bundle, String bundleKey) {
-                    return HealthScore.Score.from(bundle, bundleKey);
+                    return DataAbstraction.from(bundle.getBundle(bundleKey), HealthScore.Score.class);
                 }
             });
 
-            mInitialScore = HealthScore.Score.from(savedInstanceState, INITIAL_SCORE);
+            mInitialScore = DataAbstraction.from(savedInstanceState.getBundle(INITIAL_SCORE), HealthScore.Score.class);
         }
     }
 
@@ -117,7 +118,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
             HashMap<String, Long> mSuggestions;
             @Override
             public void postQueryProcessing(final Cursor cursor) {
-                List<HealthScore.Score> scoresList = HealthScore.Score.listFrom(cursor);
+                List<HealthScore.Score> scoresList = DataAbstraction.listFrom(cursor, HealthScore.Score.class);
                 mSuggestions = new HashMap<>(scoresList.size());
                 mScores = new HashMap<>(scoresList.size());
 
