@@ -290,8 +290,13 @@ public final class Utils {
                                         if (!hadDailyMedication && haveDailyMedication(hour)) {
                                             DateTime t = DateTime.now().withDate(year, month, day)
                                                     .withTime(hour, minute(), second(), 0);
-                                            long eventId = c.EVENT.insert(db, time(
-                                                    year, month, day, hour), 2, "Daily medication");
+                                            Event.Value event = new Event.Value(
+                                                    time(year, month, day, hour),
+                                                    null,
+                                                    null,
+                                                    2,
+                                                    "Daily medication");
+                                            long eventId = c.EVENT.insert(db, event);
                                             c.MEDICATION_EVENT.insert(db, dailyMedicationId, eventId);
                                             hadDailyMedication = true;
                                         }
@@ -345,15 +350,17 @@ public final class Utils {
             private static void insertMeal(SQLiteDatabase db, int year, int month,
                                            int day, int hour, String name, long mealId) {
                 Contract c = Contract.getInstance();
-                long eventId = c.EVENT.insert(db, time(
-                        year, month, day, hour), 1, name);
+                Event.Value event = new Event.Value(
+                        time(year, month, day, hour), null, null, 1, name);
+                long eventId = c.EVENT.insert(db, event);
                 c.MEAL_EVENT.insert(db, mealId, eventId);
             }
 
             private static void insertMedication(SQLiteDatabase db, int year, int month, int day, int hour, String medication, long medicationId) {
                 Contract c = Contract.getInstance();
-                long eventId = c.EVENT.insert(db, time(
-                        year, month, day, hour), 2, "Medication");
+                Event.Value event = new Event.Value(
+                        time(year, month, day, hour), null, null, 2, "Medication");
+                long eventId = c.EVENT.insert(db, event);
                 c.MEDICATION_EVENT.insert(db, medicationId, eventId);
             }
 

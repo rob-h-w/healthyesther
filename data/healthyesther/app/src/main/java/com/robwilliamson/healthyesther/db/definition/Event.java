@@ -21,34 +21,33 @@ import java.util.TimeZone;
  */
 public class Event extends Table {
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
-        private final DateTime mWhen;
-        private String mName;
-        private Long mTypeId;
+        private final Value mValue;
 
         public Modification(String name, DateTime when) {
             assertValidName(name);
 
-            mName = name;
-            mWhen = when;
+            mValue = new Value(when, Utils.Time.localNow(), null, 0, name);
         }
 
         public void setTypeId(long id) {
-            mTypeId = id;
+            mValue.typeId = id;
         }
 
         @Override
         public void modify(SQLiteDatabase db) {
-            if (mTypeId == null) {
+            if (mValue.typeId == 0) {
                 throw new IllegalArgumentException("An event must have a type.");
             }
 
             Contract c = Contract.getInstance();
             if (isRowIdSet()) {
                 // Update an existing event
-                c.EVENT.update(db, getRowId(), mWhen, mName);
+                mValue._id = getRowId();
+                c.EVENT.update(db, mValue);
             } else {
                 // Create a new event
-                setRowId(c.EVENT.insert(db, mWhen, mTypeId, mName));
+                setRowId(c.EVENT.insert(db, mValue));
+                mValue._id = getRowId();
             }
         }
     }
@@ -85,7 +84,7 @@ public class Event extends Table {
                 DateTime modified,
                 long typeId,
                 String name) {
-            this._id = _id == 0L ? null : _id;
+            this._id = (_id == null || _id <= 0L) ? null : _id;
             this.when = when;
             this.created = created;
             this.modified = modified;
@@ -229,28 +228,17 @@ public class Event extends Table {
         }
     }
 
-    public long insert(SQLiteDatabase db, DateTime when, long typeId, String name) {
-        ContentValues values = new ContentValues();
-        values.put(WHEN, Utils.Time.toDatabaseString(when));
-        values.put(TYPE_ID, typeId);
-
-        if (name != null) {
-            values.put(NAME, name);
-        }
-
-        return insert(db, values);
+    public long insert(SQLiteDatabase db, Value event) {
+        return insert(db, event.asContentValues());
     }
 
-    public int update(SQLiteDatabase db, long id, DateTime when, String name) {
-        ContentValues values = new ContentValues();
-        values.put(WHEN, Utils.Time.toDatabaseString(when));
-        values.put(MODIFIED, Utils.Time.toDatabaseString(DateTime.now()));
-
-        if (name != null) {
-            values.put(NAME, name);
+    public int update(SQLiteDatabase db, Value event) {
+        if (event._id == null) {
+            throw new IllegalArgumentException(
+                    "An event must specify an ID before it's database entry can be updated.");
         }
 
-        return update(db, values, id);
+        return update(db, event.asContentValues(), event._id);
     }
 
     private void replaceUtcWithCurrentLocale(SQLiteDatabase db) {
