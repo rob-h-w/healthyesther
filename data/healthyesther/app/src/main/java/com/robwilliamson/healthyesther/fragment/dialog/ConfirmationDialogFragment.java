@@ -1,10 +1,10 @@
 package com.robwilliamson.healthyesther.fragment.dialog;
 
+import android.R.string;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.R.string;
 import android.support.annotation.NonNull;
 
 public class ConfirmationDialogFragment extends FixedDialogFragment {
