@@ -30,6 +30,17 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
         mWatcher = (T)activity;
     }
 
+    /**
+     * Called when the fragment is no longer attached to its activity.  This
+     * is called after {@link #onDestroy()}.
+     */
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mWatcher = null;
+    }
+
     public abstract Modification getModification();
     public abstract boolean validate();
     protected abstract void updateWatcher(T watcher);
