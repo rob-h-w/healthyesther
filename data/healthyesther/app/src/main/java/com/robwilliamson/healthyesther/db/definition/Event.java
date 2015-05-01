@@ -20,6 +20,27 @@ import java.util.TimeZone;
  * Note that internal times are in UTC, while user-displayed or analytical times use the local TZ.
  */
 public class Event extends Table {
+    public enum Type {
+        MEAL(1),
+        MEDICATION(2),
+        HEALTH_SCORE(3),
+        NOTE(4),;
+
+        private final long m_id;
+
+        Type(long _id) {
+            m_id = _id;
+        }
+
+        public long id() {
+            return m_id;
+        }
+
+        public static Type valueOf(long _id) {
+            return Type.values()[(int) _id - 1];
+        }
+    }
+
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
         private final Value mValue;
 

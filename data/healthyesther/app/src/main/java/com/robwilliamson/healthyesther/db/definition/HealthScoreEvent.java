@@ -34,7 +34,7 @@ public class HealthScoreEvent extends Table {
         }
     }
 
-    public static final long EVENT_TYPE_ID = 3;
+    public static final long EVENT_TYPE_ID = Event.Type.HEALTH_SCORE.id();
 
     public static final String TABLE_NAME = "health_score_event";
     public static final String HEALTH_SCORE_ID = "health_score_id";

@@ -33,7 +33,7 @@ public class MealEvent extends Table {
         }
     }
 
-    public static final long EVENT_TYPE_ID = 1;
+    public static final long EVENT_TYPE_ID = Event.Type.MEAL.id();
     public static final String TABLE_NAME = "meal_event";
     public static final String MEAL_ID = "meal_id";
     public static final String EVENT_ID = "event_id";

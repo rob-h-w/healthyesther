@@ -28,7 +28,7 @@ public class NoteEvent extends Table {
         }
     }
 
-    public static final long EVENT_TYPE_ID = 4;
+    public static final long EVENT_TYPE_ID = Event.Type.NOTE.id();
     public static final String TABLE_NAME = "note_event";
     public static final String NOTE_ID = "note_id";
     public static final String EVENT_ID = "event_id";
