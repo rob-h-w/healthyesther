@@ -25,6 +25,14 @@ public final class Utils {
         return str.toString();
     }
 
+    public static <T> T checkNotNull(T obj) {
+        if (obj == null) {
+            throw new NullPointerException();
+        }
+
+        return obj;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T uncheckedCast(Object obj) {
         return (T) obj;
