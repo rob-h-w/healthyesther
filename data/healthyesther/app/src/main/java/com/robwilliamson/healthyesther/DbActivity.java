@@ -188,7 +188,7 @@ public abstract class DbActivity extends BusyActivity
             Log.e(LOG_TAG, "Query threw", e);
         }
 
-        if (mTask.isCancelled()) {
+        if (mTask == null || mTask.isCancelled()) {
             return;
         }
 
@@ -196,7 +196,7 @@ public abstract class DbActivity extends BusyActivity
             query.postQueryProcessing(cursor[0]);
         }
 
-        if (mTask.isCancelled()) {
+        if (mTask == null || mTask.isCancelled()) {
             return;
         }
 
