@@ -32,10 +32,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        Utils.checkAssignable(activity, mType);
-
-        //noinspection unchecked
-        mWatcher = (T)activity;
+        mWatcher = Utils.checkAssignable(activity, mType);
     }
 
     /**
