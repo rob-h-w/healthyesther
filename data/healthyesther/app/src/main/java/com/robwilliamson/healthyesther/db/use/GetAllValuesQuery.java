@@ -1,36 +1,9 @@
 package com.robwilliamson.healthyesther.db.use;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.robwilliamson.healthyesther.db.Contract;
-import com.robwilliamson.healthyesther.db.Utils;
-
-public abstract class GetAllValuesQuery implements SelectQuery {
-    public abstract String getTableName();
-    public abstract String getOrderColumn();
-    public abstract String getOrder();
+public abstract class GetAllValuesQuery extends GetSomeValuesQuery {
 
     @Override
-    public Cursor query(SQLiteDatabase db) {
-        Cursor cursor = null;
-        Contract c = Contract.getInstance();
-
-        String orderExpression = null;
-
-        if (!Utils.Strings.nullOrEmpty(getOrderColumn()) &&
-                !Utils.Strings.nullOrEmpty(getOrder())) {
-            orderExpression = getOrderColumn() + " COLLATE " + getOrder();
-        }
-
-        try {
-            db.beginTransaction();
-            cursor = db.query(getTableName(), getResultColumns(), null, null, null, null, orderExpression);
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-
-        return cursor;
+    public String getWhereSelection() {
+        return null;
     }
 }
