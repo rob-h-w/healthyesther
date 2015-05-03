@@ -18,12 +18,12 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         public TextView time;
     }
 
-    public EventListAdapter(Activity context, int parentViewId) {
-        super(context, parentViewId, EventListAdapter.Tag.class, View.class);
+    public EventListAdapter(Activity context, int layoutId) {
+        super(context, layoutId, EventListAdapter.Tag.class, View.class);
     }
 
-    public EventListAdapter(Activity context, int parentViewId, List<Event.Value> data) {
-        super(context, parentViewId, data, EventListAdapter.Tag.class, View.class);
+    public EventListAdapter(Activity context, int layoutId, List<Event.Value> data) {
+        super(context, layoutId, data, EventListAdapter.Tag.class, View.class);
     }
 
     /**
