@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.dialog;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -55,15 +56,16 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_add_value, container, false);
-        return view;
+        return inflater.inflate(R.layout.dialog_add_value, container, false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        getNameTitle().setText(getView().getContext().getText(valueNameId()));
+        View view = Utils.checkNotNull(getView());
+        Context context = Utils.checkNotNull(view.getContext());
+        getNameTitle().setText(context.getText(valueNameId()));
 
         AutoCompleteTextView name = getNameTextView();
         name.setCompletionHint(getView().getContext().getText(valueCompletionHintId()));
@@ -166,19 +168,19 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
     protected abstract Integer contentLayoutId();
 
     protected LinearLayout getContentArea() {
-        return Utils.View.getTypeSafeView(getView(), R.id.add_value_content_area);
+        return Utils.View.getTypeSafeView(getView(), R.id.add_value_content_area, LinearLayout.class);
     }
 
     private TextView getNameTitle() {
-        return Utils.View.getTypeSafeView(getView(), R.id.name_title);
+        return Utils.View.getTypeSafeView(getView(), R.id.name_title, TextView.class);
     }
 
     private AutoCompleteTextView getNameTextView() {
-        return Utils.View.getTypeSafeView(getView(), R.id.autocomplete_name);
+        return Utils.View.getTypeSafeView(getView(), R.id.autocomplete_name, AutoCompleteTextView.class);
     }
 
     private Button getOkButton() {
-        return Utils.View.getTypeSafeView(getView(), R.id.ok_button);
+        return Utils.View.getTypeSafeView(getView(), R.id.ok_button, Button.class);
     }
 
     private void updateSuggestionAdapter() {
@@ -194,7 +196,11 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
         String [] suggestions = new String[set.size()];
         set.toArray(suggestions);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getView().getContext(),
+        View view = Utils.checkNotNull(getView());
+        Context context = Utils.checkNotNull(view.getContext());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                context,
                 android.R.layout.simple_dropdown_item_1line,
                 suggestions);
 

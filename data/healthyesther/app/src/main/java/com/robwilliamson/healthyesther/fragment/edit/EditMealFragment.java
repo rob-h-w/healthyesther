@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Meal;
 import com.robwilliamson.healthyesther.db.definition.Modification;
@@ -25,7 +24,9 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         void onQueryFailed(EditMealFragment fragment, Throwable error);
     }
 
-    public EditMealFragment() {}
+    public EditMealFragment() {
+        super(EditMealFragment.Watcher.class);
+    }
 
     @Override
     protected int getFragmentLayout() {
@@ -106,7 +107,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
     @Override
     public boolean validate() {
-        return Contract.getInstance().MEAL.validateName(getName());
+        return Meal.validateName(getName());
     }
 
     @Override
@@ -120,6 +121,6 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
     @Override
     protected AutoCompleteTextView getNameView() {
-        return getTypeSafeView(R.id.meal_name);
+        return getTypeSafeView(R.id.meal_name, AutoCompleteTextView.class);
     }
 }

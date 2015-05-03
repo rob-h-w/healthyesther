@@ -47,7 +47,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     }
 
     public EditScoreEventGroupFragment() {
-        // Required empty public constructor
+        super(EditScoreEventGroupFragment.Watcher.class);
     }
 
     @Override
@@ -240,6 +240,6 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     }
 
     private AddValueFragment getAddValueFragment() {
-        return Utils.View.getTypeSafeFragment(getFragmentManager(), ADD_VALUE_FRAGMENT);
+        return Utils.View.getTypeSafeFragment(getFragmentManager(), ADD_VALUE_FRAGMENT, AddValueFragment.class);
     }
 }

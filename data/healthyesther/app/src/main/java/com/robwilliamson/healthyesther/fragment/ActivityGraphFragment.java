@@ -48,7 +48,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
     }
 
     private LinearLayout getLayout() {
-        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), R.id.activity_graph_layout);
+        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), R.id.activity_graph_layout, LinearLayout.class);
     }
 
     /**

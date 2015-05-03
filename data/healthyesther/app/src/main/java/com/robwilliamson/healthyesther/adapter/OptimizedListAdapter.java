@@ -11,32 +11,35 @@ import com.robwilliamson.healthyesther.Utils;
 import java.util.List;
 
 public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAdapter<D> {
-
+    private final Class<T> mTagType;
+    private final Class<V> mViewType;
     private final Activity mActivity;
     private final int mLayout;
 
-    public OptimizedListAdapter(Activity context, int layout) {
+    public OptimizedListAdapter(Activity context, int layout, Class<T> tagType, Class<V> viewType) {
         super(context, layout);
+        mTagType = tagType;
+        mViewType = viewType;
         mLayout = layout;
         mActivity = context;
     }
 
-    public OptimizedListAdapter(Activity context, int layout, List<D> list) {
-        this(context, layout);
+    public OptimizedListAdapter(Activity context, int layout, List<D> list, Class<T> tagType, Class<V> viewType) {
+        this(context, layout, tagType, viewType);
         this.addAll(list);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        V view = Utils.uncheckedCast(convertView);
+        V view = Utils.checkedCast(convertView, mViewType);
 
         if (view == null) {
             LayoutInflater inflater = mActivity.getLayoutInflater();
-            view = Utils.uncheckedCast(inflater.inflate(mLayout, parent));
+            view = Utils.checkedCast(inflater.inflate(mLayout, parent), mViewType);
             view.setTag(getTagFor(view));
         }
 
-        T tag = Utils.uncheckedCast(view.getTag());
+        T tag = Utils.checkedCast(view.getTag(), mTagType);
         populateTag(tag, getItem(position));
 
         return view;

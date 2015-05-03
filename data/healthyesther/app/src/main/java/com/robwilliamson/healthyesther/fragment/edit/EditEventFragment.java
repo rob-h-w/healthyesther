@@ -37,7 +37,9 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         void onFragmentUpdate(EditEventFragment fragment);
     }
 
-    public EditEventFragment() {}
+    public EditEventFragment() {
+        super(EditEventFragment.Watcher.class);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,7 +129,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     @Override
     public boolean validate() {
-        return getName() == null || Contract.getInstance().EVENT.validateName(getName());
+        return getName() == null || Event.validateName(getName());
     }
 
     @Override
@@ -204,10 +206,10 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     private Button getButton(int id) {
-        return getTypeSafeView(id);
+        return getTypeSafeView(id, Button.class);
     }
 
     private AutoCompleteTextView getNameView() {
-        return getTypeSafeView(R.id.edit_event_name);
+        return getTypeSafeView(R.id.edit_event_name, AutoCompleteTextView.class);
     }
 }

@@ -57,10 +57,10 @@ public class AddValueFragment extends BaseFragment {
     }
 
     private TextView getTextView() {
-        return Utils.View.getTypeSafeView(getView(), R.id.add_value_text);
+        return Utils.View.getTypeSafeView(getView(), R.id.add_value_text, TextView.class);
     }
 
     private FrameLayout getLayout() {
-        return Utils.View.getTypeSafeView(getView(), R.id.add_value_layout);
+        return Utils.View.getTypeSafeView(getView(), R.id.add_value_layout, FrameLayout.class);
     }
 }

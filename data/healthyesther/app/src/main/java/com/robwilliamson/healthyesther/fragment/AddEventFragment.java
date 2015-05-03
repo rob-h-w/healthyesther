@@ -56,22 +56,26 @@ public class AddEventFragment extends BaseFragment {
     }
 
     private Button getCreateMealEventButton() {
-        return getTypeSafeView(R.id.create_meal_event_button);
+        return getButton(R.id.create_meal_event_button);
     }
 
     private Button getCreateMedicationEventButton() {
-        return getTypeSafeView(R.id.create_medication_event_button);
+        return getButton(R.id.create_medication_event_button);
     }
 
     private Button getCreateHealthScoreEventButton() {
-        return getTypeSafeView(R.id.create_health_score_event_button);
+        return getButton(R.id.create_health_score_event_button);
     }
 
     private Button getCreateNoteEventButton() {
-        return getTypeSafeView(R.id.create_note_event_button);
+        return getButton(R.id.create_note_event_button);
     }
 
-    private <T extends View> T getTypeSafeView(int id) {
-        return Utils.View.getTypeSafeView(getView(), id);
+    private Button getButton(int id) {
+        return getTypeSafeView(id, Button.class);
+    }
+
+    private <T extends View> T getTypeSafeView(int id, Class<T> type) {
+        return Utils.View.getTypeSafeView(getView(), id, type);
     }
 }

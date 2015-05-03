@@ -34,8 +34,16 @@ public final class Utils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T uncheckedCast(Object obj) {
+    public static <T> T checkAssignable(Object obj, Class<T> type) {
+        if (!type.isAssignableFrom(obj.getClass())) {
+            throw new ClassCastException(obj.toString() + " must be implement or derive from " + type.getCanonicalName());
+        }
+
         return (T) obj;
+    }
+
+    public static <T> T checkedCast(Object obj, Class<T> type) {
+        return checkAssignable(obj, type);
     }
 
     public static final class View {
@@ -64,28 +72,28 @@ public final class Utils {
             }
         }
 
-        public static <T extends android.view.View> T getTypeSafeView(android.view.View parent, int id) {
+        public static <T extends android.view.View> T getTypeSafeView(android.view.View parent, int id, Class<T> type) {
             if (parent == null) {
                 return null;
             }
 
-            return uncheckedCast(parent.findViewById(id));
+            return checkedCast(parent.findViewById(id), type);
         }
 
-        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, String tag) {
+        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, String tag, Class<T> type) {
             if (manager == null) {
                 return null;
             }
 
-            return uncheckedCast(manager.findFragmentByTag(tag));
+            return checkedCast(manager.findFragmentByTag(tag), type);
         }
 
-        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, int id) {
+        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, int id, Class<T> type) {
             if (manager == null) {
                 return null;
             }
 
-            return uncheckedCast(manager.findFragmentById(id));
+            return checkedCast(manager.findFragmentById(id), type);
         }
 
         public static void assertIsOnUiThread() {

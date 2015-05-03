@@ -21,9 +21,9 @@ public class MealActivity extends AbstractAddActivity
 
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
-        ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(2);
-        EditFragment meal = null;
-        EditFragment event = null;
+        ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);
+        EditFragment meal;
+        EditFragment event;
         if (create) {
             meal = new EditMealFragment();
             event = new EditEventFragment();
@@ -32,8 +32,8 @@ public class MealActivity extends AbstractAddActivity
             event = getEventFragment();
         }
 
-        list.add(new Pair<EditFragment, String>(meal, MEAL_TAG));
-        list.add(new Pair<EditFragment, String>(event, EVENT_TAG));
+        list.add(new Pair<>(meal, MEAL_TAG));
+        list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
     }
@@ -52,11 +52,11 @@ public class MealActivity extends AbstractAddActivity
     }
 
     private EditMealFragment getMealFragment() {
-        return getFragment(MEAL_TAG);
+        return getFragment(MEAL_TAG, EditMealFragment.class);
     }
 
     private EditEventFragment getEventFragment() {
-        return getFragment(EVENT_TAG);
+        return getFragment(EVENT_TAG, EditEventFragment.class);
     }
 
     @Override

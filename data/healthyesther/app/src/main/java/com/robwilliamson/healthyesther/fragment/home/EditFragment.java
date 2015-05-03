@@ -23,6 +23,6 @@ public class EditFragment extends AbstractHomeFragment {
     }
 
     private ActivityGraphFragment getActivityGraphFragment() {
-        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.activity_graph_fragment);
+        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.activity_graph_fragment, ActivityGraphFragment.class);
     }
 }

@@ -242,11 +242,11 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private TextView getBestValueCurrentValue() {
-        return Utils.View.getTypeSafeView(getView(), R.id.best_value_current_value);
+        return Utils.View.getTypeSafeView(getView(), R.id.best_value_current_value, TextView.class);
     }
 
     private SeekBar getBestValueWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.best_value);
+        return Utils.View.getTypeSafeView(getView(), R.id.best_value, SeekBar.class);
     }
 
     private boolean getRandomQuery() {
@@ -258,7 +258,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private Switch getRandomQueryWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.random_query);
+        return Utils.View.getTypeSafeView(getView(), R.id.random_query, Switch.class);
     }
 
     private String getMinLabel() {
@@ -270,7 +270,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private EditText getMinLabelWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.min_label);
+        return Utils.View.getTypeSafeView(getView(), R.id.min_label, EditText.class);
     }
 
     private String getMaxLabel() {
@@ -282,7 +282,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private EditText getMaxLabelWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.max_label);
+        return Utils.View.getTypeSafeView(getView(), R.id.max_label, EditText.class);
     }
 
     private Watcher getWatcher() {

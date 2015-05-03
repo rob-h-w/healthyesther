@@ -81,11 +81,11 @@ public class ScoreActivity extends AbstractAddActivity implements EditScoreEvent
     }
 
     private EditScoreEventGroupFragment getScoreGroupFragment() {
-        return getFragment(SCORE_GROUP_TAG);
+        return getFragment(SCORE_GROUP_TAG, EditScoreEventGroupFragment.class);
     }
 
     private EditEventFragment getEventFragment() {
-        return getFragment(EVENT_TAG);
+        return getFragment(EVENT_TAG, EditEventFragment.class);
     }
 
     @Override

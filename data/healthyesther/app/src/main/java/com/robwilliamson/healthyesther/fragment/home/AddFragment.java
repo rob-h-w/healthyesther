@@ -24,10 +24,10 @@ public class AddFragment extends AbstractHomeFragment {
     }
 
     private AddEventFragment getAddEventFragment() {
-        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.add_event_fragment);
+        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.add_event_fragment, AddEventFragment.class);
     }
 
     private ActivityGraphFragment getActivityGraphFragment() {
-        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.activity_graph_fragment);
+        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.activity_graph_fragment, ActivityGraphFragment.class);
     }
 }

@@ -13,20 +13,17 @@ import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MedicationActivity extends AbstractAddActivity
         implements EditMedicationFragment.Watcher, EditEventFragment.Watcher {
     private final static String MEDICATION_TAG = "medication";
     private final static String EVENT_TAG = "event";
 
-    private final HashMap<String, Long> mSuggestionIds = new HashMap<String, Long>();
-
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
-        ArrayList<Pair<EditFragment, String>> list = new ArrayList<Pair<EditFragment, String>>(2);
-        EditFragment meal = null;
-        EditFragment event = null;
+        ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);
+        EditFragment meal;
+        EditFragment event;
         if (create) {
             meal = new EditMedicationFragment();
             event = new EditEventFragment();
@@ -35,8 +32,8 @@ public class MedicationActivity extends AbstractAddActivity
             event = getEventFragment();
         }
 
-        list.add(new Pair<EditFragment, String>(meal, MEDICATION_TAG));
-        list.add(new Pair<EditFragment, String>(event, EVENT_TAG));
+        list.add(new Pair<>(meal, MEDICATION_TAG));
+        list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
     }
@@ -71,11 +68,11 @@ public class MedicationActivity extends AbstractAddActivity
     }
 
     private EditMedicationFragment getMedicationFragment() {
-        return getFragment(MEDICATION_TAG);
+        return getFragment(MEDICATION_TAG, EditMedicationFragment.class);
     }
 
     private EditEventFragment getEventFragment() {
-        return getFragment(EVENT_TAG);
+        return getFragment(EVENT_TAG, EditEventFragment.class);
     }
 
     @Override

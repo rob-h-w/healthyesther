@@ -17,6 +17,10 @@ import java.util.Set;
 public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
     private HashMap<String, Long> mSuggestionIds;
 
+    protected SuggestionEditFragment(Class<T> type) {
+        super(type);
+    }
+
     @Override
     public void onResume() {
         super.onResume();

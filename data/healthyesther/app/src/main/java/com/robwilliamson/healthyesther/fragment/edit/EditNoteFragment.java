@@ -80,7 +80,9 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         void onQueryFailed(EditNoteFragment fragment, Throwable error);
     }
 
-    public EditNoteFragment() {}
+    public EditNoteFragment() {
+        super(EditNoteFragment.Watcher.class);
+    }
 
     @Override
     public Modification getModification() {
@@ -148,10 +150,10 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
 
     @Override
     protected AutoCompleteTextView getNameView() {
-        return getTypeSafeView(R.id.note_name);
+        return getTypeSafeView(R.id.note_name, AutoCompleteTextView.class);
     }
 
     private EditText getNoteView() {
-        return getTypeSafeView(R.id.note_content);
+        return getTypeSafeView(R.id.note_content, EditText.class);
     }
 }

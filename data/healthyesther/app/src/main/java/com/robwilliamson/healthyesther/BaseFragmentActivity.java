@@ -66,7 +66,11 @@ public class BaseFragmentActivity extends FragmentActivity {
         return (LinearLayout)findViewById(getActivityContentLayoutResourceId());
     }
 
-    protected <T extends Fragment> T getFragment(String tag) {
-        return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), tag);
+    protected <T extends Fragment> T getFragment(String tag, Class<T> type) {
+        return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), tag, type);
+    }
+
+    protected Fragment getFragment(String tag) {
+        return getFragment(tag, Fragment.class);
     }
 }

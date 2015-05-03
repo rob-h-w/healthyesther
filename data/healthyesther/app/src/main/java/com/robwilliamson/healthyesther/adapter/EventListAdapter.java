@@ -19,11 +19,11 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
     }
 
     public EventListAdapter(Activity context, int parentViewId) {
-        super(context, parentViewId);
+        super(context, parentViewId, EventListAdapter.Tag.class, View.class);
     }
 
     public EventListAdapter(Activity context, int parentViewId, List<Event.Value> data) {
-        super(context, parentViewId, data);
+        super(context, parentViewId, data, EventListAdapter.Tag.class, View.class);
     }
 
     /**
@@ -37,9 +37,9 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
     protected Tag getTagFor(final View view) {
         return new Tag() {
             {
-                eventIcon = Utils.View.getTypeSafeView(view, R.id.eventIcon);
-                title = Utils.View.getTypeSafeView(view, R.id.eventTitle);
-                time = Utils.View.getTypeSafeView(view, R.id.eventTime);
+                eventIcon = Utils.View.getTypeSafeView(view, R.id.eventIcon, ImageView.class);
+                title = Utils.View.getTypeSafeView(view, R.id.eventTitle, TextView.class);
+                time = Utils.View.getTypeSafeView(view, R.id.eventTime, TextView.class);
             }
         };
     }
@@ -53,7 +53,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
      */
     @Override
     protected void populateTag(Tag tag, Event.Value data) {
-        int iconId = 0;
+        int iconId;
         switch (Event.Type.valueOf(data.typeId)) {
             case MEAL:
                 iconId = R.drawable.ic_food;

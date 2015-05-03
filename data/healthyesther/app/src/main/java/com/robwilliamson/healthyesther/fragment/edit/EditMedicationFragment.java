@@ -25,6 +25,10 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
         void onQueryFailed(EditMedicationFragment fragment, Throwable error);
     }
 
+    public EditMedicationFragment() {
+        super(EditMedicationFragment.Watcher.class);
+    }
+
     @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_edit_medication;
@@ -37,7 +41,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                     HashMap<String, Long> mSuggestionIds;
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
-                        mSuggestionIds = new HashMap<String, Long>();
+                        mSuggestionIds = new HashMap<>();
                         mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
                                 com.robwilliamson.healthyesther.db.definition.Medication.NAME,
                                 com.robwilliamson.healthyesther.db.definition.Medication._ID));
@@ -62,7 +66,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                     HashMap<String, Long> mSuggestionIds;
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
-                        mSuggestionIds = new HashMap<String, Long>();
+                        mSuggestionIds = new HashMap<>();
                         mSuggestionIds.putAll(Utils.Db.cursorToSuggestionList(cursor,
                                 MedicationName.NAME,
                                 MedicationName.MEDICATION_ID));
@@ -143,6 +147,6 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
 
     @Override
     protected AutoCompleteTextView getNameView() {
-        return getTypeSafeView(R.id.medication_name);
+        return getTypeSafeView(R.id.medication_name, AutoCompleteTextView.class);
     }
 }

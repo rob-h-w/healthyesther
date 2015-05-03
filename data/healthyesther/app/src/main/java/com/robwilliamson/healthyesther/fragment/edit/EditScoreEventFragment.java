@@ -68,7 +68,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     public EditScoreEventFragment() {
-        // Required empty public constructor
+        super(EditScoreEventFragment.Watcher.class);
     }
 
     @Override
@@ -126,7 +126,8 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     @Override
     public void onResume() {
         super.onResume();
-        registerForContextMenu(getView());
+        View view = Utils.checkNotNull(getView());
+        registerForContextMenu(view);
 
         updateUi();
 
@@ -170,18 +171,18 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     private TextView getTitle() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_name_title);
+        return Utils.View.getTypeSafeView(getView(), R.id.score_name_title, TextView.class);
     }
 
     private TextView getMinLabel() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_minimum_label);
+        return Utils.View.getTypeSafeView(getView(), R.id.score_minimum_label, TextView.class);
     }
 
     private TextView getMaxLabel() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_maximum_label);
+        return Utils.View.getTypeSafeView(getView(), R.id.score_maximum_label, TextView.class);
     }
 
     private RatingBar getRatingBar() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_bar);
+        return Utils.View.getTypeSafeView(getView(), R.id.score_bar, RatingBar.class);
     }
 }

@@ -24,22 +24,22 @@ public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditSco
     }
 
     public EditScoreEventGroupListAdapter(Activity context) {
-        super(context, R.layout.fragment_edit_score_event);
+        super(context, R.layout.fragment_edit_score_event, EditScoreEventGroupListAdapter.Tag.class, View.class);
     }
 
     public EditScoreEventGroupListAdapter(Activity context, List<Pair<HealthScore.Value, Integer>> list) {
-        super(context, R.layout.fragment_edit_score_event, list);
+        super(context, R.layout.fragment_edit_score_event, list, EditScoreEventGroupListAdapter.Tag.class, View.class);
     }
 
     @Override
     protected Tag getTagFor(final View view) {
         return new Tag() {
             {
-                title = Utils.View.getTypeSafeView(view, R.id.score_name_title);
-                minLabel = Utils.View.getTypeSafeView(view, R.id.score_minimum_label);
-                maxLabel = Utils.View.getTypeSafeView(view, R.id.score_maximum_label);
-                ratingBar = Utils.View.getTypeSafeView(view, R.id.score_bar);
-                layout = Utils.View.getTypeSafeView(view, R.id.edit_score_layout);
+                title = Utils.View.getTypeSafeView(view, R.id.score_name_title, TextView.class);
+                minLabel = Utils.View.getTypeSafeView(view, R.id.score_minimum_label, TextView.class);
+                maxLabel = Utils.View.getTypeSafeView(view, R.id.score_maximum_label, TextView.class);
+                ratingBar = Utils.View.getTypeSafeView(view, R.id.score_bar, RatingBar.class);
+                layout = Utils.View.getTypeSafeView(view, R.id.edit_score_layout, LinearLayout.class);
             }
         };
     }

@@ -7,6 +7,7 @@ import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
 
 public abstract class EditFragment<T> extends AbstractQueryFragment {
+    Class<T> mType;
     private T mWatcher = null;
     private boolean mModified;
 
@@ -19,12 +20,20 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     }
 
     protected interface WatcherCaller<T> {
-        public void call(T watcher);
+        void call(T watcher);
+    }
+
+    public EditFragment(Class<T> type) {
+        mType = type;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        if (!mType.isAssignableFrom(activity.getClass())) {
+            throw new ClassCastException(activity.toString() + " must implement " + mType.getCanonicalName());
+        }
 
         //noinspection unchecked
         mWatcher = (T)activity;
@@ -57,7 +66,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
         }
     }
 
-    protected <T extends View> T getTypeSafeView(int id) {
-        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id);
+    protected <T extends View> T getTypeSafeView(int id, Class<T> type) {
+        return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id, type);
     }
 }
