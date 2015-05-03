@@ -36,7 +36,7 @@ public final class Utils {
     @SuppressWarnings("unchecked")
     public static <T> T checkAssignable(Object obj, Class<T> type) {
         if (!type.isAssignableFrom(obj.getClass())) {
-            throw new ClassCastException(obj.toString() + " must be implement or derive from " + type.getCanonicalName());
+            throw new ClassCastException(obj.toString() + " must be assignable to " + type.getCanonicalName());
         }
 
         return (T) obj;

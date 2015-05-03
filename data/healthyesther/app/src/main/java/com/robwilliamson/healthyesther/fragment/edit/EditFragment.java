@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 import android.app.Activity;
 import android.view.View;
 
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
 
@@ -31,9 +32,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if (!mType.isAssignableFrom(activity.getClass())) {
-            throw new ClassCastException(activity.toString() + " must implement " + mType.getCanonicalName());
-        }
+        Utils.checkAssignable(activity, mType);
 
         //noinspection unchecked
         mWatcher = (T)activity;
