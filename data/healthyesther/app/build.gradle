@@ -19,14 +19,6 @@ android {
         versionName "0.8.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-            debuggable false
-        }
-    }
     packagingOptions {
         exclude 'LICENSE.txt'
         exclude 'META-INF/LICENSE'
