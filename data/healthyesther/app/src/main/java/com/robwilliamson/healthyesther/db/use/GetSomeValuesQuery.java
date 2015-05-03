@@ -21,7 +21,7 @@ public abstract class GetSomeValuesQuery implements SelectQuery {
 
         if (!Utils.Strings.nullOrEmpty(getOrderColumn()) &&
                 !Utils.Strings.nullOrEmpty(getOrder())) {
-            orderExpression = getOrderColumn() + " COLLATE " + getOrder();
+            orderExpression = getOrderColumn() + " " + getOrder();
         }
 
         try {

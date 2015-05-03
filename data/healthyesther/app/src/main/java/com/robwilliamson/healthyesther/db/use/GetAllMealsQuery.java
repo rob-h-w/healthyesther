@@ -16,7 +16,7 @@ public abstract class GetAllMealsQuery extends GetAllValuesQuery {
 
     @Override
     public String getOrder() {
-        return "NOCASE ASC";
+        return "COLLATE NOCASE ASC";
     }
 
     @Override
