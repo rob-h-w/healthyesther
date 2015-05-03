@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.RadioButton;
@@ -25,6 +26,7 @@ public final class Utils {
         return str.toString();
     }
 
+    @NonNull
     public static <T> T checkNotNull(T obj) {
         if (obj == null) {
             throw new NullPointerException();
@@ -35,6 +37,10 @@ public final class Utils {
 
     @SuppressWarnings("unchecked")
     public static <T> T checkAssignable(Object obj, Class<T> type) {
+        if (obj == null) {
+            return null;
+        }
+
         if (!type.isAssignableFrom(obj.getClass())) {
             throw new ClassCastException(obj.toString() + " must be assignable to " + type.getCanonicalName());
         }

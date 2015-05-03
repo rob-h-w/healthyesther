@@ -18,10 +18,10 @@ public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAd
 
     public OptimizedListAdapter(Activity context, int layout, Class<T> tagType, Class<V> viewType) {
         super(context, layout);
-        mTagType = tagType;
-        mViewType = viewType;
+        mTagType = Utils.checkNotNull(tagType);
+        mViewType = Utils.checkNotNull(viewType);
         mLayout = layout;
-        mActivity = context;
+        mActivity = Utils.checkNotNull(context);
     }
 
     public OptimizedListAdapter(Activity context, int layout, List<D> list, Class<T> tagType, Class<V> viewType) {
@@ -35,8 +35,10 @@ public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAd
 
         if (view == null) {
             LayoutInflater inflater = mActivity.getLayoutInflater();
-            view = Utils.checkedCast(inflater.inflate(mLayout, parent), mViewType);
-            view.setTag(getTagFor(view));
+            view = Utils.checkNotNull(
+                    Utils.checkedCast(inflater.inflate(mLayout, null), mViewType));
+            T tag = Utils.checkNotNull(getTagFor(view));
+            view.setTag(tag);
         }
 
         T tag = Utils.checkedCast(view.getTag(), mTagType);
