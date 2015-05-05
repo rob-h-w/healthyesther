@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.DataAbstraction;
@@ -36,6 +37,7 @@ public class Event extends Table {
             return m_id;
         }
 
+        @NonNull
         public static Type valueOf(long _id) {
             return Type.values()[(int) _id - 1];
         }
