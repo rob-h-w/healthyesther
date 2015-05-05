@@ -1,18 +1,26 @@
 package com.robwilliamson.healthyesther;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.robwilliamson.healthyesther.add.MealActivity;
+import com.robwilliamson.healthyesther.add.MedicationActivity;
+import com.robwilliamson.healthyesther.add.NoteActivity;
+import com.robwilliamson.healthyesther.add.ScoreActivity;
+import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EventListFragment;
 import com.robwilliamson.healthyesther.fragment.home.AbstractHomeFragment;
 
 
 public class HomeActivity extends DbActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        EventListFragment.Watcher {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -108,5 +116,35 @@ public class HomeActivity extends DbActivity
     @Override
     public QueryUser[] getQueryUsers() {
         return mNavigationDrawerFragment.getMode().getFragment(getSupportFragmentManager()).getQueryUsers();
+    }
+
+    @Override
+    public void onEventSelected(Event.Value event) {
+        Intent intent = null;
+
+        switch (Event.Type.valueOf(event.typeId)) {
+            case MEAL:
+                intent = new Intent(this, MealActivity.class);
+                break;
+            case MEDICATION:
+                intent = new Intent(this, MedicationActivity.class);
+                break;
+            case HEALTH_SCORE:
+                intent = new Intent(this, ScoreActivity.class);
+                break;
+            case NOTE:
+                intent = new Intent(this, NoteActivity.class);
+                break;
+        }
+
+        Bundle bundle = event.asBundle();
+        intent.putExtras(bundle);
+
+        this.startActivity(intent);
+    }
+
+    @Override
+    public void onQueryFailure(Throwable failure) {
+        // TODO: Display a toast.
     }
 }

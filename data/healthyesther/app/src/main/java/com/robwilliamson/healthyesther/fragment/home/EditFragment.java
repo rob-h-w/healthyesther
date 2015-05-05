@@ -5,6 +5,10 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.ActivityGraphFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EventHistoryListFragment;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class EditFragment extends AbstractHomeFragment {
     @Override
@@ -14,7 +18,10 @@ public class EditFragment extends AbstractHomeFragment {
 
     @Override
     public Query[] getQueries() {
-        return getActivityGraphFragment().getQueries();
+        List<Query> queries = Arrays.asList(getActivityGraphFragment().getQueries());
+        queries.addAll(Arrays.asList(getEventHistoryFragment().getQueries()));
+        Query[] queryArray = new Query[queries.size()];
+        return queries.toArray(queryArray);
     }
 
     @Override
@@ -24,5 +31,9 @@ public class EditFragment extends AbstractHomeFragment {
 
     private ActivityGraphFragment getActivityGraphFragment() {
         return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.activity_graph_fragment, ActivityGraphFragment.class);
+    }
+
+    private EventHistoryListFragment getEventHistoryFragment() {
+        return Utils.View.getTypeSafeFragment(getChildFragmentManager(), R.id.event_list_fragment, EventHistoryListFragment.class);
     }
 }
