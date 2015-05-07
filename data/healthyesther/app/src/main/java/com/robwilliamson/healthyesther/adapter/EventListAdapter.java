@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -8,6 +9,9 @@ import android.widget.TextView;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.Event;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
@@ -18,12 +22,20 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         public TextView time;
     }
 
+    private DateTimeFormatter mDateTimeFormatter;
+
     public EventListAdapter(Activity context, int layoutId) {
         super(context, layoutId, EventListAdapter.Tag.class, View.class);
+        init(context);
     }
 
     public EventListAdapter(Activity context, int layoutId, List<Event.Value> data) {
         super(context, layoutId, data, EventListAdapter.Tag.class, View.class);
+        init(context);
+    }
+
+    private void init(Context context) {
+        mDateTimeFormatter = DateTimeFormat.forPattern(context.getString(R.string.event_date_time_format));
     }
 
     /**
@@ -76,6 +88,9 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         tag.eventIcon.setImageResource(iconId);
 
         tag.title.setText(data.name);
-        tag.time.setText(data.when.toString());
+        tag.time.setText(
+                com.robwilliamson.healthyesther.db.Utils.Time.toString(
+                        data.when,
+                        mDateTimeFormatter));
     }
 }
