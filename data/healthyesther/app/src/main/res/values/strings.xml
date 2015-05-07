@@ -62,7 +62,7 @@
     <string name="reminder_content">How are you feeling? Have you eaten? Taken medication?</string>
     <string name="reminder_ticker">How are you?</string>
     <string name="get_more">Get more</string>
-    <string name="getting_more">Getting more...</string>
+    <string name="getting_more">Getting more…</string>
     <string name="event_icon_content_description">Image indicating the type of event displayed.</string>
 
 </resources>
