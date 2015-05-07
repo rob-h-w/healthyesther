@@ -54,12 +54,12 @@ public class HomeActivityAccessor {
             onView(withText(NavigationDrawerFragment.NavigationDrawerMode.EDIT.stringId)).perform(click());
         }
 
-        public static Matcher<View> activityGraph() {
-            return withId(R.id.activity_graph_layout);
+        public static Matcher<View> eventList() {
+            return withId(R.id.event_list_fragment);
         }
 
         public static void checkUnmodifiedContent() {
-            onView(activityGraph()).check(matches(isEnabled()));
+            onView(eventList()).check(matches(isEnabled()));
             onView(AddMode.healthScoreButton()).check(doesNotExist());
         }
     }
