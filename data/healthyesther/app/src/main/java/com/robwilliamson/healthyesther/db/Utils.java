@@ -9,7 +9,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
-import com.robwilliamson.healthyesther.db.abstraction.EventData;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 
 import org.joda.time.DateTime;

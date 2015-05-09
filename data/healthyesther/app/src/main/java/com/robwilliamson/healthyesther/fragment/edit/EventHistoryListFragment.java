@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.abstraction.EventData;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.use.GetEventsAfterDateTimeQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
 

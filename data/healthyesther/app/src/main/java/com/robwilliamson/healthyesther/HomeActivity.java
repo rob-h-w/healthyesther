@@ -7,7 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.robwilliamson.healthyesther.db.abstraction.EventData;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.edit.MealActivity;
 import com.robwilliamson.healthyesther.edit.MedicationActivity;

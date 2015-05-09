@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.abstraction.DataAbstraction;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 
 public class HealthScore extends Table {
 

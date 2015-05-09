@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.abstraction.EventData;
+import com.robwilliamson.healthyesther.db.data.EventData;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
