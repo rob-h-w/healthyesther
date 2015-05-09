@@ -7,7 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.abstraction.EventData;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.edit.MealActivity;
 import com.robwilliamson.healthyesther.edit.MedicationActivity;
@@ -119,10 +119,10 @@ public class HomeActivity extends DbActivity
     }
 
     @Override
-    public void onEventSelected(Event.Value event) {
+    public void onEventSelected(EventData eventData) {
         Intent intent = null;
 
-        switch (Event.Type.valueOf(event.typeId)) {
+        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(eventData.typeId)) {
             case MEAL:
                 intent = new Intent(this, MealActivity.class);
                 break;
@@ -137,7 +137,7 @@ public class HomeActivity extends DbActivity
                 break;
         }
 
-        Bundle bundle = event.asBundle();
+        Bundle bundle = eventData.asBundle();
         intent.putExtras(bundle);
 
         this.startActivity(intent);

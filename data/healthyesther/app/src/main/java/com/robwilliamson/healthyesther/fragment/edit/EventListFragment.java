@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
-import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.abstraction.EventData;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
@@ -40,7 +40,7 @@ public abstract class EventListFragment extends EditFragment<EventListFragment.W
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface Watcher extends QueuedQueryExecutor {
-        void onEventSelected(Event.Value event);
+        void onEventSelected(EventData eventData);
         void onQueryFailure(Throwable failure);
     }
 

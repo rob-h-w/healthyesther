@@ -8,14 +8,14 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.abstraction.EventData;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
-public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, Event.Value> {
+public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, EventData> {
     protected static class Tag {
         public ImageView eventIcon;
         public TextView title;
@@ -29,7 +29,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         init(context);
     }
 
-    public EventListAdapter(Activity context, int layoutId, List<Event.Value> data) {
+    public EventListAdapter(Activity context, int layoutId, List<EventData> data) {
         super(context, layoutId, data, EventListAdapter.Tag.class, View.class);
         init(context);
     }
@@ -64,9 +64,9 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
      * @param data The data to populate the tag's views with.
      */
     @Override
-    protected void populateTag(Tag tag, Event.Value data) {
+    protected void populateTag(Tag tag, EventData data) {
         int iconId;
-        switch (Event.Type.valueOf(data.typeId)) {
+        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(data.typeId)) {
             case MEAL:
                 iconId = R.drawable.ic_food;
                 break;

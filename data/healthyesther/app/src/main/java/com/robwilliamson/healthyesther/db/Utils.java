@@ -9,7 +9,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
-import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.abstraction.EventData;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 
 import org.joda.time.DateTime;
@@ -295,13 +295,13 @@ public final class Utils {
                                         if (!hadDailyMedication && haveDailyMedication(hour)) {
                                             DateTime t = DateTime.now().withDate(year, month, day)
                                                     .withTime(hour, minute(), second(), 0);
-                                            Event.Value event = new Event.Value(
+                                            EventData eventData = new EventData(
                                                     time(year, month, day, hour),
                                                     null,
                                                     null,
                                                     2,
                                                     "Daily medication");
-                                            long eventId = c.EVENT.insert(db, event);
+                                            long eventId = c.EVENT.insert(db, eventData);
                                             c.MEDICATION_EVENT.insert(db, dailyMedicationId, eventId);
                                             hadDailyMedication = true;
                                         }
@@ -355,17 +355,17 @@ public final class Utils {
             private static void insertMeal(SQLiteDatabase db, int year, int month,
                                            int day, int hour, String name, long mealId) {
                 Contract c = Contract.getInstance();
-                Event.Value event = new Event.Value(
+                EventData eventData = new EventData(
                         time(year, month, day, hour), null, null, 1, name);
-                long eventId = c.EVENT.insert(db, event);
+                long eventId = c.EVENT.insert(db, eventData);
                 c.MEAL_EVENT.insert(db, mealId, eventId);
             }
 
             private static void insertMedication(SQLiteDatabase db, int year, int month, int day, int hour, String medication, long medicationId) {
                 Contract c = Contract.getInstance();
-                Event.Value event = new Event.Value(
+                EventData eventData = new EventData(
                         time(year, month, day, hour), null, null, 2, "Medication");
-                long eventId = c.EVENT.insert(db, event);
+                long eventId = c.EVENT.insert(db, eventData);
                 c.MEDICATION_EVENT.insert(db, medicationId, eventId);
             }
 
@@ -441,11 +441,11 @@ public final class Utils {
                     private void insertMeal(DateTime time, long mealId) {
                         ContentValues eventValues = new ContentValues();
                         String utcTime = Utils.Time.toUtcString(time);
-                        eventValues.put(Event.CREATED, utcTime);
-                        eventValues.put(Event.WHEN, utcTime);
-                        eventValues.put(Event.TYPE_ID, MealEvent.EVENT_TYPE_ID);
+                        eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, utcTime);
+                        eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, utcTime);
+                        eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, MealEvent.EVENT_TYPE_ID);
 
-                        long eventId = db.insert(Event.TABLE_NAME, null, eventValues);
+                        long eventId = db.insert(com.robwilliamson.healthyesther.db.definition.Event.TABLE_NAME, null, eventValues);
 
                         ContentValues mealEventValues = new ContentValues();
                         mealEventValues.put(MealEvent.MEAL_ID, mealId);

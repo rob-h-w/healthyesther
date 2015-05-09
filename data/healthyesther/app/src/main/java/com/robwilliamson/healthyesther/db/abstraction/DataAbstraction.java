@@ -1,4 +1,4 @@
-package com.robwilliamson.healthyesther.db;
+package com.robwilliamson.healthyesther.db.abstraction;
 
 import android.content.ContentValues;
 import android.database.Cursor;

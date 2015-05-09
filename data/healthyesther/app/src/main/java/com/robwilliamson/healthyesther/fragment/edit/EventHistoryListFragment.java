@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.abstraction.EventData;
 import com.robwilliamson.healthyesther.db.use.GetEventsAfterDateTimeQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
 
@@ -40,7 +40,7 @@ public class EventHistoryListFragment extends EventListFragment {
     public Query[] getQueries() {
         return new Query[] {
                 new GetEventsAfterDateTimeQuery(mFrom) {
-                    List<Event.Value> mResults;
+                    List<EventData> mResults;
 
                     /**
                      * Called after the query in the worker thread. Use this to parse the cursor output.
@@ -51,7 +51,7 @@ public class EventHistoryListFragment extends EventListFragment {
                      */
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
-                        mResults = Event.Value.listFrom(cursor, Event.Value.class);
+                        mResults = EventData.listFrom(cursor, EventData.class);
                     }
 
                     /**

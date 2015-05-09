@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.Contract;
-import com.robwilliamson.healthyesther.db.DataAbstraction;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.abstraction.DataAbstraction;
 
 public class HealthScore extends Table {
 
