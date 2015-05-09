@@ -1,4 +1,4 @@
-package com.robwilliamson.healthyesther.add;
+package com.robwilliamson.healthyesther.edit;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;

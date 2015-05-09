@@ -6,10 +6,10 @@ import android.widget.Button;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.add.MealActivity;
-import com.robwilliamson.healthyesther.add.MedicationActivity;
-import com.robwilliamson.healthyesther.add.NoteActivity;
-import com.robwilliamson.healthyesther.add.ScoreActivity;
+import com.robwilliamson.healthyesther.edit.MealActivity;
+import com.robwilliamson.healthyesther.edit.MedicationActivity;
+import com.robwilliamson.healthyesther.edit.NoteActivity;
+import com.robwilliamson.healthyesther.edit.ScoreActivity;
 
 public class AddEventFragment extends BaseFragment {
 

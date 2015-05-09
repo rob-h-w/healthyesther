@@ -4,7 +4,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.Settings;
-import com.robwilliamson.healthyesther.add.ScoreActivity;
+import com.robwilliamson.healthyesther.edit.ScoreActivity;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;

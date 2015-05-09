@@ -1,4 +1,4 @@
-package com.robwilliamson.healthyesther.add;
+package com.robwilliamson.healthyesther.edit;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;

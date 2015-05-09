@@ -26,22 +26,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".add.MealActivity"
+            android:name=".edit.MealActivity"
             android:icon="@drawable/ic_food"
             android:label="@string/log_a_meal" >
         </activity>
         <activity
-            android:name=".add.MedicationActivity"
+            android:name=".edit.MedicationActivity"
             android:icon="@mipmap/ic_medication"
             android:label="@string/log_medication" >
         </activity>
         <activity
-            android:name=".add.ScoreActivity"
+            android:name=".edit.ScoreActivity"
             android:icon="@mipmap/ic_health"
             android:label="@string/health_score" >
         </activity>
         <activity
-            android:name=".add.NoteActivity"
+            android:name=".edit.NoteActivity"
             android:icon="@mipmap/ic_note"
             android:label="@string/note" >
         </activity>
