@@ -133,9 +133,13 @@ public final class Utils {
          * this reason, we must be able to parse 2 string formats when reading DateTimes from the
          * database.
          * @param string The DB String representation of the DateTime.
-         * @return The JodaTime DateTime.
+         * @return The JodaTime DateTime or null if string is null.
          */
         public static DateTime fromDatabaseString(String string) {
+            if (string == null) {
+                return null;
+            }
+
             try {
                 return fromString(string, DB_FORMATTER);
             } catch (IllegalArgumentException e) {
@@ -157,6 +161,7 @@ public final class Utils {
         }
 
         public static DateTime fromString(String string, DateTimeFormatter formatter) {
+            com.robwilliamson.healthyesther.Utils.checkNotNull(string);
             return formatter.parseDateTime(string);
         }
 
