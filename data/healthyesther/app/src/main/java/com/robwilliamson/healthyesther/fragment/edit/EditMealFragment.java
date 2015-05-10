@@ -10,6 +10,7 @@ import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.MealData;
 import com.robwilliamson.healthyesther.db.definition.Meal;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.GetAllMealsQuery;
@@ -107,7 +108,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
     @Override
     public boolean validate() {
-        return Meal.validateName(getName());
+        return MealData.validateName(getName());
     }
 
     @Override

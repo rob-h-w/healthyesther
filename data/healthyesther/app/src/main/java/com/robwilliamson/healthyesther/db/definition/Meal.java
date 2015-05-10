@@ -4,28 +4,28 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
-import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.MealData;
 
 /**
  * Meal table contains all unique types of meal.
  */
 public class Meal extends Table {
-    public static class BadNameLength extends IllegalArgumentException {}
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
-        private String mName;
+        private final MealData mValue;
 
         public Modification(String name) {
-            mName = name;
+            mValue = new MealData(name);
         }
 
         public Modification(long id) {
             setRowId(id);
+            mValue = null;
         }
 
         @Override
         public void modify(SQLiteDatabase db) {
             if (getRowId() == null) {
-                setRowId(Contract.getInstance().MEAL.insert(db, mName));
+                setRowId(Contract.getInstance().MEAL.insert(db, mValue));
             }
         }
     }
@@ -33,10 +33,6 @@ public class Meal extends Table {
     public static final String TABLE_NAME = "meal";
     public static final String _ID = "_id";
     public static final String NAME = "name";
-
-    public static boolean validateName(String name) {
-        return Utils.Strings.validateLength(name, 1, 140);
-    }
 
     @Override
     public String getName() {
@@ -57,13 +53,7 @@ public class Meal extends Table {
 
     }
 
-    public long insert(SQLiteDatabase db, String name) {
-        if (!validateName(name)) {
-            throw new BadNameLength();
-        }
-
-        ContentValues values = new ContentValues();
-        values.put(NAME, name);
-        return insert(db, values);
+    public long insert(SQLiteDatabase db, MealData mealData) {
+        return insert(db, mealData.asContentValues());
     }
 }

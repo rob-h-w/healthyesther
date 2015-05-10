@@ -4,9 +4,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
 
+import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Meal;
 
 public class MealData extends DataAbstraction {
+    public static class BadNameLength extends IllegalArgumentException {}
+
     public Long _id;
     public String name;
 
@@ -16,7 +19,15 @@ public class MealData extends DataAbstraction {
 
     public MealData(Long _id, String name) {
         this._id = _id == null || _id == 0L ? null : _id;
+
+        if (!validateName(name)) {
+            throw new BadNameLength();
+        }
         this.name = name;
+    }
+
+    public static boolean validateName(String name) {
+        return Utils.Strings.validateLength(name, 1, 140);
     }
 
     @Override

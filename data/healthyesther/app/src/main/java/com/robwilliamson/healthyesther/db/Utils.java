@@ -10,6 +10,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.db.data.EventData;
+import com.robwilliamson.healthyesther.db.data.MealData;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 
 import org.joda.time.DateTime;
@@ -232,24 +233,24 @@ public final class Utils {
                         Contract c = Contract.getInstance();
 
                         long[] breakfast = new long[] {
-                                c.MEAL.insert(db, "Toppas"),
-                                c.MEAL.insert(db, "Toast"),
-                                c.MEAL.insert(db, "Yoghurt"),
-                                c.MEAL.insert(db, "Melon")
+                                insertMeal(c, db, "Toppas"),
+                                insertMeal(c, db, "Toast"),
+                                insertMeal(c, db, "Yoghurt"),
+                                insertMeal(c, db, "Melon")
                         };
 
                         long[] lunch = new long[] {
-                                c.MEAL.insert(db, "Sandwiches"),
-                                c.MEAL.insert(db, "Soup")
+                                insertMeal(c, db, "Sandwiches"),
+                                insertMeal(c, db, "Soup")
                         };
 
                         long[] dinner = new long[] {
-                                c.MEAL.insert(db, "Coq au vin"),
-                                c.MEAL.insert(db, "Spaghetti bolognese"),
-                                c.MEAL.insert(db, "Beef and prune casserole"),
-                                c.MEAL.insert(db, "Frauen pizza"),
-                                c.MEAL.insert(db, "Chester Burger"),
-                                c.MEAL.insert(db, "Männer pizza")
+                                insertMeal(c, db, "Coq au vin"),
+                                insertMeal(c, db, "Spaghetti bolognese"),
+                                insertMeal(c, db, "Beef and prune casserole"),
+                                insertMeal(c, db, "Frauen pizza"),
+                                insertMeal(c, db, "Chester Burger"),
+                                insertMeal(c, db, "Männer pizza")
                         };
 
                         long[] medication = new long[] {
@@ -347,6 +348,10 @@ public final class Utils {
                 });
             }
 
+            private static long insertMeal(Contract c, SQLiteDatabase db, String name) {
+                return c.MEAL.insert(db, new MealData(name));
+            }
+
             private static long randomId(long[] ids) {
                 int idIndex = rand() % ids.length;
                 return ids[idIndex];
@@ -431,7 +436,7 @@ public final class Utils {
                     public void run() {
                         Contract c = Contract.getInstance();
 
-                        final long gruelId = c.MEAL.insert(db, "gruel");
+                        final long gruelId = c.MEAL.insert(db, new MealData("gruel"));
 
                         for (int i = 0; i < 10; i++) {
                             insertMeal(time(2015, 01, rand() % 28, rand() % 24), gruelId);
