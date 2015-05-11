@@ -13,7 +13,7 @@ android {
     buildToolsVersion '21.1.2'
     defaultConfig {
         applicationId "com.robwilliamson.healthyesther"
-        minSdkVersion 18
+        minSdkVersion 19
         targetSdkVersion 21
         versionCode 17
         versionName "0.8.0"
