@@ -5,9 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 /**
  * Performs either an insert or an update of one or more table elements.
  */
-public abstract class Modification {
+public abstract class Modification implements RowIdProvider {
     private Long mRowId;
 
+    @Override
     public final Long getRowId() {
         return mRowId;
     }
