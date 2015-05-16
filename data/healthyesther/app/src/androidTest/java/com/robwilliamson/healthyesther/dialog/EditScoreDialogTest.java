@@ -7,14 +7,14 @@ import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
-import com.robwilliamson.healthyesther.edit.ScoreActivity;
+import com.robwilliamson.healthyesther.edit.ScoreEventActivity;
 import com.robwilliamson.healthyesther.test.EditScoreDialogAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreActivity> {
+public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreEventActivity> {
     public EditScoreDialogTest() {
-        super(ScoreActivity.class);
+        super(ScoreEventActivity.class);
     }
 
     @Override

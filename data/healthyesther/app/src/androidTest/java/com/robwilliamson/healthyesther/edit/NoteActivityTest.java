@@ -14,9 +14,9 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
-public class NoteActivityTest extends ActivityInstrumentationTestCase2<NoteActivity> {
+public class NoteActivityTest extends ActivityInstrumentationTestCase2<NoteEventActivity> {
     public NoteActivityTest() {
-        super(NoteActivity.class);
+        super(NoteEventActivity.class);
     }
 
     @Override

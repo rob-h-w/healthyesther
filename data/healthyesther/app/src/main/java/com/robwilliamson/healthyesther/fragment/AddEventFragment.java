@@ -6,10 +6,10 @@ import android.widget.Button;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.edit.MealActivity;
-import com.robwilliamson.healthyesther.edit.MedicationActivity;
-import com.robwilliamson.healthyesther.edit.NoteActivity;
-import com.robwilliamson.healthyesther.edit.ScoreActivity;
+import com.robwilliamson.healthyesther.edit.MealEventActivity;
+import com.robwilliamson.healthyesther.edit.MedicationEventActivity;
+import com.robwilliamson.healthyesther.edit.NoteEventActivity;
+import com.robwilliamson.healthyesther.edit.ScoreEventActivity;
 
 public class AddEventFragment extends BaseFragment {
 
@@ -25,7 +25,7 @@ public class AddEventFragment extends BaseFragment {
         getCreateMealEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MealActivity.class);
+                Intent intent = new Intent(getActivity(), MealEventActivity.class);
                 getActivity().startActivity(intent);
             }
         });
@@ -33,7 +33,7 @@ public class AddEventFragment extends BaseFragment {
         getCreateMedicationEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MedicationActivity.class);
+                Intent intent = new Intent(getActivity(), MedicationEventActivity.class);
                 getActivity().startActivity(intent);
             }
         });
@@ -41,7 +41,7 @@ public class AddEventFragment extends BaseFragment {
         getCreateHealthScoreEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ScoreActivity.class);
+                Intent intent = new Intent(getActivity(), ScoreEventActivity.class);
                 getActivity().startActivity(intent);
             }
         });
@@ -49,7 +49,7 @@ public class AddEventFragment extends BaseFragment {
         getCreateNoteEventButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), NoteActivity.class);
+                Intent intent = new Intent(getActivity(), NoteEventActivity.class);
                 getActivity().startActivity(intent);
             }
         });

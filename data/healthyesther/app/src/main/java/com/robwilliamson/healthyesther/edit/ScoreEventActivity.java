@@ -22,7 +22,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreActivity extends AbstractEditActivity implements EditScoreEventGroupFragment.Watcher,
+public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreEventGroupFragment.Watcher,
         EditScoreEventFragment.Watcher,
         EditEventFragment.Watcher{
     private final static String SCORE_GROUP_TAG = "score group";

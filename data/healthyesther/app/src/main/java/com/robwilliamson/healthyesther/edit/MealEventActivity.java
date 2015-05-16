@@ -6,17 +6,17 @@ import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.MedicationEvent;
+import com.robwilliamson.healthyesther.db.definition.MealEvent;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
-import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.ArrayList;
 
-public class MedicationActivity extends AbstractEditActivity
-        implements EditMedicationFragment.Watcher, EditEventFragment.Watcher {
-    private final static String MEDICATION_TAG = "medication";
+public class MealEventActivity extends AbstractEditEventActivity
+        implements EditMealFragment.Watcher, EditEventFragment.Watcher {
+    private final static String MEAL_TAG = "meal";
     private final static String EVENT_TAG = "event";
 
     @Override
@@ -25,14 +25,14 @@ public class MedicationActivity extends AbstractEditActivity
         EditFragment meal;
         EditFragment event;
         if (create) {
-            meal = new EditMedicationFragment();
+            meal = new EditMealFragment();
             event = new EditEventFragment();
         } else {
-            meal = getMedicationFragment();
+            meal = getMealFragment();
             event = getEventFragment();
         }
 
-        list.add(new Pair<>(meal, MEDICATION_TAG));
+        list.add(new Pair<>(meal, MEAL_TAG));
         list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
@@ -40,35 +40,19 @@ public class MedicationActivity extends AbstractEditActivity
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        com.robwilliamson.healthyesther.db.definition.Medication.Modification medication = (com.robwilliamson.healthyesther.db.definition.Medication.Modification) getMedicationFragment().getModification();
+        com.robwilliamson.healthyesther.db.definition.Meal.Modification meal = (com.robwilliamson.healthyesther.db.definition.Meal.Modification) getMealFragment().getModification();
         Event.Modification event = (Event.Modification) getEventFragment().getModification();
-        MedicationEvent.Modification medicationEvent = new MedicationEvent.Modification(medication, event);
-        medicationEvent.modify(db);
+        MealEvent.Modification mealEvent = new MealEvent.Modification(meal, event, null, null);
+        mealEvent.modify(db);
     }
 
     @Override
     protected int getModifyFailedStringId() {
-        return R.string.could_not_insert_medication_event;
+        return R.string.could_not_insert_meal_event;
     }
 
-    @Override
-    public void onFragmentUpdate(EditMedicationFragment fragment) {
-        getEventFragment().suggestEventName(fragment.getName());
-        invalidateOptionsMenu();
-    }
-
-    @Override
-    public void onQueryFailed(EditMedicationFragment fragment, Throwable error) {
-        Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onFragmentUpdate(EditEventFragment fragment) {
-        invalidateOptionsMenu();
-    }
-
-    private EditMedicationFragment getMedicationFragment() {
-        return getFragment(MEDICATION_TAG, EditMedicationFragment.class);
+    private EditMealFragment getMealFragment() {
+        return getFragment(MEAL_TAG, EditMealFragment.class);
     }
 
     private EditEventFragment getEventFragment() {
@@ -76,9 +60,25 @@ public class MedicationActivity extends AbstractEditActivity
     }
 
     @Override
+    public void onFragmentUpdate(EditMealFragment fragment) {
+        getEventFragment().suggestEventName(fragment.getName());
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onQueryFailed(EditMealFragment fragment, Throwable error) {
+        Toast.makeText(MealEventActivity.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFragmentUpdate(EditEventFragment fragment) {
+        invalidateOptionsMenu();
+    }
+
+    @Override
     public QueryUser[] getQueryUsers() {
         return new QueryUser[] {
-                getMedicationFragment()
+                getMealFragment()
         };
     }
 }

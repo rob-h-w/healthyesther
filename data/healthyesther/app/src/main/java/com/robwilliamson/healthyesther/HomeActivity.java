@@ -9,10 +9,10 @@ import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.edit.MealActivity;
-import com.robwilliamson.healthyesther.edit.MedicationActivity;
-import com.robwilliamson.healthyesther.edit.NoteActivity;
-import com.robwilliamson.healthyesther.edit.ScoreActivity;
+import com.robwilliamson.healthyesther.edit.MealEventActivity;
+import com.robwilliamson.healthyesther.edit.MedicationEventActivity;
+import com.robwilliamson.healthyesther.edit.NoteEventActivity;
+import com.robwilliamson.healthyesther.edit.ScoreEventActivity;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EventListFragment;
 import com.robwilliamson.healthyesther.fragment.home.AbstractHomeFragment;
@@ -124,16 +124,16 @@ public class HomeActivity extends DbActivity
 
         switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(eventData.typeId)) {
             case MEAL:
-                intent = new Intent(this, MealActivity.class);
+                intent = new Intent(this, MealEventActivity.class);
                 break;
             case MEDICATION:
-                intent = new Intent(this, MedicationActivity.class);
+                intent = new Intent(this, MedicationEventActivity.class);
                 break;
             case HEALTH_SCORE:
-                intent = new Intent(this, ScoreActivity.class);
+                intent = new Intent(this, ScoreEventActivity.class);
                 break;
             case NOTE:
-                intent = new Intent(this, NoteActivity.class);
+                intent = new Intent(this, NoteEventActivity.class);
                 break;
         }
 

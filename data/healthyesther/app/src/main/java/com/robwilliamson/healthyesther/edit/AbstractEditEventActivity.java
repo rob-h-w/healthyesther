@@ -20,7 +20,7 @@ import com.robwilliamson.healthyesther.reminder.TimingManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractEditActivity extends DbActivity {
+public abstract class AbstractEditEventActivity extends DbActivity {
     protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
     protected abstract void onModifySelected(SQLiteDatabase db);
     protected abstract int getModifyFailedStringId();
@@ -72,7 +72,7 @@ public abstract class AbstractEditActivity extends DbActivity {
                 @Override
                 public void onQueryFailed(Throwable error) {
                     Toast.makeText(
-                            AbstractEditActivity.this,
+                            AbstractEditEventActivity.this,
                             getText(getModifyFailedStringId())
                             + "/n" + Utils.format(error),
                             Toast.LENGTH_LONG).show();

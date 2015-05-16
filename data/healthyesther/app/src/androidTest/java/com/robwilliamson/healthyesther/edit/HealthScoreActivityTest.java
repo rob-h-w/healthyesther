@@ -16,9 +16,9 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static org.hamcrest.Matchers.not;
 
-public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreActivity> {
+public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreEventActivity> {
     public HealthScoreActivityTest() {
-        super(ScoreActivity.class);
+        super(ScoreEventActivity.class);
     }
 
     @Override
