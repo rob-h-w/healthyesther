@@ -15,7 +15,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
 
 import java.util.ArrayList;
 
-public class NoteActivity extends AbstractAddActivity
+public class NoteActivity extends AbstractEditActivity
         implements EditEventFragment.Watcher, EditNoteFragment.Watcher {
     private final static String EVENT_TAG = "event";
     private final static String NOTE_TAG = "note";

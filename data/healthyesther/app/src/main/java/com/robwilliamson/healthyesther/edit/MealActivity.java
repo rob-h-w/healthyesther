@@ -14,7 +14,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.ArrayList;
 
-public class MealActivity extends AbstractAddActivity
+public class MealActivity extends AbstractEditActivity
         implements EditMealFragment.Watcher, EditEventFragment.Watcher {
     private final static String MEAL_TAG = "meal";
     private final static String EVENT_TAG = "event";

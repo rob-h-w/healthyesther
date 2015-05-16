@@ -14,7 +14,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 
 import java.util.ArrayList;
 
-public class MedicationActivity extends AbstractAddActivity
+public class MedicationActivity extends AbstractEditActivity
         implements EditMedicationFragment.Watcher, EditEventFragment.Watcher {
     private final static String MEDICATION_TAG = "medication";
     private final static String EVENT_TAG = "event";
