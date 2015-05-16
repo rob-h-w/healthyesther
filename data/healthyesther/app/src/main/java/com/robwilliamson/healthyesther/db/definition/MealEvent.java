@@ -1,9 +1,9 @@
 package com.robwilliamson.healthyesther.db.definition;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.data.MealEventData;
 
 /**
  * Table containing details of a meal event.
@@ -12,14 +12,12 @@ public class MealEvent extends Table {
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
         private Meal.Modification mMeal;
         private Event.Modification mEvent;
-        private Double mAmount;
-        private Long mUnitsId;
+        private MealEventData mValue;
 
         public Modification(Meal.Modification meal, Event.Modification event, Double amount, Long unitsId) {
             mMeal = meal;
             mEvent = event;
-            mAmount = amount;
-            mUnitsId = unitsId;
+            mValue = new MealEventData(meal, event, amount, unitsId);
         }
 
         @Override
@@ -29,7 +27,7 @@ public class MealEvent extends Table {
             mMeal.modify(db);
 
             Contract c = Contract.getInstance();
-            c.MEAL_EVENT.insert(db, mMeal.getRowId(), mEvent.getRowId(), mAmount, mUnitsId);
+            c.MEAL_EVENT.insert(db, mValue);
         }
     }
 
@@ -66,23 +64,7 @@ public class MealEvent extends Table {
 
     }
 
-    public void insert(SQLiteDatabase db, long meal_id, long event_id) {
-        insert(db, meal_id, event_id, null, null);
-    }
-
-    public void insert(SQLiteDatabase db, long meal_id, long event_id, Double amount, Long units_id) {
-        ContentValues values = new ContentValues();
-        values.put(MEAL_ID, meal_id);
-        values.put(EVENT_ID, event_id);
-
-        if (amount != null) {
-            values.put(AMOUNT, amount);
-        }
-
-        if (units_id != null) {
-            values.put(UNITS_ID, units_id);
-        }
-
-        insert(db, values);
+    public void insert(SQLiteDatabase db, MealEventData value) {
+        insert(db, value.asContentValues());
     }
 }

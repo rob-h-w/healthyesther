@@ -11,6 +11,7 @@ import android.util.Pair;
 
 import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.data.MealData;
+import com.robwilliamson.healthyesther.db.data.MealEventData;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 
 import org.joda.time.DateTime;
@@ -363,7 +364,7 @@ public final class Utils {
                 EventData eventData = new EventData(
                         time(year, month, day, hour), null, null, 1, name);
                 long eventId = c.EVENT.insert(db, eventData);
-                c.MEAL_EVENT.insert(db, mealId, eventId);
+                c.MEAL_EVENT.insert(db, new MealEventData(mealId, eventId, null, null));
             }
 
             private static void insertMedication(SQLiteDatabase db, int year, int month, int day, int hour, String medication, long medicationId) {
