@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.db.definition;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
