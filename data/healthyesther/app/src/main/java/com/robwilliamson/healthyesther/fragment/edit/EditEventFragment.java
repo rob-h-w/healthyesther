@@ -8,8 +8,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.Query;
@@ -24,8 +24,7 @@ import org.joda.time.format.DateTimeFormat;
  * Allows the user to edit an event's name and when properties.
  */
 public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> implements DateTimePickerListener {
-    private long mId = -1;
-    private DateTime mWhen;
+    private EventData mEvent = new EventData();
     private boolean mUserEditedEventName;
 
     @Override
@@ -34,6 +33,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     public interface Watcher {
+        EventData getIntentEventData();
     }
 
     public EditEventFragment() {
@@ -44,11 +44,22 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            mWhen = Utils.Time.localNow();
+        if (savedInstanceState == null || !savedInstanceState.containsKey(Event.TABLE_NAME)) {
+            final EventData[] event = new EventData[1];
+            callWatcher(new WatcherCaller<Watcher>() {
+                @Override
+                public void call(Watcher watcher) {
+                    event[0] = watcher.getIntentEventData();
+                }
+            });
+
+            if (event[0] == null) {
+                mEvent.when = Utils.Time.localNow();
+            } else {
+                mEvent = event[0];
+            }
         } else {
-            Contract c = Contract.getInstance();
-            mWhen = Utils.Time.unBundle(savedInstanceState, c.EVENT.getQualifiedName(Event.WHEN));
+            mEvent = EventData.from(savedInstanceState.getBundle(Event.TABLE_NAME), EventData.class);
         }
 
         updateUi();
@@ -63,7 +74,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
             public void onClick(View v) {
                 TimePickerFragment dialog = new TimePickerFragment();
                 dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), mWhen);
+                dialog.show(getFragmentManager(), mEvent.when);
             }
         });
 
@@ -72,7 +83,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
             public void onClick(View v) {
                 DatePickerFragment dialog = new DatePickerFragment();
                 dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), mWhen);
+                dialog.show(getFragmentManager(), mEvent.when);
             }
         });
 
@@ -106,13 +117,12 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Contract c = Contract.getInstance();
-        Utils.Time.bundle(outState, c.EVENT.getQualifiedName(Event.WHEN), mWhen);
+        outState.putBundle(Event.TABLE_NAME, mEvent.asBundle());
     }
 
     @Override
     public void onDateTimeChange(DateTime dateTime) {
-        mWhen = dateTime;
+        mEvent.when = dateTime;
         updateUi();
     }
 
@@ -123,7 +133,12 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     @Override
     public Modification getModification() {
-        return new Event.Modification(getName(), mWhen);
+        if (mEvent.created == null) {
+            mEvent.created = Utils.Time.localNow();
+        }
+
+        mEvent.modified = Utils.Time.localNow();
+        return new Event.Modification(mEvent);
     }
 
     @Override
@@ -150,6 +165,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     public void setName(String name) {
         getNameView().getText().clear();
         getNameView().getText().append(name);
+        mEvent.name = name;
         updateUi();
     }
 
@@ -158,38 +174,34 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     public void setWhen(DateTime when) {
-        mWhen = when;
+        mEvent.when = when;
         updateUi();
     }
 
     public DateTime getWhen() {
-        return mWhen;
+        return mEvent.when;
     }
 
-    public void setEventId(long id) {
-        mId = id;
-    }
-
-    public long getEventId() {
-        return mId;
-    }
-
-    public boolean isEventIdSet() {
-        return mId > 0;
-    }
 
     public boolean isEventNameEditedByUser() {
         return mUserEditedEventName;
     }
 
     private void updateUi() {
-        if (mWhen != null) {
-            if (getTimeButton() != null) {
-                getTimeButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.shortTime()));
+        if (mEvent != null) {
+            if (getNameView() != null) {
+                getNameView().getText().clear();
+                getNameView().getText().append(mEvent.name);
             }
 
-            if (getDateButton() != null) {
-                getDateButton().setText(Utils.Time.toString(mWhen, DateTimeFormat.mediumDate()));
+            if (mEvent.when != null) {
+                if (getTimeButton() != null) {
+                    getTimeButton().setText(Utils.Time.toString(mEvent.when, DateTimeFormat.shortTime()));
+                }
+
+                if (getDateButton() != null) {
+                    getDateButton().setText(Utils.Time.toString(mEvent.when, DateTimeFormat.mediumDate()));
+                }
             }
         }
 
