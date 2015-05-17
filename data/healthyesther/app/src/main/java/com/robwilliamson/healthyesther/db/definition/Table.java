@@ -66,15 +66,6 @@ public abstract class Table {
         return qualifier + "." + name;
     }
 
-    public static String[] getQualifiedName(String qualifier, String names[], int startIndex, int endIndex) {
-        for (int i = startIndex; i < endIndex + 1; i++) {
-            String name = names[i];
-            names[i] = getQualifiedName(qualifier, name);
-        }
-
-        return names;
-    }
-
     public String getQualifiedName(String name) {
         return getQualifiedName(getName(), name);
     }
