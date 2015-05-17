@@ -16,6 +16,10 @@ public abstract class Table {
         db.execSQL("drop table if exists " + getName());
     }
 
+    public String getForeignIdName() {
+        return getName() + "_id";
+    }
+
     protected long insert(SQLiteDatabase db, ContentValues values) {
         return db.insertOrThrow(getName(), null, values);
     }
