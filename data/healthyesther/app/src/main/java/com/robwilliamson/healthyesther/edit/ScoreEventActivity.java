@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
@@ -118,6 +119,11 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     @Override
     public void onQueryFailed(EditScoreDialogFragment fragment, Throwable error) {
         // TODO Report the error.
+    }
+
+    @Override
+    public void onUseIntentEventData(EventData eventData) {
+
     }
 
     @Override

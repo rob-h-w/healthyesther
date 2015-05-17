@@ -5,6 +5,7 @@ import android.util.Pair;
 import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Note;
 import com.robwilliamson.healthyesther.db.definition.NoteEvent;
@@ -83,5 +84,10 @@ public class NoteEventActivity extends AbstractEditEventActivity
     @Override
     public void onQueryFailed(EditNoteFragment fragment, Throwable error) {
         Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_notes), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUseIntentEventData(EventData eventData) {
+
     }
 }

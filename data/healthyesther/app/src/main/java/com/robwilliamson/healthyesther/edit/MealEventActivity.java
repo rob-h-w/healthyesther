@@ -5,6 +5,7 @@ import android.util.Pair;
 import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
@@ -75,5 +76,10 @@ public class MealEventActivity extends AbstractEditEventActivity
         return new QueryUser[] {
                 getMealFragment()
         };
+    }
+
+    @Override
+    public void onUseIntentEventData(EventData eventData) {
+        getMealFragment().setEventData(eventData);
     }
 }

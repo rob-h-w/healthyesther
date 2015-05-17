@@ -34,6 +34,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     public interface Watcher {
         EventData getIntentEventData();
+        void onUseIntentEventData(EventData eventData);
     }
 
     public EditEventFragment() {

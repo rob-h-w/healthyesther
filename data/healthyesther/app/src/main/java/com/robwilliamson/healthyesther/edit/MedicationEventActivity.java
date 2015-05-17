@@ -5,6 +5,7 @@ import android.util.Pair;
 import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.MedicationEvent;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
@@ -67,6 +68,11 @@ public class MedicationEventActivity extends AbstractEditEventActivity
     @Override
     public void onQueryFailed(EditMedicationFragment fragment, Throwable error) {
         Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUseIntentEventData(EventData eventData) {
+
     }
 
     private EditMedicationFragment getMedicationFragment() {
