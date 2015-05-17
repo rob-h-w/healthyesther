@@ -15,12 +15,13 @@ import com.robwilliamson.healthyesther.db.definition.Meal;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.GetAllMealsQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
 import java.util.HashMap;
 
 public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> {
 
-    public interface Watcher {
+    public interface Watcher extends QueuedQueryExecutor {
         void onFragmentUpdate(EditMealFragment fragment);
         void onQueryFailed(EditMealFragment fragment, Throwable error);
     }
