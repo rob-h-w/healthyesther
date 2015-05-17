@@ -192,7 +192,9 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         if (mEvent != null) {
             if (getNameView() != null) {
                 getNameView().getText().clear();
-                getNameView().getText().append(mEvent.name);
+                if (mEvent.name != null) {
+                    getNameView().getText().append(mEvent.name);
+                }
             }
 
             if (mEvent.when != null) {
