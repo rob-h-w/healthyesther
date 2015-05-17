@@ -14,6 +14,8 @@ public class MealEventData extends DataAbstraction {
     private Double mAmount;
     private Long mUnitsId;
 
+    public MealEventData() {}
+
     public MealEventData(long mealDataId, long eventDataId, Double amount, Long unitsId) {
         mMealIdProvider = new SimpleRowIdProvider(mealDataId);
         mEventIdProvider = new SimpleRowIdProvider(eventDataId);
