@@ -13,17 +13,26 @@ import android.widget.Toast;
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment.Watcher;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.reminder.TimingManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractEditEventActivity extends DbActivity {
+public abstract class AbstractEditEventActivity extends DbActivity implements Watcher {
+    private EventData mIntentEventData = null;
+
     protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
     protected abstract void onModifySelected(SQLiteDatabase db);
     protected abstract int getModifyFailedStringId();
+
+    @Override
+    public EventData getIntentEventData() {
+        return mIntentEventData;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +40,11 @@ public abstract class AbstractEditEventActivity extends DbActivity {
 
         if (savedInstanceState != null) {
             return;
+        }
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            mIntentEventData = EventData.from(extras, EventData.class);
         }
 
         resetFragments(getEditFragments(true));
