@@ -13,6 +13,8 @@ public class MealData extends DataAbstraction {
     public Long _id;
     public String name;
 
+    public MealData() {}
+
     public MealData(String name) {
         this(null, name);
     }
