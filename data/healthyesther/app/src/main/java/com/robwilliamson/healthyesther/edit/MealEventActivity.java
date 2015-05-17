@@ -68,7 +68,7 @@ public class MealEventActivity extends AbstractEditEventActivity
 
     @Override
     public void onQueryFailed(EditMealFragment fragment, Throwable error) {
-        Toast.makeText(MealEventActivity.this, getText(R.string.could_not_get_autocomplete_text_for_meals), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MealEventActivity.this, getText(R.string.could_not_get_autocomplete_text_for_meals) + "\n" + error.toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
