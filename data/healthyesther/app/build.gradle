@@ -15,8 +15,8 @@ android {
         applicationId "com.robwilliamson.healthyesther"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 17
-        versionName "0.8.0"
+        versionCode 18
+        versionName "0.8.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     packagingOptions {
