@@ -17,6 +17,8 @@ public class EventData extends DataAbstraction {
     public long typeId;
     public String name;
 
+    public EventData() {}
+
     public EventData(
             DateTime when,
             DateTime created,
