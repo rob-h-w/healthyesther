@@ -94,10 +94,6 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     }
 
     @Override
-    public void onQueryFailed(EditScoreEventFragment fragment, Throwable error) {
-    }
-
-    @Override
     public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
         Settings settings = Settings.INSTANCE;
         settings.hideScore(fragment.getScore());
@@ -111,7 +107,16 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     }
 
     @Override
+    public void onQueryFailed(EditScoreEventFragment fragment, Throwable error) {
+    }
+
+    @Override
     public void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error) {
+        // TODO Report the error.
+    }
+
+    @Override
+    public void onQueryFailed(EditScoreDialogFragment fragment, Throwable error) {
         // TODO Report the error.
     }
 
@@ -154,10 +159,5 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
             fragment.setModified(true);
         }
 
-    }
-
-    @Override
-    public void onQueryFailed(EditScoreDialogFragment fragment, Throwable error) {
-        // TODO Report the error.
     }
 }

@@ -58,6 +58,13 @@ public class MedicationEventActivity extends AbstractEditEventActivity
     }
 
     @Override
+    public QueryUser[] getQueryUsers() {
+        return new QueryUser[] {
+                getMedicationFragment()
+        };
+    }
+
+    @Override
     public void onQueryFailed(EditMedicationFragment fragment, Throwable error) {
         Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
     }
@@ -68,12 +75,5 @@ public class MedicationEventActivity extends AbstractEditEventActivity
 
     private EditEventFragment getEventFragment() {
         return getFragment(EVENT_TAG, EditEventFragment.class);
-    }
-
-    @Override
-    public QueryUser[] getQueryUsers() {
-        return new QueryUser[] {
-                getMedicationFragment()
-        };
     }
 }
