@@ -45,6 +45,10 @@ public class Event extends Table {
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
         private final EventData mValue;
 
+        public Modification(EventData value) {
+            mValue = value;
+        }
+
         public Modification(String name, DateTime when) {
             assertValidName(name);
 
