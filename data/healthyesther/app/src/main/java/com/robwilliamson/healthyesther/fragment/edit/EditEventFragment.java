@@ -58,6 +58,12 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
                 mEvent.when = Utils.Time.localNow();
             } else {
                 mEvent = event[0];
+                callWatcher(new WatcherCaller<Watcher>() {
+                    @Override
+                    public void call(Watcher watcher) {
+                        watcher.onUseIntentEventData(mEvent);
+                    }
+                });
             }
         } else {
             mEvent = EventData.from(savedInstanceState.getBundle(Event.TABLE_NAME), EventData.class);
