@@ -106,11 +106,6 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     }
 
     @Override
-    public void onFragmentUpdate(EditEventFragment fragment) {
-
-    }
-
-    @Override
     public void onFragmentUpdate(EditScoreEventGroupFragment fragment) {
 
     }

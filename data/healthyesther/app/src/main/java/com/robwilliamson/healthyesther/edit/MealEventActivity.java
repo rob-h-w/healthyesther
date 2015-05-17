@@ -71,11 +71,6 @@ public class MealEventActivity extends AbstractEditEventActivity
     }
 
     @Override
-    public void onFragmentUpdate(EditEventFragment fragment) {
-        invalidateOptionsMenu();
-    }
-
-    @Override
     public QueryUser[] getQueryUsers() {
         return new QueryUser[] {
                 getMealFragment()

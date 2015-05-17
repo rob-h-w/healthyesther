@@ -62,11 +62,6 @@ public class MedicationEventActivity extends AbstractEditEventActivity
         Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onFragmentUpdate(EditEventFragment fragment) {
-        invalidateOptionsMenu();
-    }
-
     private EditMedicationFragment getMedicationFragment() {
         return getFragment(MEDICATION_TAG, EditMedicationFragment.class);
     }

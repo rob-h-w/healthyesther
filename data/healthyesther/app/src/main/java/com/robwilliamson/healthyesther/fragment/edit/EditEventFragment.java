@@ -34,7 +34,6 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     public interface Watcher {
-        void onFragmentUpdate(EditEventFragment fragment);
     }
 
     public EditEventFragment() {

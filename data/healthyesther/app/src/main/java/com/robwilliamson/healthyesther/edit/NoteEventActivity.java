@@ -84,9 +84,4 @@ public class NoteEventActivity extends AbstractEditEventActivity
     public void onQueryFailed(EditNoteFragment fragment, Throwable error) {
         Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_notes), Toast.LENGTH_SHORT).show();
     }
-
-    @Override
-    public void onFragmentUpdate(EditEventFragment fragment) {
-        invalidateOptionsMenu();
-    }
 }
