@@ -80,7 +80,7 @@ public abstract class DataAbstraction {
         return mModified;
     }
 
-    public void setModified(boolean modified) {
+    protected void setModified(boolean modified) {
         this.mModified = modified;
     }
 }
