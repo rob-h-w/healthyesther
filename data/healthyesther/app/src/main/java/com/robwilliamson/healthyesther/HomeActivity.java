@@ -122,7 +122,7 @@ public class HomeActivity extends DbActivity
     public void onEventSelected(EventData eventData) {
         Intent intent = null;
 
-        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(eventData.typeId)) {
+        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(eventData.getTypeId())) {
             case MEAL:
                 intent = new Intent(this, MealEventActivity.class);
                 break;

@@ -41,13 +41,13 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     public void setEventData(EventData eventData) {
         this.mEventData = eventData;
 
-        if (mEventData._id != null && mEventData._id != 0L) {
+        if (mEventData.get_id() != null && mEventData.get_id() != 0L) {
             callWatcher(new WatcherCaller<Watcher>() {
                 @Override
                 public void call(Watcher watcher) {
                     ArrayList<Query> queries = new ArrayList<>();
                     queries.addAll(Arrays.asList(getQueries()));
-                    queries.add(new GetOneWithEventIdQuery(mEventData._id) {
+                    queries.add(new GetOneWithEventIdQuery(mEventData.get_id()) {
                         List<MealEventData> mMealEvents;
 
                         @Override

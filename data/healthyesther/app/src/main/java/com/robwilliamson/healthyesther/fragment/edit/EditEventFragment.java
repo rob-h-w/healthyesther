@@ -55,7 +55,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
             });
 
             if (event[0] == null) {
-                mEvent.when = Utils.Time.localNow();
+                mEvent.setWhen(Utils.Time.localNow());
             } else {
                 mEvent = event[0];
                 callWatcher(new WatcherCaller<Watcher>() {
@@ -81,7 +81,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
             public void onClick(View v) {
                 TimePickerFragment dialog = new TimePickerFragment();
                 dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), mEvent.when);
+                dialog.show(getFragmentManager(), mEvent.getWhen());
             }
         });
 
@@ -90,7 +90,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
             public void onClick(View v) {
                 DatePickerFragment dialog = new DatePickerFragment();
                 dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), mEvent.when);
+                dialog.show(getFragmentManager(), mEvent.getWhen());
             }
         });
 
@@ -129,7 +129,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     @Override
     public void onDateTimeChange(DateTime dateTime) {
-        mEvent.when = dateTime;
+        mEvent.setWhen(dateTime);
         updateUi();
     }
 
@@ -140,11 +140,11 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     @Override
     public Modification getModification() {
-        if (mEvent.created == null) {
-            mEvent.created = Utils.Time.localNow();
+        if (mEvent.getCreated() == null) {
+            mEvent.setCreated(Utils.Time.localNow());
         }
 
-        mEvent.modified = Utils.Time.localNow();
+        mEvent.setModified(Utils.Time.localNow());
         return new Event.Modification(mEvent);
     }
 
@@ -172,7 +172,7 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     public void setName(String name) {
         getNameView().getText().clear();
         getNameView().getText().append(name);
-        mEvent.name = name;
+        mEvent.setName(name);
         updateUi();
     }
 
@@ -181,12 +181,12 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
     }
 
     public void setWhen(DateTime when) {
-        mEvent.when = when;
+        mEvent.setWhen(when);
         updateUi();
     }
 
     public DateTime getWhen() {
-        return mEvent.when;
+        return mEvent.getWhen();
     }
 
 
@@ -198,18 +198,18 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         if (mEvent != null) {
             if (getNameView() != null) {
                 getNameView().getText().clear();
-                if (mEvent.name != null) {
-                    getNameView().getText().append(mEvent.name);
+                if (mEvent.getName() != null) {
+                    getNameView().getText().append(mEvent.getName());
                 }
             }
 
-            if (mEvent.when != null) {
+            if (mEvent.getWhen() != null) {
                 if (getTimeButton() != null) {
-                    getTimeButton().setText(Utils.Time.toString(mEvent.when, DateTimeFormat.shortTime()));
+                    getTimeButton().setText(Utils.Time.toString(mEvent.getWhen(), DateTimeFormat.shortTime()));
                 }
 
                 if (getDateButton() != null) {
-                    getDateButton().setText(Utils.Time.toString(mEvent.when, DateTimeFormat.mediumDate()));
+                    getDateButton().setText(Utils.Time.toString(mEvent.getWhen(), DateTimeFormat.mediumDate()));
                 }
             }
         }

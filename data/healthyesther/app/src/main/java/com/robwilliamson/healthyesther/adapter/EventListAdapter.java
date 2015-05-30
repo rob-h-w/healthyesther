@@ -66,7 +66,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
     @Override
     protected void populateTag(Tag tag, EventData data) {
         int iconId;
-        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(data.typeId)) {
+        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(data.getTypeId())) {
             case MEAL:
                 iconId = R.drawable.ic_food;
                 break;
@@ -87,10 +87,10 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
 
         tag.eventIcon.setImageResource(iconId);
 
-        tag.title.setText(data.name);
+        tag.title.setText(data.getName());
         tag.time.setText(
                 com.robwilliamson.healthyesther.db.Utils.Time.toString(
-                        data.when,
+                        data.getWhen(),
                         mDateTimeFormatter));
     }
 }

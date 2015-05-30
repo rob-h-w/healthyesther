@@ -56,24 +56,24 @@ public class Event extends Table {
         }
 
         public void setTypeId(long id) {
-            mValue.typeId = id;
+            mValue.setTypeId(id);
         }
 
         @Override
         public void modify(SQLiteDatabase db) {
-            if (mValue.typeId == 0) {
+            if (mValue.getTypeId() == 0) {
                 throw new IllegalArgumentException("An event must have a type.");
             }
 
             Contract c = Contract.getInstance();
             if (isRowIdSet()) {
                 // Update an existing event
-                mValue._id = getRowId();
+                mValue.set_id(getRowId());
                 c.EVENT.update(db, mValue);
             } else {
                 // Create a new event
                 setRowId(c.EVENT.insert(db, mValue));
-                mValue._id = getRowId();
+                mValue.set_id(getRowId());
             }
         }
     }
@@ -129,12 +129,12 @@ public class Event extends Table {
     }
 
     public int update(SQLiteDatabase db, EventData eventData) {
-        if (eventData._id == null) {
+        if (eventData.get_id() == null) {
             throw new IllegalArgumentException(
                     "An event must specify an ID before it's database entry can be updated.");
         }
 
-        return update(db, eventData.asContentValues(), eventData._id);
+        return update(db, eventData.asContentValues(), eventData.get_id());
     }
 
     private void replaceUtcWithCurrentLocale(SQLiteDatabase db) {

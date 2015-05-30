@@ -10,12 +10,12 @@ import com.robwilliamson.healthyesther.db.definition.Table;
 import org.joda.time.DateTime;
 
 public class EventData extends DataAbstraction {
-    public Long _id;
-    public DateTime when;
-    public DateTime created;
-    public DateTime modified;
-    public long typeId;
-    public String name;
+    private Long m_id;
+    private DateTime mWhen;
+    private DateTime mCreated;
+    private DateTime mModified;
+    private long mTypeId;
+    private String mName;
 
     public EventData() {}
 
@@ -41,54 +41,54 @@ public class EventData extends DataAbstraction {
             DateTime modified,
             long typeId,
             String name) {
-        this._id = (_id == null || _id <= 0L) ? null : _id;
-        this.when = when;
-        this.created = created;
-        this.modified = modified;
-        this.typeId = typeId;
-        this.name = name;
+        this.m_id = (_id == null || _id <= 0L) ? null : _id;
+        this.mWhen = when;
+        this.mCreated = created;
+        this.mModified = modified;
+        this.mTypeId = typeId;
+        this.mName = name;
     }
 
     @Override
     protected void asBundle(Bundle bundle) {
-        if (_id != null) {
-            bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event._ID, _id);
+        if (m_id != null) {
+            bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event._ID, m_id);
         }
 
-        bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(when));
+        bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(mWhen));
 
-        if (created != null) {
-            bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(created));
+        if (mCreated != null) {
+            bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(mCreated));
         }
 
-        if (modified != null) {
-            bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(modified));
+        if (mModified != null) {
+            bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(mModified));
         }
 
-        bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, typeId);
-        bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.NAME, name);
+        bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, mTypeId);
+        bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.NAME, mName);
     }
 
     @Override
     public ContentValues asContentValues() {
         ContentValues values = new ContentValues();
-        values.put(com.robwilliamson.healthyesther.db.definition.Event._ID, _id);
-        values.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(when));
+        values.put(com.robwilliamson.healthyesther.db.definition.Event._ID, m_id);
+        values.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(mWhen));
 
-        if (created == null) {
+        if (mCreated == null) {
             values.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(Utils.Time.localNow()));
         } else {
-            values.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(created));
+            values.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(mCreated));
         }
 
-        if (modified != null) {
-            values.put(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(modified));
-        } else if (created != null) {
+        if (mModified != null) {
+            values.put(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(mModified));
+        } else if (mCreated != null) {
             values.put(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(Utils.Time.localNow()));
         }
 
-        values.put(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, typeId);
-        values.put(com.robwilliamson.healthyesther.db.definition.Event.NAME, name);
+        values.put(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, mTypeId);
+        values.put(com.robwilliamson.healthyesther.db.definition.Event.NAME, mName);
 
         return values;
     }
@@ -102,37 +102,91 @@ public class EventData extends DataAbstraction {
         final int typeIdIndex = cursor.getColumnIndex(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID);
         final int nameIndex = cursor.getColumnIndex(com.robwilliamson.healthyesther.db.definition.Event.NAME);
 
-        this._id = cursor.getLong(rowIdIndex);
-        this.when = Utils.Time.fromDatabaseString(cursor.getString(whenIndex));
-        this.created = Utils.Time.fromDatabaseString(cursor.getString(createdIndex));
-        this.modified = Utils.Time.fromDatabaseString(cursor.getString(modifiedIndex));
-        this.typeId = cursor.getLong(typeIdIndex);
-        this.name = cursor.getString(nameIndex);
+        this.m_id = cursor.getLong(rowIdIndex);
+        this.mWhen = Utils.Time.fromDatabaseString(cursor.getString(whenIndex));
+        this.mCreated = Utils.Time.fromDatabaseString(cursor.getString(createdIndex));
+        this.mModified = Utils.Time.fromDatabaseString(cursor.getString(modifiedIndex));
+        this.mTypeId = cursor.getLong(typeIdIndex);
+        this.mName = cursor.getString(nameIndex);
     }
 
     @Override
     protected void populateFrom(Bundle bundle) {
         if (bundle.containsKey(com.robwilliamson.healthyesther.db.definition.Event._ID)) {
-            _id = bundle.getLong(com.robwilliamson.healthyesther.db.definition.Event._ID);
+            m_id = bundle.getLong(com.robwilliamson.healthyesther.db.definition.Event._ID);
         } else {
-            _id = null;
+            m_id = null;
         }
 
-        when = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.WHEN));
+        mWhen = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.WHEN));
 
         if (bundle.containsKey(com.robwilliamson.healthyesther.db.definition.Event.CREATED)) {
-            created = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.CREATED));
+            mCreated = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.CREATED));
         } else {
-            created = null;
+            mCreated = null;
         }
 
         if (bundle.containsKey(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED)) {
-            modified = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED));
+            mModified = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED));
         } else {
-            modified = null;
+            mModified = null;
         }
 
-        typeId = bundle.getLong(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID);
-        name = bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.NAME);
+        mTypeId = bundle.getLong(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID);
+        mName = bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.NAME);
+    }
+
+    public Long get_id() {
+        return m_id;
+    }
+
+    public void set_id(Long _id) {
+        this.m_id = _id;
+        setModified(true);
+    }
+
+    public DateTime getCreated() {
+        return mCreated;
+    }
+
+    public void setCreated(DateTime created) {
+        this.mCreated = created;
+        setModified(true);
+    }
+
+    public DateTime getModified() {
+        return mModified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.mModified = modified;
+        setModified(true);
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        this.mName = name;
+        setModified(true);
+    }
+
+    public long getTypeId() {
+        return mTypeId;
+    }
+
+    public void setTypeId(long typeId) {
+        this.mTypeId = typeId;
+        setModified(true);
+    }
+
+    public DateTime getWhen() {
+        return mWhen;
+    }
+
+    public void setWhen(DateTime when) {
+        this.mWhen = when;
+        setModified(true);
     }
 }
