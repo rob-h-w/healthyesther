@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DataAbstraction {
-    private static String IN_DB = "in database";
+    private static String IN_DB = DataAbstraction.class.getCanonicalName() + "in database";
+    private static String MODIFIED = DataAbstraction.class.getCanonicalName() + "modified";
 
     private boolean mInDb = false;
+    private boolean mModified = false;
 
     public static class BadDataAbstractionException extends RuntimeException {
         public BadDataAbstractionException(Throwable causedBy) {
@@ -21,6 +23,7 @@ public abstract class DataAbstraction {
     public static <T extends DataAbstraction> T from(Bundle bundle, Class<T> type) {
         T value = newInstance(type);
         value.setInDb(bundle.getBoolean(IN_DB));
+        value.setModified(bundle.getBoolean(MODIFIED));
         value.populateFrom(bundle);
         return value;
     }
@@ -55,6 +58,7 @@ public abstract class DataAbstraction {
     public Bundle asBundle() {
         Bundle bundle = new Bundle();
         bundle.putBoolean(IN_DB, isInDb());
+        bundle.putBoolean(MODIFIED, isModified());
         asBundle(bundle);
         return bundle;
     }
@@ -73,5 +77,13 @@ public abstract class DataAbstraction {
 
     public void setInDb(boolean mInDb) {
         this.mInDb = mInDb;
+    }
+
+    public boolean isModified() {
+        return mModified;
+    }
+
+    public void setModified(boolean mModified) {
+        this.mModified = mModified;
     }
 }
