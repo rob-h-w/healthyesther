@@ -182,8 +182,7 @@ public class HealthScore extends Table {
         }
 
         @Override
-        public Bundle asBundle() {
-            Bundle bundle = new Bundle();
+        protected void asBundle(Bundle bundle) {
             if (_id != null) {
                 bundle.putLong(_ID, _id);
             }
@@ -193,7 +192,6 @@ public class HealthScore extends Table {
             bundle.putBoolean(RANDOM_QUERY, randomQuery);
             bundle.putString(MIN_LABEL, minLabel);
             bundle.putString(MAX_LABEL, maxLabel);
-            return bundle;
         }
 
         @Override

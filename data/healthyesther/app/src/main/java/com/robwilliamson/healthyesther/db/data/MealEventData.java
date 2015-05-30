@@ -31,8 +31,7 @@ public class MealEventData extends DataAbstraction {
     }
 
     @Override
-    public Bundle asBundle() {
-        Bundle bundle = new Bundle();
+    protected void asBundle(Bundle bundle) {
         bundle.putLong(MealEvent.MEAL_ID, getMealId());
         bundle.putLong(MealEvent.EVENT_ID, getEventId());
 
@@ -43,8 +42,6 @@ public class MealEventData extends DataAbstraction {
         if (mUnitsId != null) {
             bundle.putLong(MealEvent.UNITS_ID, mUnitsId);
         }
-
-        return bundle;
     }
 
     @Override

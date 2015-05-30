@@ -33,15 +33,12 @@ public class MealData extends DataAbstraction {
     }
 
     @Override
-    public Bundle asBundle() {
-        Bundle bundle = new Bundle();
-
+    protected void asBundle(Bundle bundle) {
         if (_id != null) {
             bundle.putLong(Meal._ID, _id);
         }
 
         bundle.putString(Meal.NAME, name);
-        return bundle;
     }
 
     @Override

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DataAbstraction {
+    private static String IN_DB = "in database";
+
+    private boolean mInDb = false;
 
     public static class BadDataAbstractionException extends RuntimeException {
         public BadDataAbstractionException(Throwable causedBy) {
@@ -17,6 +20,7 @@ public abstract class DataAbstraction {
 
     public static <T extends DataAbstraction> T from(Bundle bundle, Class<T> type) {
         T value = newInstance(type);
+        value.setInDb(bundle.getBoolean(IN_DB));
         value.populateFrom(bundle);
         return value;
     }
@@ -29,6 +33,8 @@ public abstract class DataAbstraction {
                 T value = newInstance(type);
 
                 value.populateFrom(cursor);
+
+                value.setInDb(true);
 
                 values.add(value);
             }
@@ -46,11 +52,26 @@ public abstract class DataAbstraction {
         }
     }
 
-    public abstract Bundle asBundle();
+    public Bundle asBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(IN_DB, isInDb());
+        asBundle(bundle);
+        return bundle;
+    }
+
+    protected abstract void asBundle(Bundle bundle);
 
     public abstract ContentValues asContentValues();
 
     protected abstract void populateFrom(Cursor cursor);
 
     protected abstract void populateFrom(Bundle bundle);
+
+    public boolean isInDb() {
+        return mInDb;
+    }
+
+    public void setInDb(boolean mInDb) {
+        this.mInDb = mInDb;
+    }
 }

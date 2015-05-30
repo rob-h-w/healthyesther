@@ -50,8 +50,7 @@ public class EventData extends DataAbstraction {
     }
 
     @Override
-    public Bundle asBundle() {
-        Bundle bundle = new Bundle();
+    protected void asBundle(Bundle bundle) {
         if (_id != null) {
             bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event._ID, _id);
         }
@@ -68,7 +67,6 @@ public class EventData extends DataAbstraction {
 
         bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, typeId);
         bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.NAME, name);
-        return bundle;
     }
 
     @Override
