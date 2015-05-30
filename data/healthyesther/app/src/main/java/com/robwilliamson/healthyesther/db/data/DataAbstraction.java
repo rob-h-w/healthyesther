@@ -34,11 +34,8 @@ public abstract class DataAbstraction {
         if (cursor.moveToFirst()) {
             do {
                 T value = newInstance(type);
-
-                value.populateFrom(cursor);
-
                 value.setInDb(true);
-
+                value.populateFrom(cursor);
                 values.add(value);
             }
             while(cursor.moveToNext());
@@ -75,15 +72,15 @@ public abstract class DataAbstraction {
         return mInDb;
     }
 
-    public void setInDb(boolean mInDb) {
-        this.mInDb = mInDb;
+    public void setInDb(boolean inDb) {
+        this.mInDb = inDb;
     }
 
     public boolean isModified() {
         return mModified;
     }
 
-    public void setModified(boolean mModified) {
-        this.mModified = mModified;
+    public void setModified(boolean modified) {
+        this.mModified = modified;
     }
 }
