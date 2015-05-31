@@ -89,4 +89,22 @@ public class MealEventData extends DataAbstraction {
     public long getMealId() {
         return mMealIdProvider.getRowId();
     }
+
+    public Double getAmount() {
+        return mAmount;
+    }
+
+    public void setAmount(Double mAmount) {
+        setModified(true);
+        this.mAmount = mAmount;
+    }
+
+    public Long getUnitsId() {
+        return mUnitsId;
+    }
+
+    public void setUnitsId(Long mUnitsId) {
+        setModified(true);
+        this.mUnitsId = mUnitsId;
+    }
 }
