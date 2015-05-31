@@ -73,11 +73,11 @@ public class MealData extends DataAbstraction {
         mName = bundle.getString(Meal.NAME);
     }
 
-    public Long getM_id() {
+    public Long get_id() {
         return m_id;
     }
 
-    public void setM_id(Long m_id) {
+    public void set_id(Long m_id) {
         setModified(true);
         this.m_id = m_id;
     }
