@@ -10,8 +10,8 @@ import com.robwilliamson.healthyesther.db.definition.Meal;
 public class MealData extends DataAbstraction {
     public static class BadNameLength extends IllegalArgumentException {}
 
-    public Long _id;
-    public String name;
+    private Long m_id;
+    private String mName;
 
     public MealData() {}
 
@@ -20,12 +20,12 @@ public class MealData extends DataAbstraction {
     }
 
     public MealData(Long _id, String name) {
-        this._id = _id == null || _id == 0L ? null : _id;
+        this.m_id = _id == null || _id == 0L ? null : _id;
 
         if (!validateName(name)) {
             throw new BadNameLength();
         }
-        this.name = name;
+        this.mName = name;
     }
 
     public static boolean validateName(String name) {
@@ -34,22 +34,22 @@ public class MealData extends DataAbstraction {
 
     @Override
     protected void asBundle(Bundle bundle) {
-        if (_id != null) {
-            bundle.putLong(Meal._ID, _id);
+        if (m_id != null) {
+            bundle.putLong(Meal._ID, m_id);
         }
 
-        bundle.putString(Meal.NAME, name);
+        bundle.putString(Meal.NAME, mName);
     }
 
     @Override
     public ContentValues asContentValues() {
         ContentValues contentValues = new ContentValues();
 
-        if (_id != null) {
-            contentValues.put(Meal._ID, _id);
+        if (m_id != null) {
+            contentValues.put(Meal._ID, m_id);
         }
 
-        contentValues.put(Meal.NAME, name);
+        contentValues.put(Meal.NAME, mName);
         return contentValues;
     }
 
@@ -58,18 +58,36 @@ public class MealData extends DataAbstraction {
         final int _idIndex = cursor.getColumnIndex(Meal._ID);
         final int nameIndex = cursor.getColumnIndex(Meal.NAME);
 
-        _id = cursor.getLong(_idIndex);
-        name = cursor.getString(nameIndex);
+        m_id = cursor.getLong(_idIndex);
+        mName = cursor.getString(nameIndex);
     }
 
     @Override
     protected void populateFrom(Bundle bundle) {
-        _id = null;
+        m_id = null;
 
         if (bundle.containsKey(Meal._ID)) {
-            _id = bundle.getLong(Meal._ID);
+            m_id = bundle.getLong(Meal._ID);
         }
 
-        name = bundle.getString(Meal.NAME);
+        mName = bundle.getString(Meal.NAME);
+    }
+
+    public Long getM_id() {
+        return m_id;
+    }
+
+    public void setM_id(Long m_id) {
+        setModified(true);
+        this.m_id = m_id;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        setModified(true);
+        this.mName = name;
     }
 }

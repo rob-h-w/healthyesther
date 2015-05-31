@@ -113,8 +113,8 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
                                 if (getNameView() != null) {
                                     getNameView().getText().clear();
 
-                                    if (mMealData.name != null) {
-                                        getNameView().getText().append(mMealData.name);
+                                    if (mMealData.getName() != null) {
+                                        getNameView().getText().append(mMealData.getName());
                                     }
                                 }
                             }
