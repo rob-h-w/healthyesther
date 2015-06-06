@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.db.definition;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.data.MealData;
 
 /**
@@ -16,16 +17,30 @@ public class Meal extends Table {
             mValue = new MealData(name);
         }
 
-        public Modification(long id) {
-            setRowId(id);
-            mValue = null;
+        public Modification(long id, String name) {
+            mValue = new MealData(name);
+            mValue.set_id(id);
+            mValue.setModified(false);
+        }
+
+        public Modification(MealData value) {
+            setRowId(value.get_id());
+            mValue = value;
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
-            if (getRowId() == null) {
-                setRowId(Contract.getInstance().MEAL.insert(db, mValue));
-            }
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            Contract.getInstance().MEAL.update(db, mValue.asContentValues(), mValue.get_id());
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().MEAL.insert(db, mValue);
         }
     }
 

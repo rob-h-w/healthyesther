@@ -13,6 +13,7 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.data.DataAbstraction;
+import com.robwilliamson.healthyesther.db.data.HealthScoreEventData;
 import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
@@ -80,7 +81,6 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     @Override
     public Modification getModification() {
         return new EventModification() {
-
             @Override
             public void modify(SQLiteDatabase db) {
                 for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
@@ -91,15 +91,32 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                     HealthScore.Modification editScoreModification = (HealthScore.Modification) fragment.getModification();
 
                     editScoreModification.modify(db);
+                    HealthScoreEventData data = new HealthScoreEventData();
+                    data.setValue(fragment.getValue());
 
                     HealthScoreEvent.Modification eventModification = new HealthScoreEvent.Modification(
                             editScoreModification,
                             getEventModification(),
-                            fragment.getValue());
+                            data);
                     eventModification.modify(db);
 
                     setRowId(eventModification.getRowId());
                 }
+            }
+
+            @Override
+            protected DataAbstraction getData() {
+                return null;
+            }
+
+            @Override
+            protected void update(SQLiteDatabase db) {
+
+            }
+
+            @Override
+            protected long insert(SQLiteDatabase db) {
+                return 0;
             }
         };
     }

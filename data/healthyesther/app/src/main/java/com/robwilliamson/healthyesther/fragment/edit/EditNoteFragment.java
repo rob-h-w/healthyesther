@@ -7,6 +7,7 @@ import android.widget.EditText;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.NoteData;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.definition.Note;
 import com.robwilliamson.healthyesther.db.use.GetAllNotesQuery;
@@ -93,7 +94,11 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
             return new Note.Modification(name, getNote());
         }
 
-        return new Note.Modification(id, getNote());
+        NoteData data = new NoteData();
+        data.set_id(id);
+        data.setNote(getNote());
+
+        return new Note.Modification(data);
     }
 
     @Override

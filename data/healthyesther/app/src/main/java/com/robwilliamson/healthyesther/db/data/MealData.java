@@ -79,6 +79,7 @@ public class MealData extends DataAbstraction {
 
     public void set_id(Long m_id) {
         setModified(true);
+        setInDb(true);
         this.m_id = m_id;
     }
 

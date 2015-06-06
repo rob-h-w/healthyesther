@@ -50,19 +50,30 @@ public class HealthScore extends Table {
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
-            if (getRowId() == null) {
-                setRowId(Contract.getInstance().HEALTH_SCORE.insert(
-                        db, mScore));
-                mScore._id = getRowId();
-            } else {
-                if (!mEnabled) {
-                    return;
-                }
+        protected void onRowIdChanged(Long rowId) {
+            // TODO: find a way to avoid setting ids here - this is bad because we don't know if the
+            // row was really created.
+            mScore._id = rowId;
+        }
 
-                mScore._id = getRowId();
-                Contract.getInstance().HEALTH_SCORE.update(db, mScore);
+        @Override
+        protected DataAbstraction getData() {
+            return mScore;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            if (!mEnabled) {
+                return;
             }
+
+            mScore._id = getRowId();
+            Contract.getInstance().HEALTH_SCORE.update(db, mScore);
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().HEALTH_SCORE.insert(db, mScore);
         }
     }
 

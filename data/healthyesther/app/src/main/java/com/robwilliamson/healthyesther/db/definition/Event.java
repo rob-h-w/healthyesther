@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.data.EventData;
 
 import org.joda.time.DateTime;
@@ -60,20 +61,33 @@ public class Event extends Table {
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
+        protected void onRowIdChanged(Long rowId) {
+            // TODO: find a way to avoid setting ids here - this is bad because we don't know if the
+            // row was really created.
+            mValue.set_id(rowId);
+        }
+
+        @Override
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            preDbWriteCheck();
+            mValue.set_id(getRowId());
+            Contract.getInstance().EVENT.update(db, mValue);
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            preDbWriteCheck();
+            return Contract.getInstance().EVENT.insert(db, mValue);
+        }
+
+        private void preDbWriteCheck() {
             if (mValue.getTypeId() == 0) {
                 throw new IllegalArgumentException("An event must have a type.");
-            }
-
-            Contract c = Contract.getInstance();
-            if (isRowIdSet()) {
-                // Update an existing event
-                mValue.set_id(getRowId());
-                c.EVENT.update(db, mValue);
-            } else {
-                // Create a new event
-                setRowId(c.EVENT.insert(db, mValue));
-                mValue.set_id(getRowId());
             }
         }
     }

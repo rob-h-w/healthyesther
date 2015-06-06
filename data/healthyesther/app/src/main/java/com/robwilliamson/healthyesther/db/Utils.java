@@ -86,6 +86,14 @@ public final class Utils {
         return string;
     }
 
+    public static boolean equals(Object left, Object right) {
+        if (left == null && right == null) {
+            return true;
+        }
+
+        return !(left == null || right == null) && left.equals(right);
+    }
+
     public static class Time {
         private static final String LOG_TAG = Time.class.getSimpleName();
         private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";

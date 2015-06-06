@@ -5,32 +5,47 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
+import com.robwilliamson.healthyesther.db.data.HealthScoreEventData;
 
 public class HealthScoreEvent extends Table {
 
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
+        private final HealthScoreEventData mValue;
         private final HealthScore.Modification mScore;
         private final Event.Modification mEvent;
-        private final int mValue;
 
         public Modification(
                 HealthScore.Modification score,
                 Event.Modification event,
-                int value) {
+                HealthScoreEventData value) {
             Utils.nonnull(score, event);
             mScore = score;
             mEvent = event;
             mValue = value;
+            mEvent.setTypeId(EVENT_TYPE_ID);
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
-            setRowId(
-                    Contract.getInstance().HEALTH_SCORE_EVENT.insert(
-                            db,
-                            mScore.getRowId(),
-                            mEvent.getRowId(),
-                            mValue));
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            final String where = HEALTH_SCORE_ID + " = " + mScore.getRowId() +
+                    " AND " +
+                    EVENT_ID + " = " + mEvent.getRowId();
+            Contract.getInstance().HEALTH_SCORE_EVENT.update(db, mValue.asContentValues(), where, 1, 1);
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().HEALTH_SCORE_EVENT.insert(
+                    db,
+                    mScore.getRowId(),
+                    mEvent.getRowId(),
+                    mValue.getValue());
         }
     }
 

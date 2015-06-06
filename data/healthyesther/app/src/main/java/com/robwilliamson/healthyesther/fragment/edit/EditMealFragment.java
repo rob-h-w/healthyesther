@@ -208,7 +208,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
         Long id = getSuggestionId(name);
         if (id != null) {
-            return new Meal.Modification(id);
+            return new Meal.Modification(id, name);
         }
 
         return new Meal.Modification(name);

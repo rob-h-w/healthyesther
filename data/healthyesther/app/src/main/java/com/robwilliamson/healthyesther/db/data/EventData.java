@@ -10,14 +10,16 @@ import com.robwilliamson.healthyesther.db.definition.Table;
 import org.joda.time.DateTime;
 
 public class EventData extends DataAbstraction {
-    private Long m_id;
+    private IdData mId;
     private DateTime mWhen;
     private DateTime mCreated;
     private DateTime mModified;
     private long mTypeId;
     private String mName;
 
-    public EventData() {}
+    public EventData() {
+        mId = new IdData(this, com.robwilliamson.healthyesther.db.definition.Event._ID);
+    }
 
     public EventData(
             DateTime when,
@@ -41,7 +43,8 @@ public class EventData extends DataAbstraction {
             DateTime modified,
             long typeId,
             String name) {
-        this.m_id = (_id == null || _id <= 0L) ? null : _id;
+        mId = new IdData(this, com.robwilliamson.healthyesther.db.definition.Event._ID);
+        mId.set_id(_id);
         this.mWhen = when;
         this.mCreated = created;
         this.mModified = modified;
@@ -51,9 +54,7 @@ public class EventData extends DataAbstraction {
 
     @Override
     protected void asBundle(Bundle bundle) {
-        if (m_id != null) {
-            bundle.putLong(com.robwilliamson.healthyesther.db.definition.Event._ID, m_id);
-        }
+        mId.asBundle(bundle);
 
         bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(mWhen));
 
@@ -72,7 +73,7 @@ public class EventData extends DataAbstraction {
     @Override
     public ContentValues asContentValues() {
         ContentValues values = new ContentValues();
-        values.put(com.robwilliamson.healthyesther.db.definition.Event._ID, m_id);
+        values.putAll(mId.asContentValues());
         values.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(mWhen));
 
         if (mCreated == null) {
@@ -102,7 +103,7 @@ public class EventData extends DataAbstraction {
         final int typeIdIndex = cursor.getColumnIndex(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID);
         final int nameIndex = cursor.getColumnIndex(com.robwilliamson.healthyesther.db.definition.Event.NAME);
 
-        this.m_id = cursor.getLong(rowIdIndex);
+        mId.set_id(cursor.getLong(rowIdIndex));
         this.mWhen = Utils.Time.fromDatabaseString(cursor.getString(whenIndex));
         this.mCreated = Utils.Time.fromDatabaseString(cursor.getString(createdIndex));
         this.mModified = Utils.Time.fromDatabaseString(cursor.getString(modifiedIndex));
@@ -112,11 +113,7 @@ public class EventData extends DataAbstraction {
 
     @Override
     protected void populateFrom(Bundle bundle) {
-        if (bundle.containsKey(com.robwilliamson.healthyesther.db.definition.Event._ID)) {
-            m_id = bundle.getLong(com.robwilliamson.healthyesther.db.definition.Event._ID);
-        } else {
-            m_id = null;
-        }
+        mId.populateFrom(bundle);
 
         mWhen = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.WHEN));
 
@@ -137,12 +134,11 @@ public class EventData extends DataAbstraction {
     }
 
     public Long get_id() {
-        return m_id;
+        return mId.get_id();
     }
 
     public void set_id(Long _id) {
-        this.m_id = _id;
-        setModified(true);
+        mId.set_id(_id);
     }
 
     public DateTime getCreated() {

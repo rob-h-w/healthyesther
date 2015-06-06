@@ -3,31 +3,53 @@ package com.robwilliamson.healthyesther.db.definition;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.data.MealEventData;
 
 /**
  * Table containing details of a meal event.
  */
 public class MealEvent extends Table {
-    public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
+    public static class Modification extends
+            com.robwilliamson.healthyesther.db.definition.Modification {
         private Meal.Modification mMeal;
         private Event.Modification mEvent;
         private MealEventData mValue;
 
-        public Modification(Meal.Modification meal, Event.Modification event, Double amount, Long unitsId) {
+        public Modification(
+                Meal.Modification meal,
+                Event.Modification event,
+                Double amount,
+                Long unitsId) {
             mMeal = meal;
             mEvent = event;
             mValue = new MealEventData(meal, event, amount, unitsId);
+            mEvent.setTypeId(EVENT_TYPE_ID);
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
+        protected void onStartModify(SQLiteDatabase db) {
             mEvent.setTypeId(MealEvent.EVENT_TYPE_ID);
             mEvent.modify(db);
             mMeal.modify(db);
+        }
 
-            Contract c = Contract.getInstance();
-            c.MEAL_EVENT.insert(db, mValue);
+        @Override
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            final String where = MEAL_ID + " = " + mValue.getMealId() +
+                    " AND " +
+                    EVENT_ID + " = " + mValue.getEventId();
+            Contract.getInstance().MEAL_EVENT.update(db, mValue.asContentValues(), where, 1, 1);
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().MEAL_EVENT.insert(db, mValue);
         }
     }
 
@@ -64,7 +86,7 @@ public class MealEvent extends Table {
 
     }
 
-    public void insert(SQLiteDatabase db, MealEventData value) {
-        insert(db, value.asContentValues());
+    public long insert(SQLiteDatabase db, MealEventData value) {
+        return insert(db, value.asContentValues());
     }
 }

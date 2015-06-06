@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
+import com.robwilliamson.healthyesther.db.data.NoteData;
 
 public class Note extends Table {
     public boolean validateName(String name) {
@@ -14,28 +16,32 @@ public class Note extends Table {
 
     public static class BadNameLength extends IllegalArgumentException {}
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
+        private final NoteData mValue;
 
-        private final String mName;
-        private final String mNote;
-
-        public Modification(long id, String note) {
-            setRowId(id);
-            mNote = note;
-            mName = null;
+        public Modification(NoteData value) {
+            setRowId(value.get_id());
+            mValue = value;
         }
 
         public Modification(String name, String note) {
-            mName = name;
-            mNote = note;
+            mValue = new NoteData();
+            mValue.setName(name);
+            mValue.setNote(note);
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
-            if (getRowId() == null) {
-                setRowId(Contract.getInstance().NOTE.insert(db, mName, mNote));
-            } else {
-                Contract.getInstance().NOTE.update(db, getRowId(), mNote);
-            }
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            Contract.getInstance().NOTE.update(db, mValue.asContentValues(), mValue.get_id());
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().NOTE.insert(db, mValue.asContentValues());
         }
     }
 

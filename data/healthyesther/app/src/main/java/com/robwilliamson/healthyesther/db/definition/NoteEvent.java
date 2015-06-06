@@ -4,27 +4,34 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
+import com.robwilliamson.healthyesther.db.data.NoteEventData;
 
 public class NoteEvent extends Table {
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
-
-        private final Note.Modification mNote;
-        private final Event.Modification mEvent;
+        private final NoteEventData mValue;
 
         public Modification(Note.Modification note, Event.Modification event) {
-            this.mNote = note;
-            mEvent = event;
+            mValue = new NoteEventData();
+            mValue.setEventIdProvider(event);
+            mValue.setNoteIdProvider(note);
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
-            mEvent.setTypeId(EVENT_TYPE_ID);
-            mEvent.modify(db);
-            mNote.modify(db);
+        protected DataAbstraction getData() {
+            return mValue;
+        }
 
-            if (getRowId() == null) {
-                setRowId(Contract.getInstance().NOTE_EVENT.insert(db, mNote.getRowId(), mEvent.getRowId()));
-            }
+        @Override
+        protected void update(SQLiteDatabase db) {
+            final String where = EVENT_ID + " = " + mValue.getEventIdProvider().getRowId() +
+                    NOTE_ID + " = " + mValue.getNoteIdProvider().getRowId();
+            Contract.getInstance().NOTE_EVENT.update(db, mValue.asContentValues(), where, 1, 1);
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().NOTE_EVENT.insert(db, mValue.asContentValues());
         }
     }
 

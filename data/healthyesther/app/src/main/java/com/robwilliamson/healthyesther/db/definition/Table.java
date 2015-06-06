@@ -33,7 +33,11 @@ public abstract class Table {
     }
 
     protected int update(SQLiteDatabase db, ContentValues values, String idName, long id, int minRows, int maxRows) {
-        int rows = db.update(getName(), values, idName + " = " + String.valueOf(id), null);
+        return update(db, values, idName + " = " + String.valueOf(id), minRows, maxRows);
+    }
+
+    protected int update(SQLiteDatabase db, ContentValues values, String where, int minRows, int maxRows) {
+        int rows = db.update(getName(), values, where, null);
 
         if (rows < minRows) {
             throw new SQLiteException("Expected update to affect at least " + minRows + " rows, but it actually affected " + rows + " rows.");

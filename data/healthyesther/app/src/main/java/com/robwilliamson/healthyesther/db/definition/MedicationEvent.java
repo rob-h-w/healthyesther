@@ -4,28 +4,41 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.Contract;
+import com.robwilliamson.healthyesther.db.data.DataAbstraction;
+import com.robwilliamson.healthyesther.db.data.MedicationEventData;
 
 public class MedicationEvent extends Table {
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
 
         private final Event.Modification mEvent;
         private final Medication.Modification mMedication;
+        private final MedicationEventData mValue;
 
         public Modification(Medication.Modification medication,
                             Event.Modification event) {
             mMedication = medication;
             mEvent = event;
+            mValue = new MedicationEventData();
         }
 
         @Override
-        public void modify(SQLiteDatabase db) {
+        protected void onStartModify(SQLiteDatabase db) {
             mMedication.modify(db);
             mEvent.setTypeId(EVENT_TYPE_ID);
             mEvent.modify(db);
-            Contract.getInstance().MEDICATION_EVENT.insert(
-                    db,
-                    mMedication.getRowId(),
-                    mEvent.getRowId());
+        }
+
+        @Override
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {}
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().MEDICATION_EVENT.insert(db, mMedication.getRowId(), mEvent.getRowId());
         }
     }
 
@@ -57,10 +70,10 @@ public class MedicationEvent extends Table {
 
     }
 
-    public void insert(SQLiteDatabase db, long medicationId, long eventId) {
+    public long insert(SQLiteDatabase db, long medicationId, long eventId) {
         ContentValues values = new ContentValues();
         values.put(MEDICATION_ID, medicationId);
         values.put(EVENT_ID, eventId);
-        insert(db, values);
+        return insert(db, values);
     }
 }

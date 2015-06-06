@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.data.MedicationData;
 import com.robwilliamson.healthyesther.db.definition.Medication;
 import com.robwilliamson.healthyesther.db.definition.MedicationName;
 import com.robwilliamson.healthyesther.db.definition.Modification;
@@ -99,7 +100,10 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
             return new Medication.Modification(id);
         }
 
-        return new Medication.Modification(name);
+        MedicationData data = new MedicationData();
+        data.setName(name);
+
+        return new Medication.Modification(data);
     }
 
     @Override
