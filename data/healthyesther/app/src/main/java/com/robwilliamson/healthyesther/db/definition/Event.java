@@ -48,6 +48,7 @@ public class Event extends Table {
 
         public Modification(EventData value) {
             mValue = value;
+            setRowId(mValue.get_id());
         }
 
         public Modification(String name, DateTime when) {

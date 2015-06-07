@@ -16,7 +16,7 @@ public abstract class Modification implements RowIdProvider {
         return mRowId;
     }
 
-    protected final void setRowId(long rowId) {
+    protected final void setRowId(Long rowId) {
         if (Utils.equals(mRowId, rowId)) {
             return;
         }

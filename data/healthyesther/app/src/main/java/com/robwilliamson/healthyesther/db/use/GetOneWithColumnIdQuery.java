@@ -32,7 +32,7 @@ public abstract class GetOneWithColumnIdQuery extends GetWithColumnIdQuery {
     @Override
     public void postQueryProcessing(Cursor cursor) {
         if (cursor.getCount() > 1) {
-            throw new UnexpectedResultsCountException(1, cursor.getCount());
+            throw new UnexpectedResultsCountException(1, cursor.getCount(), cursor);
         }
 
         postQueryProcessOne(cursor);
