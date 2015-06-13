@@ -6,24 +6,6 @@ dependencies {
 }
 
 task(sqlite2Java, type: JavaExec) {
-    System.console().printf("hello\n")
-    Set<File> files = ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files.files
-    System.console().printf("files count = " + files.size() + "\n")
-    File jarFile = null
-    for (File file : files) {
-        System.console().printf(file.absolutePath + "\n")
-        if (file.directory) {
-            continue
-        }
-
-        final String filename = file.getAbsolutePath()
-        String extension = filename.substring(filename.lastIndexOf('.') + 1)
-        System.console().printf(extension + "\n")
-        if (extension == "jar") {
-            jarFile = file
-            break
-        }
-    }
     classpath = ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files
     args = [
             getRootDir().absolutePath + "/db_definition",
