@@ -1,0 +1,3 @@
+This contains JSON exported directly from SQLiteStudio. This already parses the syntax tree a little.
+
+Future database versions should be produced in SQLiteStudio and exported in the same way. Alternatively, a copy of the most recent version of this DB JSON should be made, and modified appropriately.

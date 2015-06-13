@@ -1,0 +1,579 @@
+{
+    "type": "database",
+    "name": "health",
+    "objects": [
+        {
+            "type": "table",
+            "database": null,
+            "name": "event",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE event ( \n    _id      INTEGER      PRIMARY KEY AUTOINCREMENT,\n    [when]   DATETIME     NOT NULL\n                          DEFAULT ( CURRENT_TIMESTAMP ),\n    created  DATETIME     NOT NULL\n                          DEFAULT ( CURRENT_TIMESTAMP ),\n    modified DATETIME,\n    type_id               REFERENCES event_type ( _id ) ON DELETE CASCADE\n                                                        ON UPDATE CASCADE\n                          NOT NULL,\n    name     TEXT( 140 )  DEFAULT ( '' ) \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY AUTOINCREMENT"
+                        }
+                    ]
+                },
+                {
+                    "name": "when",
+                    "type": "DATETIME",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                          "
+                        },
+                        {
+                            "type": "DEFAULT",
+                            "definition": "DEFAULT ( CURRENT_TIMESTAMP )"
+                        }
+                    ]
+                },
+                {
+                    "name": "created",
+                    "type": "DATETIME",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                          "
+                        },
+                        {
+                            "type": "DEFAULT",
+                            "definition": "DEFAULT ( CURRENT_TIMESTAMP )"
+                        }
+                    ]
+                },
+                {
+                    "name": "modified",
+                    "type": "DATETIME"
+                },
+                {
+                    "name": "type_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES event_type ( _id ) ON DELETE CASCADE\n                                                        ON UPDATE CASCADE\n                          "
+                        },
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "DEFAULT",
+                            "definition": "DEFAULT ( '' ) \n"
+                        }
+                    ]
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "health_score",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY AUTOINCREMENT"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                              "
+                        },
+                        {
+                            "type": "UNIQUE",
+                            "definition": "UNIQUE"
+                        }
+                    ]
+                },
+                {
+                    "name": "best_value",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "random_query",
+                    "type": "BOOLEAN",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                              "
+                        },
+                        {
+                            "type": "DEFAULT",
+                            "definition": "DEFAULT ( 0 )"
+                        }
+                    ]
+                },
+                {
+                    "name": "min_label",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "max_label",
+                    "type": "TEXT"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "android_metadata",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE android_metadata (locale TEXT)",
+            "columns": [
+                {
+                    "name": "locale",
+                    "type": "TEXT"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "medication_name",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE medication_name ( \n    medication_id             REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    name          TEXT( 50 )  NOT NULL,\n    PRIMARY KEY ( medication_id, name ) \n)",
+            "columns": [
+                {
+                    "name": "medication_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY ( medication_id, name ) \n"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "medication_event",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE medication_event ( \n    medication_id  NOT NULL\n                   REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                 ON UPDATE CASCADE,\n    event_id       NOT NULL\n                   REFERENCES event ( _id ) ON DELETE CASCADE\n                                            ON UPDATE CASCADE,\n    PRIMARY KEY ( medication_id, event_id ) \n)",
+            "columns": [
+                {
+                    "name": "medication_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                   "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                 ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "event_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                   "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES event ( _id ) ON DELETE CASCADE\n                                            ON UPDATE CASCADE"
+                        }
+                    ]
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY ( medication_id, event_id ) \n"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "event_type",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE event_type ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 30 )  NOT NULL\n                     UNIQUE,\n    icon TEXT \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY AUTOINCREMENT"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                     "
+                        },
+                        {
+                            "type": "UNIQUE",
+                            "definition": "UNIQUE"
+                        }
+                    ]
+                },
+                {
+                    "name": "icon",
+                    "type": "TEXT"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "medication",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE medication ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 50 )  NOT NULL \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY AUTOINCREMENT"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL \n"
+                        }
+                    ]
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "health_score_event",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE health_score_event ( \n    health_score_id         NOT NULL\n                            REFERENCES health_score ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    event_id                NOT NULL\n                            REFERENCES event ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    score           INTEGER,\n    PRIMARY KEY ( health_score_id, event_id ) \n)",
+            "columns": [
+                {
+                    "name": "health_score_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                            "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES health_score ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "event_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                            "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES event ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "score",
+                    "type": "INTEGER"
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY ( health_score_id, event_id ) \n"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "note",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE note ( \n    _id  INTEGER      PRIMARY KEY,\n    name TEXT( 140 )  NOT NULL,\n    note TEXT \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL"
+                        }
+                    ]
+                },
+                {
+                    "name": "note",
+                    "type": "TEXT"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "units",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE units ( \n    _id       INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name      TEXT( 40 )  NOT NULL\n                          UNIQUE,\n    si_factor REAL \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY AUTOINCREMENT"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                          "
+                        },
+                        {
+                            "type": "UNIQUE",
+                            "definition": "UNIQUE"
+                        }
+                    ]
+                },
+                {
+                    "name": "si_factor",
+                    "type": "REAL"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "meal",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE meal ( \n    _id  INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 140 )  NOT NULL\n                      UNIQUE \n)",
+            "columns": [
+                {
+                    "name": "_id",
+                    "type": "INTEGER",
+                    "constraints": [
+                        {
+                            "type": "PRIMARY KEY",
+                            "definition": "PRIMARY KEY AUTOINCREMENT"
+                        }
+                    ]
+                },
+                {
+                    "name": "name",
+                    "type": "TEXT",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                      "
+                        },
+                        {
+                            "type": "UNIQUE",
+                            "definition": "UNIQUE \n"
+                        }
+                    ]
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "note_event",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE note_event ( \n    note_id   NOT NULL\n              REFERENCES note ( _id ) ON DELETE CASCADE\n                                      ON UPDATE CASCADE,\n    event_id  NOT NULL\n              REFERENCES event ( _id ) ON DELETE CASCADE\n                                       ON UPDATE CASCADE,\n    PRIMARY KEY ( note_id, event_id ) \n)",
+            "columns": [
+                {
+                    "name": "note_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n              "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES note ( _id ) ON DELETE CASCADE\n                                      ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "event_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n              "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES event ( _id ) ON DELETE CASCADE\n                                       ON UPDATE CASCADE"
+                        }
+                    ]
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY ( note_id, event_id ) \n"
+                }
+            ],
+            "rows": [
+            ]
+        },
+        {
+            "type": "table",
+            "database": null,
+            "name": "meal_event",
+            "withoutRowId": true,
+            "ddl": "CREATE TABLE meal_event ( \n    meal_id       NOT NULL\n                  REFERENCES meal ( _id ) ON DELETE CASCADE\n                                          ON UPDATE CASCADE,\n    event_id      NOT NULL\n                  REFERENCES event ( _id ) ON DELETE CASCADE\n                                           ON UPDATE CASCADE,\n    amount   REAL,\n    units_id      REFERENCES units ( _id ) ON DELETE SET NULL\n                                           ON UPDATE CASCADE,\n    PRIMARY KEY ( meal_id, event_id ) \n)",
+            "columns": [
+                {
+                    "name": "meal_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                  "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES meal ( _id ) ON DELETE CASCADE\n                                          ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "event_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "NOT NULL",
+                            "definition": "NOT NULL\n                  "
+                        },
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES event ( _id ) ON DELETE CASCADE\n                                           ON UPDATE CASCADE"
+                        }
+                    ]
+                },
+                {
+                    "name": "amount",
+                    "type": "REAL"
+                },
+                {
+                    "name": "units_id",
+                    "type": "",
+                    "constraints": [
+                        {
+                            "type": "FOREIGN KEY",
+                            "definition": "REFERENCES units ( _id ) ON DELETE SET NULL\n                                           ON UPDATE CASCADE"
+                        }
+                    ]
+                }
+            ],
+            "constraints": [
+                {
+                    "type": "PRIMARY KEY",
+                    "definition": "PRIMARY KEY ( meal_id, event_id ) \n"
+                }
+            ],
+            "rows": [
+            ]
+        }
+    ]
+}
