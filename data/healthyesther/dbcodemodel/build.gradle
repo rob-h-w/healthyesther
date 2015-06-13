@@ -5,7 +5,7 @@ dependencies {
     compile 'com.sun.codemodel:codemodel:2.6'
 }
 
-task(sqlite2Java, type: JavaExec) {
+task(sqlite2Java, type: JavaExec, dependsOn: assemble) {
     classpath = ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files
     args = [
             getRootDir().absolutePath + "/db_definition",
