@@ -27,6 +27,10 @@ public final class Main {
                 sourceFolder,
                 destinationFolder,
                 destinationPackage);
+
+        Source source = new Source(sourceFolder);
+        Destination destination = new Destination(destinationFolder, destinationPackage);
+        CodeGenerator generator = new CodeGenerator(source, destination);
     }
 
     private static void printUsage() {
