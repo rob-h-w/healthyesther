@@ -23,7 +23,7 @@ public final class Main {
         String destinationFolder = args[1];
         String destinationPackage = args[2];
 
-        System.out.printf("sourceFolder = %s\ndestinationFolder = %s\ndestinationPackage = %s\n",
+        Log.v("sourceFolder = %s\ndestinationFolder = %s\ndestinationPackage = %s\n",
                 sourceFolder,
                 destinationFolder,
                 destinationPackage);
