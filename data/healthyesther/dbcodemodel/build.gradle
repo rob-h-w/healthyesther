@@ -25,5 +25,10 @@ task(sqlite2Java, type: JavaExec) {
         }
     }
     classpath = ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files
+    args = [
+            getRootDir().absolutePath + "/db_definition",
+            getRootDir().absolutePath + "/app/src/main/java",
+            "com.robwilliamson.healthyesther.db.generated"
+    ]
     main = 'com.robwilliamson.healthyesther.Main'
 }
