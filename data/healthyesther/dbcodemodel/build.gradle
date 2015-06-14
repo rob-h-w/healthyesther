@@ -1,17 +1,31 @@
 apply plugin: 'java'
 
+def dbDefinition = getRootDir().absolutePath + "/db_definition"
+def appJava = getRootDir().absolutePath + "/app/src/main/java"
+def generatedPackage = "com.robwilliamson.healthyesther.db.generated"
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.sun.codemodel:codemodel:2.6'
     compile 'com.google.code.gson:gson:2.3.1'
 }
 
-task(sqlite2Java, type: JavaExec, dependsOn: assemble) {
-    classpath = ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files
+task(clearGenerated, type: Delete) {
+    def generatedFilesPath = appJava + File.separator + generatedPackage.replace(".", File.separator)
+    doFirst {
+        println("removing " + generatedFilesPath)
+    }
+
+    delete generatedFilesPath
+}
+
+task(sqlite2Java, type: JavaExec, dependsOn: [assemble, clearGenerated]) {
+    classpath = sourceSets.main.runtimeClasspath
+    classpath += ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files
     args = [
-            getRootDir().absolutePath + "/db_definition",
-            getRootDir().absolutePath + "/app/src/main/java",
-            "com.robwilliamson.healthyesther.db.generated"
+            dbDefinition,
+            appJava,
+            generatedPackage
     ]
     main = 'com.robwilliamson.healthyesther.Main'
 }
