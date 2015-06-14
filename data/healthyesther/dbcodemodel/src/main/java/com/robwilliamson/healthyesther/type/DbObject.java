@@ -9,4 +9,8 @@ public class DbObject {
     private Constraint[] constraints;
 
     public DbObject() {}
+
+    public boolean isTable() {
+        return type.equals("table");
+    }
 }
