@@ -2,6 +2,9 @@ package com.robwilliamson.healthyesther;
 
 import com.google.gson.Gson;
 import com.robwilliamson.healthyesther.type.Database;
+import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JPackage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +12,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 class CodeGenerator {
+    public static class GenerationException extends RuntimeException {
+        public GenerationException(Throwable t) {
+            super(t);
+        }
+    }
+
     private final Source mSource;
     private final Destination mDestination;
 
@@ -19,6 +28,15 @@ class CodeGenerator {
 
     public void generate() {
         Database dbFromJson = parseDatabase();
+        JCodeModel codeModel = new JCodeModel();
+        JPackage rootPackage = codeModel._package(mDestination.getPackage());
+        try {
+            com.robwilliamson.healthyesther.generator.Database database =
+                    new com.robwilliamson.healthyesther.generator.Database(dbFromJson, rootPackage);
+            codeModel.build(mDestination.getFolder());
+        } catch (JClassAlreadyExistsException | IOException e) {
+            throw new GenerationException(e);
+        }
     }
 
     private Database parseDatabase() {

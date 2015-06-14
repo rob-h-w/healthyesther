@@ -2,7 +2,8 @@ package com.robwilliamson.healthyesther;
 
 import java.io.File;
 
-class Destination {
+public class Destination {
+
     public static class DestinationException extends RuntimeException {
         public DestinationException(String message, Object ... parameters) {
             super(String.format(message, parameters));
@@ -19,5 +20,13 @@ class Destination {
         if (!mFolder.exists() && !mFolder.mkdirs()) {
             throw new DestinationException("Could not create %s", destinationFolder);
         }
+    }
+
+    public File getFolder() {
+        return mFolder;
+    }
+
+    public String getPackage() {
+        return mPackage;
     }
 }
