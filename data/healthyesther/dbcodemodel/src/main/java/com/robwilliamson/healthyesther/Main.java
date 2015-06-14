@@ -31,6 +31,7 @@ public final class Main {
         Source source = new Source(sourceFolder);
         Destination destination = new Destination(destinationFolder, destinationPackage);
         CodeGenerator generator = new CodeGenerator(source, destination);
+        generator.generate();
     }
 
     private static void printUsage() {

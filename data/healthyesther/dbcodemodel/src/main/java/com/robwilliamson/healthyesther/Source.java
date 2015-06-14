@@ -2,10 +2,15 @@ package com.robwilliamson.healthyesther;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class Source {
     public static class SourceMissingException extends RuntimeException {
+        public SourceMissingException(String message) {
+            super(message);
+        }
+
         public SourceMissingException(String message, Throwable cause) {
             super(message, cause);
         }
@@ -22,6 +27,10 @@ class Source {
         }
 
         Log.v("Using source JSON file: %s", mJsonFile.getAbsolutePath());
+    }
+
+    public File getJsonFile() {
+        return mJsonFile;
     }
 
     private File getMostRecentDbJsonFile(String sourceDirectory) throws FileNotFoundException {
