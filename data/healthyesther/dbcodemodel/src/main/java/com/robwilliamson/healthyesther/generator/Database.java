@@ -14,6 +14,7 @@ public class Database implements ClassGenerator {
             JPackage jPackage) throws JClassAlreadyExistsException {
         mDb = database;
         mClass = jPackage._class(0, getName());
+        Default.configuration(mClass);
     }
 
     @Override
