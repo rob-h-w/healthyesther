@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther;
 
 import com.google.gson.Gson;
+import com.robwilliamson.healthyesther.generator.DbTransactable;
 import com.robwilliamson.healthyesther.type.Database;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
@@ -31,6 +32,7 @@ class CodeGenerator {
         JCodeModel codeModel = new JCodeModel();
         JPackage rootPackage = codeModel._package(mDestination.getPackage());
         try {
+            DbTransactable transactable = new DbTransactable(rootPackage);
             com.robwilliamson.healthyesther.generator.Database database =
                     new com.robwilliamson.healthyesther.generator.Database(dbFromJson, rootPackage);
             codeModel.build(mDestination.getFolder());
