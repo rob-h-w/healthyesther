@@ -8,7 +8,7 @@ package com.robwilliamson.healthyesther.db.generated;
  * 
  */
 public final class MealTable
-    extends BaseTable
+    extends Table
 {
 
 

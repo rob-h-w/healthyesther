@@ -8,7 +8,7 @@ package com.robwilliamson.healthyesther.db.generated;
  * 
  */
 public final class MedicationNameTable
-    extends BaseTable
+    extends Table
 {
 
 

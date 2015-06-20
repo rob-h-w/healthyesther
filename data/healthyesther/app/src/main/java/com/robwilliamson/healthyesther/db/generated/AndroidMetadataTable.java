@@ -8,7 +8,7 @@ package com.robwilliamson.healthyesther.db.generated;
  * 
  */
 public final class AndroidMetadataTable
-    extends BaseTable
+    extends Table
 {
 
 

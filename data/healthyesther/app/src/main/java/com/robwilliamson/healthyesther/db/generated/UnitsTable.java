@@ -8,7 +8,7 @@ package com.robwilliamson.healthyesther.db.generated;
  * 
  */
 public final class UnitsTable
-    extends BaseTable
+    extends Table
 {
 
 
