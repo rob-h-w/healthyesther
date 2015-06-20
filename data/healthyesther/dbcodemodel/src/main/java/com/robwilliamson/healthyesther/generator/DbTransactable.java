@@ -1,20 +1,17 @@
 package com.robwilliamson.healthyesther.generator;
 
 import com.sun.codemodel.JClassAlreadyExistsException;
-import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JMods;
+import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-public class DbTransactable implements ClassGenerator {
-    private final JDefinedClass mClass;
+@ClassGeneratorFeatures(name = "DbTransactable", parameterName = "transaction")
+public class DbTransactable extends BaseClassGenerator {
 
     public DbTransactable(JPackage jPackage) throws JClassAlreadyExistsException {
-        mClass = jPackage._interface("DbTransactable");
-        Default.configuration(mClass);
-    }
+        setJClass(jPackage._interface(JMod.PUBLIC, getName()));
 
-    @Override
-    public JDefinedClass getJClass() {
-        return mClass;
+        JMethod execSQL = getJClass().method(0, model().ref(String.class), "execSQL");
+        execSQL.param(model().ref(String.class), "sql");
     }
 }

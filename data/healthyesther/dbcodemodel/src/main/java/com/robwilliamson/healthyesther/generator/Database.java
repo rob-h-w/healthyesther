@@ -1,32 +1,81 @@
 package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.semantic.*;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-public class Database implements ClassGenerator {
+@ClassGeneratorFeatures(name = "Database", parameterName = "Db")
+public class Database extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.type.Database mDb;
-    private final JDefinedClass mClass;
+    private final DbTransactable mTransactable;
+
+    private final JFieldVar mFileName;
+
+    private final JMethod mConstructor;
+    private final JMethod mCreate;
 
     public Database(
             com.robwilliamson.healthyesther.type.Database database,
+            DbTransactable transactable,
             JPackage jPackage) throws JClassAlreadyExistsException {
         mDb = database;
-        mClass = jPackage._class(0, getName());
-        Default.configuration(mClass);
-        mClass.mods().setFinal(true);
-        JMethod constructor = mClass.constructor(0);
-        constructor.mods().setPublic();
+        mTransactable = transactable;
+
+        setJClass(makeClass(jPackage));
+
+        mFileName = makeStaticFileName();
+
+        mConstructor = makeConstructor();
+        mCreate = makeCreateMethod();
+        makeTables();
     }
 
     @Override
-    public JDefinedClass getJClass() {
-        return mClass;
+    public String getName() {
+        return Strings.capitalize(mDb.getName()) + super.getName();
     }
 
-    private String getName() {
-        return Strings.capitalize(mDb.getName()) + "Database";
+    @Override
+    public String getPreferredParameterName() {
+        return mDb.getName() + super.getPreferredParameterName();
+    }
+
+    private JDefinedClass makeClass(JPackage jPackage) throws JClassAlreadyExistsException {
+        JDefinedClass clazz = jPackage._class(JMod.PUBLIC | JMod.FINAL, getName());
+        Default.configuration(clazz);
+        return clazz;
+    }
+
+    private JFieldVar makeStaticFileName() {
+        return getJClass().field(JMod.STATIC | JMod.FINAL | JMod.PUBLIC, model().ref(String.class), "FILE_NAME", JExpr.lit(mDb.getName() + ".db3"));
+    }
+
+    private JMethod makeConstructor() {
+        JMethod constructor = getJClass().constructor(JMod.PUBLIC);
+        return constructor;
+    }
+
+    private JMethod makeCreateMethod() {
+        JMethod create = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "create");
+        create.param(mTransactable.getJClass(), mTransactable.getPreferredParameterName());
+        return create;
+    }
+
+    private void makeTables() throws JClassAlreadyExistsException {
+        for (com.robwilliamson.healthyesther.semantic.Table table : mDb.getTables()) {
+            Table jTable = new Table(getJClass().getPackage(), table);
+
+            getJClass().field(
+                    JMod.PUBLIC | JMod.FINAL | JMod.STATIC,
+                    jTable.getJClass(),
+                    Strings.constantName(jTable.getPreferredParameterName()),
+                    JExpr._new(jTable.getJClass()));
+        }
     }
 }

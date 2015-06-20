@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.type;
 
+import java.util.Arrays;
+
 public class DbObject {
     private String type;
     private String name;
@@ -12,5 +14,18 @@ public class DbObject {
 
     public boolean isTable() {
         return type.equals("table");
+    }
+
+    public void copyTo(DbObject other) {
+        other.type = type;
+        other.name = name;
+        other.withoutRowId = withoutRowId;
+        other.ddl = ddl;
+        other.columns = columns == null ? null : Arrays.copyOf(columns, columns.length);
+        other.constraints = constraints == null ? null : Arrays.copyOf(constraints, constraints.length);
+    }
+
+    public String getName() {
+        return name;
     }
 }

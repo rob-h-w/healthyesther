@@ -34,7 +34,10 @@ class CodeGenerator {
         try {
             DbTransactable transactable = new DbTransactable(rootPackage);
             com.robwilliamson.healthyesther.generator.Database database =
-                    new com.robwilliamson.healthyesther.generator.Database(dbFromJson, rootPackage);
+                    new com.robwilliamson.healthyesther.generator.Database(
+                            dbFromJson,
+                            transactable,
+                            rootPackage);
             codeModel.build(mDestination.getFolder());
         } catch (JClassAlreadyExistsException | IOException e) {
             throw new GenerationException(e);
