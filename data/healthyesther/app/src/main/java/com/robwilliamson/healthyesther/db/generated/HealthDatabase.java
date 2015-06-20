@@ -10,6 +10,7 @@ package com.robwilliamson.healthyesther.db.generated;
 public final class HealthDatabase {
 
     public final static String FILE_NAME = "health.db3";
+    public final static BaseTable[] TABLES = new BaseTable[] {EVENT_TABLE, HEALTH_SCORE_TABLE, ANDROID_METADATA_TABLE, MEDICATION_NAME_TABLE, MEDICATION_EVENT_TABLE, EVENT_TYPE_TABLE, MEDICATION_TABLE, HEALTH_SCORE_EVENT_TABLE, NOTE_TABLE, UNITS_TABLE, MEAL_TABLE, NOTE_EVENT_TABLE, MEAL_EVENT_TABLE };
     public final static EventTable EVENT_TABLE = new EventTable();
     public final static HealthScoreTable HEALTH_SCORE_TABLE = new HealthScoreTable();
     public final static AndroidMetadataTable ANDROID_METADATA_TABLE = new AndroidMetadataTable();

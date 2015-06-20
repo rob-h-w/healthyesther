@@ -2,9 +2,11 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.semantic.*;
+import com.sun.codemodel.JArray;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
@@ -65,17 +67,22 @@ public class Database extends BaseClassGenerator {
         JPackage jPackage = getJClass().getPackage();
         BaseTable baseTable = new BaseTable(jPackage);
 
+        JArray tablesList = JExpr.newArray(baseTable.getJClass());
+        JFieldVar tablesListField = getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, baseTable.getJClass().array(), "TABLES", tablesList);
+
         for (com.robwilliamson.healthyesther.semantic.Table table : mDb.getTables()) {
             Table jTable = new Table(
                     jPackage,
                     table,
                     baseTable);
 
-            getJClass().field(
+            JFieldVar tableField = getJClass().field(
                     JMod.PUBLIC | JMod.FINAL | JMod.STATIC,
                     jTable.getJClass(),
                     Strings.constantName(jTable.getPreferredParameterName()),
                     JExpr._new(jTable.getJClass()));
+
+            tablesList.add(tableField);
         }
     }
 }
