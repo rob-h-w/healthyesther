@@ -62,8 +62,14 @@ public class Database extends BaseClassGenerator {
     }
 
     private void makeTables() throws JClassAlreadyExistsException {
+        JPackage jPackage = getJClass().getPackage();
+        BaseTable baseTable = new BaseTable(jPackage);
+
         for (com.robwilliamson.healthyesther.semantic.Table table : mDb.getTables()) {
-            Table jTable = new Table(getJClass().getPackage(), table);
+            Table jTable = new Table(
+                    jPackage,
+                    table,
+                    baseTable);
 
             getJClass().field(
                     JMod.PUBLIC | JMod.FINAL | JMod.STATIC,
