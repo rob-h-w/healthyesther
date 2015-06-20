@@ -39,6 +39,10 @@ public abstract class BaseClassGenerator implements ClassOwner {
 
     protected void setJClass(JDefinedClass clazz) {
         mClass = clazz;
+
+        if (mClass != null) {
+            Default.configuration(mClass);
+        }
     }
 
     public String getName() {

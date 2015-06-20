@@ -27,7 +27,7 @@ public class Database extends BaseClassGenerator {
         mDb = database;
         mTransactable = transactable;
 
-        setJClass(makeClass(jPackage));
+        setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
 
         mFileName = makeStaticFileName();
 
@@ -44,12 +44,6 @@ public class Database extends BaseClassGenerator {
     @Override
     public String getPreferredParameterName() {
         return mDb.getName() + super.getPreferredParameterName();
-    }
-
-    private JDefinedClass makeClass(JPackage jPackage) throws JClassAlreadyExistsException {
-        JDefinedClass clazz = jPackage._class(JMod.PUBLIC | JMod.FINAL, getName());
-        Default.configuration(clazz);
-        return clazz;
     }
 
     private JFieldVar makeStaticFileName() {
