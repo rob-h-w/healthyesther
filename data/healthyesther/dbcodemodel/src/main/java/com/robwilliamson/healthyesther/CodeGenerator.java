@@ -12,12 +12,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-class CodeGenerator {
+public class CodeGenerator {
     public static class GenerationException extends RuntimeException {
         public GenerationException(Throwable t) {
             super(t);
         }
     }
+
+    public static final AsyncExecutor ASYNC = new AsyncExecutor();
 
     private final Source mSource;
     private final Destination mDestination;
@@ -32,13 +34,17 @@ class CodeGenerator {
         JCodeModel codeModel = new JCodeModel();
         JPackage rootPackage = codeModel._package(mDestination.getPackage());
         try {
-            DbTransactable transactable = new DbTransactable(rootPackage);
-            com.robwilliamson.healthyesther.generator.Database database =
-                    new com.robwilliamson.healthyesther.generator.Database(
-                            dbFromJson,
-                            transactable,
-                            rootPackage);
-            codeModel.build(mDestination.getFolder());
+            synchronized (ASYNC.lock()) {
+                DbTransactable transactable = new DbTransactable(rootPackage);
+                com.robwilliamson.healthyesther.generator.Database database =
+                        new com.robwilliamson.healthyesther.generator.Database(
+                                dbFromJson,
+                                transactable,
+                                rootPackage);
+                codeModel.build(mDestination.getFolder());
+            }
+
+            ASYNC.execute();
         } catch (JClassAlreadyExistsException | IOException e) {
             throw new GenerationException(e);
         }

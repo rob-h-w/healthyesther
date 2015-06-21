@@ -143,6 +143,8 @@ public class Table extends DbObject {
         return null;
     }
 
+    private com.robwilliamson.healthyesther.generator.Table mGenerator;
+
     public Table(DbObject table) {
         if (!table.isTable()) {
             throw new IllegalArgumentException("The DbObject must be a table object.");
@@ -176,5 +178,13 @@ public class Table extends DbObject {
         }
 
         return tableDependencies;
+    }
+
+    public void setGenerator(com.robwilliamson.healthyesther.generator.Table generator) {
+        mGenerator = generator;
+    }
+
+    public com.robwilliamson.healthyesther.generator.Table getmGenerator() {
+        return mGenerator;
     }
 }

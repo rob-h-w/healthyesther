@@ -9,7 +9,7 @@ public class Database {
     private String name;
     private DbObject[] objects;
 
-    private volatile transient List<Table> mTables;
+    private transient List<Table> mTables;
 
     public Database() {}
 
