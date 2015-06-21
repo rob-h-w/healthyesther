@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.Strings;
 import com.sun.codemodel.JClassAlreadyExistsException;
-import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 

@@ -28,4 +28,12 @@ public class DbObject {
     public String getName() {
         return name;
     }
+
+    public Column[] getColumns() {
+        if (columns == null) {
+            return new Column[] {};
+        }
+
+        return columns;
+    }
 }
