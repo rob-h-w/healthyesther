@@ -68,4 +68,16 @@ public class Column {
     public Table getTable() {
         return mTable;
     }
+
+    public boolean isNotNull() {
+        return mNotNull;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public boolean isForeignKey() {
+        return !mColumnDependencies.isEmpty();
+    }
 }

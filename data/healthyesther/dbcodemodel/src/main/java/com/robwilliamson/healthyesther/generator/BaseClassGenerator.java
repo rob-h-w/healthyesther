@@ -5,8 +5,14 @@ import com.sun.codemodel.JDefinedClass;
 
 public abstract class BaseClassGenerator implements ClassOwner {
     public static class MissingAnnotationException extends RuntimeException {
+        private static String message = "Class generators must have ClassGeneratorFeatures annotations!";
+
+        public MissingAnnotationException() {
+            super(message);
+        }
+
         public MissingAnnotationException(Throwable e) {
-            super("Class generators must have ClassGeneratorFeatures annotations!", e);
+            super(message, e);
         }
     }
 
@@ -19,7 +25,13 @@ public abstract class BaseClassGenerator implements ClassOwner {
     }
 
     protected static ClassGeneratorFeatures getFeatures(Class<?> clazz) {
-        return clazz.getAnnotation(ClassGeneratorFeatures.class);
+        ClassGeneratorFeatures features = clazz.getAnnotation(ClassGeneratorFeatures.class);
+
+        if (features == null) {
+            throw new MissingAnnotationException();
+        }
+
+        return features;
     }
 
     private JDefinedClass mClass;

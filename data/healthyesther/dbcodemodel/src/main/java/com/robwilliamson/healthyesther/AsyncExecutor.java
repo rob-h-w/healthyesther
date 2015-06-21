@@ -6,28 +6,22 @@ import java.util.Set;
 public class AsyncExecutor {
     private final Object mLock = new Object();
     private final Set<Runnable> mTasks = new HashSet<>();
-    private volatile boolean mExecuting;
-
-    /**
-     * Synchronize on this before attempting to schedule tasks.
-     * @return Object to synchronize on.
-     */
-    public Object lock() {
-        return mLock;
-    }
 
     /**
      * Executes all extant tasks.
      */
-    public synchronized void execute() {
-        synchronized (mLock) {
-            mExecuting = true;
+    public void execute() {
+        Set<Runnable> tasks;
 
-            for (Runnable task : mTasks) {
-                task.run();
+        while(!mTasks.isEmpty()) {
+            synchronized (mLock) {
+                tasks = new HashSet<>(mTasks);
+                mTasks.clear();
             }
 
-            mExecuting = false;
+            for (Runnable task : tasks) {
+                task.run();
+            }
         }
     }
 
@@ -35,11 +29,9 @@ public class AsyncExecutor {
      * Schedule a task for subsequent execution.
      * @param task Task that will be run later.
      */
-    public synchronized void schedule(Runnable task) {
-        if (mExecuting) {
-            throw new IllegalStateException("Attempt to add a task while executing tasks");
+    public void schedule(Runnable task) {
+        synchronized (mLock) {
+            mTasks.add(task);
         }
-
-        mTasks.add(task);
     }
 }

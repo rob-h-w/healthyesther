@@ -15,6 +15,7 @@ import java.util.Set;
 public class Table extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.semantic.Table mTable;
     private final List<Table> mDependencies = new ArrayList<>();
+    private Row mRow;
 
     public Table(
             JPackage jPackage,
@@ -39,10 +40,10 @@ public class Table extends BaseClassGenerator {
         return mTable;
     }
 
-    public void init(Map<String, Table> tableGeneratorsByName) {
-        Set<com.robwilliamson.healthyesther.semantic.Table> tablesDependedOn = mTable.getTablesDependedOn();
+    public void init(Map<String, Table> tableGeneratorsByName) throws JClassAlreadyExistsException {
+        Set<com.robwilliamson.healthyesther.semantic.Table> dependencies = mTable.getTableDependencies();
 
-        for (com.robwilliamson.healthyesther.semantic.Table table : tablesDependedOn) {
+        for (com.robwilliamson.healthyesther.semantic.Table table : dependencies) {
             Table dependency = tableGeneratorsByName.get(table.getName());
 
             if (dependency == null) {
@@ -50,6 +51,12 @@ public class Table extends BaseClassGenerator {
             }
 
             mDependencies.add(dependency);
+        }
+
+        if (getTable().hasDependencies()) {
+            mRow = new JoinedRow(this);
+        } else {
+            mRow = new SimpleRow(this);
         }
 
         CodeGenerator.ASYNC.schedule(new Runnable() {
@@ -61,5 +68,6 @@ public class Table extends BaseClassGenerator {
     }
 
     private void build() {
+        mRow.init();
     }
 }

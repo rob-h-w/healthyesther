@@ -95,7 +95,7 @@ public class Table extends DbObject {
         while(remainingTries > 0) {
             for (Table table : tables) {
                 if (!table.hasDependencies() ||
-                        sortedTables.containsAll(table.getTablesDependedOn())) {
+                        sortedTables.containsAll(table.getTableDependencies())) {
                     sortedTables.add(table);
                 }
             }
@@ -169,7 +169,7 @@ public class Table extends DbObject {
         return false;
     }
 
-    public Set<Table> getTablesDependedOn() {
+    public Set<Table> getTableDependencies() {
         Set<Table> tableDependencies = new HashSet<>();
         for (Column column : getColumns()) {
             for (ColumnDependency dependency : column.getColumnDependencies()) {

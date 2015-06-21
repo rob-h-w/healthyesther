@@ -34,17 +34,14 @@ public class CodeGenerator {
         JCodeModel codeModel = new JCodeModel();
         JPackage rootPackage = codeModel._package(mDestination.getPackage());
         try {
-            synchronized (ASYNC.lock()) {
-                DbTransactable transactable = new DbTransactable(rootPackage);
-                com.robwilliamson.healthyesther.generator.Database database =
-                        new com.robwilliamson.healthyesther.generator.Database(
-                                dbFromJson,
-                                transactable,
-                                rootPackage);
-                codeModel.build(mDestination.getFolder());
-            }
-
+            DbTransactable transactable = new DbTransactable(rootPackage);
+            com.robwilliamson.healthyesther.generator.Database database =
+                    new com.robwilliamson.healthyesther.generator.Database(
+                            dbFromJson,
+                            transactable,
+                            rootPackage);
             ASYNC.execute();
+            codeModel.build(mDestination.getFolder());
         } catch (JClassAlreadyExistsException | IOException e) {
             throw new GenerationException(e);
         }
