@@ -71,9 +71,9 @@ public class Database extends BaseClassGenerator {
         JArray tablesList = JExpr.newArray(baseTable.getJClass());
 
         final List<com.robwilliamson.healthyesther.semantic.Table> tables = mDb.getTables();
-        final Map<String, Table> tableGenerators = new HashMap<>(tables.size());
+        final Map<String, TableGenerator> tableGenerators = new HashMap<>(tables.size());
         for (com.robwilliamson.healthyesther.semantic.Table table : tables) {
-            Table tableGenerator = new Table(
+            TableGenerator tableGenerator = new TableGenerator(
                     jPackage,
                     table,
                     baseTable);
@@ -90,7 +90,7 @@ public class Database extends BaseClassGenerator {
             tableGenerators.put(table.getName(), tableGenerator);
         }
 
-        for (Map.Entry<String, Table> generator : tableGenerators.entrySet()) {
+        for (Map.Entry<String, TableGenerator> generator : tableGenerators.entrySet()) {
             generator.getValue().init(tableGenerators);
         }
 

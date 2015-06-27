@@ -17,13 +17,23 @@ public final class EventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
+    public final static class EventTableId {
+
+
+    }
+
+
+    /**
+     * This class is generated, and should not be edited. Edits will be overwritten
+     * 
+     */
     public final static class Row {
 
 
-        public Row(String eventCreated, String eventWhen, String eventName, Long eventId, String eventModified) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row event_typeTableRow, String eventWhen, String eventCreated, String eventModified, String eventName, Long eventId) {
         }
 
-        public Row(String eventCreated, String eventWhen, String eventName, Long eventId, String eventModified) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTableId event_typeTableId, String eventWhen, String eventCreated, String eventModified, String eventName, Long eventId) {
         }
 
     }

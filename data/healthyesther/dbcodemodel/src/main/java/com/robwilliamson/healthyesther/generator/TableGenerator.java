@@ -12,12 +12,13 @@ import java.util.Map;
 import java.util.Set;
 
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
-public class Table extends BaseClassGenerator {
+public class TableGenerator extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.semantic.Table mTable;
-    private final List<Table> mDependencies = new ArrayList<>();
-    private Row mRow;
+    private final List<TableGenerator> mDependencies = new ArrayList<>();
+    private RowGenerator mRowGenerator;
+    private BaseRowIdGenerator mRowIdGenerator;
 
-    public Table(
+    public TableGenerator(
             JPackage jPackage,
             com.robwilliamson.healthyesther.semantic.Table table,
             BaseTable baseTable) throws JClassAlreadyExistsException {
@@ -40,11 +41,15 @@ public class Table extends BaseClassGenerator {
         return mTable;
     }
 
-    public void init(Map<String, Table> tableGeneratorsByName) throws JClassAlreadyExistsException {
+    public RowGenerator getRow() {
+        return mRowGenerator;
+    }
+
+    public void init(Map<String, TableGenerator> tableGeneratorsByName) throws JClassAlreadyExistsException {
         Set<com.robwilliamson.healthyesther.semantic.Table> dependencies = mTable.getTableDependencies();
 
         for (com.robwilliamson.healthyesther.semantic.Table table : dependencies) {
-            Table dependency = tableGeneratorsByName.get(table.getName());
+            TableGenerator dependency = tableGeneratorsByName.get(table.getName());
 
             if (dependency == null) {
                 continue;
@@ -54,9 +59,11 @@ public class Table extends BaseClassGenerator {
         }
 
         if (getTable().hasDependencies()) {
-            mRow = new JoinedRow(this);
+            mRowGenerator = new JoinedRowGenerator(this);
+            mRowIdGenerator = new JoinedRowIdGenerator(this);
         } else {
-            mRow = new SimpleRow(this);
+            mRowGenerator = new SimpleRowGenerator(this);
+            mRowIdGenerator = new SimpleRowIdGenerator(this);
         }
 
         CodeGenerator.ASYNC.schedule(new Runnable() {
@@ -67,7 +74,11 @@ public class Table extends BaseClassGenerator {
         });
     }
 
+    public BaseRowIdGenerator getRowIdGenerator() {
+        return mRowIdGenerator;
+    }
+
     private void build() {
-        mRow.init();
+        mRowGenerator.init();
     }
 }

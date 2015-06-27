@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.generator;
 
+import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JMethod;
@@ -8,12 +9,12 @@ import com.sun.codemodel.JMod;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JoinedRow extends Row {
+public class JoinedRowGenerator extends RowGenerator {
     private JMethod mRowConstructor;
     private JMethod mJoinConstructor;
 
-    public JoinedRow(Table table) throws JClassAlreadyExistsException {
-        super(table);
+    public JoinedRowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
+        super(tableGenerator);
 
         mRowConstructor = getJClass().constructor(JMod.PUBLIC);
         mJoinConstructor = getJClass().constructor(JMod.PUBLIC);
@@ -38,7 +39,7 @@ public class JoinedRow extends Row {
 
         for (Column column : nonNull) {
             if (column.isForeignKey()) {
-                // TODO
+                addConstructorParam(column.getColumnDependency());
             } else {
                 mRowConstructor.param(primitiveType(column), name(column));
                 mJoinConstructor.param(primitiveType(column), name(column));
@@ -47,11 +48,20 @@ public class JoinedRow extends Row {
 
         for (Column column : nullable) {
             if (column.isForeignKey()) {
-                // TODO
+                addConstructorParam(column.getColumnDependency());
             } else {
                 mRowConstructor.param(nullableType(column), name(column));
                 mJoinConstructor.param(nullableType(column), name(column));
             }
         }
+    }
+
+    private void addConstructorParam(ColumnDependency columnDependency) {
+        RowGenerator rowGenerator = columnDependency.getDependency().getTable().getGenerator().getRow();
+        mRowConstructor.param(rowGenerator.getJClass(), name(rowGenerator));
+
+        com.robwilliamson.healthyesther.semantic.Table table = rowGenerator.getTableGenerator().getTable();
+        BaseRowIdGenerator rowIdGenerator = table.getGenerator().getRowIdGenerator();
+        mJoinConstructor.param(rowIdGenerator.getJClass(), rowIdGenerator.getPreferredParameterName());
     }
 }

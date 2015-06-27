@@ -23,10 +23,22 @@ public final class Strings {
         }
 
         if (string.length() == 1) {
-            return string.substring(0, 1).toUpperCase();
+            return string.toUpperCase();
         }
 
         return string.substring(0, 1).toUpperCase() + string.substring(1);
+    }
+
+    public static String lowerCase(String string) {
+        if (isEmpty(string)) {
+            return "";
+        }
+
+        if (string.length() == 1) {
+            return string.toLowerCase();
+        }
+
+        return string.substring(0, 1).toLowerCase() + string.substring(1);
     }
 
     public static String constantName(String string) {

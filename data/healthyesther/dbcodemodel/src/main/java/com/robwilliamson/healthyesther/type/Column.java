@@ -14,7 +14,7 @@ public class Column {
     private String type;
     private Constraint[] constraints;
 
-    private transient List<ColumnDependency> mColumnDependencies;
+    private transient ColumnDependency mColumnDependency;
     private transient boolean mNotNull = false;
     private transient Table mTable;
 
@@ -24,9 +24,8 @@ public class Column {
         return name;
     }
 
-    public List<ColumnDependency> getColumnDependencies() {
-        if (mColumnDependencies == null) {
-            mColumnDependencies = new ArrayList<>();
+    public ColumnDependency getColumnDependency() {
+        if (mColumnDependency == null) {
 
             if (constraints != null) {
                 // REFERENCES event_type ( _id )
@@ -41,16 +40,9 @@ public class Column {
                         }
 
                         String tableName = matcher.group(1);
-                        String columnGroup = matcher.group(2);
-                        String columns[] = columnGroup.split(",");
+                        String columnName = matcher.group(2);
 
-                        for (String column : columns) {
-                            if (Strings.isEmpty(column)) {
-                                continue;
-                            }
-
-                            mColumnDependencies.add(new ColumnDependency(this, tableName, column));
-                        }
+                        mColumnDependency = new ColumnDependency(this, tableName, columnName);
                     } else if (constraint.getType().equals("NOT NULL")) {
                         mNotNull = true;
                     }
@@ -58,7 +50,7 @@ public class Column {
             }
         }
 
-        return mColumnDependencies;
+        return mColumnDependency;
     }
 
     public void setTable(Table table) {
@@ -78,6 +70,6 @@ public class Column {
     }
 
     public boolean isForeignKey() {
-        return !mColumnDependencies.isEmpty();
+        return getColumnDependency() != null;
     }
 }

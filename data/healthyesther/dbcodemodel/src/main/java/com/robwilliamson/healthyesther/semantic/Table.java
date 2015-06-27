@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.semantic;
 
+import com.robwilliamson.healthyesther.generator.TableGenerator;
 import com.robwilliamson.healthyesther.type.Column;
 import com.robwilliamson.healthyesther.type.DbObject;
 
@@ -33,18 +34,17 @@ public class Table extends DbObject {
                 final String dependencyIndent = "        ";
 
                 for (Column column : table.getColumns()) {
-                    if (column.getColumnDependencies().isEmpty()) {
+                    if (!column.isForeignKey()) {
                         continue;
                     }
 
                     builder.append(columnIndent).append(column.getName()).append(":{\n");
 
-                    for (ColumnDependency dependency : column.getColumnDependencies()) {
-                        builder.append(dependencyIndent)
-                                .append(dependency.table)
-                                .append(": ")
-                                .append(dependency.column);
-                    }
+                    ColumnDependency dependency = column.getColumnDependency();
+                    builder.append(dependencyIndent)
+                            .append(dependency.table)
+                            .append(": ")
+                            .append(dependency.column);
 
                     builder.append(columnIndent).append("}\n");
                 }
@@ -82,10 +82,13 @@ public class Table extends DbObject {
 
         for (Table table : tables) {
             for (Column column : table.getColumns()) {
-                for (ColumnDependency dependency : column.getColumnDependencies()) {
-                    Column columnDependendOn = byDependency(tables, dependency);
-                    dependency.setDependency(columnDependendOn);
+                if (!column.isForeignKey()) {
+                    continue;
                 }
+
+                ColumnDependency dependency = column.getColumnDependency();
+                Column columnDependendOn = byDependency(tables, dependency);
+                dependency.setDependency(columnDependendOn);
             }
         }
         
@@ -143,7 +146,7 @@ public class Table extends DbObject {
         return null;
     }
 
-    private com.robwilliamson.healthyesther.generator.Table mGenerator;
+    private TableGenerator mGenerator;
 
     public Table(DbObject table) {
         if (!table.isTable()) {
@@ -161,7 +164,7 @@ public class Table extends DbObject {
 
     public boolean hasDependencies() {
         for (Column column : getColumns()) {
-            if (!column.getColumnDependencies().isEmpty()) {
+            if (column.isForeignKey()) {
                 return true;
             }
         }
@@ -172,19 +175,19 @@ public class Table extends DbObject {
     public Set<Table> getTableDependencies() {
         Set<Table> tableDependencies = new HashSet<>();
         for (Column column : getColumns()) {
-            for (ColumnDependency dependency : column.getColumnDependencies()) {
-                tableDependencies.add(dependency.getDependency().getTable());
+            if (column.isForeignKey()) {
+                tableDependencies.add(column.getColumnDependency().getDependency().getTable());
             }
         }
 
         return tableDependencies;
     }
 
-    public void setGenerator(com.robwilliamson.healthyesther.generator.Table generator) {
+    public void setGenerator(TableGenerator generator) {
         mGenerator = generator;
     }
 
-    public com.robwilliamson.healthyesther.generator.Table getmGenerator() {
+    public TableGenerator getGenerator() {
         return mGenerator;
     }
 }

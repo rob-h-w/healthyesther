@@ -17,6 +17,16 @@ public final class MedicationTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
+    public final static class MedicationTableId {
+
+
+    }
+
+
+    /**
+     * This class is generated, and should not be edited. Edits will be overwritten
+     * 
+     */
     public final static class Row {
 
 

@@ -4,15 +4,16 @@ import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JVar;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class SimpleRow extends Row {
+public class SimpleRowGenerator extends RowGenerator {
     private JMethod mConstructor;
 
-    public SimpleRow(Table table) throws JClassAlreadyExistsException {
-        super(table);
+    public SimpleRowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
+        super(tableGenerator);
 
         mConstructor = getJClass().constructor(JMod.PUBLIC);
     }
