@@ -30,10 +30,10 @@ public final class NoteEventTable
     public final static class Row {
 
 
-        public Row(com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow) {
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTableId noteTableId, com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTableId noteTableId) {
         }
 
     }

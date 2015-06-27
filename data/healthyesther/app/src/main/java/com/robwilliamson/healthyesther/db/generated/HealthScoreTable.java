@@ -30,7 +30,7 @@ public final class HealthScoreTable
     public final static class Row {
 
 
-        public Row(boolean healthScoreRandomQuery, String healthScoreName, long healthScoreBestValue, String healthScoreMinLabel, Long healthScoreId, String healthScoreMaxLabel) {
+        public Row(long healthScoreBestValue, String healthScoreName, boolean healthScoreRandomQuery, Long healthScoreId, String healthScoreMaxLabel, String healthScoreMinLabel) {
         }
 
     }

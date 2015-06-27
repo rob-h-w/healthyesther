@@ -6,8 +6,9 @@ import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class JoinedRowGenerator extends RowGenerator {
     private JMethod mRowConstructor;
@@ -26,8 +27,8 @@ public class JoinedRowGenerator extends RowGenerator {
     }
 
     private void initConstructors() {
-        Set<Column> nullable = new HashSet<>();
-        Set<Column> nonNull = new HashSet<>();
+        List<Column> nullable = new ArrayList<>();
+        List<Column> nonNull = new ArrayList<>();
 
         for (Column column : getTableGenerator().getTable().getColumns()) {
             if (column.isNotNull()) {
@@ -36,6 +37,10 @@ public class JoinedRowGenerator extends RowGenerator {
                 nullable.add(column);
             }
         }
+
+        Column.Comparator comparator = new Column.Comparator();
+        Collections.sort(nullable, comparator);
+        Collections.sort(nonNull, comparator);
 
         for (Column column : nonNull) {
             if (column.isForeignKey()) {

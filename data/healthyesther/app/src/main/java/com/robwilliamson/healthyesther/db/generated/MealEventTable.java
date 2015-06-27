@@ -30,10 +30,10 @@ public final class MealEventTable
     public final static class Row {
 
 
-        public Row(com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, Double mealEventAmount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, Double mealEventAmount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow) {
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.MealTable.MealTableId mealTableId, com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId, Double mealEventAmount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTableId unitsTableId) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId, com.robwilliamson.healthyesther.db.generated.MealTable.MealTableId mealTableId, Double mealEventAmount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTableId unitsTableId) {
         }
 
     }

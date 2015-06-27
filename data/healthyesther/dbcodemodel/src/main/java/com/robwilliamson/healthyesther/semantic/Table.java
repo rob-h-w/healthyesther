@@ -5,9 +5,8 @@ import com.robwilliamson.healthyesther.type.Column;
 import com.robwilliamson.healthyesther.type.DbObject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 public class Table extends DbObject {
     public static class DependencyLoopException extends RuntimeException {
@@ -154,6 +153,9 @@ public class Table extends DbObject {
         }
 
         table.copyTo(this);
+
+        // Sort the columns.
+        Arrays.sort(getColumns(), new Column.Comparator());
     }
 
     public void init() {
@@ -172,8 +174,8 @@ public class Table extends DbObject {
         return false;
     }
 
-    public Set<Table> getTableDependencies() {
-        Set<Table> tableDependencies = new HashSet<>();
+    public List<Table> getTableDependencies() {
+        List<Table> tableDependencies = new ArrayList<>();
         for (Column column : getColumns()) {
             if (column.isForeignKey()) {
                 tableDependencies.add(column.getColumnDependency().getDependency().getTable());

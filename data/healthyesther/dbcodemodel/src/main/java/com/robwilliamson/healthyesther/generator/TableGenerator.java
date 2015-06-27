@@ -9,7 +9,6 @@ import com.sun.codemodel.JPackage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
 public class TableGenerator extends BaseClassGenerator {
@@ -46,7 +45,7 @@ public class TableGenerator extends BaseClassGenerator {
     }
 
     public void init(Map<String, TableGenerator> tableGeneratorsByName) throws JClassAlreadyExistsException {
-        Set<com.robwilliamson.healthyesther.semantic.Table> dependencies = mTable.getTableDependencies();
+        List<com.robwilliamson.healthyesther.semantic.Table> dependencies = mTable.getTableDependencies();
 
         for (com.robwilliamson.healthyesther.semantic.Table table : dependencies) {
             TableGenerator dependency = tableGeneratorsByName.get(table.getName());

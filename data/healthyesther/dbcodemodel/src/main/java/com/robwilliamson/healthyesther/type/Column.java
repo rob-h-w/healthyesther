@@ -1,15 +1,35 @@
 package com.robwilliamson.healthyesther.type;
 
-import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.Table;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Column {
+    public static class Comparator implements java.util.Comparator<Column> {
+        @Override
+        public int compare(Column c1, Column c2) {
+            if (!c1.isNotNull() && c2.isNotNull()) {
+                return -1;
+            }
+
+            if (c1.isNotNull() && !c2.isNotNull()) {
+                return 1;
+            }
+
+            if (!c1.isForeignKey() && c2.isForeignKey()) {
+                return -1;
+            }
+
+            if (c1.isForeignKey() && !c2.isForeignKey()) {
+                return 1;
+            }
+
+            return c1.getName().compareTo(c2.getName());
+        }
+    }
+
     private String name;
     private String type;
     private Constraint[] constraints;

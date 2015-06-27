@@ -30,10 +30,10 @@ public final class HealthScoreEventTable
     public final static class Row {
 
 
-        public Row(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row health_scoreTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, Long healthScoreEventScore) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row health_scoreTableRow, Long healthScoreEventScore) {
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTableId health_scoreTableId, com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId, Long healthScoreEventScore) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTableId health_scoreTableId, Long healthScoreEventScore) {
         }
 
     }
