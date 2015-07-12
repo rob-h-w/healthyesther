@@ -20,6 +20,16 @@ public final class AndroidMetadataTable
     public final static class AndroidMetadataTableId {
 
 
+        public boolean equals(AndroidMetadataTable.AndroidMetadataTableId android_metadataTableId) {
+            if (android_metadataTableId == null) {
+                return false;
+            }
+            if (android_metadataTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 

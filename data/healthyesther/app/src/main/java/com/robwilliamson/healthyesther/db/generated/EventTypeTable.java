@@ -20,6 +20,16 @@ public final class EventTypeTable
     public final static class EventTypeTableId {
 
 
+        public boolean equals(EventTypeTable.EventTypeTableId event_typeTableId) {
+            if (event_typeTableId == null) {
+                return false;
+            }
+            if (event_typeTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 

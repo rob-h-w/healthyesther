@@ -20,6 +20,16 @@ public final class MedicationTable
     public final static class MedicationTableId {
 
 
+        public boolean equals(MedicationTable.MedicationTableId medicationTableId) {
+            if (medicationTableId == null) {
+                return false;
+            }
+            if (medicationTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 

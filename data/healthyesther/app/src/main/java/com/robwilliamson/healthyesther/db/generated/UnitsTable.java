@@ -33,6 +33,16 @@ public final class UnitsTable
     public final static class UnitsTableId {
 
 
+        public boolean equals(UnitsTable.UnitsTableId unitsTableId) {
+            if (unitsTableId == null) {
+                return false;
+            }
+            if (unitsTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 }

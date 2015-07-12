@@ -20,6 +20,16 @@ public final class MealTable
     public final static class MealTableId {
 
 
+        public boolean equals(MealTable.MealTableId mealTableId) {
+            if (mealTableId == null) {
+                return false;
+            }
+            if (mealTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 

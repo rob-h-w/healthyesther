@@ -4,15 +4,16 @@ import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JMod;
 
 @ClassGeneratorFeatures(name = "Id", parameterName = "Id")
-public abstract class BaseRowIdGenerator extends BaseClassGenerator {
+public abstract class BasePrimaryKeyGenerator extends BaseClassGenerator {
     private final TableGenerator mTableGenerator;
 
-    public BaseRowIdGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
+    public BasePrimaryKeyGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         super();
 
         mTableGenerator = tableGenerator;
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
+        makeEquals();
     }
 
     public TableGenerator getTableGenerator() {
@@ -28,4 +29,6 @@ public abstract class BaseRowIdGenerator extends BaseClassGenerator {
     public String getPreferredParameterName() {
         return getTableGenerator().getPreferredParameterName() + super.getPreferredParameterName();
     }
+
+    protected abstract void makeEquals();
 }

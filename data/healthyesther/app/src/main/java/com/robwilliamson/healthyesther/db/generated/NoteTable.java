@@ -20,6 +20,16 @@ public final class NoteTable
     public final static class NoteTableId {
 
 
+        public boolean equals(NoteTable.NoteTableId noteTableId) {
+            if (noteTableId == null) {
+                return false;
+            }
+            if (noteTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 

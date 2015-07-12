@@ -20,6 +20,16 @@ public final class HealthScoreTable
     public final static class HealthScoreTableId {
 
 
+        public boolean equals(HealthScoreTable.HealthScoreTableId health_scoreTableId) {
+            if (health_scoreTableId == null) {
+                return false;
+            }
+            if (health_scoreTableId == this) {
+                return true;
+            }
+            return true;
+        }
+
     }
 
 
