@@ -17,15 +17,18 @@ public final class NoteTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class NoteTableId {
+    public final static class NoteTablePrimaryKey {
 
+        private long mId;
 
-        public boolean equals(NoteTable.NoteTableId noteTableId) {
-            if (noteTableId == null) {
+        public boolean equals(NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
+            if (noteTablePrimaryKey == null) {
                 return false;
             }
-            if (noteTableId == this) {
+            if (noteTablePrimaryKey == this) {
                 return true;
+            }
+            if (noteTablePrimaryKey.mId == mId) {
             }
             return true;
         }

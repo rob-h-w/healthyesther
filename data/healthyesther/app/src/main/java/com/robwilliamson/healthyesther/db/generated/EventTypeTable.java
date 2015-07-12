@@ -17,15 +17,18 @@ public final class EventTypeTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class EventTypeTableId {
+    public final static class EventTypeTablePrimaryKey {
 
+        private long mId;
 
-        public boolean equals(EventTypeTable.EventTypeTableId event_typeTableId) {
-            if (event_typeTableId == null) {
+        public boolean equals(EventTypeTable.EventTypeTablePrimaryKey event_typeTablePrimaryKey) {
+            if (event_typeTablePrimaryKey == null) {
                 return false;
             }
-            if (event_typeTableId == this) {
+            if (event_typeTablePrimaryKey == this) {
                 return true;
+            }
+            if (event_typeTablePrimaryKey.mId == mId) {
             }
             return true;
         }

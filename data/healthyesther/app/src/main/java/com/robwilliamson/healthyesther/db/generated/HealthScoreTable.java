@@ -17,15 +17,18 @@ public final class HealthScoreTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class HealthScoreTableId {
+    public final static class HealthScoreTablePrimaryKey {
 
+        private long mId;
 
-        public boolean equals(HealthScoreTable.HealthScoreTableId health_scoreTableId) {
-            if (health_scoreTableId == null) {
+        public boolean equals(HealthScoreTable.HealthScoreTablePrimaryKey health_scoreTablePrimaryKey) {
+            if (health_scoreTablePrimaryKey == null) {
                 return false;
             }
-            if (health_scoreTableId == this) {
+            if (health_scoreTablePrimaryKey == this) {
                 return true;
+            }
+            if (health_scoreTablePrimaryKey.mId == mId) {
             }
             return true;
         }

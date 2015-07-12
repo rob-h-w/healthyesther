@@ -66,7 +66,7 @@ public class JoinedRowGenerator extends RowGenerator {
         mRowConstructor.param(rowGenerator.getJClass(), name(rowGenerator));
 
         com.robwilliamson.healthyesther.semantic.Table table = rowGenerator.getTableGenerator().getTable();
-        BasePrimaryKeyGenerator primaryKeyGenerator = table.getGenerator().getPrimaryKeyGenerator();
+        PrimaryKeyGenerator primaryKeyGenerator = table.getGenerator().getPrimaryKeyGenerator();
         mJoinConstructor.param(primaryKeyGenerator.getJClass(), primaryKeyGenerator.getPreferredParameterName());
     }
 }

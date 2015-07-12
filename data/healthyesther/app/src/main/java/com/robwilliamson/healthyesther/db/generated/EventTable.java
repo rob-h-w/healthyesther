@@ -17,8 +17,21 @@ public final class EventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class EventTableId {
+    public final static class EventTablePrimaryKey {
 
+        private long mId;
+
+        public boolean equals(EventTable.EventTablePrimaryKey eventTablePrimaryKey) {
+            if (eventTablePrimaryKey == null) {
+                return false;
+            }
+            if (eventTablePrimaryKey == this) {
+                return true;
+            }
+            if (eventTablePrimaryKey.mId == mId) {
+            }
+            return true;
+        }
 
     }
 
@@ -33,7 +46,7 @@ public final class EventTable
         public Row(String eventCreated, String eventWhen, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row event_typeTableRow, String eventModified, String eventName, Long eventId) {
         }
 
-        public Row(String eventCreated, String eventWhen, com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTableId event_typeTableId, String eventModified, String eventName, Long eventId) {
+        public Row(String eventCreated, String eventWhen, com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey event_typeTablePrimaryKey, String eventModified, String eventName, Long eventId) {
         }
 
     }

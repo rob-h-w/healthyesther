@@ -30,15 +30,18 @@ public final class UnitsTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class UnitsTableId {
+    public final static class UnitsTablePrimaryKey {
 
+        private long mId;
 
-        public boolean equals(UnitsTable.UnitsTableId unitsTableId) {
-            if (unitsTableId == null) {
+        public boolean equals(UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
+            if (unitsTablePrimaryKey == null) {
                 return false;
             }
-            if (unitsTableId == this) {
+            if (unitsTablePrimaryKey == this) {
                 return true;
+            }
+            if (unitsTablePrimaryKey.mId == mId) {
             }
             return true;
         }

@@ -17,14 +17,14 @@ public final class AndroidMetadataTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class AndroidMetadataTableId {
+    public final static class AndroidMetadataTablePrimaryKey {
 
 
-        public boolean equals(AndroidMetadataTable.AndroidMetadataTableId android_metadataTableId) {
-            if (android_metadataTableId == null) {
+        public boolean equals(AndroidMetadataTable.AndroidMetadataTablePrimaryKey android_metadataTablePrimaryKey) {
+            if (android_metadataTablePrimaryKey == null) {
                 return false;
             }
-            if (android_metadataTableId == this) {
+            if (android_metadataTablePrimaryKey == this) {
                 return true;
             }
             return true;

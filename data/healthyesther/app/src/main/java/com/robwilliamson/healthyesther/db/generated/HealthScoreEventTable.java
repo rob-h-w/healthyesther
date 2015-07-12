@@ -17,8 +17,24 @@ public final class HealthScoreEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class HealthScoreEventTableId {
+    public final static class HealthScoreEventTablePrimaryKey {
 
+        private long mEventId;
+        private long mHealthScoreId;
+
+        public boolean equals(HealthScoreEventTable.HealthScoreEventTablePrimaryKey health_score_eventTablePrimaryKey) {
+            if (health_score_eventTablePrimaryKey == null) {
+                return false;
+            }
+            if (health_score_eventTablePrimaryKey == this) {
+                return true;
+            }
+            if (health_score_eventTablePrimaryKey.mHealthScoreId == mHealthScoreId) {
+            }
+            if (health_score_eventTablePrimaryKey.mEventId == mEventId) {
+            }
+            return true;
+        }
 
     }
 
@@ -33,7 +49,7 @@ public final class HealthScoreEventTable
         public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row health_scoreTableRow, Long healthScoreEventScore) {
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTableId eventTableId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTableId health_scoreTableId, Long healthScoreEventScore) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey health_scoreTablePrimaryKey, Long healthScoreEventScore) {
         }
 
     }

@@ -2,6 +2,8 @@ package com.robwilliamson.healthyesther.type;
 
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.Table;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,6 +105,23 @@ public class Column {
 
     public String getType() {
         return type;
+    }
+
+    public JType getJtype(JCodeModel model) {
+        if (isForeignKey()) {
+            return model.LONG;
+        }
+
+        switch(getType()) {
+            case "TEXT":
+                return model._ref(String.class);
+            case "INTEGER":
+                return model.LONG;
+            case "REAL":
+                return model.DOUBLE;
+            default:
+                throw new IllegalArgumentException("Unrecognized type " + getType());
+        }
     }
 
     public boolean isForeignKey() {

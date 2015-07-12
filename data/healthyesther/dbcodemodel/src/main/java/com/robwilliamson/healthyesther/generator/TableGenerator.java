@@ -15,7 +15,7 @@ public class TableGenerator extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.semantic.Table mTable;
     private final List<TableGenerator> mDependencies = new ArrayList<>();
     private RowGenerator mRowGenerator;
-    private BasePrimaryKeyGenerator mPrimaryKeyGenerator;
+    private PrimaryKeyGenerator mPrimaryKeyGenerator;
 
     public TableGenerator(
             JPackage jPackage,
@@ -59,11 +59,11 @@ public class TableGenerator extends BaseClassGenerator {
 
         if (getTable().hasDependencies()) {
             mRowGenerator = new JoinedRowGenerator(this);
-            mPrimaryKeyGenerator = new JoinedPrimaryKeyGenerator(this);
         } else {
             mRowGenerator = new SimpleRowGenerator(this);
-            mPrimaryKeyGenerator = new SimplePrimaryKeyGenerator(this);
         }
+
+        mPrimaryKeyGenerator = new PrimaryKeyGenerator(this);
 
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
@@ -73,7 +73,7 @@ public class TableGenerator extends BaseClassGenerator {
         });
     }
 
-    public BasePrimaryKeyGenerator getPrimaryKeyGenerator() {
+    public PrimaryKeyGenerator getPrimaryKeyGenerator() {
         return mPrimaryKeyGenerator;
     }
 
