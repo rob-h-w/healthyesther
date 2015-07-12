@@ -10,6 +10,14 @@ public class Column {
     public static class Comparator implements java.util.Comparator<Column> {
         @Override
         public int compare(Column c1, Column c2) {
+            if (!c1.isPrimaryKey() && c2.isPrimaryKey()) {
+                return -1;
+            }
+
+            if (c1.isPrimaryKey() && !c2.isPrimaryKey()) {
+                return 1;
+            }
+
             if (!c1.isNotNull() && c2.isNotNull()) {
                 return -1;
             }
@@ -37,6 +45,7 @@ public class Column {
     private transient ColumnDependency mColumnDependency;
     private transient boolean mNotNull = false;
     private transient Table mTable;
+    private transient boolean mPrimaryKey = false;
 
     Column() {}
 
@@ -52,19 +61,25 @@ public class Column {
                 Pattern referencePattern = Pattern.compile("REFERENCES (\\w+) \\( ([\\w\\s]+) \\).*");
 
                 for (Constraint constraint : constraints) {
-                    if (constraint.getType().equals("FOREIGN KEY")) {
-                        Matcher matcher = referencePattern.matcher(constraint.getDefinition());
+                    switch (constraint.getType()) {
+                        case "PRIMARY KEY":
+                            mPrimaryKey = true;
+                            break;
+                        case "FOREIGN KEY":
+                            Matcher matcher = referencePattern.matcher(constraint.getDefinition());
 
-                        if (!matcher.find()) {
-                            continue;
-                        }
+                            if (!matcher.find()) {
+                                continue;
+                            }
 
-                        String tableName = matcher.group(1);
-                        String columnName = matcher.group(2);
+                            String tableName = matcher.group(1);
+                            String columnName = matcher.group(2);
 
-                        mColumnDependency = new ColumnDependency(this, tableName, columnName);
-                    } else if (constraint.getType().equals("NOT NULL")) {
-                        mNotNull = true;
+                            mColumnDependency = new ColumnDependency(this, tableName, columnName);
+                            break;
+                        case "NOT NULL":
+                            mNotNull = true;
+                            break;
                     }
                 }
             }
@@ -82,6 +97,7 @@ public class Column {
     }
 
     public boolean isNotNull() {
+        getColumnDependency();
         return mNotNull;
     }
 
@@ -91,5 +107,10 @@ public class Column {
 
     public boolean isForeignKey() {
         return getColumnDependency() != null;
+    }
+
+    public boolean isPrimaryKey() {
+        getColumnDependency();
+        return mPrimaryKey || getTable().isPrimaryKey(this);
     }
 }

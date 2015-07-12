@@ -20,7 +20,7 @@ public final class UnitsTable
     public final static class Row {
 
 
-        public Row(String unitsName, Long unitsId, Double unitsSiFactor) {
+        public Row(String unitsName, Double unitsSiFactor, Long unitsId) {
         }
 
     }

@@ -31,9 +31,17 @@ public class DbObject {
 
     public Column[] getColumns() {
         if (columns == null) {
-            return new Column[] {};
+            columns = new Column[] {};
         }
 
         return columns;
+    }
+
+    public Constraint[] getConstraints() {
+        if (constraints == null) {
+            constraints = new Constraint[] {};
+        }
+
+        return constraints;
     }
 }

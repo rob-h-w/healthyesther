@@ -30,7 +30,7 @@ public final class EventTypeTable
     public final static class Row {
 
 
-        public Row(String eventTypeName, Long eventTypeId, String eventTypeIcon) {
+        public Row(String eventTypeName, String eventTypeIcon, Long eventTypeId) {
         }
 
     }

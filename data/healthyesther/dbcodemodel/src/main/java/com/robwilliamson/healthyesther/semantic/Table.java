@@ -2,11 +2,14 @@ package com.robwilliamson.healthyesther.semantic;
 
 import com.robwilliamson.healthyesther.generator.TableGenerator;
 import com.robwilliamson.healthyesther.type.Column;
+import com.robwilliamson.healthyesther.type.Constraint;
 import com.robwilliamson.healthyesther.type.DbObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Table extends DbObject {
     public static class DependencyLoopException extends RuntimeException {
@@ -146,6 +149,7 @@ public class Table extends DbObject {
     }
 
     private TableGenerator mGenerator;
+    private List<String> mPrimaryKeyColumnNames = null;
 
     public Table(DbObject table) {
         if (!table.isTable()) {
@@ -154,14 +158,15 @@ public class Table extends DbObject {
 
         table.copyTo(this);
 
+        for (Column column : getColumns()) {
+            column.setTable(this);
+        }
+
         // Sort the columns.
         Arrays.sort(getColumns(), new Column.Comparator());
     }
 
     public void init() {
-        for (Column column : getColumns()) {
-            column.setTable(this);
-        }
     }
 
     public boolean hasDependencies() {
@@ -191,5 +196,24 @@ public class Table extends DbObject {
 
     public TableGenerator getGenerator() {
         return mGenerator;
+    }
+
+    public boolean isPrimaryKey(Column column) {
+        if (mPrimaryKeyColumnNames == null) {
+            mPrimaryKeyColumnNames = new ArrayList<>();
+            for (Constraint constraint : this.getConstraints()) {
+                if ("PRIMARY KEY".equals(constraint.getType())) {
+                    // PRIMARY KEY ( medication_id, name )
+                    Pattern referencePattern = Pattern.compile("PRIMARY KEY \\( (.+) \\)");
+                    Matcher matcher = referencePattern.matcher(constraint.getDefinition());
+                    if (matcher.lookingAt()) {
+                        String[] columnNames = matcher.group(1).split(", ");
+                        mPrimaryKeyColumnNames.addAll(Arrays.asList(columnNames));
+                    }
+                }
+            }
+        }
+
+        return mPrimaryKeyColumnNames.contains(column.getName());
     }
 }

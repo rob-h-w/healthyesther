@@ -30,7 +30,7 @@ public final class NoteTable
     public final static class Row {
 
 
-        public Row(String noteName, Long noteId, String noteNote) {
+        public Row(String noteName, String noteNote, Long noteId) {
         }
 
     }
