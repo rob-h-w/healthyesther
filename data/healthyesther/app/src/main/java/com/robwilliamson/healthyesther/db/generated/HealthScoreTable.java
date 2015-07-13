@@ -28,7 +28,8 @@ public final class HealthScoreTable
             if (health_scoreTablePrimaryKey == this) {
                 return true;
             }
-            if (health_scoreTablePrimaryKey.mId == mId) {
+            if (health_scoreTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

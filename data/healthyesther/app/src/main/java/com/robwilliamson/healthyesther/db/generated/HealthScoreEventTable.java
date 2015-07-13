@@ -29,9 +29,11 @@ public final class HealthScoreEventTable
             if (health_score_eventTablePrimaryKey == this) {
                 return true;
             }
-            if (health_score_eventTablePrimaryKey.mHealthScoreId == mHealthScoreId) {
+            if (health_score_eventTablePrimaryKey.mHealthScoreId!= mHealthScoreId) {
+                return false;
             }
-            if (health_score_eventTablePrimaryKey.mEventId == mEventId) {
+            if (health_score_eventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
             }
             return true;
         }

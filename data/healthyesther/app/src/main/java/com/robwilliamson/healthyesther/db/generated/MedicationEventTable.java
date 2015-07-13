@@ -29,9 +29,11 @@ public final class MedicationEventTable
             if (medication_eventTablePrimaryKey == this) {
                 return true;
             }
-            if (medication_eventTablePrimaryKey.mMedicationId == mMedicationId) {
+            if (medication_eventTablePrimaryKey.mMedicationId!= mMedicationId) {
+                return false;
             }
-            if (medication_eventTablePrimaryKey.mEventId == mEventId) {
+            if (medication_eventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
             }
             return true;
         }

@@ -28,7 +28,8 @@ public final class NoteTable
             if (noteTablePrimaryKey == this) {
                 return true;
             }
-            if (noteTablePrimaryKey.mId == mId) {
+            if (noteTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

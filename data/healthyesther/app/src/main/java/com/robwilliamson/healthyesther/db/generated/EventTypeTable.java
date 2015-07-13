@@ -28,7 +28,8 @@ public final class EventTypeTable
             if (event_typeTablePrimaryKey == this) {
                 return true;
             }
-            if (event_typeTablePrimaryKey.mId == mId) {
+            if (event_typeTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

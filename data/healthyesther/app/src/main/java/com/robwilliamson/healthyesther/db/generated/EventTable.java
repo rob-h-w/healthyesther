@@ -28,7 +28,8 @@ public final class EventTable
             if (eventTablePrimaryKey == this) {
                 return true;
             }
-            if (eventTablePrimaryKey.mId == mId) {
+            if (eventTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

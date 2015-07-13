@@ -29,9 +29,11 @@ public final class MealEventTable
             if (meal_eventTablePrimaryKey == this) {
                 return true;
             }
-            if (meal_eventTablePrimaryKey.mEventId == mEventId) {
+            if (meal_eventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
             }
-            if (meal_eventTablePrimaryKey.mMealId == mMealId) {
+            if (meal_eventTablePrimaryKey.mMealId!= mMealId) {
+                return false;
             }
             return true;
         }

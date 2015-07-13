@@ -28,7 +28,8 @@ public final class MedicationTable
             if (medicationTablePrimaryKey == this) {
                 return true;
             }
-            if (medicationTablePrimaryKey.mId == mId) {
+            if (medicationTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

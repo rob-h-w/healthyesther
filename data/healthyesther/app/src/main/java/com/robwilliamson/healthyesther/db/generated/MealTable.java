@@ -28,7 +28,8 @@ public final class MealTable
             if (mealTablePrimaryKey == this) {
                 return true;
             }
-            if (mealTablePrimaryKey.mId == mId) {
+            if (mealTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

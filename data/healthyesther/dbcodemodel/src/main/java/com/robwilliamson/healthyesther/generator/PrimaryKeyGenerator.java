@@ -87,7 +87,8 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
         // Check each primary key column.
         for (Map.Entry<String, JFieldVar> primaryKeyFieldEntry : mPrimaryKeyFields.entrySet()) {
-            ifBlock = equals._if(other.ref(primaryKeyFieldEntry.getValue()).eq(primaryKeyFieldEntry.getValue()))._then();
+            ifBlock = equals._if(other.ref(primaryKeyFieldEntry.getValue()).ne(primaryKeyFieldEntry.getValue()))._then();
+            ifBlock._return(JExpr.lit(false));
         }
 
         // Finally return true

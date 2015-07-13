@@ -29,9 +29,11 @@ public final class MedicationNameTable
             if (medication_nameTablePrimaryKey == this) {
                 return true;
             }
-            if (medication_nameTablePrimaryKey.mName == mName) {
+            if (medication_nameTablePrimaryKey.mName!= mName) {
+                return false;
             }
-            if (medication_nameTablePrimaryKey.mMedicationId == mMedicationId) {
+            if (medication_nameTablePrimaryKey.mMedicationId!= mMedicationId) {
+                return false;
             }
             return true;
         }

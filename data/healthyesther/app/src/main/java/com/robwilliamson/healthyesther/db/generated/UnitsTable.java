@@ -41,7 +41,8 @@ public final class UnitsTable
             if (unitsTablePrimaryKey == this) {
                 return true;
             }
-            if (unitsTablePrimaryKey.mId == mId) {
+            if (unitsTablePrimaryKey.mId!= mId) {
+                return false;
             }
             return true;
         }

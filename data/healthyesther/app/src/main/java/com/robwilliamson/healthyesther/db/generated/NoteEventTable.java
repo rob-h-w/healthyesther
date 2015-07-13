@@ -29,9 +29,11 @@ public final class NoteEventTable
             if (note_eventTablePrimaryKey == this) {
                 return true;
             }
-            if (note_eventTablePrimaryKey.mNoteId == mNoteId) {
+            if (note_eventTablePrimaryKey.mNoteId!= mNoteId) {
+                return false;
             }
-            if (note_eventTablePrimaryKey.mEventId == mEventId) {
+            if (note_eventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
             }
             return true;
         }
