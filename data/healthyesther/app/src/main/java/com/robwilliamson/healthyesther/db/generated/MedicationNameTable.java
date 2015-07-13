@@ -19,7 +19,7 @@ public final class MedicationNameTable
      */
     public final static class MedicationNameTablePrimaryKey {
 
-        private long mMedicationId;
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         private String mName;
 
         public boolean equals(Object other) {

@@ -19,8 +19,8 @@ public final class NoteEventTable
      */
     public final static class NoteEventTablePrimaryKey {
 
-        private long mEventId;
-        private long mNoteId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey mNoteId;
 
         public boolean equals(Object other) {
             if (other == null) {

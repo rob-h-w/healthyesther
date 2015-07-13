@@ -19,8 +19,8 @@ public final class MealEventTable
      */
     public final static class MealEventTablePrimaryKey {
 
-        private long mEventId;
-        private long mMealId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
 
         public boolean equals(Object other) {
             if (other == null) {

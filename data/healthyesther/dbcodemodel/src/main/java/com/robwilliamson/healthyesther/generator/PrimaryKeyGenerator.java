@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.generator;
 
+import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.robwilliamson.healthyesther.type.Column;
@@ -11,6 +12,7 @@ import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
@@ -32,8 +34,13 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         mPrimaryKeyFields = new HashMap<>();
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
-        populatePrimaryKeyValues();
-        makeEquals();
+        CodeGenerator.ASYNC.schedule(new Runnable() {
+            @Override
+            public void run() {
+                populatePrimaryKeyValues();
+                makeEquals();
+            }
+        });
     }
 
     public TableGenerator getTableGenerator() {
@@ -53,7 +60,11 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     private void populatePrimaryKeyValues() {
         List <Column> primaryKeyColumns = getPrimaryKeyColumns();
         for (Column column : primaryKeyColumns) {
-            JFieldVar primaryKeyField = getJClass().field(JMod.PRIVATE, column.getJtype(model()), "m" + Strings.capitalize(Strings.underscoresToCamel(column.getName())));
+            JType type = column.getJtype(model());
+            if (column.isForeignKey()) {
+                type = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+            }
+            JFieldVar primaryKeyField = getJClass().field(JMod.PRIVATE, type, "m" + Strings.capitalize(Strings.underscoresToCamel(column.getName())));
             mPrimaryKeyFields.put(column.getName(), primaryKeyField);
         }
     }

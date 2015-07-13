@@ -19,8 +19,8 @@ public final class HealthScoreEventTable
      */
     public final static class HealthScoreEventTablePrimaryKey {
 
-        private long mEventId;
-        private long mHealthScoreId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey mHealthScoreId;
 
         public boolean equals(Object other) {
             if (other == null) {

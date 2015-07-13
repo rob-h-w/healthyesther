@@ -19,8 +19,8 @@ public final class MedicationEventTable
      */
     public final static class MedicationEventTablePrimaryKey {
 
-        private long mEventId;
-        private long mMedicationId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
 
         public boolean equals(Object other) {
             if (other == null) {
