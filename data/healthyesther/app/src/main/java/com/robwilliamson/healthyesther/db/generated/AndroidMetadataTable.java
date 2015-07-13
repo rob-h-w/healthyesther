@@ -20,12 +20,15 @@ public final class AndroidMetadataTable
     public final static class AndroidMetadataTablePrimaryKey {
 
 
-        public boolean equals(AndroidMetadataTable.AndroidMetadataTablePrimaryKey android_metadataTablePrimaryKey) {
-            if (android_metadataTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (android_metadataTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
+            }
+            if (!(other instanceof AndroidMetadataTable.AndroidMetadataTablePrimaryKey)) {
+                return false;
             }
             return true;
         }

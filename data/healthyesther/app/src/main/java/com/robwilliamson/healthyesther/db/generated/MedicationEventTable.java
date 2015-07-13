@@ -22,17 +22,21 @@ public final class MedicationEventTable
         private long mEventId;
         private long mMedicationId;
 
-        public boolean equals(MedicationEventTable.MedicationEventTablePrimaryKey medication_eventTablePrimaryKey) {
-            if (medication_eventTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (medication_eventTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (medication_eventTablePrimaryKey.mMedicationId!= mMedicationId) {
+            if (!(other instanceof MedicationEventTable.MedicationEventTablePrimaryKey)) {
                 return false;
             }
-            if (medication_eventTablePrimaryKey.mEventId!= mEventId) {
+            MedicationEventTable.MedicationEventTablePrimaryKey theMedicationEventTablePrimaryKey = ((MedicationEventTable.MedicationEventTablePrimaryKey) other);
+            if (theMedicationEventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
+            }
+            if (theMedicationEventTablePrimaryKey.mMedicationId!= mMedicationId) {
                 return false;
             }
             return true;

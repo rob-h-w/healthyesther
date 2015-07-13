@@ -22,17 +22,21 @@ public final class HealthScoreEventTable
         private long mEventId;
         private long mHealthScoreId;
 
-        public boolean equals(HealthScoreEventTable.HealthScoreEventTablePrimaryKey health_score_eventTablePrimaryKey) {
-            if (health_score_eventTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (health_score_eventTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (health_score_eventTablePrimaryKey.mHealthScoreId!= mHealthScoreId) {
+            if (!(other instanceof HealthScoreEventTable.HealthScoreEventTablePrimaryKey)) {
                 return false;
             }
-            if (health_score_eventTablePrimaryKey.mEventId!= mEventId) {
+            HealthScoreEventTable.HealthScoreEventTablePrimaryKey theHealthScoreEventTablePrimaryKey = ((HealthScoreEventTable.HealthScoreEventTablePrimaryKey) other);
+            if (theHealthScoreEventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
+            }
+            if (theHealthScoreEventTablePrimaryKey.mHealthScoreId!= mHealthScoreId) {
                 return false;
             }
             return true;

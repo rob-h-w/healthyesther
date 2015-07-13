@@ -22,17 +22,21 @@ public final class MealEventTable
         private long mEventId;
         private long mMealId;
 
-        public boolean equals(MealEventTable.MealEventTablePrimaryKey meal_eventTablePrimaryKey) {
-            if (meal_eventTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (meal_eventTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (meal_eventTablePrimaryKey.mEventId!= mEventId) {
+            if (!(other instanceof MealEventTable.MealEventTablePrimaryKey)) {
                 return false;
             }
-            if (meal_eventTablePrimaryKey.mMealId!= mMealId) {
+            MealEventTable.MealEventTablePrimaryKey theMealEventTablePrimaryKey = ((MealEventTable.MealEventTablePrimaryKey) other);
+            if (theMealEventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
+            }
+            if (theMealEventTablePrimaryKey.mMealId!= mMealId) {
                 return false;
             }
             return true;

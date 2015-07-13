@@ -21,14 +21,18 @@ public final class EventTypeTable
 
         private long mId;
 
-        public boolean equals(EventTypeTable.EventTypeTablePrimaryKey event_typeTablePrimaryKey) {
-            if (event_typeTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (event_typeTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (event_typeTablePrimaryKey.mId!= mId) {
+            if (!(other instanceof EventTypeTable.EventTypeTablePrimaryKey)) {
+                return false;
+            }
+            EventTypeTable.EventTypeTablePrimaryKey theEventTypeTablePrimaryKey = ((EventTypeTable.EventTypeTablePrimaryKey) other);
+            if (theEventTypeTablePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;

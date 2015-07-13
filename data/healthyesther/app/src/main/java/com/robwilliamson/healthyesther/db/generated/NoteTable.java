@@ -21,14 +21,18 @@ public final class NoteTable
 
         private long mId;
 
-        public boolean equals(NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
-            if (noteTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (noteTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (noteTablePrimaryKey.mId!= mId) {
+            if (!(other instanceof NoteTable.NoteTablePrimaryKey)) {
+                return false;
+            }
+            NoteTable.NoteTablePrimaryKey theNoteTablePrimaryKey = ((NoteTable.NoteTablePrimaryKey) other);
+            if (theNoteTablePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;

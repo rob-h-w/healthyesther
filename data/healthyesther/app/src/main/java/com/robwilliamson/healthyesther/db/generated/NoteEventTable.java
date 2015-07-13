@@ -22,17 +22,21 @@ public final class NoteEventTable
         private long mEventId;
         private long mNoteId;
 
-        public boolean equals(NoteEventTable.NoteEventTablePrimaryKey note_eventTablePrimaryKey) {
-            if (note_eventTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (note_eventTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (note_eventTablePrimaryKey.mNoteId!= mNoteId) {
+            if (!(other instanceof NoteEventTable.NoteEventTablePrimaryKey)) {
                 return false;
             }
-            if (note_eventTablePrimaryKey.mEventId!= mEventId) {
+            NoteEventTable.NoteEventTablePrimaryKey theNoteEventTablePrimaryKey = ((NoteEventTable.NoteEventTablePrimaryKey) other);
+            if (theNoteEventTablePrimaryKey.mEventId!= mEventId) {
+                return false;
+            }
+            if (theNoteEventTablePrimaryKey.mNoteId!= mNoteId) {
                 return false;
             }
             return true;

@@ -22,17 +22,21 @@ public final class MedicationNameTable
         private long mMedicationId;
         private String mName;
 
-        public boolean equals(MedicationNameTable.MedicationNameTablePrimaryKey medication_nameTablePrimaryKey) {
-            if (medication_nameTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (medication_nameTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (medication_nameTablePrimaryKey.mName!= mName) {
+            if (!(other instanceof MedicationNameTable.MedicationNameTablePrimaryKey)) {
                 return false;
             }
-            if (medication_nameTablePrimaryKey.mMedicationId!= mMedicationId) {
+            MedicationNameTable.MedicationNameTablePrimaryKey theMedicationNameTablePrimaryKey = ((MedicationNameTable.MedicationNameTablePrimaryKey) other);
+            if (theMedicationNameTablePrimaryKey.mMedicationId!= mMedicationId) {
+                return false;
+            }
+            if (theMedicationNameTablePrimaryKey.mName!= mName) {
                 return false;
             }
             return true;

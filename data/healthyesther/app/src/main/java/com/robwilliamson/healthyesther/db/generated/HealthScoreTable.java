@@ -21,14 +21,18 @@ public final class HealthScoreTable
 
         private long mId;
 
-        public boolean equals(HealthScoreTable.HealthScoreTablePrimaryKey health_scoreTablePrimaryKey) {
-            if (health_scoreTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (health_scoreTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (health_scoreTablePrimaryKey.mId!= mId) {
+            if (!(other instanceof HealthScoreTable.HealthScoreTablePrimaryKey)) {
+                return false;
+            }
+            HealthScoreTable.HealthScoreTablePrimaryKey theHealthScoreTablePrimaryKey = ((HealthScoreTable.HealthScoreTablePrimaryKey) other);
+            if (theHealthScoreTablePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;

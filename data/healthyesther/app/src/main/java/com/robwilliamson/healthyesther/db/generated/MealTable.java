@@ -21,14 +21,18 @@ public final class MealTable
 
         private long mId;
 
-        public boolean equals(MealTable.MealTablePrimaryKey mealTablePrimaryKey) {
-            if (mealTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (mealTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (mealTablePrimaryKey.mId!= mId) {
+            if (!(other instanceof MealTable.MealTablePrimaryKey)) {
+                return false;
+            }
+            MealTable.MealTablePrimaryKey theMealTablePrimaryKey = ((MealTable.MealTablePrimaryKey) other);
+            if (theMealTablePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;

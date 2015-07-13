@@ -34,14 +34,18 @@ public final class UnitsTable
 
         private long mId;
 
-        public boolean equals(UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
-            if (unitsTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (unitsTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (unitsTablePrimaryKey.mId!= mId) {
+            if (!(other instanceof UnitsTable.UnitsTablePrimaryKey)) {
+                return false;
+            }
+            UnitsTable.UnitsTablePrimaryKey theUnitsTablePrimaryKey = ((UnitsTable.UnitsTablePrimaryKey) other);
+            if (theUnitsTablePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;

@@ -21,14 +21,18 @@ public final class MedicationTable
 
         private long mId;
 
-        public boolean equals(MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
-            if (medicationTablePrimaryKey == null) {
+        public boolean equals(Object other) {
+            if (other == null) {
                 return false;
             }
-            if (medicationTablePrimaryKey == this) {
+            if (other == this) {
                 return true;
             }
-            if (medicationTablePrimaryKey.mId!= mId) {
+            if (!(other instanceof MedicationTable.MedicationTablePrimaryKey)) {
+                return false;
+            }
+            MedicationTable.MedicationTablePrimaryKey theMedicationTablePrimaryKey = ((MedicationTable.MedicationTablePrimaryKey) other);
+            if (theMedicationTablePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;
