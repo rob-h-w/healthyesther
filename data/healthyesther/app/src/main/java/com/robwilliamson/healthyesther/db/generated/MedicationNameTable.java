@@ -34,10 +34,14 @@ public final class MedicationNameTable
             }
             MedicationNameTable.MedicationNameTablePrimaryKey theMedicationNameTablePrimaryKey = ((MedicationNameTable.MedicationNameTablePrimaryKey) other);
             if (theMedicationNameTablePrimaryKey.mMedicationId!= mMedicationId) {
-                return false;
+                if ((theMedicationNameTablePrimaryKey.mMedicationId == null)||(!theMedicationNameTablePrimaryKey.mMedicationId.equals(mMedicationId))) {
+                    return false;
+                }
             }
             if (theMedicationNameTablePrimaryKey.mName!= mName) {
-                return false;
+                if ((theMedicationNameTablePrimaryKey.mName == null)||(!theMedicationNameTablePrimaryKey.mName.equals(mName))) {
+                    return false;
+                }
             }
             return true;
         }

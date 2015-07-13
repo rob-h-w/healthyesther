@@ -34,10 +34,14 @@ public final class MedicationEventTable
             }
             MedicationEventTable.MedicationEventTablePrimaryKey theMedicationEventTablePrimaryKey = ((MedicationEventTable.MedicationEventTablePrimaryKey) other);
             if (theMedicationEventTablePrimaryKey.mEventId!= mEventId) {
-                return false;
+                if ((theMedicationEventTablePrimaryKey.mEventId == null)||(!theMedicationEventTablePrimaryKey.mEventId.equals(mEventId))) {
+                    return false;
+                }
             }
             if (theMedicationEventTablePrimaryKey.mMedicationId!= mMedicationId) {
-                return false;
+                if ((theMedicationEventTablePrimaryKey.mMedicationId == null)||(!theMedicationEventTablePrimaryKey.mMedicationId.equals(mMedicationId))) {
+                    return false;
+                }
             }
             return true;
         }

@@ -118,7 +118,15 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             // Check each primary key column.
             for (JFieldVar primaryKeyField : fields) {
                 ifBlock = equals._if(otherType.ref(primaryKeyField).ne(primaryKeyField))._then();
-                ifBlock._return(JExpr.lit(false));
+
+                if (primaryKeyField.type().isPrimitive()) {
+                    ifBlock._return(JExpr.lit(false));
+                } else {
+                    // Check nullness.
+                    // if (otherType.key == null || !otherType.key.equals(key) { return false }
+                    ifBlock = ifBlock._if(otherType.ref(primaryKeyField).eq(JExpr._null()).cor(otherType.ref(primaryKeyField).invoke("equals").arg(primaryKeyField).not()))._then();
+                    ifBlock._return(JExpr.lit(false));
+                }
             }
         }
 

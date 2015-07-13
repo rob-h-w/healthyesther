@@ -34,10 +34,14 @@ public final class HealthScoreEventTable
             }
             HealthScoreEventTable.HealthScoreEventTablePrimaryKey theHealthScoreEventTablePrimaryKey = ((HealthScoreEventTable.HealthScoreEventTablePrimaryKey) other);
             if (theHealthScoreEventTablePrimaryKey.mEventId!= mEventId) {
-                return false;
+                if ((theHealthScoreEventTablePrimaryKey.mEventId == null)||(!theHealthScoreEventTablePrimaryKey.mEventId.equals(mEventId))) {
+                    return false;
+                }
             }
             if (theHealthScoreEventTablePrimaryKey.mHealthScoreId!= mHealthScoreId) {
-                return false;
+                if ((theHealthScoreEventTablePrimaryKey.mHealthScoreId == null)||(!theHealthScoreEventTablePrimaryKey.mHealthScoreId.equals(mHealthScoreId))) {
+                    return false;
+                }
             }
             return true;
         }

@@ -34,10 +34,14 @@ public final class NoteEventTable
             }
             NoteEventTable.NoteEventTablePrimaryKey theNoteEventTablePrimaryKey = ((NoteEventTable.NoteEventTablePrimaryKey) other);
             if (theNoteEventTablePrimaryKey.mEventId!= mEventId) {
-                return false;
+                if ((theNoteEventTablePrimaryKey.mEventId == null)||(!theNoteEventTablePrimaryKey.mEventId.equals(mEventId))) {
+                    return false;
+                }
             }
             if (theNoteEventTablePrimaryKey.mNoteId!= mNoteId) {
-                return false;
+                if ((theNoteEventTablePrimaryKey.mNoteId == null)||(!theNoteEventTablePrimaryKey.mNoteId.equals(mNoteId))) {
+                    return false;
+                }
             }
             return true;
         }

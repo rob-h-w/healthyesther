@@ -34,10 +34,14 @@ public final class MealEventTable
             }
             MealEventTable.MealEventTablePrimaryKey theMealEventTablePrimaryKey = ((MealEventTable.MealEventTablePrimaryKey) other);
             if (theMealEventTablePrimaryKey.mEventId!= mEventId) {
-                return false;
+                if ((theMealEventTablePrimaryKey.mEventId == null)||(!theMealEventTablePrimaryKey.mEventId.equals(mEventId))) {
+                    return false;
+                }
             }
             if (theMealEventTablePrimaryKey.mMealId!= mMealId) {
-                return false;
+                if ((theMealEventTablePrimaryKey.mMealId == null)||(!theMealEventTablePrimaryKey.mMealId.equals(mMealId))) {
+                    return false;
+                }
             }
             return true;
         }
