@@ -37,7 +37,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
-                populatePrimaryKeyValues();
+                makePrimaryKeyValues();
                 makeEquals();
             }
         });
@@ -57,7 +57,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return getTableGenerator().getPreferredParameterName() + super.getPreferredParameterName();
     }
 
-    private void populatePrimaryKeyValues() {
+    private void makePrimaryKeyValues() {
         List <Column> primaryKeyColumns = getPrimaryKeyColumns();
         for (Column column : primaryKeyColumns) {
             JType type = column.getJtype(model());
