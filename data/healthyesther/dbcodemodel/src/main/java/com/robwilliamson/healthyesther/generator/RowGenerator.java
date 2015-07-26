@@ -63,7 +63,14 @@ public class RowGenerator extends BaseClassGenerator {
 
         for (Column column : nonNull) {
             if (column.isForeignKey()) {
+                // Always there is a join constructor if there are foreign keys.
                 addConstructorParam(column.getColumnDependency());
+            } else if (column.isPrimaryKey()) {
+                PrimaryKeyGenerator keyGenerator = column.getTable().getGenerator().getPrimaryKeyGenerator();
+                mRowConstructor.param(keyGenerator.getJClass(), name(column));
+                if (mJoinConstructor != null) {
+                    mJoinConstructor.param(keyGenerator.getJClass(), name(column));
+                }
             } else {
                 mRowConstructor.param(primitiveType(column), name(column));
                 if (mJoinConstructor != null) {

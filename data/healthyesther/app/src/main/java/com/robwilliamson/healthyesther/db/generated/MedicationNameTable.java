@@ -56,10 +56,10 @@ public final class MedicationNameTable
     public final static class Row {
 
 
-        public Row(String medicationNameName, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
+        public Row(MedicationNameTable.MedicationNameTablePrimaryKey medicationNameName, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
         }
 
-        public Row(String medicationNameName, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+        public Row(MedicationNameTable.MedicationNameTablePrimaryKey medicationNameName, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
         }
 
     }
