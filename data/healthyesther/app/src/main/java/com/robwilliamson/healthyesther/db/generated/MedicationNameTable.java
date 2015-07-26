@@ -22,6 +22,16 @@ public final class MedicationNameTable
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         private String mName;
 
+        public MedicationNameTablePrimaryKey(MedicationNameTable.MedicationNameTablePrimaryKey other) {
+            mMedicationId = other.mMedicationId;
+            mName = other.mName;
+        }
+
+        public MedicationNameTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId, String Name) {
+            mMedicationId = MedicationId;
+            mName = Name;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

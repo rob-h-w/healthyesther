@@ -34,6 +34,14 @@ public final class UnitsTable
 
         private long mId;
 
+        public UnitsTablePrimaryKey(UnitsTable.UnitsTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public UnitsTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

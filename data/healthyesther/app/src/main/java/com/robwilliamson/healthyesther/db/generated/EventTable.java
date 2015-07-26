@@ -21,6 +21,14 @@ public final class EventTable
 
         private long mId;
 
+        public EventTablePrimaryKey(EventTable.EventTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public EventTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

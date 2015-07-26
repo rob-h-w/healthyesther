@@ -21,6 +21,14 @@ public final class MedicationTable
 
         private long mId;
 
+        public MedicationTablePrimaryKey(MedicationTable.MedicationTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public MedicationTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

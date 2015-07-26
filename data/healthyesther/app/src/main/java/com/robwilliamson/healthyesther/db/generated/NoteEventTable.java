@@ -22,6 +22,16 @@ public final class NoteEventTable
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey mNoteId;
 
+        public NoteEventTablePrimaryKey(NoteEventTable.NoteEventTablePrimaryKey other) {
+            mEventId = other.mEventId;
+            mNoteId = other.mNoteId;
+        }
+
+        public NoteEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey NoteId) {
+            mEventId = EventId;
+            mNoteId = NoteId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

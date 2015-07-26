@@ -21,6 +21,14 @@ public final class HealthScoreTable
 
         private long mId;
 
+        public HealthScoreTablePrimaryKey(HealthScoreTable.HealthScoreTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public HealthScoreTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

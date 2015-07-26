@@ -22,6 +22,16 @@ public final class MedicationEventTable
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
 
+        public MedicationEventTablePrimaryKey(MedicationEventTable.MedicationEventTablePrimaryKey other) {
+            mEventId = other.mEventId;
+            mMedicationId = other.mMedicationId;
+        }
+
+        public MedicationEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId) {
+            mEventId = EventId;
+            mMedicationId = MedicationId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

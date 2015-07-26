@@ -21,6 +21,14 @@ public final class NoteTable
 
         private long mId;
 
+        public NoteTablePrimaryKey(NoteTable.NoteTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public NoteTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

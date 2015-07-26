@@ -21,6 +21,14 @@ public final class EventTypeTable
 
         private long mId;
 
+        public EventTypeTablePrimaryKey(EventTypeTable.EventTypeTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public EventTypeTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

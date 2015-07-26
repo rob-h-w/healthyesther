@@ -17,34 +17,75 @@ import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @ClassGeneratorFeatures(name = "PrimaryKey", parameterName = "PrimaryKey")
 public class PrimaryKeyGenerator extends BaseClassGenerator {
+    private class Field {
+        public final String name;
+        public final JFieldVar fieldVar;
+        public final Column column;
+
+        public Field(String name, JFieldVar fieldVar, Column column) {
+            this.name = name;
+            this.fieldVar = fieldVar;
+            this.column = column;
+        }
+    }
+
     private final TableGenerator mTableGenerator;
-    private final Map<String, JFieldVar> mPrimaryKeyFields;
+    private final Map<String, Field> mPrimaryKeyFields;
+    private final List<Field> mSortedPrimaryKeyFields;
+    private JMethod mCopyConstructor;
+    private JMethod mValueConstructor;
 
     public PrimaryKeyGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         super();
 
         mTableGenerator = tableGenerator;
         mPrimaryKeyFields = new HashMap<>();
+        mSortedPrimaryKeyFields = new ArrayList<>();
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
                 makePrimaryKeyValues();
+                makeConstructors();
                 makeEquals();
             }
         });
     }
 
+    private void makeConstructors() {
+        if (mSortedPrimaryKeyFields.isEmpty()) {
+            return;
+        }
+
+        mCopyConstructor = getJClass().constructor(JMod.PUBLIC);
+        mValueConstructor = getJClass().constructor(JMod.PUBLIC);
+
+        JVar other = mCopyConstructor.param(getJClass(), "other");
+
+        for (Field field : mSortedPrimaryKeyFields) {
+            mCopyConstructor.body().assign(field.fieldVar, JExpr.ref(other, field.fieldVar));
+            JVar param = mValueConstructor.param(field.fieldVar.type(), field.name);
+            mValueConstructor.body().assign(field.fieldVar, param);
+        }
+    }
+
     public TableGenerator getTableGenerator() {
         return mTableGenerator;
+    }
+
+    public JMethod getCopyConstructor() {
+        return mCopyConstructor;
+    }
+
+    public JMethod getValueConstructor() {
+        return mValueConstructor;
     }
 
     @Override
@@ -64,8 +105,18 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             if (column.isForeignKey()) {
                 type = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
             }
-            JFieldVar primaryKeyField = getJClass().field(JMod.PRIVATE, type, "m" + Strings.capitalize(Strings.underscoresToCamel(column.getName())));
-            mPrimaryKeyFields.put(column.getName(), primaryKeyField);
+            String name = Strings.capitalize(Strings.underscoresToCamel(column.getName()));
+            JFieldVar primaryKeyField = getJClass().field(JMod.PRIVATE, type, "m" + name);
+            Field field = new Field(name, primaryKeyField, column);
+            mPrimaryKeyFields.put(column.getName(), field);
+        }
+
+        String[] names = new String[mPrimaryKeyFields.size()];
+        mPrimaryKeyFields.keySet().toArray(names);
+        Arrays.sort(names);
+
+        for (String name : names) {
+            mSortedPrimaryKeyFields.add(mPrimaryKeyFields.get(name));
         }
     }
 
@@ -102,21 +153,13 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         ifBlock = equals._if(other._instanceof(theClass).not())._then();
         ifBlock._return(JExpr.lit(false));
 
-        JFieldVar[] fields = new JFieldVar[mPrimaryKeyFields.size()];
-        mPrimaryKeyFields.values().toArray(fields);
-        Arrays.sort(fields, new Comparator<JFieldVar>() {
-            @Override
-            public int compare(JFieldVar o1, JFieldVar o2) {
-                return o1.name().compareTo(o2.name());
-            }
-        });
-
-        if (fields.length > 0) {
+        if (!mSortedPrimaryKeyFields.isEmpty()) {
             // Cast
             JVar otherType = equals.decl(theClass, "the" + theClass.name(), JExpr.cast(theClass, other));
 
             // Check each primary key column.
-            for (JFieldVar primaryKeyField : fields) {
+            for (Field field : mSortedPrimaryKeyFields) {
+                JFieldVar primaryKeyField = field.fieldVar;
                 ifBlock = equals._if(otherType.ref(primaryKeyField).ne(primaryKeyField))._then();
 
                 if (primaryKeyField.type().isPrimitive()) {

@@ -21,6 +21,14 @@ public final class MealTable
 
         private long mId;
 
+        public MealTablePrimaryKey(MealTable.MealTablePrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public MealTablePrimaryKey(long Id) {
+            mId = Id;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
