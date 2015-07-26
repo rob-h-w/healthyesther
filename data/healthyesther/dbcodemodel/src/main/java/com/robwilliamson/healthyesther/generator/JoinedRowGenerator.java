@@ -18,7 +18,10 @@ public class JoinedRowGenerator extends RowGenerator {
         super(tableGenerator);
 
         mRowConstructor = getJClass().constructor(JMod.PUBLIC);
-        mJoinConstructor = getJClass().constructor(JMod.PUBLIC);
+
+        if (getTableGenerator().getTable().hasDependencies()) {
+            mJoinConstructor = getJClass().constructor(JMod.PUBLIC);
+        }
     }
 
     @Override
@@ -47,7 +50,9 @@ public class JoinedRowGenerator extends RowGenerator {
                 addConstructorParam(column.getColumnDependency());
             } else {
                 mRowConstructor.param(primitiveType(column), name(column));
-                mJoinConstructor.param(primitiveType(column), name(column));
+                if (mJoinConstructor != null) {
+                    mJoinConstructor.param(primitiveType(column), name(column));
+                }
             }
         }
 
@@ -56,7 +61,9 @@ public class JoinedRowGenerator extends RowGenerator {
                 addConstructorParam(column.getColumnDependency());
             } else {
                 mRowConstructor.param(nullableType(column), name(column));
-                mJoinConstructor.param(nullableType(column), name(column));
+                if (mJoinConstructor != null) {
+                    mJoinConstructor.param(nullableType(column), name(column));
+                }
             }
         }
     }
