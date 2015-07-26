@@ -57,7 +57,7 @@ public class TableGenerator extends BaseClassGenerator {
             mDependencies.add(dependency);
         }
 
-        mRowGenerator = new JoinedRowGenerator(this);
+        mRowGenerator = new RowGenerator(this);
 
         mPrimaryKeyGenerator = new PrimaryKeyGenerator(this);
 
