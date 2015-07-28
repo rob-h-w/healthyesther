@@ -32,6 +32,22 @@ public final class NoteEventTable
             mNoteId = NoteId;
         }
 
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
+            mEventId = EventId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+            return mEventId;
+        }
+
+        public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey NoteId) {
+            mNoteId = NoteId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey getNoteId() {
+            return mNoteId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

@@ -32,6 +32,22 @@ public final class MealEventTable
             mMealId = MealId;
         }
 
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
+            mEventId = EventId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+            return mEventId;
+        }
+
+        public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey MealId) {
+            mMealId = MealId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey getMealId() {
+            return mMealId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

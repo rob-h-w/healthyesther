@@ -32,6 +32,22 @@ public final class MedicationNameTable
             mName = Name;
         }
 
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId) {
+            mMedicationId = MedicationId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
+            return mMedicationId;
+        }
+
+        public void setName(String Name) {
+            mName = Name;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

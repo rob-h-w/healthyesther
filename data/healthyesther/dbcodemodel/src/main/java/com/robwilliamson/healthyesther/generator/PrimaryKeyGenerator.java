@@ -13,6 +13,7 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JType;
+import com.sun.codemodel.JTypeVar;
 import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             public void run() {
                 makePrimaryKeyValues();
                 makeConstructors();
+                makeValueAccessors();
                 makeEquals();
             }
         });
@@ -73,6 +75,23 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             mCopyConstructor.body().assign(field.fieldVar, JExpr.ref(other, field.fieldVar));
             JVar param = mValueConstructor.param(field.fieldVar.type(), field.name);
             mValueConstructor.body().assign(field.fieldVar, param);
+        }
+    }
+
+    private void makeValueAccessors() {
+        for (Field field : mSortedPrimaryKeyFields) {
+            JMethod setter = getJClass().method(
+                    JMod.PUBLIC,
+                    getJClass().owner().VOID,
+                    "set" + Strings.capitalize(field.name));
+            JVar value = setter.param(field.fieldVar.type(), field.name);
+            setter.body().assign(field.fieldVar, value);
+
+            JMethod getter = getJClass().method(
+                    JMod.PUBLIC,
+                    field.fieldVar.type(),
+                    "get" + Strings.capitalize(field.name));
+            getter.body()._return(field.fieldVar);
         }
     }
 

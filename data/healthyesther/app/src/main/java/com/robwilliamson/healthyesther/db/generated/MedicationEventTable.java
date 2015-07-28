@@ -32,6 +32,22 @@ public final class MedicationEventTable
             mMedicationId = MedicationId;
         }
 
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
+            mEventId = EventId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+            return mEventId;
+        }
+
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId) {
+            mMedicationId = MedicationId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
+            return mMedicationId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

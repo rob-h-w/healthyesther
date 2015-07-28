@@ -29,6 +29,14 @@ public final class MealTable
             mId = Id;
         }
 
+        public void setId(long Id) {
+            mId = Id;
+        }
+
+        public long getId() {
+            return mId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

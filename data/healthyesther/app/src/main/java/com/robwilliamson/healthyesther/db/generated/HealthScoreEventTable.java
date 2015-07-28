@@ -32,6 +32,22 @@ public final class HealthScoreEventTable
             mHealthScoreId = HealthScoreId;
         }
 
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
+            mEventId = EventId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+            return mEventId;
+        }
+
+        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey HealthScoreId) {
+            mHealthScoreId = HealthScoreId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey getHealthScoreId() {
+            return mHealthScoreId;
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
