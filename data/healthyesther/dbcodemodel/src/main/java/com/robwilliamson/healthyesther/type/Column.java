@@ -107,6 +107,11 @@ public class Column {
         return type;
     }
 
+    /**
+     * Get the codemodel type of the column.
+     * @param model The model to use to generate basic types.
+     * @return The primitive type that represents the SQLite type of this column.
+     */
     public JType getJtype(JCodeModel model) {
         if (isForeignKey()) {
             return model.LONG;
@@ -122,6 +127,20 @@ public class Column {
             default:
                 throw new IllegalArgumentException("Unrecognized type " + getType());
         }
+    }
+
+    /**
+     * Like {@link #getJtype(JCodeModel model)}, but resolves dependencies.
+     * @param model The model to use to generate basic types.
+     * @return The type that should be written in places that use this column.
+     */
+    public JType getDependentJtype(JCodeModel model) {
+        JType type = getJtype(model);
+        if (isForeignKey()) {
+            type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+        }
+
+        return type;
     }
 
     public boolean isForeignKey() {

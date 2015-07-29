@@ -27,21 +27,21 @@ public final class MedicationNameTable
             mName = other.mName;
         }
 
-        public MedicationNameTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId, String Name) {
-            mMedicationId = MedicationId;
-            mName = Name;
+        public MedicationNameTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId, String name) {
+            mMedicationId = medicationId;
+            mName = name;
         }
 
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId) {
-            mMedicationId = MedicationId;
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+            mMedicationId = medicationId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
             return mMedicationId;
         }
 
-        public void setName(String Name) {
-            mName = Name;
+        public void setName(String name) {
+            mName = name;
         }
 
         public String getName() {

@@ -27,21 +27,21 @@ public final class MealEventTable
             mMealId = other.mMealId;
         }
 
-        public MealEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId, com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey MealId) {
-            mEventId = EventId;
-            mMealId = MealId;
+        public MealEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
+            mEventId = eventId;
+            mMealId = mealId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
-            mEventId = EventId;
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+            mEventId = eventId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey MealId) {
-            mMealId = MealId;
+        public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
+            mMealId = mealId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey getMealId() {

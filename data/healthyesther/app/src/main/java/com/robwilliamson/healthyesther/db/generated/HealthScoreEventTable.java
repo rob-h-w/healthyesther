@@ -27,21 +27,21 @@ public final class HealthScoreEventTable
             mHealthScoreId = other.mHealthScoreId;
         }
 
-        public HealthScoreEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey HealthScoreId) {
-            mEventId = EventId;
-            mHealthScoreId = HealthScoreId;
+        public HealthScoreEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
+            mEventId = eventId;
+            mHealthScoreId = healthScoreId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
-            mEventId = EventId;
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+            mEventId = eventId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey HealthScoreId) {
-            mHealthScoreId = HealthScoreId;
+        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
+            mHealthScoreId = healthScoreId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey getHealthScoreId() {

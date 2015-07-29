@@ -27,21 +27,21 @@ public final class NoteEventTable
             mNoteId = other.mNoteId;
         }
 
-        public NoteEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey NoteId) {
-            mEventId = EventId;
-            mNoteId = NoteId;
+        public NoteEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteId) {
+            mEventId = eventId;
+            mNoteId = noteId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
-            mEventId = EventId;
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+            mEventId = eventId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey NoteId) {
-            mNoteId = NoteId;
+        public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteId) {
+            mNoteId = noteId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey getNoteId() {

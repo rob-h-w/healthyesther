@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JBlock;
@@ -12,8 +13,6 @@ import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
-import com.sun.codemodel.JType;
-import com.sun.codemodel.JTypeVar;
 import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
@@ -24,21 +23,9 @@ import java.util.Map;
 
 @ClassGeneratorFeatures(name = "PrimaryKey", parameterName = "PrimaryKey")
 public class PrimaryKeyGenerator extends BaseClassGenerator {
-    private class Field {
-        public final String name;
-        public final JFieldVar fieldVar;
-        public final Column column;
-
-        public Field(String name, JFieldVar fieldVar, Column column) {
-            this.name = name;
-            this.fieldVar = fieldVar;
-            this.column = column;
-        }
-    }
-
     private final TableGenerator mTableGenerator;
-    private final Map<String, Field> mPrimaryKeyFields;
-    private final List<Field> mSortedPrimaryKeyFields;
+    private Map<String, ColumnField> mPrimaryKeyFields;
+    private List<ColumnField> mSortedPrimaryKeyFields;
     private JMethod mCopyConstructor;
     private JMethod mValueConstructor;
 
@@ -46,8 +33,6 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         super();
 
         mTableGenerator = tableGenerator;
-        mPrimaryKeyFields = new HashMap<>();
-        mSortedPrimaryKeyFields = new ArrayList<>();
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
         CodeGenerator.ASYNC.schedule(new Runnable() {
@@ -71,7 +56,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
         JVar other = mCopyConstructor.param(getJClass(), "other");
 
-        for (Field field : mSortedPrimaryKeyFields) {
+        for (ColumnField field : mSortedPrimaryKeyFields) {
             mCopyConstructor.body().assign(field.fieldVar, JExpr.ref(other, field.fieldVar));
             JVar param = mValueConstructor.param(field.fieldVar.type(), field.name);
             mValueConstructor.body().assign(field.fieldVar, param);
@@ -79,7 +64,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     }
 
     private void makeValueAccessors() {
-        for (Field field : mSortedPrimaryKeyFields) {
+        for (ColumnField field : mSortedPrimaryKeyFields) {
             JMethod setter = getJClass().method(
                     JMod.PUBLIC,
                     getJClass().owner().VOID,
@@ -118,25 +103,8 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     }
 
     private void makePrimaryKeyValues() {
-        List <Column> primaryKeyColumns = getPrimaryKeyColumns();
-        for (Column column : primaryKeyColumns) {
-            JType type = column.getJtype(model());
-            if (column.isForeignKey()) {
-                type = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
-            }
-            String name = Strings.capitalize(Strings.underscoresToCamel(column.getName()));
-            JFieldVar primaryKeyField = getJClass().field(JMod.PRIVATE, type, "m" + name);
-            Field field = new Field(name, primaryKeyField, column);
-            mPrimaryKeyFields.put(column.getName(), field);
-        }
-
-        String[] names = new String[mPrimaryKeyFields.size()];
-        mPrimaryKeyFields.keySet().toArray(names);
-        Arrays.sort(names);
-
-        for (String name : names) {
-            mSortedPrimaryKeyFields.add(mPrimaryKeyFields.get(name));
-        }
+        mPrimaryKeyFields = ColumnField.makeMap(getJClass(), getPrimaryKeyColumns());
+        mSortedPrimaryKeyFields = ColumnField.makeSortedList(mPrimaryKeyFields);
     }
 
     private List<Column> getPrimaryKeyColumns() {
@@ -177,7 +145,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             JVar otherType = equals.decl(theClass, "the" + theClass.name(), JExpr.cast(theClass, other));
 
             // Check each primary key column.
-            for (Field field : mSortedPrimaryKeyFields) {
+            for (ColumnField field : mSortedPrimaryKeyFields) {
                 JFieldVar primaryKeyField = field.fieldVar;
                 ifBlock = equals._if(otherType.ref(primaryKeyField).ne(primaryKeyField))._then();
 

@@ -27,21 +27,21 @@ public final class MedicationEventTable
             mMedicationId = other.mMedicationId;
         }
 
-        public MedicationEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId) {
-            mEventId = EventId;
-            mMedicationId = MedicationId;
+        public MedicationEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+            mEventId = eventId;
+            mMedicationId = medicationId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey EventId) {
-            mEventId = EventId;
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+            mEventId = eventId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey MedicationId) {
-            mMedicationId = MedicationId;
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+            mMedicationId = medicationId;
         }
 
         public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
