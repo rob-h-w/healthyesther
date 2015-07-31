@@ -3,10 +3,8 @@ package com.robwilliamson.healthyesther.semantic;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMod;
-import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
