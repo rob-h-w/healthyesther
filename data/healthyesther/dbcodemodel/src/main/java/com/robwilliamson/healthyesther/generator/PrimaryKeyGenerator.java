@@ -22,7 +22,6 @@ import java.util.Map;
 @ClassGeneratorFeatures(name = "PrimaryKey", parameterName = "PrimaryKey")
 public class PrimaryKeyGenerator extends BaseClassGenerator {
     private final TableGenerator mTableGenerator;
-    private Map<String, ColumnField> mPrimaryKeyFields;
     private List<ColumnField> mSortedPrimaryKeyFields;
     private JMethod mCopyConstructor;
     private JMethod mValueConstructor;
@@ -101,8 +100,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     }
 
     private void makePrimaryKeyValues() {
-        mPrimaryKeyFields = ColumnField.makeMap(getJClass(), getPrimaryKeyColumns());
-        mSortedPrimaryKeyFields = ColumnField.makeSortedList(mPrimaryKeyFields);
+        mSortedPrimaryKeyFields = ColumnField.makeSortedList(getJClass(), getPrimaryKeyColumns());
     }
 
     private List<Column> getPrimaryKeyColumns() {

@@ -34,12 +34,20 @@ public class ColumnField {
         }
     }
 
+    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns) {
+        return makeMap(columns, new DefaultMaker(owningClass));
+    }
+
     public static Map<String, ColumnField> makeMap(List<Column> columns, Maker maker) {
         Map<String, ColumnField> map = new HashMap<>(columns.size());
         for (Column column : columns) {
             map.put(column.getName(), maker.make(column));
         }
         return map;
+    }
+
+    public static List<ColumnField> makeSortedList(JDefinedClass owningClass, List<Column> columns) {
+        return makeSortedList(makeMap(owningClass, columns));
     }
 
     public static List<ColumnField> makeSortedList(Map<String, ColumnField> map) {
@@ -54,10 +62,6 @@ public class ColumnField {
         }
 
         return list;
-    }
-
-    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns) {
-        return makeMap(columns, new DefaultMaker(owningClass));
     }
 
     public ColumnField(JDefinedClass owningClass, Column column) {
