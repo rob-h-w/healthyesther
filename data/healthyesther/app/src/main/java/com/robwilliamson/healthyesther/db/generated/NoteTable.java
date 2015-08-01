@@ -25,12 +25,12 @@ public final class NoteTable
             mId = other.mId;
         }
 
-        public NoteTablePrimaryKey(long Id) {
-            mId = Id;
+        public NoteTablePrimaryKey(long id) {
+            mId = id;
         }
 
-        public void setId(long Id) {
-            mId = Id;
+        public void setId(long id) {
+            mId = id;
         }
 
         public long getId() {
@@ -63,8 +63,35 @@ public final class NoteTable
      */
     public final static class Row {
 
+        private String mNote;
+        private String mName;
+        private NoteTable.NoteTablePrimaryKey mId;
 
-        public Row(String noteName, String noteNote, Long noteId) {
+        public Row(String name, NoteTable.NoteTablePrimaryKey id, String note) {
+        }
+
+        public void setId(NoteTable.NoteTablePrimaryKey id) {
+            mId = id;
+        }
+
+        public NoteTable.NoteTablePrimaryKey getId() {
+            return mId;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+        public void setNote(String note) {
+            mNote = note;
+        }
+
+        public String getNote() {
+            return mNote;
         }
 
     }

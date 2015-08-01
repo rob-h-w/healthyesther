@@ -81,11 +81,38 @@ public final class HealthScoreEventTable
      */
     public final static class Row {
 
+        private long mScore;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey mHealthScoreId;
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row health_scoreTableRow, Long healthScoreEventScore) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreTableRow, Long score) {
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey health_scoreTablePrimaryKey, Long healthScoreEventScore) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreTablePrimaryKey, Long score) {
+        }
+
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+            mEventId = eventId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+            return mEventId;
+        }
+
+        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
+            mHealthScoreId = healthScoreId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey getHealthScoreId() {
+            return mHealthScoreId;
+        }
+
+        public void setScore(long score) {
+            mScore = score;
+        }
+
+        public long getScore() {
+            return mScore;
         }
 
     }

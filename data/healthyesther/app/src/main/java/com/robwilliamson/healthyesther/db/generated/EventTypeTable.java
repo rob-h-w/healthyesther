@@ -25,12 +25,12 @@ public final class EventTypeTable
             mId = other.mId;
         }
 
-        public EventTypeTablePrimaryKey(long Id) {
-            mId = Id;
+        public EventTypeTablePrimaryKey(long id) {
+            mId = id;
         }
 
-        public void setId(long Id) {
-            mId = Id;
+        public void setId(long id) {
+            mId = id;
         }
 
         public long getId() {
@@ -63,8 +63,35 @@ public final class EventTypeTable
      */
     public final static class Row {
 
+        private String mIcon;
+        private String mName;
+        private EventTypeTable.EventTypeTablePrimaryKey mId;
 
-        public Row(String eventTypeName, String eventTypeIcon, Long eventTypeId) {
+        public Row(String name, EventTypeTable.EventTypeTablePrimaryKey id, String icon) {
+        }
+
+        public void setId(EventTypeTable.EventTypeTablePrimaryKey id) {
+            mId = id;
+        }
+
+        public EventTypeTable.EventTypeTablePrimaryKey getId() {
+            return mId;
+        }
+
+        public void setIcon(String icon) {
+            mIcon = icon;
+        }
+
+        public String getIcon() {
+            return mIcon;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
         }
 
     }

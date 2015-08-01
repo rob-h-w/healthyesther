@@ -28,12 +28,14 @@ public class TableGenerator extends BaseClassGenerator {
 
     @Override
     public String getName() {
-        return Strings.underscoresToCamel(Strings.capitalize(mTable.getName()) + super.getName());
+        return Strings.capitalize(Strings.underscoresToCamel(mTable.getName())) +
+                Strings.capitalize(super.getName());
     }
 
     @Override
     public String getPreferredParameterName() {
-        return mTable.getName() + super.getPreferredParameterName();
+        return Strings.lowerCase(Strings.underscoresToCamel(mTable.getName())) +
+                Strings.capitalize(super.getPreferredParameterName());
     }
 
     public com.robwilliamson.healthyesther.semantic.Table getTable() {

@@ -42,8 +42,17 @@ public final class AndroidMetadataTable
      */
     public final static class Row {
 
+        private String mLocale;
 
-        public Row(String androidMetadataLocale) {
+        public Row(String locale) {
+        }
+
+        public void setLocale(String locale) {
+            mLocale = locale;
+        }
+
+        public String getLocale() {
+            return mLocale;
         }
 
     }

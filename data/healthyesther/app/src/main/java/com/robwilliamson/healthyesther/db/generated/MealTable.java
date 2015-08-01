@@ -25,12 +25,12 @@ public final class MealTable
             mId = other.mId;
         }
 
-        public MealTablePrimaryKey(long Id) {
-            mId = Id;
+        public MealTablePrimaryKey(long id) {
+            mId = id;
         }
 
-        public void setId(long Id) {
-            mId = Id;
+        public void setId(long id) {
+            mId = id;
         }
 
         public long getId() {
@@ -63,8 +63,26 @@ public final class MealTable
      */
     public final static class Row {
 
+        private String mName;
+        private MealTable.MealTablePrimaryKey mId;
 
-        public Row(String mealName, Long mealId) {
+        public Row(String name, MealTable.MealTablePrimaryKey id) {
+        }
+
+        public void setId(MealTable.MealTablePrimaryKey id) {
+            mId = id;
+        }
+
+        public MealTable.MealTablePrimaryKey getId() {
+            return mId;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
         }
 
     }

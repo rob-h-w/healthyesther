@@ -1,8 +1,11 @@
 package com.robwilliamson.healthyesther.type;
 
+import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.generator.DateTimeGenerator;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JType;
 
 import java.util.regex.Matcher;
@@ -112,32 +115,84 @@ public class Column {
      * @param model The model to use to generate basic types.
      * @return The primitive type that represents the SQLite type of this column.
      */
-    public JType getJtype(JCodeModel model) {
-        if (isForeignKey()) {
+    public JType getPrimitiveType(JCodeModel model) {
+        if (isForeignKey() || mPrimaryKey) {
             return model.LONG;
         }
 
         switch(getType()) {
-            case "TEXT":
-                return model._ref(String.class);
+            case "BOOLEAN":
+                return model.BOOLEAN;
+            case "DATETIME":
+                return DateTimeGenerator.getInstance().getJClass();
             case "INTEGER":
                 return model.LONG;
             case "REAL":
                 return model.DOUBLE;
+            case "TEXT":
+                return model._ref(String.class);
             default:
                 throw new IllegalArgumentException("Unrecognized type " + getType());
         }
     }
 
+    public JType getNullableType(JCodeModel model) {
+        String typeName = getType();
+        switch (typeName) {
+            case "BOOLEAN":
+                return model.ref(Boolean.class);
+            case "DATETIME":
+                return DateTimeGenerator.getInstance().getJClass();
+            case "INTEGER":
+                return model.ref(Long.class);
+            case "REAL":
+                return model.ref(Double.class);
+            case "TEXT":
+                return model._ref(String.class);
+            default:
+                return handleUnknownColumnType(model.ref(Long.class));
+        }
+    }
+
+    private JType handleUnknownColumnType(JType indexer) {
+        String typeName = getType();
+
+        if (Strings.isEmpty(typeName)) {
+            if (isForeignKey()) {
+                return indexer;
+            }
+        }
+
+        throw new IllegalArgumentException("Type " + typeName + " is unsupported.");
+    }
+
     /**
-     * Like {@link #getJtype(JCodeModel model)}, but resolves dependencies.
+     * Like {@link #getPrimitiveType(JCodeModel)}, but resolves dependencies.
      * @param model The model to use to generate basic types.
      * @return The type that should be written in places that use this column.
      */
     public JType getDependentJtype(JCodeModel model) {
-        JType type = getJtype(model);
+        JType type = getPrimitiveType(model);
         if (isForeignKey()) {
             type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+        } else if (mPrimaryKey) {
+            type = getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+        }
+
+        return type;
+    }
+
+    /**
+     * Like {@link #getNullableType(JCodeModel)}, but resolves dependencies.
+     * @param model The model to use to generate basic types.
+     * @return The type that should be written in places that use this column.
+     */
+    public JType getDependentNullableJtype(JCodeModel model) {
+        JType type = getNullableType(model);
+        if (isForeignKey()) {
+            type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+        } else if (mPrimaryKey) {
+            type = getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
         }
 
         return type;

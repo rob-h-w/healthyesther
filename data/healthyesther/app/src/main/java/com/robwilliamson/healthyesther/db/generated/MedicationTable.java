@@ -25,12 +25,12 @@ public final class MedicationTable
             mId = other.mId;
         }
 
-        public MedicationTablePrimaryKey(long Id) {
-            mId = Id;
+        public MedicationTablePrimaryKey(long id) {
+            mId = id;
         }
 
-        public void setId(long Id) {
-            mId = Id;
+        public void setId(long id) {
+            mId = id;
         }
 
         public long getId() {
@@ -63,8 +63,26 @@ public final class MedicationTable
      */
     public final static class Row {
 
+        private String mName;
+        private MedicationTable.MedicationTablePrimaryKey mId;
 
-        public Row(String medicationName, Long medicationId) {
+        public Row(String name, MedicationTable.MedicationTablePrimaryKey id) {
+        }
+
+        public void setId(MedicationTable.MedicationTablePrimaryKey id) {
+            mId = id;
+        }
+
+        public MedicationTable.MedicationTablePrimaryKey getId() {
+            return mId;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
         }
 
     }

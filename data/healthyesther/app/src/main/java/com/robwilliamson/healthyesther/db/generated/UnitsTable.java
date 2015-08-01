@@ -19,8 +19,35 @@ public final class UnitsTable
      */
     public final static class Row {
 
+        private double mSiFactor;
+        private String mName;
+        private UnitsTable.UnitsTablePrimaryKey mId;
 
-        public Row(String unitsName, Double unitsSiFactor, Long unitsId) {
+        public Row(String name, UnitsTable.UnitsTablePrimaryKey id, Double siFactor) {
+        }
+
+        public void setId(UnitsTable.UnitsTablePrimaryKey id) {
+            mId = id;
+        }
+
+        public UnitsTable.UnitsTablePrimaryKey getId() {
+            return mId;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+        public void setSiFactor(double siFactor) {
+            mSiFactor = siFactor;
+        }
+
+        public double getSiFactor() {
+            return mSiFactor;
         }
 
     }
@@ -38,12 +65,12 @@ public final class UnitsTable
             mId = other.mId;
         }
 
-        public UnitsTablePrimaryKey(long Id) {
-            mId = Id;
+        public UnitsTablePrimaryKey(long id) {
+            mId = id;
         }
 
-        public void setId(long Id) {
-            mId = Id;
+        public void setId(long id) {
+            mId = id;
         }
 
         public long getId() {

@@ -81,11 +81,29 @@ public final class MedicationNameTable
      */
     public final static class Row {
 
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
+        private String mName;
 
-        public Row(MedicationNameTable.MedicationNameTablePrimaryKey medicationNameName, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
+        public Row(MedicationNameTable.MedicationNameTablePrimaryKey name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
         }
 
-        public Row(MedicationNameTable.MedicationNameTablePrimaryKey medicationNameName, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+        public Row(MedicationNameTable.MedicationNameTablePrimaryKey name, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+        }
+
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+            mMedicationId = medicationId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
+            return mMedicationId;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
         }
 
     }

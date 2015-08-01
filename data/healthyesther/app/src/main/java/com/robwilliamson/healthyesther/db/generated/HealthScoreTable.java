@@ -25,12 +25,12 @@ public final class HealthScoreTable
             mId = other.mId;
         }
 
-        public HealthScoreTablePrimaryKey(long Id) {
-            mId = Id;
+        public HealthScoreTablePrimaryKey(long id) {
+            mId = id;
         }
 
-        public void setId(long Id) {
-            mId = Id;
+        public void setId(long id) {
+            mId = id;
         }
 
         public long getId() {
@@ -63,8 +63,62 @@ public final class HealthScoreTable
      */
     public final static class Row {
 
+        private String mMaxLabel;
+        private String mMinLabel;
+        private long mBestValue;
+        private String mName;
+        private boolean mRandomQuery;
+        private HealthScoreTable.HealthScoreTablePrimaryKey mId;
 
-        public Row(long healthScoreBestValue, String healthScoreName, boolean healthScoreRandomQuery, String healthScoreMaxLabel, String healthScoreMinLabel, Long healthScoreId) {
+        public Row(long bestValue, String name, boolean randomQuery, HealthScoreTable.HealthScoreTablePrimaryKey id, String maxLabel, String minLabel) {
+        }
+
+        public void setId(HealthScoreTable.HealthScoreTablePrimaryKey id) {
+            mId = id;
+        }
+
+        public HealthScoreTable.HealthScoreTablePrimaryKey getId() {
+            return mId;
+        }
+
+        public void setBestValue(long bestValue) {
+            mBestValue = bestValue;
+        }
+
+        public long getBestValue() {
+            return mBestValue;
+        }
+
+        public void setMaxLabel(String maxLabel) {
+            mMaxLabel = maxLabel;
+        }
+
+        public String getMaxLabel() {
+            return mMaxLabel;
+        }
+
+        public void setMinLabel(String minLabel) {
+            mMinLabel = minLabel;
+        }
+
+        public String getMinLabel() {
+            return mMinLabel;
+        }
+
+        public void setName(String name) {
+            mName = name;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+        public void setRandomQuery(boolean randomQuery) {
+            mRandomQuery = randomQuery;
+        }
+
+        public boolean getRandomQuery() {
+            return mRandomQuery;
         }
 
     }
