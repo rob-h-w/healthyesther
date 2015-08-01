@@ -35,7 +35,7 @@ public class DateTimeGenerator extends BaseClassGenerator {
         JDefinedClass clazz = getJClass();
         JClass comparable = model().ref(Comparable.class).narrow(clazz);
         clazz._implements(comparable);
-        mString = clazz.field(JMod.PRIVATE, String.class, "mString");
+        mString = clazz.field(JMod.PRIVATE | JMod.FINAL, String.class, "mString");
 
         makeConstructor();
         makeGetter();

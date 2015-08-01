@@ -11,7 +11,7 @@ public class DateTime
     implements Comparable<DateTime>
 {
 
-    private String mString;
+    private final String mString;
 
     public DateTime(String string) {
         mString = string;
