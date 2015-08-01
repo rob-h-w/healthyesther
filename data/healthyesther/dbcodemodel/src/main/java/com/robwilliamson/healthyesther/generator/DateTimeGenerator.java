@@ -9,6 +9,7 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JTypeVar;
 import com.sun.codemodel.JVar;
 
 @ClassGeneratorFeatures(name = "DateTime", parameterName = "dateTime")
@@ -28,7 +29,9 @@ public class DateTimeGenerator extends BaseClassGenerator {
         return sInstance;
     }
 
-    JFieldVar mString;
+    private JFieldVar mString;
+    private JDefinedClass mConverterFrom;
+    private JDefinedClass mConverterTo;
 
     public DateTimeGenerator(JPackage jPackage) throws JClassAlreadyExistsException {
         setJClass(jPackage._class(JMod.PUBLIC, getName()));
@@ -37,9 +40,38 @@ public class DateTimeGenerator extends BaseClassGenerator {
         clazz._implements(comparable);
         mString = clazz.field(JMod.PRIVATE | JMod.FINAL, String.class, "mString");
 
+        makeConverters();
         makeConstructor();
         makeGetter();
         makeComparable();
+    }
+
+    public JDefinedClass getConverterFrom() {
+        return mConverterFrom;
+    }
+
+    public JDefinedClass getConverterTo() {
+        return mConverterTo;
+    }
+
+    private void makeConverters() throws JClassAlreadyExistsException {
+        JDefinedClass clazz = getJClass();
+
+        mConverterFrom = clazz._interface(JMod.PUBLIC, "ConvertFrom");
+        JTypeVar generic = mConverterFrom.generify("T");
+        JMethod convert = mConverterFrom.method(
+                JMod.PUBLIC,
+                clazz,
+                "convert");
+        convert.param(generic, "fromType");
+
+        mConverterTo = clazz._interface(JMod.PUBLIC, "ConverterTo");
+        generic = mConverterTo.generify("T");
+        convert = mConverterTo.method(
+                JMod.PUBLIC,
+                generic,
+                "convert");
+        convert.param(clazz, "dateTime");
     }
 
     private void makeConstructor() {

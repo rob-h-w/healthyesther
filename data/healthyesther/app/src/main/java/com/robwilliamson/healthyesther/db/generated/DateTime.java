@@ -32,4 +32,18 @@ public class DateTime
         return mString.compareTo(other.mString);
     }
 
+    public interface ConverterTo<T >{
+
+
+        public T convert(DateTime dateTime);
+
+    }
+
+    public interface ConvertFrom<T >{
+
+
+        public DateTime convert(T fromType);
+
+    }
+
 }
