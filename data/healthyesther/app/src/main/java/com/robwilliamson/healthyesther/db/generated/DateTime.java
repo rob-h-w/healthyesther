@@ -1,6 +1,7 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.HashMap;
 
 
 /**
@@ -12,9 +13,18 @@ public class DateTime
 {
 
     private final String mString;
+    private final static HashMap<Class, DateTime.Converter> sConverterRegistry = new HashMap<Class, DateTime.Converter>();
 
     public DateTime(String string) {
         mString = string;
+    }
+
+    public static<T >void register(Class<T> type, DateTime.Converter converter) {
+        sConverterRegistry.put(type, converter);
+    }
+
+    private static<T >DateTime.Converter retrieve(Class<T> type) {
+        return sConverterRegistry.get(type);
     }
 
     public String getString() {
@@ -32,17 +42,12 @@ public class DateTime
         return mString.compareTo(other.mString);
     }
 
-    public interface ConverterTo<T >{
-
-
-        public T convert(DateTime dateTime);
-
-    }
-
-    public interface ConvertFrom<T >{
+    public interface Converter<T >{
 
 
         public DateTime convert(T fromType);
+
+        public T convert(DateTime dateTime);
 
     }
 

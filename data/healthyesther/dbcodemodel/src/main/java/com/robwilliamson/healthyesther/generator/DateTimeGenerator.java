@@ -12,6 +12,8 @@ import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JTypeVar;
 import com.sun.codemodel.JVar;
 
+import java.util.HashMap;
+
 @ClassGeneratorFeatures(name = "DateTime", parameterName = "dateTime")
 public class DateTimeGenerator extends BaseClassGenerator {
     private static DateTimeGenerator sInstance;
@@ -29,9 +31,9 @@ public class DateTimeGenerator extends BaseClassGenerator {
         return sInstance;
     }
 
+    private JFieldVar mConverterRegistry;
     private JFieldVar mString;
-    private JDefinedClass mConverterFrom;
-    private JDefinedClass mConverterTo;
+    private JDefinedClass mConverter;
 
     public DateTimeGenerator(JPackage jPackage) throws JClassAlreadyExistsException {
         setJClass(jPackage._class(JMod.PUBLIC, getName()));
@@ -41,37 +43,55 @@ public class DateTimeGenerator extends BaseClassGenerator {
         mString = clazz.field(JMod.PRIVATE | JMod.FINAL, String.class, "mString");
 
         makeConverters();
+        makeConverterRegistry();
         makeConstructor();
         makeGetter();
         makeComparable();
     }
 
-    public JDefinedClass getConverterFrom() {
-        return mConverterFrom;
-    }
-
-    public JDefinedClass getConverterTo() {
-        return mConverterTo;
+    public JDefinedClass getConverter() {
+        return mConverter;
     }
 
     private void makeConverters() throws JClassAlreadyExistsException {
         JDefinedClass clazz = getJClass();
 
-        mConverterFrom = clazz._interface(JMod.PUBLIC, "ConvertFrom");
-        JTypeVar generic = mConverterFrom.generify("T");
-        JMethod convert = mConverterFrom.method(
+        mConverter = clazz._interface(JMod.PUBLIC, "Converter");
+        JTypeVar generic = mConverter.generify("T");
+        JMethod convert = mConverter.method(
                 JMod.PUBLIC,
                 clazz,
                 "convert");
         convert.param(generic, "fromType");
-
-        mConverterTo = clazz._interface(JMod.PUBLIC, "ConverterTo");
-        generic = mConverterTo.generify("T");
-        convert = mConverterTo.method(
+        convert = mConverter.method(
                 JMod.PUBLIC,
                 generic,
                 "convert");
         convert.param(clazz, "dateTime");
+    }
+
+    private void makeConverterRegistry() {
+        JDefinedClass clazz = getJClass();
+        JClass hashmapType = model().ref(HashMap.class).narrow(
+                model().ref(Class.class),
+                mConverter);
+        mConverterRegistry = clazz.field(
+                JMod.PRIVATE | JMod.STATIC | JMod.FINAL,
+                hashmapType,
+                "sConverterRegistry");
+        mConverterRegistry.init(JExpr._new(hashmapType));
+
+        JMethod register = clazz.method(JMod.PUBLIC | JMod.STATIC, model().VOID, "register");
+        JTypeVar generic = register.generify("T");
+        JClass typeClass = model().ref(Class.class).narrow(generic);
+        JVar typeParam = register.param(typeClass, "type");
+        JVar converterParam = register.param(mConverter, "converter");
+        register.body().invoke(mConverterRegistry, "put").arg(typeParam).arg(converterParam);
+
+        JMethod retrieve = clazz.method(JMod.PRIVATE | JMod.STATIC, mConverter, "retrieve");
+        generic = retrieve.generify("T");
+        typeParam = retrieve.param(typeClass, "type");
+        retrieve.body()._return(JExpr.invoke(mConverterRegistry, "get").arg(typeParam));
     }
 
     private void makeConstructor() {
