@@ -1,10 +1,17 @@
 package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.type.Column;
+import com.sun.codemodel.JBlock;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JVar;
@@ -24,11 +31,15 @@ public class RowGenerator extends BaseClassGenerator {
     private List<ColumnField> mSortedFields;
     private final JMethod mRowConstructor;
     private final JMethod mJoinConstructor;
+    private JFieldVar mColumnNames;
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
 
-        setJClass(mTableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
+        JDefinedClass clazz = mTableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName());
+        clazz._extends(BaseTransactable.class);
+
+        setJClass(clazz);
 
         mRowConstructor = getJClass().constructor(JMod.PUBLIC);
 
@@ -42,8 +53,38 @@ public class RowGenerator extends BaseClassGenerator {
     public void init() {
         mSortedFields = ColumnField.makeSortedList(getJClass(),
                 Arrays.asList(getTableGenerator().getTable().getColumns()));
+        // Create a static list of field names.
+        JClass stringListType = model().ref(ArrayList.class);
+        stringListType.narrow(String.class);
+        mColumnNames = getJClass().field(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, stringListType, "COLUMN_NAMES");
+        mColumnNames.init(JExpr._new(stringListType).arg(JExpr.lit(mSortedFields.size())));
+
+        // Get a class constructor body.
+        JBlock classConstructor = getJClass().init();
+        for (ColumnField columnField : mSortedFields) {
+            // Populate the field names.
+            classConstructor.invoke(mColumnNames, "add").arg(JExpr.lit(columnField.column.getName()));
+        }
+
         initConstructors();
         makeAccessors();
+        makeInsert();
+        //makeModify();
+        //makeRemove();
+    }
+
+    private void makeInsert() {
+        JMethod insert = getJClass().method(JMod.PUBLIC, model().VOID, "insert");
+        insert.annotate(Override.class);
+        JVar transaction = insert.param(Transaction.class, "transaction");
+        TableGenerator generator = getTableGenerator();
+        PrimaryKeyGenerator keyGenerator = generator.getPrimaryKeyGenerator();
+        JDefinedClass primaryKeyType = keyGenerator.getJClass();
+        if (generator.getTable().hasDependencies()) {
+            // TODO: multi-stage insertion here.
+        } else {
+            // TODO: Simple insertion.
+        }
     }
 
     private void initConstructors() {

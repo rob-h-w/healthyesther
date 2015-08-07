@@ -1,6 +1,9 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.ArrayList;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -61,11 +64,20 @@ public final class NoteTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row {
+    public final static class Row
+        extends BaseTransactable
+    {
 
         private String mNote;
         private String mName;
         private NoteTable.NoteTablePrimaryKey mId;
+        public final static ArrayList COLUMN_NAMES = new ArrayList(3);
+
+        static {
+            COLUMN_NAMES.add("_id");
+            COLUMN_NAMES.add("name");
+            COLUMN_NAMES.add("note");
+        }
 
         public Row(String name, NoteTable.NoteTablePrimaryKey id, String note) {
         }
@@ -92,6 +104,10 @@ public final class NoteTable
 
         public String getNote() {
             return mNote;
+        }
+
+        @Override
+        public void insert(Transaction transaction) {
         }
 
     }

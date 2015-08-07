@@ -1,6 +1,9 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.ArrayList;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -61,7 +64,9 @@ public final class EventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row {
+    public final static class Row
+        extends BaseTransactable
+    {
 
         private DateTime mModified;
         private String mName;
@@ -69,6 +74,16 @@ public final class EventTable
         private DateTime mWhen;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey mTypeId;
         private EventTable.EventTablePrimaryKey mId;
+        public final static ArrayList COLUMN_NAMES = new ArrayList(6);
+
+        static {
+            COLUMN_NAMES.add("_id");
+            COLUMN_NAMES.add("created");
+            COLUMN_NAMES.add("modified");
+            COLUMN_NAMES.add("name");
+            COLUMN_NAMES.add("type_id");
+            COLUMN_NAMES.add("when");
+        }
 
         public Row(DateTime created, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row eventTypeTableRow, DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
         }
@@ -122,6 +137,10 @@ public final class EventTable
 
         public DateTime getWhen() {
             return mWhen;
+        }
+
+        @Override
+        public void insert(Transaction transaction) {
         }
 
     }

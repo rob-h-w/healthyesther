@@ -1,6 +1,9 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.ArrayList;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -79,12 +82,22 @@ public final class MealEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row {
+    public final static class Row
+        extends BaseTransactable
+    {
 
         private double mAmount;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
+        public final static ArrayList COLUMN_NAMES = new ArrayList(4);
+
+        static {
+            COLUMN_NAMES.add("amount");
+            COLUMN_NAMES.add("event_id");
+            COLUMN_NAMES.add("meal_id");
+            COLUMN_NAMES.add("units_id");
+        }
 
         public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, Double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow) {
         }
@@ -122,6 +135,10 @@ public final class MealEventTable
 
         public com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey getUnitsId() {
             return mUnitsId;
+        }
+
+        @Override
+        public void insert(Transaction transaction) {
         }
 
     }

@@ -1,6 +1,9 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.ArrayList;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -79,10 +82,18 @@ public final class MedicationEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row {
+    public final static class Row
+        extends BaseTransactable
+    {
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
+        public final static ArrayList COLUMN_NAMES = new ArrayList(2);
+
+        static {
+            COLUMN_NAMES.add("event_id");
+            COLUMN_NAMES.add("medication_id");
+        }
 
         public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
         }
@@ -104,6 +115,10 @@ public final class MedicationEventTable
 
         public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
             return mMedicationId;
+        }
+
+        @Override
+        public void insert(Transaction transaction) {
         }
 
     }

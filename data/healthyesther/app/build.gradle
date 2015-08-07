@@ -30,7 +30,7 @@ android {
 tasks.preBuild.dependsOn(":dbcodemodel:sqlite2Java")
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-v4:22.1.1'
     compile 'net.danlew:android.joda:2.7.1'
     compile 'com.jjoe64:graphview:3.1.3'
@@ -58,4 +58,5 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
+    compile project(':dbcodemodel')
 }

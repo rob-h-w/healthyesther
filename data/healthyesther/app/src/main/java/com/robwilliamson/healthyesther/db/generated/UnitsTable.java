@@ -1,6 +1,9 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.ArrayList;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -17,11 +20,20 @@ public final class UnitsTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row {
+    public final static class Row
+        extends BaseTransactable
+    {
 
         private double mSiFactor;
         private String mName;
         private UnitsTable.UnitsTablePrimaryKey mId;
+        public final static ArrayList COLUMN_NAMES = new ArrayList(3);
+
+        static {
+            COLUMN_NAMES.add("_id");
+            COLUMN_NAMES.add("name");
+            COLUMN_NAMES.add("si_factor");
+        }
 
         public Row(String name, UnitsTable.UnitsTablePrimaryKey id, Double siFactor) {
         }
@@ -48,6 +60,10 @@ public final class UnitsTable
 
         public double getSiFactor() {
             return mSiFactor;
+        }
+
+        @Override
+        public void insert(Transaction transaction) {
         }
 
     }

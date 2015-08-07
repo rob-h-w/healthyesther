@@ -1,6 +1,9 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.util.ArrayList;
+import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -61,11 +64,20 @@ public final class EventTypeTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row {
+    public final static class Row
+        extends BaseTransactable
+    {
 
         private String mIcon;
         private String mName;
         private EventTypeTable.EventTypeTablePrimaryKey mId;
+        public final static ArrayList COLUMN_NAMES = new ArrayList(3);
+
+        static {
+            COLUMN_NAMES.add("_id");
+            COLUMN_NAMES.add("icon");
+            COLUMN_NAMES.add("name");
+        }
 
         public Row(String name, EventTypeTable.EventTypeTablePrimaryKey id, String icon) {
         }
@@ -92,6 +104,10 @@ public final class EventTypeTable
 
         public String getName() {
             return mName;
+        }
+
+        @Override
+        public void insert(Transaction transaction) {
         }
 
     }
