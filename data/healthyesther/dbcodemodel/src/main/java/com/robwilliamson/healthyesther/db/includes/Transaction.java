@@ -7,7 +7,7 @@ public interface Transaction {
         public void onCompleted();
     }
 
-    public void registerCompletionHandler(CompletionHandler handler);
+    public void addCompletionHandler(CompletionHandler handler);
 
     public long insert(List<String> columnNames, Object... columnValues);
 }

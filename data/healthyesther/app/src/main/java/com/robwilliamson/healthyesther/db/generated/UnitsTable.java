@@ -27,6 +27,7 @@ public final class UnitsTable
         private double mSiFactor;
         private String mName;
         private UnitsTable.UnitsTablePrimaryKey mId;
+        private UnitsTable.UnitsTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(3);
 
         static {
@@ -64,6 +65,16 @@ public final class UnitsTable
 
         @Override
         public void insert(Transaction transaction) {
+            final UnitsTable.UnitsTablePrimaryKey primaryKey = new UnitsTable.UnitsTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName, mSiFactor));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mPrimaryKey = primaryKey;
+                }
+
+            }
+            );
         }
 
     }

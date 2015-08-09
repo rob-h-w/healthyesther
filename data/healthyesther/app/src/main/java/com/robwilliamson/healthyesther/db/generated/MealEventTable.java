@@ -90,6 +90,7 @@ public final class MealEventTable
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
+        private MealEventTable.MealEventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(4);
 
         static {

@@ -88,6 +88,7 @@ public final class MedicationEventTable
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
+        private MedicationEventTable.MedicationEventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(2);
 
         static {

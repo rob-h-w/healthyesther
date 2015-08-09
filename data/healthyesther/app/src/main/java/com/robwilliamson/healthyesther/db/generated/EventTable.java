@@ -74,6 +74,7 @@ public final class EventTable
         private DateTime mWhen;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey mTypeId;
         private EventTable.EventTablePrimaryKey mId;
+        private EventTable.EventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(6);
 
         static {

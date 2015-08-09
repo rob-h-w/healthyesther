@@ -88,6 +88,7 @@ public final class MedicationNameTable
 
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         private String mName;
+        private MedicationNameTable.MedicationNameTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(2);
 
         static {

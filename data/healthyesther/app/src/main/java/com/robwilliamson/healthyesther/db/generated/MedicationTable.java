@@ -70,6 +70,7 @@ public final class MedicationTable
 
         private String mName;
         private MedicationTable.MedicationTablePrimaryKey mId;
+        private MedicationTable.MedicationTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(2);
 
         static {
@@ -98,6 +99,16 @@ public final class MedicationTable
 
         @Override
         public void insert(Transaction transaction) {
+            final MedicationTable.MedicationTablePrimaryKey primaryKey = new MedicationTable.MedicationTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mPrimaryKey = primaryKey;
+                }
+
+            }
+            );
         }
 
     }

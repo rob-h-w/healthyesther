@@ -90,6 +90,10 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return mValueConstructor;
     }
 
+    public boolean hasPrimaryKeys() {
+        return !mSortedPrimaryKeyFields.isEmpty();
+    }
+
     @Override
     public String getName() {
         return getTableGenerator().getName() + Strings.capitalize(super.getName());

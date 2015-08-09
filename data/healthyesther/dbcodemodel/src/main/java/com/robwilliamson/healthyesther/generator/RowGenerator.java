@@ -1,17 +1,18 @@
 package com.robwilliamson.healthyesther.generator;
 
+import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
-import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JVar;
@@ -32,6 +33,7 @@ public class RowGenerator extends BaseClassGenerator {
     private final JMethod mRowConstructor;
     private final JMethod mJoinConstructor;
     private JFieldVar mColumnNames;
+    private JFieldVar mPrimaryKey;
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
@@ -53,6 +55,7 @@ public class RowGenerator extends BaseClassGenerator {
     public void init() {
         mSortedFields = ColumnField.makeSortedList(getJClass(),
                 Arrays.asList(getTableGenerator().getTable().getColumns()));
+        mPrimaryKey = getJClass().field(JMod.PRIVATE, getTableGenerator().getPrimaryKeyGenerator().getJClass(), "mPrimaryKey", JExpr._null());
         // Create a static list of field names.
         JClass stringListType = model().ref(ArrayList.class);
         stringListType.narrow(String.class);
@@ -65,12 +68,16 @@ public class RowGenerator extends BaseClassGenerator {
             // Populate the field names.
             classConstructor.invoke(mColumnNames, "add").arg(JExpr.lit(columnField.column.getName()));
         }
-
-        initConstructors();
-        makeAccessors();
-        makeInsert();
-        //makeModify();
-        //makeRemove();
+        CodeGenerator.ASYNC.schedule(new Runnable() {
+            @Override
+            public void run() {
+                initConstructors();
+                makeAccessors();
+                makeInsert();
+                //makeModify();
+                //makeRemove();
+            }
+        });
     }
 
     private void makeInsert() {
@@ -83,8 +90,41 @@ public class RowGenerator extends BaseClassGenerator {
         if (generator.getTable().hasDependencies()) {
             // TODO: multi-stage insertion here.
         } else {
-            // TODO: Simple insertion.
+            // Simple insertion.
+            JBlock body = insert.body();
+
+            if (keyGenerator.hasPrimaryKeys()) {
+                JInvocation insertionCall = populateArgumentsFor(JExpr.invoke(transaction, "insert"));
+                JVar primaryKey = body.decl(
+                        JMod.FINAL,
+                        primaryKeyType,
+                        "primaryKey",
+                        JExpr._new(primaryKeyType)
+                                .arg(insertionCall));
+                JDefinedClass anonymousType = model().anonymousClass(Transaction.CompletionHandler.class);
+                anonymousType.method(
+                        JMod.PUBLIC,
+                        model().VOID,
+                        "onCompleted").body().assign(mPrimaryKey, primaryKey);
+                body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
+            } else {
+                populateArgumentsFor(body.invoke(transaction, "insert"));
+            }
         }
+    }
+
+    private JInvocation populateArgumentsFor(JInvocation invocation) {
+        invocation = invocation.arg(mColumnNames);
+
+        for (ColumnField columnField : mSortedFields) {
+            if (columnField.column.isPrimaryKey()) {
+                continue;
+            }
+
+            invocation = invocation.arg(columnField.fieldVar);
+        }
+
+        return invocation;
     }
 
     private void initConstructors() {

@@ -89,6 +89,7 @@ public final class HealthScoreEventTable
         private long mScore;
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey mHealthScoreId;
+        private HealthScoreEventTable.HealthScoreEventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(3);
 
         static {

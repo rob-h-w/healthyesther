@@ -70,6 +70,7 @@ public final class MealTable
 
         private String mName;
         private MealTable.MealTablePrimaryKey mId;
+        private MealTable.MealTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(2);
 
         static {
@@ -98,6 +99,16 @@ public final class MealTable
 
         @Override
         public void insert(Transaction transaction) {
+            final MealTable.MealTablePrimaryKey primaryKey = new MealTable.MealTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mPrimaryKey = primaryKey;
+                }
+
+            }
+            );
         }
 
     }
