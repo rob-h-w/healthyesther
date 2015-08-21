@@ -122,7 +122,7 @@ public final class MedicationNameTable
         @Override
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
-            if (mMedicationId!= null) {
+            if (mMedicationId == null) {
                 medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
             }
             final long rowId = transaction.insert(COLUMN_NAMES, medicationId[ 0 ], mName);

@@ -124,11 +124,11 @@ public final class MedicationEventTable
         @Override
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId!= null) {
+            if (mEventId == null) {
                 eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
-            if (mMedicationId!= null) {
+            if (mMedicationId == null) {
                 medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
             }
             final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], medicationId[ 0 ]);

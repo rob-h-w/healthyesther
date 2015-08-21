@@ -132,7 +132,7 @@ public class RowGenerator extends BaseClassGenerator {
                         JExpr.newArray(field.fieldVar.type()).add(field.fieldVar));
                 JAssignmentTarget tempKeyValue = tempKey.component(JExpr.lit(0));
                 temporaryPrimaryKeys.put(field, tempKey);
-                JBlock ifBlock = body._if(field.fieldVar.ne(JExpr._null()))._then();
+                JBlock ifBlock = body._if(field.fieldVar.eq(JExpr._null()))._then();
                 ifBlock.assign(
                         tempKeyValue,
                         JExpr.cast(

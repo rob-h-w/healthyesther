@@ -134,11 +134,11 @@ public final class HealthScoreEventTable
         @Override
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId!= null) {
+            if (mEventId == null) {
                 eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] healthScoreId = new com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] {mHealthScoreId };
-            if (mHealthScoreId!= null) {
+            if (mHealthScoreId == null) {
                 healthScoreId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey) mHealthScoreIdRow.insert(transaction));
             }
             final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], healthScoreId[ 0 ], mScore);

@@ -124,11 +124,11 @@ public final class NoteEventTable
         @Override
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId!= null) {
+            if (mEventId == null) {
                 eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] noteId = new com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] {mNoteId };
-            if (mNoteId!= null) {
+            if (mNoteId == null) {
                 noteId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey) mNoteIdRow.insert(transaction));
             }
             final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], noteId[ 0 ]);

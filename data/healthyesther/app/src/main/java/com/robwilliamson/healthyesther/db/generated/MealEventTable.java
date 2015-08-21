@@ -146,11 +146,11 @@ public final class MealEventTable
         @Override
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId!= null) {
+            if (mEventId == null) {
                 eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] mealId = new com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] {mMealId };
-            if (mMealId!= null) {
+            if (mMealId == null) {
                 mealId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey) mMealIdRow.insert(transaction));
             }
             final long rowId = transaction.insert(COLUMN_NAMES, mAmount, eventId[ 0 ], mealId[ 0 ], mUnitsId);
