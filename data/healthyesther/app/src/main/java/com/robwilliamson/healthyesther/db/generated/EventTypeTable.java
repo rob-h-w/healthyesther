@@ -71,7 +71,6 @@ public final class EventTypeTable
         private String mIcon;
         private String mName;
         private EventTypeTable.EventTypeTablePrimaryKey mId;
-        private EventTypeTable.EventTypeTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(3);
 
         static {
@@ -108,17 +107,18 @@ public final class EventTypeTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
             final EventTypeTable.EventTypeTablePrimaryKey primaryKey = new EventTypeTable.EventTypeTablePrimaryKey(transaction.insert(COLUMN_NAMES, mIcon, mName));
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mPrimaryKey = primaryKey;
+                    mId = primaryKey;
                 }
 
             }
             );
+            return primaryKey;
         }
 
     }

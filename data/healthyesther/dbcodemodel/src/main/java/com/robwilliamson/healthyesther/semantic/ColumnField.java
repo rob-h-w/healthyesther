@@ -1,10 +1,8 @@
 package com.robwilliamson.healthyesther.semantic;
 
-import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JFieldVar;
-import com.sun.codemodel.JMod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,9 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ColumnField {
-    public final String name;
-    public final JFieldVar fieldVar;
+public class ColumnField extends BaseField {
     public final Column column;
 
     public interface Maker {
@@ -64,29 +60,18 @@ public class ColumnField {
         return list;
     }
 
-    public static String name(Column column) {
-        return Strings.lowerCase(Strings.underscoresToCamel(column.getName()));
-    }
-
-    public static String memberName(Column column) {
-        return "m" + Strings.capitalize(name(column));
-    }
-
     public ColumnField(JDefinedClass owningClass, Column column) {
+        super(owningClass, column.getName(), column.getDependentJtype(owningClass.owner()));
         this.column = column;
-        name = name(column);
-        fieldVar = owningClass.field(JMod.PRIVATE, column.getDependentJtype(owningClass.owner()), memberName(column));
     }
 
     public ColumnField(JFieldVar fieldVar, Column column) {
-        this.name = name(column);
-        this.fieldVar = fieldVar;
+        super(fieldVar, column.getName());
         this.column = column;
     }
 
     public ColumnField(ColumnField other) {
-        this.name = other.name;
-        this.fieldVar = other.fieldVar;
+        super(other);
         this.column = other.column;
     }
 }

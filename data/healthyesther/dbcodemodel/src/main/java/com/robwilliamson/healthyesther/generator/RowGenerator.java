@@ -6,6 +6,7 @@ import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
+import com.robwilliamson.healthyesther.semantic.RowField;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
@@ -19,7 +20,9 @@ import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ClassGeneratorFeatures(name = "Row", parameterName = "row")
 public class RowGenerator extends BaseClassGenerator {
@@ -33,7 +36,9 @@ public class RowGenerator extends BaseClassGenerator {
     private final JMethod mRowConstructor;
     private final JMethod mJoinConstructor;
     private JFieldVar mColumnNames;
-    private JFieldVar mPrimaryKey;
+    private List<ColumnField> mPrimaryKeyFields = new ArrayList<>();
+    private List<RowField> mSortedRowDependencies = new ArrayList<>();
+    private Map<ColumnField, RowField> mPrimaryKeyFieldToRowMap = new HashMap<>();
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
@@ -55,7 +60,6 @@ public class RowGenerator extends BaseClassGenerator {
     public void init() {
         mSortedFields = ColumnField.makeSortedList(getJClass(),
                 Arrays.asList(getTableGenerator().getTable().getColumns()));
-        mPrimaryKey = getJClass().field(JMod.PRIVATE, getTableGenerator().getPrimaryKeyGenerator().getJClass(), "mPrimaryKey", JExpr._null());
         // Create a static list of field names.
         JClass stringListType = model().ref(ArrayList.class);
         stringListType.narrow(String.class);
@@ -67,11 +71,17 @@ public class RowGenerator extends BaseClassGenerator {
         for (ColumnField columnField : mSortedFields) {
             // Populate the field names.
             classConstructor.invoke(mColumnNames, "add").arg(JExpr.lit(columnField.column.getName()));
+
+            // Collect primary key(s).
+            if (columnField.column.isPrimaryKey()) {
+                mPrimaryKeyFields.add(columnField);
+            }
         }
+
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
-                initConstructors();
+                makeConstructors();
                 makeAccessors();
                 makeInsert();
                 //makeModify();
@@ -80,36 +90,49 @@ public class RowGenerator extends BaseClassGenerator {
         });
     }
 
+    public List<ColumnField> getPrimaryKeyFields() {
+        return mPrimaryKeyFields;
+    }
+
     private void makeInsert() {
-        JMethod insert = getJClass().method(JMod.PUBLIC, model().VOID, "insert");
-        insert.annotate(Override.class);
-        JVar transaction = insert.param(Transaction.class, "transaction");
         TableGenerator generator = getTableGenerator();
         PrimaryKeyGenerator keyGenerator = generator.getPrimaryKeyGenerator();
         JDefinedClass primaryKeyType = keyGenerator.getJClass();
-        if (generator.getTable().hasDependencies()) {
-            // TODO: multi-stage insertion here.
-        } else {
-            // Simple insertion.
-            JBlock body = insert.body();
+        JMethod insert = getJClass().method(JMod.PUBLIC, Object.class, "insert");
+        insert.annotate(Override.class);
+        JVar transaction = insert.param(Transaction.class, "transaction");
+        JBlock body = insert.body();
 
-            if (keyGenerator.hasPrimaryKeys()) {
-                JInvocation insertionCall = populateArgumentsFor(JExpr.invoke(transaction, "insert"));
-                JVar primaryKey = body.decl(
-                        JMod.FINAL,
-                        primaryKeyType,
-                        "primaryKey",
-                        JExpr._new(primaryKeyType)
-                                .arg(insertionCall));
-                JDefinedClass anonymousType = model().anonymousClass(Transaction.CompletionHandler.class);
-                anonymousType.method(
-                        JMod.PUBLIC,
-                        model().VOID,
-                        "onCompleted").body().assign(mPrimaryKey, primaryKey);
-                body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
-            } else {
-                populateArgumentsFor(body.invoke(transaction, "insert"));
+        if (keyGenerator.hasPrimaryKeys()) {
+            Map<ColumnField, JVar> temporaryPrimaryKeys = new HashMap<>();
+            for (ColumnField field : mPrimaryKeyFields) {
+                if (!field.column.isForeignKey()) {
+                    continue;
+                }
+
+                JVar tempKey = body.decl(JMod.FINAL, field.fieldVar.type().array(), field.name, JExpr.newArray(field.fieldVar.type()).add(field.fieldVar));
+                temporaryPrimaryKeys.put(field, tempKey);
+                RowGenerator row = field.column.getColumnDependency().getDependency().getTable().getGenerator().getRow();
+                JBlock ifBlock = body._if(field.fieldVar.ne(JExpr._null()))._then();
+                ifBlock.assign(field.fieldVar, mPrimaryKeyFieldToRowMap.get(field).fieldVar.invoke("insert").arg(transaction));
             }
+
+            JInvocation insertionCall = populateArgumentsFor(JExpr.invoke(transaction, "insert"));
+            JVar primaryKey = body.decl(
+                    JMod.FINAL,
+                    primaryKeyType,
+                    "primaryKey",
+                    JExpr._new(primaryKeyType)
+                            .arg(insertionCall));
+            JDefinedClass anonymousType = model().anonymousClass(Transaction.CompletionHandler.class);
+            anonymousType.method(
+                    JMod.PUBLIC,
+                    model().VOID,
+                    "onCompleted").body().assign(mPrimaryKeyFields.get(0).fieldVar, primaryKey);
+            body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
+            body._return(primaryKey);
+        } else {
+            body._return(populateArgumentsFor(body.invoke(transaction, "insert")));
         }
     }
 
@@ -127,7 +150,7 @@ public class RowGenerator extends BaseClassGenerator {
         return invocation;
     }
 
-    private void initConstructors() {
+    private void makeConstructors() {
         List<ColumnField> nullable = new ArrayList<>();
         List<ColumnField> nonNull = new ArrayList<>();
 
@@ -165,6 +188,17 @@ public class RowGenerator extends BaseClassGenerator {
                 if (mJoinConstructor != null) {
                     mJoinConstructor.param(field.column.getDependentNullableJtype(model()), field.name);
                 }
+            }
+        }
+
+        for (ColumnField field : mSortedFields) {
+            if (field.column.isForeignKey()) {
+                RowGenerator row = field.column.getColumnDependency().getDependency().getTable().getGenerator().getRow();
+                RowField rowField = new RowField(getJClass(), row, field.name + "Row");
+                JVar param = mRowConstructor.param(row.getJClass(), row.getPreferredParameterName() + Strings.capitalize(field.name));
+                mRowConstructor.body().assign(rowField.fieldVar, param);
+                mSortedRowDependencies.add(rowField);
+                mPrimaryKeyFieldToRowMap.put(field, rowField);
             }
         }
     }

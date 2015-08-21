@@ -71,7 +71,6 @@ public final class NoteTable
         private String mNote;
         private String mName;
         private NoteTable.NoteTablePrimaryKey mId;
-        private NoteTable.NoteTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(3);
 
         static {
@@ -108,17 +107,18 @@ public final class NoteTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
             final NoteTable.NoteTablePrimaryKey primaryKey = new NoteTable.NoteTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName, mNote));
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mPrimaryKey = primaryKey;
+                    mId = primaryKey;
                 }
 
             }
             );
+            return primaryKey;
         }
 
     }

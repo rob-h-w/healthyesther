@@ -74,7 +74,6 @@ public final class HealthScoreTable
         private String mName;
         private boolean mRandomQuery;
         private HealthScoreTable.HealthScoreTablePrimaryKey mId;
-        private HealthScoreTable.HealthScoreTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(6);
 
         static {
@@ -138,17 +137,18 @@ public final class HealthScoreTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
             final HealthScoreTable.HealthScoreTablePrimaryKey primaryKey = new HealthScoreTable.HealthScoreTablePrimaryKey(transaction.insert(COLUMN_NAMES, mBestValue, mMaxLabel, mMinLabel, mName, mRandomQuery));
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mPrimaryKey = primaryKey;
+                    mId = primaryKey;
                 }
 
             }
             );
+            return primaryKey;
         }
 
     }

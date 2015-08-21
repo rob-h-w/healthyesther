@@ -88,15 +88,18 @@ public final class NoteEventTable
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey mNoteId;
-        private NoteEventTable.NoteEventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(2);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.NoteTable.Row mNoteIdRow;
 
         static {
             COLUMN_NAMES.add("event_id");
             COLUMN_NAMES.add("note_id");
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row rowEventId, com.robwilliamson.healthyesther.db.generated.NoteTable.Row rowNoteId) {
+            mEventIdRow = rowEventId;
+            mNoteIdRow = rowNoteId;
         }
 
         public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
@@ -119,7 +122,26 @@ public final class NoteEventTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
+            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
+            if (mEventId!= null) {
+                mEventId = mEventIdRow.insert(transaction);
+            }
+            final com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] noteId = new com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] {mNoteId };
+            if (mNoteId!= null) {
+                mNoteId = mNoteIdRow.insert(transaction);
+            }
+            final NoteEventTable.NoteEventTablePrimaryKey primaryKey = new NoteEventTable.NoteEventTablePrimaryKey(transaction.insert(COLUMN_NAMES));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mEventId = primaryKey;
+                }
+
+            }
+            );
+            return primaryKey;
         }
 
     }

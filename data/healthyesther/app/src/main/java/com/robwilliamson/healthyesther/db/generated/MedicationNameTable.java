@@ -88,15 +88,16 @@ public final class MedicationNameTable
 
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         private String mName;
-        private MedicationNameTable.MedicationNameTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(2);
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
 
         static {
             COLUMN_NAMES.add("medication_id");
             COLUMN_NAMES.add("name");
         }
 
-        public Row(MedicationNameTable.MedicationNameTablePrimaryKey name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
+        public Row(MedicationNameTable.MedicationNameTablePrimaryKey name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row rowMedicationId) {
+            mMedicationIdRow = rowMedicationId;
         }
 
         public Row(MedicationNameTable.MedicationNameTablePrimaryKey name, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
@@ -119,7 +120,22 @@ public final class MedicationNameTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
+            final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
+            if (mMedicationId!= null) {
+                mMedicationId = mMedicationIdRow.insert(transaction);
+            }
+            final MedicationNameTable.MedicationNameTablePrimaryKey primaryKey = new MedicationNameTable.MedicationNameTablePrimaryKey(transaction.insert(COLUMN_NAMES));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mMedicationId = primaryKey;
+                }
+
+            }
+            );
+            return primaryKey;
         }
 
     }

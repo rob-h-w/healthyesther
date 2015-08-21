@@ -74,8 +74,8 @@ public final class EventTable
         private DateTime mWhen;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey mTypeId;
         private EventTable.EventTablePrimaryKey mId;
-        private EventTable.EventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(6);
+        private com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row mTypeIdRow;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -86,7 +86,8 @@ public final class EventTable
             COLUMN_NAMES.add("when");
         }
 
-        public Row(DateTime created, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row eventTypeTableRow, DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
+        public Row(DateTime created, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row eventTypeTableRow, DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row rowTypeId) {
+            mTypeIdRow = rowTypeId;
         }
 
         public Row(DateTime created, com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey eventTypeTablePrimaryKey, DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
@@ -141,7 +142,18 @@ public final class EventTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
+            final EventTable.EventTablePrimaryKey primaryKey = new EventTable.EventTablePrimaryKey(transaction.insert(COLUMN_NAMES, mCreated, mModified, mName, mTypeId, mWhen));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mId = primaryKey;
+                }
+
+            }
+            );
+            return primaryKey;
         }
 
     }

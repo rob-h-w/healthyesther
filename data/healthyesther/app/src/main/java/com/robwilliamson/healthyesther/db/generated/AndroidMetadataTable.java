@@ -48,7 +48,6 @@ public final class AndroidMetadataTable
     {
 
         private String mLocale;
-        private AndroidMetadataTable.AndroidMetadataTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(1);
 
         static {
@@ -67,8 +66,9 @@ public final class AndroidMetadataTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
             transaction.insert(COLUMN_NAMES, mLocale);
+            return transaction.insert(COLUMN_NAMES, mLocale);
         }
 
     }

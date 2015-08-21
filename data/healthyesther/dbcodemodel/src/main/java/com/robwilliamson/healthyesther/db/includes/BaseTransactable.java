@@ -30,7 +30,7 @@ public abstract class BaseTransactable {
         mDeleted = true;
     }
 
-    protected abstract void insert(Transaction transaction);
+    protected abstract Object insert(Transaction transaction);
     /*protected abstract void modify(Transaction transaction);
     protected abstract void remove(Transaction transaction);*/
 

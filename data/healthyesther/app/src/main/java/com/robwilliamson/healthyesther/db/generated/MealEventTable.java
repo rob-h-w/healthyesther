@@ -90,8 +90,10 @@ public final class MealEventTable
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
-        private MealEventTable.MealEventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(4);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.MealTable.Row mMealIdRow;
+        private com.robwilliamson.healthyesther.db.generated.UnitsTable.Row mUnitsIdRow;
 
         static {
             COLUMN_NAMES.add("amount");
@@ -100,7 +102,10 @@ public final class MealEventTable
             COLUMN_NAMES.add("units_id");
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, Double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, Double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row rowEventId, com.robwilliamson.healthyesther.db.generated.MealTable.Row rowMealId, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row rowUnitsId) {
+            mEventIdRow = rowEventId;
+            mMealIdRow = rowMealId;
+            mUnitsIdRow = rowUnitsId;
         }
 
         public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealTablePrimaryKey, Double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
@@ -139,7 +144,26 @@ public final class MealEventTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
+            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
+            if (mEventId!= null) {
+                mEventId = mEventIdRow.insert(transaction);
+            }
+            final com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] mealId = new com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] {mMealId };
+            if (mMealId!= null) {
+                mMealId = mMealIdRow.insert(transaction);
+            }
+            final MealEventTable.MealEventTablePrimaryKey primaryKey = new MealEventTable.MealEventTablePrimaryKey(transaction.insert(COLUMN_NAMES, mAmount, mUnitsId));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mEventId = primaryKey;
+                }
+
+            }
+            );
+            return primaryKey;
         }
 
     }

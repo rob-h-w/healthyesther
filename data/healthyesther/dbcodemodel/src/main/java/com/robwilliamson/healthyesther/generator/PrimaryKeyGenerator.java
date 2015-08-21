@@ -114,7 +114,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
                 }
 
                 JType type = column.getPrimitiveType(model());
-                JFieldVar fieldVar = getJClass().field(JMod.PRIVATE, type, ColumnField.memberName(column));
+                JFieldVar fieldVar = getJClass().field(JMod.PRIVATE, type, ColumnField.memberName(column.getName()));
                 return new ColumnField(fieldVar, column);
             }
         });

@@ -89,8 +89,9 @@ public final class HealthScoreEventTable
         private long mScore;
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey mHealthScoreId;
-        private HealthScoreEventTable.HealthScoreEventTablePrimaryKey mPrimaryKey = null;
         public final static ArrayList COLUMN_NAMES = new ArrayList(3);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
 
         static {
             COLUMN_NAMES.add("event_id");
@@ -98,7 +99,9 @@ public final class HealthScoreEventTable
             COLUMN_NAMES.add("score");
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreTableRow, Long score) {
+        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreTableRow, Long score, com.robwilliamson.healthyesther.db.generated.EventTable.Row rowEventId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row rowHealthScoreId) {
+            mEventIdRow = rowEventId;
+            mHealthScoreIdRow = rowHealthScoreId;
         }
 
         public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreTablePrimaryKey, Long score) {
@@ -129,7 +132,26 @@ public final class HealthScoreEventTable
         }
 
         @Override
-        public void insert(Transaction transaction) {
+        public Object insert(Transaction transaction) {
+            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
+            if (mEventId!= null) {
+                mEventId = mEventIdRow.insert(transaction);
+            }
+            final com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] healthScoreId = new com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] {mHealthScoreId };
+            if (mHealthScoreId!= null) {
+                mHealthScoreId = mHealthScoreIdRow.insert(transaction);
+            }
+            final HealthScoreEventTable.HealthScoreEventTablePrimaryKey primaryKey = new HealthScoreEventTable.HealthScoreEventTablePrimaryKey(transaction.insert(COLUMN_NAMES, mScore));
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    mEventId = primaryKey;
+                }
+
+            }
+            );
+            return primaryKey;
         }
 
     }

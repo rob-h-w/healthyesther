@@ -5,7 +5,6 @@ import com.robwilliamson.healthyesther.generator.DateTimeGenerator;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.sun.codemodel.JCodeModel;
-import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JType;
 
 import java.util.regex.Matcher;
