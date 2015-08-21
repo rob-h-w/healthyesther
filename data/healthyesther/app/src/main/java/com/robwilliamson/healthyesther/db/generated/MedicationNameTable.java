@@ -130,7 +130,7 @@ public final class MedicationNameTable
 
 
                 public void onCompleted() {
-                    mMedicationId = primaryKey;
+                    mMedicationId = medicationId[ 1 ];
                 }
 
             }

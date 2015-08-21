@@ -136,7 +136,8 @@ public final class MedicationEventTable
 
 
                 public void onCompleted() {
-                    mEventId = primaryKey;
+                    mEventId = eventId[ 1 ];
+                    mMedicationId = medicationId[ 1 ];
                 }
 
             }

@@ -143,7 +143,21 @@ public class RowGenerator extends BaseClassGenerator {
             JBlock callback = anonymousType.method(
                     JMod.PUBLIC,
                     model().VOID,
-                    "onCompleted").body().assign(mPrimaryKeyFields.get(0).fieldVar, primaryKey);
+                    "onCompleted").body();
+
+            for (ColumnField field : mPrimaryKeyFields) {
+                if (!field.column.isForeignKey()) {
+                    if (field.fieldVar.type().equals(primaryKey.type())) {
+                        callback.assign(field.fieldVar, primaryKey);
+                    }
+                    continue;
+                }
+
+                callback.assign(
+                        field.fieldVar,
+                        temporaryPrimaryKeys.get(field).component(JExpr.lit(1)));
+            }
+
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
             body._return(primaryKey);
         } else {

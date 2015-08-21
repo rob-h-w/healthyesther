@@ -136,7 +136,8 @@ public final class NoteEventTable
 
 
                 public void onCompleted() {
-                    mEventId = primaryKey;
+                    mEventId = eventId[ 1 ];
+                    mNoteId = noteId[ 1 ];
                 }
 
             }

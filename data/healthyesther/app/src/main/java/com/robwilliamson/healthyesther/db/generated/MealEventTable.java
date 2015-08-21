@@ -158,7 +158,8 @@ public final class MealEventTable
 
 
                 public void onCompleted() {
-                    mEventId = primaryKey;
+                    mEventId = eventId[ 1 ];
+                    mMealId = mealId[ 1 ];
                 }
 
             }

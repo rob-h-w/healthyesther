@@ -146,7 +146,8 @@ public final class HealthScoreEventTable
 
 
                 public void onCompleted() {
-                    mEventId = primaryKey;
+                    mEventId = eventId[ 1 ];
+                    mHealthScoreId = healthScoreId[ 1 ];
                 }
 
             }
