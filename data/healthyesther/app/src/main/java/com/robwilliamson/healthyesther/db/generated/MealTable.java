@@ -98,7 +98,8 @@ public final class MealTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final MealTable.MealTablePrimaryKey primaryKey = new MealTable.MealTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName));
+            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName);
+            final MealTable.MealTablePrimaryKey primaryKey = new MealTable.MealTablePrimaryKey(rowId);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

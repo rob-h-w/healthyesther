@@ -98,7 +98,8 @@ public final class MedicationTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final MedicationTable.MedicationTablePrimaryKey primaryKey = new MedicationTable.MedicationTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName));
+            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName);
+            final MedicationTable.MedicationTablePrimaryKey primaryKey = new MedicationTable.MedicationTablePrimaryKey(rowId);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

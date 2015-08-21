@@ -125,19 +125,20 @@ public final class NoteEventTable
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
             if (mEventId!= null) {
-                mEventId = mEventIdRow.insert(transaction);
+                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] noteId = new com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] {mNoteId };
             if (mNoteId!= null) {
-                mNoteId = mNoteIdRow.insert(transaction);
+                noteId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey) mNoteIdRow.insert(transaction));
             }
-            final NoteEventTable.NoteEventTablePrimaryKey primaryKey = new NoteEventTable.NoteEventTablePrimaryKey(transaction.insert(COLUMN_NAMES));
+            final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], noteId[ 0 ]);
+            final NoteEventTable.NoteEventTablePrimaryKey primaryKey = new NoteEventTable.NoteEventTablePrimaryKey(eventId[ 0 ], noteId[ 0 ]);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 1 ];
-                    mNoteId = noteId[ 1 ];
+                    mEventId = eventId[ 0 ];
+                    mNoteId = noteId[ 0 ];
                 }
 
             }

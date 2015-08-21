@@ -138,7 +138,8 @@ public final class HealthScoreTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final HealthScoreTable.HealthScoreTablePrimaryKey primaryKey = new HealthScoreTable.HealthScoreTablePrimaryKey(transaction.insert(COLUMN_NAMES, mBestValue, mMaxLabel, mMinLabel, mName, mRandomQuery));
+            final long rowId = transaction.insert(COLUMN_NAMES, mId, mBestValue, mMaxLabel, mMinLabel, mName, mRandomQuery);
+            final HealthScoreTable.HealthScoreTablePrimaryKey primaryKey = new HealthScoreTable.HealthScoreTablePrimaryKey(rowId);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

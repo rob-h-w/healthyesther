@@ -64,7 +64,8 @@ public final class UnitsTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final UnitsTable.UnitsTablePrimaryKey primaryKey = new UnitsTable.UnitsTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName, mSiFactor));
+            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName, mSiFactor);
+            final UnitsTable.UnitsTablePrimaryKey primaryKey = new UnitsTable.UnitsTablePrimaryKey(rowId);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

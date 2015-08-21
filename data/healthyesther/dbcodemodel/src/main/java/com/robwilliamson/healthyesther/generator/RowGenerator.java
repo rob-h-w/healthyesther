@@ -7,6 +7,7 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.RowField;
+import com.sun.codemodel.JAssignmentTarget;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
@@ -113,8 +114,14 @@ public class RowGenerator extends BaseClassGenerator {
 
         if (keyGenerator.hasPrimaryKeys()) {
             Map<ColumnField, JVar> temporaryPrimaryKeys = new HashMap<>();
-            for (ColumnField field : mPrimaryKeyFields) {
-                if (!field.column.isForeignKey()) {
+            JInvocation insertionCall = JExpr.invoke(transaction, "insert");
+            JInvocation newPrimaryKeyTypeCall = JExpr._new(primaryKeyType);
+
+            insertionCall.arg(mColumnNames);
+
+            for (ColumnField field : mSortedFields) {
+                if (!field.column.isForeignKey() || !field.column.isPrimaryKey()) {
+                    insertionCall.arg(field.fieldVar);
                     continue;
                 }
 
@@ -123,21 +130,30 @@ public class RowGenerator extends BaseClassGenerator {
                         field.fieldVar.type().array(),
                         field.name,
                         JExpr.newArray(field.fieldVar.type()).add(field.fieldVar));
+                JAssignmentTarget tempKeyValue = tempKey.component(JExpr.lit(0));
                 temporaryPrimaryKeys.put(field, tempKey);
                 JBlock ifBlock = body._if(field.fieldVar.ne(JExpr._null()))._then();
                 ifBlock.assign(
-                        field.fieldVar,
-                        mPrimaryKeyFieldToRowMap
-                                .get(field).fieldVar.invoke("insert").arg(transaction));
+                        tempKeyValue,
+                        JExpr.cast(
+                                field.fieldVar.type(),
+                                mPrimaryKeyFieldToRowMap
+                                        .get(field).fieldVar.invoke("insert").arg(transaction)));
+
+                insertionCall.arg(tempKeyValue);
+                newPrimaryKeyTypeCall.arg(tempKeyValue);
             }
 
-            JInvocation insertionCall = populateArgumentsFor(JExpr.invoke(transaction, "insert"));
+            JVar insertionId = body.decl(JMod.FINAL, model().LONG, "rowId", insertionCall);
+            if (hasSingleRowIdPrimaryKey()) {
+                newPrimaryKeyTypeCall.arg(insertionId);
+            }
+
             JVar primaryKey = body.decl(
                     JMod.FINAL,
                     primaryKeyType,
                     "primaryKey",
-                    JExpr._new(primaryKeyType)
-                            .arg(insertionCall));
+                    newPrimaryKeyTypeCall);
             JDefinedClass anonymousType = model().anonymousClass(
                     Transaction.CompletionHandler.class);
             JBlock callback = anonymousType.method(
@@ -155,7 +171,7 @@ public class RowGenerator extends BaseClassGenerator {
 
                 callback.assign(
                         field.fieldVar,
-                        temporaryPrimaryKeys.get(field).component(JExpr.lit(1)));
+                        temporaryPrimaryKeys.get(field).component(JExpr.lit(0)));
             }
 
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
@@ -269,5 +285,15 @@ public class RowGenerator extends BaseClassGenerator {
         PrimaryKeyGenerator primaryKeyGenerator = table.getGenerator().getPrimaryKeyGenerator();
         mJoinConstructor.param(primaryKeyGenerator.getJClass(), primaryKeyGenerator
                 .getPreferredParameterName());
+    }
+
+    private boolean hasSingleRowIdPrimaryKey() {
+        if (getPrimaryKeyFields().size() != 1) {
+            return false;
+        }
+
+        ColumnField field = mPrimaryKeyFields.get(0);
+
+        return field.column.getName().equals("_id") && field.column.getPrimitiveType(model()).equals(model().LONG);
     }
 }

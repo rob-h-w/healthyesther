@@ -123,14 +123,15 @@ public final class MedicationNameTable
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
             if (mMedicationId!= null) {
-                mMedicationId = mMedicationIdRow.insert(transaction);
+                medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
             }
-            final MedicationNameTable.MedicationNameTablePrimaryKey primaryKey = new MedicationNameTable.MedicationNameTablePrimaryKey(transaction.insert(COLUMN_NAMES));
+            final long rowId = transaction.insert(COLUMN_NAMES, medicationId[ 0 ], mName);
+            final MedicationNameTable.MedicationNameTablePrimaryKey primaryKey = new MedicationNameTable.MedicationNameTablePrimaryKey(medicationId[ 0 ]);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mMedicationId = medicationId[ 1 ];
+                    mMedicationId = medicationId[ 0 ];
                 }
 
             }

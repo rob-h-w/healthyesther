@@ -108,7 +108,8 @@ public final class NoteTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final NoteTable.NoteTablePrimaryKey primaryKey = new NoteTable.NoteTablePrimaryKey(transaction.insert(COLUMN_NAMES, mName, mNote));
+            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName, mNote);
+            final NoteTable.NoteTablePrimaryKey primaryKey = new NoteTable.NoteTablePrimaryKey(rowId);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

@@ -135,19 +135,20 @@ public final class HealthScoreEventTable
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
             if (mEventId!= null) {
-                mEventId = mEventIdRow.insert(transaction);
+                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] healthScoreId = new com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] {mHealthScoreId };
             if (mHealthScoreId!= null) {
-                mHealthScoreId = mHealthScoreIdRow.insert(transaction);
+                healthScoreId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey) mHealthScoreIdRow.insert(transaction));
             }
-            final HealthScoreEventTable.HealthScoreEventTablePrimaryKey primaryKey = new HealthScoreEventTable.HealthScoreEventTablePrimaryKey(transaction.insert(COLUMN_NAMES, mScore));
+            final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], healthScoreId[ 0 ], mScore);
+            final HealthScoreEventTable.HealthScoreEventTablePrimaryKey primaryKey = new HealthScoreEventTable.HealthScoreEventTablePrimaryKey(eventId[ 0 ], healthScoreId[ 0 ]);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 1 ];
-                    mHealthScoreId = healthScoreId[ 1 ];
+                    mEventId = eventId[ 0 ];
+                    mHealthScoreId = healthScoreId[ 0 ];
                 }
 
             }

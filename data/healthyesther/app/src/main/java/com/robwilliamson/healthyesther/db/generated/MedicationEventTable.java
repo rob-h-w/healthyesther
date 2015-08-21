@@ -125,19 +125,20 @@ public final class MedicationEventTable
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
             if (mEventId!= null) {
-                mEventId = mEventIdRow.insert(transaction);
+                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
             if (mMedicationId!= null) {
-                mMedicationId = mMedicationIdRow.insert(transaction);
+                medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
             }
-            final MedicationEventTable.MedicationEventTablePrimaryKey primaryKey = new MedicationEventTable.MedicationEventTablePrimaryKey(transaction.insert(COLUMN_NAMES));
+            final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], medicationId[ 0 ]);
+            final MedicationEventTable.MedicationEventTablePrimaryKey primaryKey = new MedicationEventTable.MedicationEventTablePrimaryKey(eventId[ 0 ], medicationId[ 0 ]);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 1 ];
-                    mMedicationId = medicationId[ 1 ];
+                    mEventId = eventId[ 0 ];
+                    mMedicationId = medicationId[ 0 ];
                 }
 
             }

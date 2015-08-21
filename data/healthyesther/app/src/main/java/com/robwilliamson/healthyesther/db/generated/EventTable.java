@@ -143,7 +143,8 @@ public final class EventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final EventTable.EventTablePrimaryKey primaryKey = new EventTable.EventTablePrimaryKey(transaction.insert(COLUMN_NAMES, mCreated, mModified, mName, mTypeId, mWhen));
+            final long rowId = transaction.insert(COLUMN_NAMES, mId, mCreated, mModified, mName, mTypeId, mWhen);
+            final EventTable.EventTablePrimaryKey primaryKey = new EventTable.EventTablePrimaryKey(rowId);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

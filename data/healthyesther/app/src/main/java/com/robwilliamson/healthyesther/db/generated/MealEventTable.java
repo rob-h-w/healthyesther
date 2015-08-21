@@ -147,19 +147,20 @@ public final class MealEventTable
         public Object insert(Transaction transaction) {
             final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
             if (mEventId!= null) {
-                mEventId = mEventIdRow.insert(transaction);
+                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
             }
             final com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] mealId = new com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] {mMealId };
             if (mMealId!= null) {
-                mMealId = mMealIdRow.insert(transaction);
+                mealId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey) mMealIdRow.insert(transaction));
             }
-            final MealEventTable.MealEventTablePrimaryKey primaryKey = new MealEventTable.MealEventTablePrimaryKey(transaction.insert(COLUMN_NAMES, mAmount, mUnitsId));
+            final long rowId = transaction.insert(COLUMN_NAMES, mAmount, eventId[ 0 ], mealId[ 0 ], mUnitsId);
+            final MealEventTable.MealEventTablePrimaryKey primaryKey = new MealEventTable.MealEventTablePrimaryKey(eventId[ 0 ], mealId[ 0 ]);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 1 ];
-                    mMealId = mealId[ 1 ];
+                    mEventId = eventId[ 0 ];
+                    mMealId = mealId[ 0 ];
                 }
 
             }
