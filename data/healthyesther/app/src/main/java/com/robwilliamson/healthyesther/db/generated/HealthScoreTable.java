@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -85,7 +86,19 @@ public final class HealthScoreTable
             COLUMN_NAMES.add("random_query");
         }
 
-        public Row(long bestValue, String name, boolean randomQuery, HealthScoreTable.HealthScoreTablePrimaryKey id, String maxLabel, String minLabel) {
+        public Row(
+            @Nonnull
+            long bestValue,
+            @Nonnull
+            String name,
+            @Nonnull
+            boolean randomQuery, HealthScoreTable.HealthScoreTablePrimaryKey id, String maxLabel, String minLabel) {
+            mBestValue = bestValue;
+            mName = name;
+            mRandomQuery = randomQuery;
+            mId = id;
+            mMaxLabel = maxLabel;
+            mMinLabel = minLabel;
         }
 
         public void setId(HealthScoreTable.HealthScoreTablePrimaryKey id) {

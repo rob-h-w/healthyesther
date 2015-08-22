@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -97,12 +98,20 @@ public final class NoteEventTable
             COLUMN_NAMES.add("note_id");
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row rowEventId, com.robwilliamson.healthyesther.db.generated.NoteTable.Row rowNoteId) {
-            mEventIdRow = rowEventId;
-            mNoteIdRow = rowNoteId;
+        public Row(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow) {
+            mEventIdRow = eventTableRow;
+            mNoteIdRow = noteTableRow;
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
+        public Row(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {

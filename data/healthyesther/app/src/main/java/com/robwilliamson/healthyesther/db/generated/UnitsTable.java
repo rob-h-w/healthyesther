@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -35,7 +36,12 @@ public final class UnitsTable
             COLUMN_NAMES.add("si_factor");
         }
 
-        public Row(String name, UnitsTable.UnitsTablePrimaryKey id, Double siFactor) {
+        public Row(
+            @Nonnull
+            String name, UnitsTable.UnitsTablePrimaryKey id, double siFactor) {
+            mName = name;
+            mId = id;
+            mSiFactor = siFactor;
         }
 
         public void setId(UnitsTable.UnitsTablePrimaryKey id) {

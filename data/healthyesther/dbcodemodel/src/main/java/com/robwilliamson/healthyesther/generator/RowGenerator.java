@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 @ClassGeneratorFeatures(name = "Row", parameterName = "row")
 public class RowGenerator extends BaseClassGenerator {
 
@@ -212,49 +214,68 @@ public class RowGenerator extends BaseClassGenerator {
         }
 
         for (ColumnField field : nonNull) {
-            if (field.column.isForeignKey()) {
-                // Always there is a join constructor if there are foreign keys.
-                addConstructorParam(field.column.getColumnDependency());
-            } else if (field.column.isPrimaryKey()) {
-                PrimaryKeyGenerator keyGenerator = field.column
-                        .getTable().getGenerator().getPrimaryKeyGenerator();
-                mRowConstructor.param(keyGenerator.getJClass(), field.name);
-                if (mJoinConstructor != null) {
-                    mJoinConstructor.param(keyGenerator.getJClass(), field.name);
-                }
-            } else {
-                mRowConstructor.param(field.column.getDependentJtype(model()), field.name);
-                if (mJoinConstructor != null) {
-                    mJoinConstructor.param(field.column.getDependentJtype(model()), field.name);
-                }
-            }
+            // Handle join constructor.
+            implementJoinConstructorFor(field, false);
+
+            // Handle row constructor.
+            implementRowConstructorFor(field, false);
         }
 
         for (ColumnField field : nullable) {
-            if (field.column.isForeignKey()) {
-                addConstructorParam(field.column.getColumnDependency());
-            } else {
-                mRowConstructor.param(field.column.getDependentNullableJtype(model()), field.name);
-                if (mJoinConstructor != null) {
-                    mJoinConstructor.param(
-                            field.column.getDependentNullableJtype(model()),
-                            field.name);
-                }
+            // Handle join constructor.
+            implementJoinConstructorFor(field, true);
+
+            // Handle row constructor.
+            implementRowConstructorFor(field, true);
+        }
+    }
+
+    private void implementJoinConstructorFor(ColumnField field, boolean nullable) {
+        JVar param = null;
+        if (field.column.isForeignKey()) {
+            // Always there is a join constructor if there are foreign keys.
+            ColumnDependency dependency = field.column.getColumnDependency();
+            param = addJoinConstructorParam(dependency);
+        } else if (field.column.isPrimaryKey()) {
+            PrimaryKeyGenerator keyGenerator = field.column
+                    .getTable().getGenerator().getPrimaryKeyGenerator();
+            if (mJoinConstructor != null) {
+                param = mJoinConstructor.param(keyGenerator.getJClass(), field.name);
+            }
+        } else {
+            if (mJoinConstructor != null) {
+                param = mJoinConstructor.param(field.column.getDependentJtype(model()), field.name);
             }
         }
 
-        for (ColumnField field : mSortedFields) {
-            if (field.column.isForeignKey()) {
-                RowGenerator row = field.column
-                        .getColumnDependency().getDependency().getTable().getGenerator().getRow();
-                RowField rowField = new RowField(getJClass(), row, field.name + "Row");
-                JVar param = mRowConstructor.param(
-                        row.getJClass(),
-                        row.getPreferredParameterName() + Strings.capitalize(field.name));
-                mRowConstructor.body().assign(rowField.fieldVar, param);
-                mSortedRowDependencies.add(rowField);
-                mPrimaryKeyFieldToRowMap.put(field, rowField);
-            }
+        if (param != null) {
+            annotateNonull(param, !nullable);
+        }
+    }
+
+    private void implementRowConstructorFor(ColumnField field, boolean nullable) {
+        ColumnDependency dependency = field.column.getColumnDependency();
+        JVar param = null;
+        if (field.column.isForeignKey()) {
+
+            RowGenerator row = field.column
+                    .getColumnDependency().getDependency().getTable().getGenerator().getRow();
+            RowField rowField = new RowField(getJClass(), row, field.name + "Row");
+            param = addRowConstructorParam(dependency);
+            mRowConstructor.body().assign(rowField.fieldVar, param);
+            mSortedRowDependencies.add(rowField);
+            mPrimaryKeyFieldToRowMap.put(field, rowField);
+        } else {
+            param = mRowConstructor.param(field.fieldVar.type(), field.name);
+            mRowConstructor.body().assign(field.fieldVar, param);
+        }
+
+        annotateNonull(param, !nullable);
+    }
+
+    private void annotateNonull(JVar param, boolean nonnull) {
+        if (nonnull) {
+            param.annotate(Nonnull.class);
         }
     }
 
@@ -279,15 +300,20 @@ public class RowGenerator extends BaseClassGenerator {
         return mTableGenerator;
     }
 
-    private void addConstructorParam(ColumnDependency columnDependency) {
+    private JVar addRowConstructorParam(ColumnDependency columnDependency) {
         RowGenerator rowGenerator = columnDependency
                 .getDependency().getTable().getGenerator().getRow();
-        mRowConstructor.param(rowGenerator.getJClass(), name(rowGenerator));
+        return mRowConstructor.param(rowGenerator.getJClass(), name(rowGenerator));
+    }
+
+    private JVar addJoinConstructorParam(ColumnDependency columnDependency) {
+        RowGenerator rowGenerator = columnDependency
+                .getDependency().getTable().getGenerator().getRow();
 
         com.robwilliamson.healthyesther.semantic.Table table = rowGenerator
                 .getTableGenerator().getTable();
         PrimaryKeyGenerator primaryKeyGenerator = table.getGenerator().getPrimaryKeyGenerator();
-        mJoinConstructor.param(primaryKeyGenerator.getJClass(), primaryKeyGenerator
+        return mJoinConstructor.param(primaryKeyGenerator.getJClass(), primaryKeyGenerator
                 .getPreferredParameterName());
     }
 

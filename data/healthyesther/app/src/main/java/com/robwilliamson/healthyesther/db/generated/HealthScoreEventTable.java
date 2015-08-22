@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -99,12 +100,21 @@ public final class HealthScoreEventTable
             COLUMN_NAMES.add("score");
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreTableRow, Long score, com.robwilliamson.healthyesther.db.generated.EventTable.Row rowEventId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row rowHealthScoreId) {
-            mEventIdRow = rowEventId;
-            mHealthScoreIdRow = rowHealthScoreId;
+        public Row(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreTableRow, long score) {
+            mEventIdRow = eventTableRow;
+            mHealthScoreIdRow = healthScoreTableRow;
+            mScore = score;
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreTablePrimaryKey, Long score) {
+        public Row(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreTablePrimaryKey, long score) {
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {

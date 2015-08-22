@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -86,11 +87,28 @@ public final class EventTable
             COLUMN_NAMES.add("when");
         }
 
-        public Row(DateTime created, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row eventTypeTableRow, DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name, com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row rowTypeId) {
-            mTypeIdRow = rowTypeId;
+        public Row(
+            @Nonnull
+            DateTime created,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row eventTypeTableRow,
+            @Nonnull
+            DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
+            mCreated = created;
+            mTypeIdRow = eventTypeTableRow;
+            mWhen = when;
+            mId = id;
+            mModified = modified;
+            mName = name;
         }
 
-        public Row(DateTime created, com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey eventTypeTablePrimaryKey, DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
+        public Row(
+            @Nonnull
+            DateTime created,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey eventTypeTablePrimaryKey,
+            @Nonnull
+            DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
         }
 
         public void setId(EventTable.EventTablePrimaryKey id) {

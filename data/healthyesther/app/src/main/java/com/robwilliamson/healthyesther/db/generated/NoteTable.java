@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -79,7 +80,12 @@ public final class NoteTable
             COLUMN_NAMES.add("note");
         }
 
-        public Row(String name, NoteTable.NoteTablePrimaryKey id, String note) {
+        public Row(
+            @Nonnull
+            String name, NoteTable.NoteTablePrimaryKey id, String note) {
+            mName = name;
+            mId = id;
+            mNote = note;
         }
 
         public void setId(NoteTable.NoteTablePrimaryKey id) {

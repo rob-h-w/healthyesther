@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -102,13 +103,22 @@ public final class MealEventTable
             COLUMN_NAMES.add("units_id");
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow, com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, Double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow, com.robwilliamson.healthyesther.db.generated.EventTable.Row rowEventId, com.robwilliamson.healthyesther.db.generated.MealTable.Row rowMealId, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row rowUnitsId) {
-            mEventIdRow = rowEventId;
-            mMealIdRow = rowMealId;
-            mUnitsIdRow = rowUnitsId;
+        public Row(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow) {
+            mEventIdRow = eventTableRow;
+            mMealIdRow = mealTableRow;
+            mAmount = amount;
+            mUnitsIdRow = unitsTableRow;
         }
 
-        public Row(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey, com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealTablePrimaryKey, Double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
+        public Row(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealTablePrimaryKey, double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
         }
 
         public void setAmount(double amount) {

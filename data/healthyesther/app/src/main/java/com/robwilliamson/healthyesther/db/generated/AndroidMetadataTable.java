@@ -55,6 +55,7 @@ public final class AndroidMetadataTable
         }
 
         public Row(String locale) {
+            mLocale = locale;
         }
 
         public void setLocale(String locale) {

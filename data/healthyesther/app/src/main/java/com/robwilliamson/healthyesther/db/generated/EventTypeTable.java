@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -79,7 +80,12 @@ public final class EventTypeTable
             COLUMN_NAMES.add("name");
         }
 
-        public Row(String name, EventTypeTable.EventTypeTablePrimaryKey id, String icon) {
+        public Row(
+            @Nonnull
+            String name, EventTypeTable.EventTypeTablePrimaryKey id, String icon) {
+            mName = name;
+            mId = id;
+            mIcon = icon;
         }
 
         public void setId(EventTypeTable.EventTypeTablePrimaryKey id) {

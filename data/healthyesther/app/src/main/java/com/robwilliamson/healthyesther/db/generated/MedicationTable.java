@@ -2,6 +2,7 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
@@ -77,7 +78,11 @@ public final class MedicationTable
             COLUMN_NAMES.add("name");
         }
 
-        public Row(String name, MedicationTable.MedicationTablePrimaryKey id) {
+        public Row(
+            @Nonnull
+            String name, MedicationTable.MedicationTablePrimaryKey id) {
+            mName = name;
+            mId = id;
         }
 
         public void setId(MedicationTable.MedicationTablePrimaryKey id) {
