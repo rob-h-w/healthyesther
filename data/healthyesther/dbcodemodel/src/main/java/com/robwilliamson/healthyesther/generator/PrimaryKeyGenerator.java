@@ -136,23 +136,11 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     }
 
     private void makeEquals() {
+        JMethod eqMethod = makeBasicEquals();
         JDefinedClass theClass = getJClass();
         JCodeModel model = theClass.owner();
-        JMethod eqMethod = theClass.method(JMod.PUBLIC, model.BOOLEAN, "equals");
         JBlock equals = eqMethod.body();
-        JVar other = eqMethod.param(model.ref(Object.class), "other");
-
-        // If other == null
-        JBlock ifBlock = equals._if(other.eq(JExpr._null()))._then();
-        ifBlock._return(JExpr.lit(false));
-
-        // If other == this
-        ifBlock = equals._if(other.eq(JExpr._this()))._then();
-        ifBlock._return(JExpr.lit(true));
-
-        // Check type
-        ifBlock = equals._if(other._instanceof(theClass).not())._then();
-        ifBlock._return(JExpr.lit(false));
+        JVar other = eqMethod.listParams()[0];
 
         if (!mSortedPrimaryKeyFields.isEmpty()) {
             // Cast
@@ -161,7 +149,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             // Check each primary key column.
             for (ColumnField field : mSortedPrimaryKeyFields) {
                 JFieldVar primaryKeyField = field.fieldVar;
-                ifBlock = equals._if(otherType.ref(primaryKeyField).ne(primaryKeyField))._then();
+                JBlock ifBlock = equals._if(otherType.ref(primaryKeyField).ne(primaryKeyField))._then();
 
                 if (primaryKeyField.type().isPrimitive()) {
                     ifBlock._return(JExpr.lit(false));

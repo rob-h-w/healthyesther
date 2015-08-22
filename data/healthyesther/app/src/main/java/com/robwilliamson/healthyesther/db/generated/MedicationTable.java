@@ -86,7 +86,10 @@ public final class MedicationTable
         }
 
         public void setId(MedicationTable.MedicationTablePrimaryKey id) {
-            mId = id;
+            if (mId!= id) {
+                mId = id;
+                setIsModified(true);
+            }
         }
 
         public MedicationTable.MedicationTablePrimaryKey getId() {
@@ -94,7 +97,10 @@ public final class MedicationTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -111,6 +117,7 @@ public final class MedicationTable
                 public void onCompleted() {
                     mId = primaryKey;
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

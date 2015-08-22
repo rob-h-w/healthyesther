@@ -45,7 +45,10 @@ public final class UnitsTable
         }
 
         public void setId(UnitsTable.UnitsTablePrimaryKey id) {
-            mId = id;
+            if (mId!= id) {
+                mId = id;
+                setIsModified(true);
+            }
         }
 
         public UnitsTable.UnitsTablePrimaryKey getId() {
@@ -53,7 +56,10 @@ public final class UnitsTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -61,7 +67,10 @@ public final class UnitsTable
         }
 
         public void setSiFactor(double siFactor) {
-            mSiFactor = siFactor;
+            if (mSiFactor!= siFactor) {
+                mSiFactor = siFactor;
+                setIsModified(true);
+            }
         }
 
         public double getSiFactor() {
@@ -78,6 +87,7 @@ public final class UnitsTable
                 public void onCompleted() {
                     mId = primaryKey;
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

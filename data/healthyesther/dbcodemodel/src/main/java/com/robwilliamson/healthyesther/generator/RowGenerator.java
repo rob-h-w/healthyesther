@@ -179,13 +179,22 @@ public class RowGenerator extends BaseClassGenerator {
                         temporaryPrimaryKeys.get(field).component(JExpr.lit(0)));
             }
 
-            callback.invoke("setIsInDatabase").arg(JExpr.lit(true));
+            setIsInDatabaseCall(callback, true);
+            setIsModifiedCall(callback, false);
 
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
             body._return(primaryKey);
         } else {
             body._return(populateArgumentsFor(body.invoke(transaction, "insert")));
         }
+    }
+
+    private void setIsModifiedCall(JBlock block, boolean isModified) {
+        block.invoke("setIsModified").arg(JExpr.lit(isModified));
+    }
+
+    private void setIsInDatabaseCall(JBlock block, boolean isInDatabase) {
+        block.invoke("setIsInDatabase").arg(JExpr.lit(isInDatabase));
     }
 
     private JInvocation populateArgumentsFor(JInvocation invocation) {
@@ -282,7 +291,9 @@ public class RowGenerator extends BaseClassGenerator {
                     model().VOID,
                     "set" + Strings.capitalize(field.name));
             JVar value = setter.param(field.fieldVar.type(), field.name);
-            setter.body().assign(field.fieldVar, value);
+            JBlock ifChangedBlock = setter.body()._if(field.fieldVar.ne(value))._then();
+            ifChangedBlock.assign(field.fieldVar, value);
+            setIsModifiedCall(ifChangedBlock, true);
 
             JMethod getter = getJClass().method(
                     JMod.PUBLIC,

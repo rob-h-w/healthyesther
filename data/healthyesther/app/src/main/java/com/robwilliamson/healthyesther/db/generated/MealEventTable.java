@@ -126,7 +126,10 @@ public final class MealEventTable
         }
 
         public void setAmount(double amount) {
-            mAmount = amount;
+            if (mAmount!= amount) {
+                mAmount = amount;
+                setIsModified(true);
+            }
         }
 
         public double getAmount() {
@@ -134,7 +137,10 @@ public final class MealEventTable
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            mEventId = eventId;
+            if (mEventId!= eventId) {
+                mEventId = eventId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
@@ -142,7 +148,10 @@ public final class MealEventTable
         }
 
         public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
-            mMealId = mealId;
+            if (mMealId!= mealId) {
+                mMealId = mealId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey getMealId() {
@@ -150,7 +159,10 @@ public final class MealEventTable
         }
 
         public void setUnitsId(com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsId) {
-            mUnitsId = unitsId;
+            if (mUnitsId!= unitsId) {
+                mUnitsId = unitsId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey getUnitsId() {
@@ -176,6 +188,7 @@ public final class MealEventTable
                     mEventId = eventId[ 0 ];
                     mMealId = mealId[ 0 ];
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

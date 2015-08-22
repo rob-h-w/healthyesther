@@ -102,7 +102,10 @@ public final class HealthScoreTable
         }
 
         public void setId(HealthScoreTable.HealthScoreTablePrimaryKey id) {
-            mId = id;
+            if (mId!= id) {
+                mId = id;
+                setIsModified(true);
+            }
         }
 
         public HealthScoreTable.HealthScoreTablePrimaryKey getId() {
@@ -110,7 +113,10 @@ public final class HealthScoreTable
         }
 
         public void setBestValue(long bestValue) {
-            mBestValue = bestValue;
+            if (mBestValue!= bestValue) {
+                mBestValue = bestValue;
+                setIsModified(true);
+            }
         }
 
         public long getBestValue() {
@@ -118,7 +124,10 @@ public final class HealthScoreTable
         }
 
         public void setMaxLabel(String maxLabel) {
-            mMaxLabel = maxLabel;
+            if (mMaxLabel!= maxLabel) {
+                mMaxLabel = maxLabel;
+                setIsModified(true);
+            }
         }
 
         public String getMaxLabel() {
@@ -126,7 +135,10 @@ public final class HealthScoreTable
         }
 
         public void setMinLabel(String minLabel) {
-            mMinLabel = minLabel;
+            if (mMinLabel!= minLabel) {
+                mMinLabel = minLabel;
+                setIsModified(true);
+            }
         }
 
         public String getMinLabel() {
@@ -134,7 +146,10 @@ public final class HealthScoreTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -142,7 +157,10 @@ public final class HealthScoreTable
         }
 
         public void setRandomQuery(boolean randomQuery) {
-            mRandomQuery = randomQuery;
+            if (mRandomQuery!= randomQuery) {
+                mRandomQuery = randomQuery;
+                setIsModified(true);
+            }
         }
 
         public boolean getRandomQuery() {
@@ -159,6 +177,7 @@ public final class HealthScoreTable
                 public void onCompleted() {
                     mId = primaryKey;
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

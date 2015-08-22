@@ -117,7 +117,10 @@ public final class MedicationEventTable
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            mEventId = eventId;
+            if (mEventId!= eventId) {
+                mEventId = eventId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
@@ -125,7 +128,10 @@ public final class MedicationEventTable
         }
 
         public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
-            mMedicationId = medicationId;
+            if (mMedicationId!= medicationId) {
+                mMedicationId = medicationId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
@@ -151,6 +157,7 @@ public final class MedicationEventTable
                     mEventId = eventId[ 0 ];
                     mMedicationId = medicationId[ 0 ];
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

@@ -59,7 +59,10 @@ public final class AndroidMetadataTable
         }
 
         public void setLocale(String locale) {
-            mLocale = locale;
+            if (mLocale!= locale) {
+                mLocale = locale;
+                setIsModified(true);
+            }
         }
 
         public String getLocale() {

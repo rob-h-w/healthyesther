@@ -1,7 +1,12 @@
 package com.robwilliamson.healthyesther.generator;
 
+import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JMod;
+import com.sun.codemodel.JVar;
 
 public abstract class BaseClassGenerator implements ClassOwner {
     private JDefinedClass mClass;
@@ -55,6 +60,28 @@ public abstract class BaseClassGenerator implements ClassOwner {
 
     protected JCodeModel model() {
         return mClass.owner();
+    }
+
+    protected JMethod makeBasicEquals() {
+        JDefinedClass theClass = getJClass();
+        JCodeModel model = model();
+        JMethod eqMethod = theClass.method(JMod.PUBLIC, model.BOOLEAN, "equals");
+        JBlock equals = eqMethod.body();
+        JVar other = eqMethod.param(model.ref(Object.class), "other");
+
+        // If other == null
+        JBlock ifBlock = equals._if(other.eq(JExpr._null()))._then();
+        ifBlock._return(JExpr.lit(false));
+
+        // If other == this
+        ifBlock = equals._if(other.eq(JExpr._this()))._then();
+        ifBlock._return(JExpr.lit(true));
+
+        // Check type
+        ifBlock = equals._if(other._instanceof(theClass).not())._then();
+        ifBlock._return(JExpr.lit(false));
+
+        return eqMethod;
     }
 
     public static class MissingAnnotationException extends RuntimeException {

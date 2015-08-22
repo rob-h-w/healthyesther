@@ -118,7 +118,10 @@ public final class EventTable
         }
 
         public void setId(EventTable.EventTablePrimaryKey id) {
-            mId = id;
+            if (mId!= id) {
+                mId = id;
+                setIsModified(true);
+            }
         }
 
         public EventTable.EventTablePrimaryKey getId() {
@@ -126,7 +129,10 @@ public final class EventTable
         }
 
         public void setCreated(DateTime created) {
-            mCreated = created;
+            if (mCreated!= created) {
+                mCreated = created;
+                setIsModified(true);
+            }
         }
 
         public DateTime getCreated() {
@@ -134,7 +140,10 @@ public final class EventTable
         }
 
         public void setModified(DateTime modified) {
-            mModified = modified;
+            if (mModified!= modified) {
+                mModified = modified;
+                setIsModified(true);
+            }
         }
 
         public DateTime getModified() {
@@ -142,7 +151,10 @@ public final class EventTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -150,7 +162,10 @@ public final class EventTable
         }
 
         public void setTypeId(com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey typeId) {
-            mTypeId = typeId;
+            if (mTypeId!= typeId) {
+                mTypeId = typeId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey getTypeId() {
@@ -158,7 +173,10 @@ public final class EventTable
         }
 
         public void setWhen(DateTime when) {
-            mWhen = when;
+            if (mWhen!= when) {
+                mWhen = when;
+                setIsModified(true);
+            }
         }
 
         public DateTime getWhen() {
@@ -175,6 +193,7 @@ public final class EventTable
                 public void onCompleted() {
                     mId = primaryKey;
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

@@ -121,7 +121,10 @@ public final class HealthScoreEventTable
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            mEventId = eventId;
+            if (mEventId!= eventId) {
+                mEventId = eventId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
@@ -129,7 +132,10 @@ public final class HealthScoreEventTable
         }
 
         public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
-            mHealthScoreId = healthScoreId;
+            if (mHealthScoreId!= healthScoreId) {
+                mHealthScoreId = healthScoreId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey getHealthScoreId() {
@@ -137,7 +143,10 @@ public final class HealthScoreEventTable
         }
 
         public void setScore(long score) {
-            mScore = score;
+            if (mScore!= score) {
+                mScore = score;
+                setIsModified(true);
+            }
         }
 
         public long getScore() {
@@ -163,6 +172,7 @@ public final class HealthScoreEventTable
                     mEventId = eventId[ 0 ];
                     mHealthScoreId = healthScoreId[ 0 ];
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

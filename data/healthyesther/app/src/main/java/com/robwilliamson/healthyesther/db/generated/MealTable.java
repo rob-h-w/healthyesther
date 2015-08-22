@@ -86,7 +86,10 @@ public final class MealTable
         }
 
         public void setId(MealTable.MealTablePrimaryKey id) {
-            mId = id;
+            if (mId!= id) {
+                mId = id;
+                setIsModified(true);
+            }
         }
 
         public MealTable.MealTablePrimaryKey getId() {
@@ -94,7 +97,10 @@ public final class MealTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -111,6 +117,7 @@ public final class MealTable
                 public void onCompleted() {
                     mId = primaryKey;
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

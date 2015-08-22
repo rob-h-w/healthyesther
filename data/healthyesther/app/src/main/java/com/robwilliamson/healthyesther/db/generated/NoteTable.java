@@ -89,7 +89,10 @@ public final class NoteTable
         }
 
         public void setId(NoteTable.NoteTablePrimaryKey id) {
-            mId = id;
+            if (mId!= id) {
+                mId = id;
+                setIsModified(true);
+            }
         }
 
         public NoteTable.NoteTablePrimaryKey getId() {
@@ -97,7 +100,10 @@ public final class NoteTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -105,7 +111,10 @@ public final class NoteTable
         }
 
         public void setNote(String note) {
-            mNote = note;
+            if (mNote!= note) {
+                mNote = note;
+                setIsModified(true);
+            }
         }
 
         public String getNote() {
@@ -122,6 +131,7 @@ public final class NoteTable
                 public void onCompleted() {
                     mId = primaryKey;
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }

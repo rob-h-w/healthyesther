@@ -112,7 +112,10 @@ public final class MedicationNameTable
         }
 
         public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
-            mMedicationId = medicationId;
+            if (mMedicationId!= medicationId) {
+                mMedicationId = medicationId;
+                setIsModified(true);
+            }
         }
 
         public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
@@ -120,7 +123,10 @@ public final class MedicationNameTable
         }
 
         public void setName(String name) {
-            mName = name;
+            if (mName!= name) {
+                mName = name;
+                setIsModified(true);
+            }
         }
 
         public String getName() {
@@ -141,6 +147,7 @@ public final class MedicationNameTable
                 public void onCompleted() {
                     mMedicationId = medicationId[ 0 ];
                     setIsInDatabase(true);
+                    setIsModified(false);
                 }
 
             }
