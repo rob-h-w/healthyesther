@@ -89,10 +89,11 @@ public final class NoteTable
         }
 
         public void setId(NoteTable.NoteTablePrimaryKey id) {
-            if (mId!= id) {
-                mId = id;
-                setIsModified(true);
+            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
+                return ;
             }
+            mId = id;
+            setIsModified(true);
         }
 
         public NoteTable.NoteTablePrimaryKey getId() {
@@ -100,10 +101,11 @@ public final class NoteTable
         }
 
         public void setName(String name) {
-            if (mName!= name) {
-                mName = name;
-                setIsModified(true);
+            if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
+                return ;
             }
+            mName = name;
+            setIsModified(true);
         }
 
         public String getName() {
@@ -111,10 +113,11 @@ public final class NoteTable
         }
 
         public void setNote(String note) {
-            if (mNote!= note) {
-                mNote = note;
-                setIsModified(true);
+            if (((mNote == null)&&(note == null))||((mNote!= null)&&mNote.equals(note))) {
+                return ;
             }
+            mNote = note;
+            setIsModified(true);
         }
 
         public String getNote() {

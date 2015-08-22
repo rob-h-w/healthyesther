@@ -126,10 +126,11 @@ public final class MealEventTable
         }
 
         public void setAmount(double amount) {
-            if (mAmount!= amount) {
-                mAmount = amount;
-                setIsModified(true);
+            if (mAmount == amount) {
+                return ;
             }
+            mAmount = amount;
+            setIsModified(true);
         }
 
         public double getAmount() {
@@ -137,10 +138,11 @@ public final class MealEventTable
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            if (mEventId!= eventId) {
-                mEventId = eventId;
-                setIsModified(true);
+            if (((mEventId == null)&&(eventId == null))||((mEventId!= null)&&mEventId.equals(eventId))) {
+                return ;
             }
+            mEventId = eventId;
+            setIsModified(true);
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
@@ -148,10 +150,11 @@ public final class MealEventTable
         }
 
         public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
-            if (mMealId!= mealId) {
-                mMealId = mealId;
-                setIsModified(true);
+            if (((mMealId == null)&&(mealId == null))||((mMealId!= null)&&mMealId.equals(mealId))) {
+                return ;
             }
+            mMealId = mealId;
+            setIsModified(true);
         }
 
         public com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey getMealId() {
@@ -159,10 +162,11 @@ public final class MealEventTable
         }
 
         public void setUnitsId(com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsId) {
-            if (mUnitsId!= unitsId) {
-                mUnitsId = unitsId;
-                setIsModified(true);
+            if (((mUnitsId == null)&&(unitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(unitsId))) {
+                return ;
             }
+            mUnitsId = unitsId;
+            setIsModified(true);
         }
 
         public com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey getUnitsId() {

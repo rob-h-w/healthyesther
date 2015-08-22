@@ -307,9 +307,10 @@ public class RowGenerator extends BaseClassGenerator {
                     model().VOID,
                     "set" + Strings.capitalize(field.name));
             JVar value = setter.param(field.fieldVar.type(), field.name);
-            JBlock ifChangedBlock = setter.body()._if(field.fieldVar.ne(value))._then();
-            ifChangedBlock.assign(field.fieldVar, value);
-            setIsModifiedCall(ifChangedBlock, true);
+            JBlock body = setter.body();
+            body._if(makeEquals(field.fieldVar, value))._then()._return();
+            body.assign(field.fieldVar, value);
+            setIsModifiedCall(body, true);
 
             JMethod getter = getJClass().method(
                     JMod.PUBLIC,

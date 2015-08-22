@@ -117,10 +117,11 @@ public final class NoteEventTable
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            if (mEventId!= eventId) {
-                mEventId = eventId;
-                setIsModified(true);
+            if (((mEventId == null)&&(eventId == null))||((mEventId!= null)&&mEventId.equals(eventId))) {
+                return ;
             }
+            mEventId = eventId;
+            setIsModified(true);
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
@@ -128,10 +129,11 @@ public final class NoteEventTable
         }
 
         public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteId) {
-            if (mNoteId!= noteId) {
-                mNoteId = noteId;
-                setIsModified(true);
+            if (((mNoteId == null)&&(noteId == null))||((mNoteId!= null)&&mNoteId.equals(noteId))) {
+                return ;
             }
+            mNoteId = noteId;
+            setIsModified(true);
         }
 
         public com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey getNoteId() {

@@ -118,10 +118,11 @@ public final class EventTable
         }
 
         public void setId(EventTable.EventTablePrimaryKey id) {
-            if (mId!= id) {
-                mId = id;
-                setIsModified(true);
+            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
+                return ;
             }
+            mId = id;
+            setIsModified(true);
         }
 
         public EventTable.EventTablePrimaryKey getId() {
@@ -129,10 +130,11 @@ public final class EventTable
         }
 
         public void setCreated(DateTime created) {
-            if (mCreated!= created) {
-                mCreated = created;
-                setIsModified(true);
+            if (((mCreated == null)&&(created == null))||((mCreated!= null)&&mCreated.equals(created))) {
+                return ;
             }
+            mCreated = created;
+            setIsModified(true);
         }
 
         public DateTime getCreated() {
@@ -140,10 +142,11 @@ public final class EventTable
         }
 
         public void setModified(DateTime modified) {
-            if (mModified!= modified) {
-                mModified = modified;
-                setIsModified(true);
+            if (((mModified == null)&&(modified == null))||((mModified!= null)&&mModified.equals(modified))) {
+                return ;
             }
+            mModified = modified;
+            setIsModified(true);
         }
 
         public DateTime getModified() {
@@ -151,10 +154,11 @@ public final class EventTable
         }
 
         public void setName(String name) {
-            if (mName!= name) {
-                mName = name;
-                setIsModified(true);
+            if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
+                return ;
             }
+            mName = name;
+            setIsModified(true);
         }
 
         public String getName() {
@@ -162,10 +166,11 @@ public final class EventTable
         }
 
         public void setTypeId(com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey typeId) {
-            if (mTypeId!= typeId) {
-                mTypeId = typeId;
-                setIsModified(true);
+            if (((mTypeId == null)&&(typeId == null))||((mTypeId!= null)&&mTypeId.equals(typeId))) {
+                return ;
             }
+            mTypeId = typeId;
+            setIsModified(true);
         }
 
         public com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey getTypeId() {
@@ -173,10 +178,11 @@ public final class EventTable
         }
 
         public void setWhen(DateTime when) {
-            if (mWhen!= when) {
-                mWhen = when;
-                setIsModified(true);
+            if (((mWhen == null)&&(when == null))||((mWhen!= null)&&mWhen.equals(when))) {
+                return ;
             }
+            mWhen = when;
+            setIsModified(true);
         }
 
         public DateTime getWhen() {

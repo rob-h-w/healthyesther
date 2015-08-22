@@ -102,10 +102,11 @@ public final class HealthScoreTable
         }
 
         public void setId(HealthScoreTable.HealthScoreTablePrimaryKey id) {
-            if (mId!= id) {
-                mId = id;
-                setIsModified(true);
+            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
+                return ;
             }
+            mId = id;
+            setIsModified(true);
         }
 
         public HealthScoreTable.HealthScoreTablePrimaryKey getId() {
@@ -113,10 +114,11 @@ public final class HealthScoreTable
         }
 
         public void setBestValue(long bestValue) {
-            if (mBestValue!= bestValue) {
-                mBestValue = bestValue;
-                setIsModified(true);
+            if (mBestValue == bestValue) {
+                return ;
             }
+            mBestValue = bestValue;
+            setIsModified(true);
         }
 
         public long getBestValue() {
@@ -124,10 +126,11 @@ public final class HealthScoreTable
         }
 
         public void setMaxLabel(String maxLabel) {
-            if (mMaxLabel!= maxLabel) {
-                mMaxLabel = maxLabel;
-                setIsModified(true);
+            if (((mMaxLabel == null)&&(maxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(maxLabel))) {
+                return ;
             }
+            mMaxLabel = maxLabel;
+            setIsModified(true);
         }
 
         public String getMaxLabel() {
@@ -135,10 +138,11 @@ public final class HealthScoreTable
         }
 
         public void setMinLabel(String minLabel) {
-            if (mMinLabel!= minLabel) {
-                mMinLabel = minLabel;
-                setIsModified(true);
+            if (((mMinLabel == null)&&(minLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(minLabel))) {
+                return ;
             }
+            mMinLabel = minLabel;
+            setIsModified(true);
         }
 
         public String getMinLabel() {
@@ -146,10 +150,11 @@ public final class HealthScoreTable
         }
 
         public void setName(String name) {
-            if (mName!= name) {
-                mName = name;
-                setIsModified(true);
+            if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
+                return ;
             }
+            mName = name;
+            setIsModified(true);
         }
 
         public String getName() {
@@ -157,10 +162,11 @@ public final class HealthScoreTable
         }
 
         public void setRandomQuery(boolean randomQuery) {
-            if (mRandomQuery!= randomQuery) {
-                mRandomQuery = randomQuery;
-                setIsModified(true);
+            if (mRandomQuery == randomQuery) {
+                return ;
             }
+            mRandomQuery = randomQuery;
+            setIsModified(true);
         }
 
         public boolean getRandomQuery() {

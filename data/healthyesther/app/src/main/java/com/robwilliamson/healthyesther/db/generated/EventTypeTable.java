@@ -89,10 +89,11 @@ public final class EventTypeTable
         }
 
         public void setId(EventTypeTable.EventTypeTablePrimaryKey id) {
-            if (mId!= id) {
-                mId = id;
-                setIsModified(true);
+            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
+                return ;
             }
+            mId = id;
+            setIsModified(true);
         }
 
         public EventTypeTable.EventTypeTablePrimaryKey getId() {
@@ -100,10 +101,11 @@ public final class EventTypeTable
         }
 
         public void setIcon(String icon) {
-            if (mIcon!= icon) {
-                mIcon = icon;
-                setIsModified(true);
+            if (((mIcon == null)&&(icon == null))||((mIcon!= null)&&mIcon.equals(icon))) {
+                return ;
             }
+            mIcon = icon;
+            setIsModified(true);
         }
 
         public String getIcon() {
@@ -111,10 +113,11 @@ public final class EventTypeTable
         }
 
         public void setName(String name) {
-            if (mName!= name) {
-                mName = name;
-                setIsModified(true);
+            if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
+                return ;
             }
+            mName = name;
+            setIsModified(true);
         }
 
         public String getName() {

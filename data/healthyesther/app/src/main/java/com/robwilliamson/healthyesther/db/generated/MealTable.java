@@ -86,10 +86,11 @@ public final class MealTable
         }
 
         public void setId(MealTable.MealTablePrimaryKey id) {
-            if (mId!= id) {
-                mId = id;
-                setIsModified(true);
+            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
+                return ;
             }
+            mId = id;
+            setIsModified(true);
         }
 
         public MealTable.MealTablePrimaryKey getId() {
@@ -97,10 +98,11 @@ public final class MealTable
         }
 
         public void setName(String name) {
-            if (mName!= name) {
-                mName = name;
-                setIsModified(true);
+            if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
+                return ;
             }
+            mName = name;
+            setIsModified(true);
         }
 
         public String getName() {
