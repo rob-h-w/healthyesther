@@ -6,6 +6,7 @@ public class Destination {
 
     private final File mFolder;
     private final String mPackage;
+
     Destination(String destinationFolder, String destinationPackage) {
         mFolder = new File(Strings.checkNotEmpty(destinationFolder, "destinationFolder"));
         mPackage = Strings.checkNotEmpty(destinationPackage, "destinationPackage");

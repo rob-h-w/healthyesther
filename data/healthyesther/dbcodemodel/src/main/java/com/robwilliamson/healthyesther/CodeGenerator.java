@@ -17,6 +17,7 @@ public class CodeGenerator {
     public static final AsyncExecutor ASYNC = new AsyncExecutor();
     private final Source mSource;
     private final Destination mDestination;
+
     CodeGenerator(Source source, Destination destination) {
         mSource = source;
         mDestination = destination;

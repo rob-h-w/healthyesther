@@ -20,6 +20,7 @@ public class DateTimeGenerator extends BaseClassGenerator {
     private JFieldVar mConverterRegistry;
     private JFieldVar mString;
     private JDefinedClass mConverter;
+
     public DateTimeGenerator(JPackage jPackage) throws JClassAlreadyExistsException {
         setJClass(jPackage._class(JMod.PUBLIC, getName()));
         JDefinedClass clazz = getJClass();

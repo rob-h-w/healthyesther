@@ -18,6 +18,7 @@ public class Column {
     private transient boolean mNotNull = false;
     private transient Table mTable;
     private transient boolean mPrimaryKey = false;
+
     Column() {
     }
 
