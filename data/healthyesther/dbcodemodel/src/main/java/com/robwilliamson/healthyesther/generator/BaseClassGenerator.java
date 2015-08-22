@@ -1,9 +1,12 @@
 package com.robwilliamson.healthyesther.generator;
 
+import com.sun.codemodel.JAssignmentTarget;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JExpression;
+import com.sun.codemodel.JExpressionImpl;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JVar;
@@ -82,6 +85,14 @@ public abstract class BaseClassGenerator implements ClassOwner {
         ifBlock._return(JExpr.lit(false));
 
         return eqMethod;
+    }
+
+    protected JExpression makeEquals(JVar left, JExpressionImpl right) {
+        if (left.type().isPrimitive()) {
+            return left.eq(right);
+        }
+
+        return left.eq(JExpr._null()).cand(right.eq(JExpr._null())).cor(left.ne(JExpr._null()).cand(left.invoke("equals").arg(right)));
     }
 
     public static class MissingAnnotationException extends RuntimeException {

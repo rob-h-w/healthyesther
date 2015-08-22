@@ -185,6 +185,38 @@ public final class HealthScoreTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof HealthScoreTable.Row)) {
+                return false;
+            }
+            HealthScoreTable.Row theRow = ((HealthScoreTable.Row) other);
+            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
+                return false;
+            }
+            if (!(mBestValue == theRow.mBestValue)) {
+                return false;
+            }
+            if (!(((mMaxLabel == null)&&(theRow.mMaxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(theRow.mMaxLabel)))) {
+                return false;
+            }
+            if (!(((mMinLabel == null)&&(theRow.mMinLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(theRow.mMinLabel)))) {
+                return false;
+            }
+            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
+                return false;
+            }
+            if (!(mRandomQuery == theRow.mRandomQuery)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

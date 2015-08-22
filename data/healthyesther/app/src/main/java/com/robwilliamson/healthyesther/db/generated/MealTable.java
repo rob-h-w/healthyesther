@@ -125,6 +125,26 @@ public final class MealTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof MealTable.Row)) {
+                return false;
+            }
+            MealTable.Row theRow = ((MealTable.Row) other);
+            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
+                return false;
+            }
+            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

@@ -96,8 +96,24 @@ public class RowGenerator extends BaseClassGenerator {
                 makeInsert();
                 //makeModify();
                 //makeRemove();
+                makeEquals();
             }
         });
+    }
+
+    private void makeEquals() {
+        JMethod eqMethod = makeBasicEquals();
+        JDefinedClass theClass = getJClass();
+        JBlock body = eqMethod.body();
+        JVar other = eqMethod.listParams()[0];
+        JVar otherType = body.decl(theClass, "the" + theClass.name(), JExpr.cast(theClass, other));
+
+        for (ColumnField field : mSortedFields) {
+            JBlock ifBlock = body._if(makeEquals(field.fieldVar, otherType.ref(field.fieldVar)).not())._then();
+            ifBlock._return(JExpr.lit(false));
+        }
+
+        body._return(JExpr.lit(true));
     }
 
     public List<ColumnField> getPrimaryKeyFields() {

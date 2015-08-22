@@ -75,6 +75,23 @@ public final class AndroidMetadataTable
             return transaction.insert(COLUMN_NAMES, mLocale);
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof AndroidMetadataTable.Row)) {
+                return false;
+            }
+            AndroidMetadataTable.Row theRow = ((AndroidMetadataTable.Row) other);
+            if (!(((mLocale == null)&&(theRow.mLocale == null))||((mLocale!= null)&&mLocale.equals(theRow.mLocale)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

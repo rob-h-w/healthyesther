@@ -201,6 +201,38 @@ public final class EventTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof EventTable.Row)) {
+                return false;
+            }
+            EventTable.Row theRow = ((EventTable.Row) other);
+            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
+                return false;
+            }
+            if (!(((mCreated == null)&&(theRow.mCreated == null))||((mCreated!= null)&&mCreated.equals(theRow.mCreated)))) {
+                return false;
+            }
+            if (!(((mModified == null)&&(theRow.mModified == null))||((mModified!= null)&&mModified.equals(theRow.mModified)))) {
+                return false;
+            }
+            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
+                return false;
+            }
+            if (!(((mTypeId == null)&&(theRow.mTypeId == null))||((mTypeId!= null)&&mTypeId.equals(theRow.mTypeId)))) {
+                return false;
+            }
+            if (!(((mWhen == null)&&(theRow.mWhen == null))||((mWhen!= null)&&mWhen.equals(theRow.mWhen)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

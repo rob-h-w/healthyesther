@@ -196,6 +196,32 @@ public final class MealEventTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof MealEventTable.Row)) {
+                return false;
+            }
+            MealEventTable.Row theRow = ((MealEventTable.Row) other);
+            if (!(mAmount == theRow.mAmount)) {
+                return false;
+            }
+            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
+                return false;
+            }
+            if (!(((mMealId == null)&&(theRow.mMealId == null))||((mMealId!= null)&&mMealId.equals(theRow.mMealId)))) {
+                return false;
+            }
+            if (!(((mUnitsId == null)&&(theRow.mUnitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(theRow.mUnitsId)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

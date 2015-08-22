@@ -139,6 +139,29 @@ public final class EventTypeTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof EventTypeTable.Row)) {
+                return false;
+            }
+            EventTypeTable.Row theRow = ((EventTypeTable.Row) other);
+            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
+                return false;
+            }
+            if (!(((mIcon == null)&&(theRow.mIcon == null))||((mIcon!= null)&&mIcon.equals(theRow.mIcon)))) {
+                return false;
+            }
+            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

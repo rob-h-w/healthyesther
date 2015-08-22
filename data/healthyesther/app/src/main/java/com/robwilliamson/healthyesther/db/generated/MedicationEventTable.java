@@ -165,6 +165,26 @@ public final class MedicationEventTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof MedicationEventTable.Row)) {
+                return false;
+            }
+            MedicationEventTable.Row theRow = ((MedicationEventTable.Row) other);
+            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
+                return false;
+            }
+            if (!(((mMedicationId == null)&&(theRow.mMedicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(theRow.mMedicationId)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

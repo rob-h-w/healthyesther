@@ -155,6 +155,26 @@ public final class MedicationNameTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof MedicationNameTable.Row)) {
+                return false;
+            }
+            MedicationNameTable.Row theRow = ((MedicationNameTable.Row) other);
+            if (!(((mMedicationId == null)&&(theRow.mMedicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(theRow.mMedicationId)))) {
+                return false;
+            }
+            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

@@ -165,6 +165,26 @@ public final class NoteEventTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof NoteEventTable.Row)) {
+                return false;
+            }
+            NoteEventTable.Row theRow = ((NoteEventTable.Row) other);
+            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
+                return false;
+            }
+            if (!(((mNoteId == null)&&(theRow.mNoteId == null))||((mNoteId!= null)&&mNoteId.equals(theRow.mNoteId)))) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

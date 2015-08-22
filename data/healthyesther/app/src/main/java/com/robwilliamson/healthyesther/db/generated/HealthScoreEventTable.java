@@ -180,6 +180,29 @@ public final class HealthScoreEventTable
             return primaryKey;
         }
 
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof HealthScoreEventTable.Row)) {
+                return false;
+            }
+            HealthScoreEventTable.Row theRow = ((HealthScoreEventTable.Row) other);
+            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
+                return false;
+            }
+            if (!(((mHealthScoreId == null)&&(theRow.mHealthScoreId == null))||((mHealthScoreId!= null)&&mHealthScoreId.equals(theRow.mHealthScoreId)))) {
+                return false;
+            }
+            if (!(mScore == theRow.mScore)) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }
