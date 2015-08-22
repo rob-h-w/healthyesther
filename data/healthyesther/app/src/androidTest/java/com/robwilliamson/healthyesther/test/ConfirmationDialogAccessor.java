@@ -21,6 +21,7 @@ public final class ConfirmationDialogAccessor {
     public static Matcher<View> cancelButton() {
         return withText(string.cancel);
     }
+
     public static Matcher<View> okButton() {
         return withText(string.ok);
     }

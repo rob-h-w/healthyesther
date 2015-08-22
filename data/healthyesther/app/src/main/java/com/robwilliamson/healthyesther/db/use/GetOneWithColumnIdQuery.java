@@ -4,11 +4,11 @@ import android.database.Cursor;
 
 public abstract class GetOneWithColumnIdQuery extends GetWithColumnIdQuery {
 
-    protected abstract void postQueryProcessOne(Cursor cursor);
-
     public GetOneWithColumnIdQuery(long id) {
         super(id);
     }
+
+    protected abstract void postQueryProcessOne(Cursor cursor);
 
     @Override
     public String getOrder() {

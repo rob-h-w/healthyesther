@@ -11,10 +11,6 @@ public class ConfirmationDialogFragment extends FixedDialogFragment {
     private static final String TITLE = ConfirmationDialogFragment.class.getCanonicalName() + ".title";
     private static final String MESSAGE = ConfirmationDialogFragment.class.getCanonicalName() + ".message";
 
-    public interface Observer {
-        void onDialogOk(ConfirmationDialogFragment dialogFragment);
-    }
-
     public static ConfirmationDialogFragment create(int title, int message) {
         ConfirmationDialogFragment fragment = new ConfirmationDialogFragment();
         Bundle arguments = new Bundle();
@@ -46,10 +42,15 @@ public class ConfirmationDialogFragment extends FixedDialogFragment {
                         }
                     }
                 }).setNegativeButton(string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {}
-                });
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
 
         return builder.create();
+    }
+
+    public interface Observer {
+        void onDialogOk(ConfirmationDialogFragment dialogFragment);
     }
 }

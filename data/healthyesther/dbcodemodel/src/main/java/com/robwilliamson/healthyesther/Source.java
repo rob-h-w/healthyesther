@@ -6,16 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class Source {
-    public static class SourceMissingException extends RuntimeException {
-        public SourceMissingException(String message) {
-            super(message);
-        }
-
-        public SourceMissingException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
     private final File mJsonFile;
 
     Source(String sourceDirectory) {
@@ -43,7 +33,7 @@ class Source {
         int highestVersion = -1;
 
         File[] files = directory.listFiles();
-        if ( files == null) {
+        if (files == null) {
             throw new FileNotFoundException("No files found in the source folder.");
         }
 
@@ -74,5 +64,15 @@ class Source {
         }
 
         return jsonFile;
+    }
+
+    public static class SourceMissingException extends RuntimeException {
+        public SourceMissingException(String message) {
+            super(message);
+        }
+
+        public SourceMissingException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }

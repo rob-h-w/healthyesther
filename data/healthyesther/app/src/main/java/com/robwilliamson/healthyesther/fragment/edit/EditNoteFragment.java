@@ -21,6 +21,10 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
     private Long mOldUserSelectedId = null;
     private boolean mAlwaysCreate = false;
 
+    public EditNoteFragment() {
+        super(EditNoteFragment.Watcher.class);
+    }
+
     @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_edit_note_event;
@@ -76,15 +80,6 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         return getNoteView().getText().toString();
     }
 
-    public interface Watcher {
-        void onFragmentUpdate(EditNoteFragment fragment);
-        void onQueryFailed(EditNoteFragment fragment, Throwable error);
-    }
-
-    public EditNoteFragment() {
-        super(EditNoteFragment.Watcher.class);
-    }
-
     @Override
     public Modification getModification() {
         String name = getName();
@@ -114,7 +109,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
 
     @Override
     public Query[] getQueries() {
-        return new Query[] {
+        return new Query[]{
                 new GetAllNotesQuery() {
                     private HashMap<String, Long> mSuggestionIds;
 
@@ -131,7 +126,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
                         if (cursor.moveToFirst()) {
                             do {
                                 mNoteContents.put(cursor.getLong(rowIdIndex), cursor.getString(noteIndex));
-                            } while(cursor.moveToNext());
+                            } while (cursor.moveToNext());
                         }
                     }
 
@@ -160,5 +155,11 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
 
     private EditText getNoteView() {
         return getTypeSafeView(R.id.note_content, EditText.class);
+    }
+
+    public interface Watcher {
+        void onFragmentUpdate(EditNoteFragment fragment);
+
+        void onQueryFailed(EditNoteFragment fragment, Throwable error);
     }
 }

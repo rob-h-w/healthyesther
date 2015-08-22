@@ -16,12 +16,6 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, EventData> {
-    protected static class Tag {
-        public ImageView eventIcon;
-        public TextView title;
-        public TextView time;
-    }
-
     private DateTimeFormatter mDateTimeFormatter;
 
     public EventListAdapter(Activity context, int layoutId) {
@@ -92,5 +86,11 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
                 com.robwilliamson.healthyesther.db.Utils.Time.toString(
                         data.getWhen(),
                         mDateTimeFormatter));
+    }
+
+    protected static class Tag {
+        public ImageView eventIcon;
+        public TextView title;
+        public TextView time;
     }
 }

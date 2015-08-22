@@ -17,24 +17,9 @@ import java.util.HashMap;
 @ClassGeneratorFeatures(name = "DateTime", parameterName = "dateTime")
 public class DateTimeGenerator extends BaseClassGenerator {
     private static DateTimeGenerator sInstance;
-
-    public static DateTimeGenerator create(JPackage rootPackage) throws JClassAlreadyExistsException {
-        if (sInstance != null) {
-            throw new JClassAlreadyExistsException(sInstance.getJClass());
-        }
-
-        sInstance = new DateTimeGenerator(rootPackage);
-        return sInstance;
-    }
-
-    public static DateTimeGenerator getInstance() {
-        return sInstance;
-    }
-
     private JFieldVar mConverterRegistry;
     private JFieldVar mString;
     private JDefinedClass mConverter;
-
     public DateTimeGenerator(JPackage jPackage) throws JClassAlreadyExistsException {
         setJClass(jPackage._class(JMod.PUBLIC, getName()));
         JDefinedClass clazz = getJClass();
@@ -47,6 +32,19 @@ public class DateTimeGenerator extends BaseClassGenerator {
         makeConstructor();
         makeGetter();
         makeComparable();
+    }
+
+    public static DateTimeGenerator create(JPackage rootPackage) throws JClassAlreadyExistsException {
+        if (sInstance != null) {
+            throw new JClassAlreadyExistsException(sInstance.getJClass());
+        }
+
+        sInstance = new DateTimeGenerator(rootPackage);
+        return sInstance;
+    }
+
+    public static DateTimeGenerator getInstance() {
+        return sInstance;
     }
 
     public JDefinedClass getConverter() {

@@ -13,21 +13,19 @@ import java.util.Map;
 public class ColumnField extends BaseField {
     public final Column column;
 
-    public interface Maker {
-        ColumnField make(Column column);
+    public ColumnField(JDefinedClass owningClass, Column column) {
+        super(owningClass, column.getName(), column.getDependentJtype(owningClass.owner()));
+        this.column = column;
     }
 
-    public static class DefaultMaker implements Maker {
-        private final JDefinedClass mOwningClass;
+    public ColumnField(JFieldVar fieldVar, Column column) {
+        super(fieldVar, column.getName());
+        this.column = column;
+    }
 
-        public DefaultMaker(JDefinedClass owningClass) {
-            mOwningClass = owningClass;
-        }
-
-        @Override
-        public ColumnField make(Column column) {
-            return new ColumnField(mOwningClass, column);
-        }
+    public ColumnField(ColumnField other) {
+        super(other);
+        this.column = other.column;
     }
 
     public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns) {
@@ -60,18 +58,20 @@ public class ColumnField extends BaseField {
         return list;
     }
 
-    public ColumnField(JDefinedClass owningClass, Column column) {
-        super(owningClass, column.getName(), column.getDependentJtype(owningClass.owner()));
-        this.column = column;
+    public interface Maker {
+        ColumnField make(Column column);
     }
 
-    public ColumnField(JFieldVar fieldVar, Column column) {
-        super(fieldVar, column.getName());
-        this.column = column;
-    }
+    public static class DefaultMaker implements Maker {
+        private final JDefinedClass mOwningClass;
 
-    public ColumnField(ColumnField other) {
-        super(other);
-        this.column = other.column;
+        public DefaultMaker(JDefinedClass owningClass) {
+            mOwningClass = owningClass;
+        }
+
+        @Override
+        public ColumnField make(Column column) {
+            return new ColumnField(mOwningClass, column);
+        }
     }
 }

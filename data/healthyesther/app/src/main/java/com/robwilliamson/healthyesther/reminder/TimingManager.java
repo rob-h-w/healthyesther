@@ -41,97 +41,9 @@ public enum TimingManager {
     private static final long BIP = 50;
     private static final long GAP = 150;
     private static final long MINI_GAP = 75;
-
-    private class Environment implements TimingModel.Environment {
-
-        @Override
-        public DateTime getNow() {
-            DateTime now = Utils.Time.localNow();
-            log("getNow returning " + now);
-            return now;
-        }
-
-        @Override
-        public void setLastNotifiedTime(DateTime time) {
-            time = makeLocal(time);
-            setTime(PREVIOUS_REMINDER, time);
-            log("setLastNotifiedTime " + time);
-        }
-
-        @Override
-        public DateTime getLastNotifiedTime() {
-            DateTime lastNotified = makeLocal(getTime(PREVIOUS_REMINDER));
-            log("getLastNotifiedTime " + lastNotified);
-            return lastNotified;
-        }
-
-        @Override
-        public void setNextNotificationTime(DateTime time) {
-            time = makeLocal(time);
-            log("setNextNotificationTime(" + time + ")");
-            setTime(NEXT_REMINDER, time);
-        }
-
-        @Override
-        public DateTime getNextNotificationTime() {
-            DateTime nextNotificationTime = makeLocal(getTime(NEXT_REMINDER));
-            log("getNextNotificationTime" + nextNotificationTime);
-            return nextNotificationTime;
-        }
-
-        @Override
-        public boolean appInForeground() {
-            return App.getInForeGround();
-        }
-
-        @Override
-        public void setAlarm(DateTime alarmTime) {
-            alarmTime = makeLocal(alarmTime);
-            AlarmManager alarmManager =
-                    (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-
-            if (BuildConfig.DEBUG) {
-                long millisUntil = alarmTime.getMillis() - getNow().getMillis();
-                int seconds = Math.round(millisUntil/1000);
-                int minutes = Math.round(seconds/60);
-
-                log("setting new notification in " + millisUntil + "ms, expected to trigger at " + alarmTime);
-            }
-
-            // Use time elapsed since boot.
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME, Utils.Time.toBootRealTimeElapsedMillis(alarmTime), getOperation());
-        }
-
-        @Override
-        public void sendReminder() {
-            Uri soundToBugEsther = Uri.parse("android.resource://com.robwilliamson.healthyesther/" + R.raw.hello );
-            Intent intent = new Intent(getContext(), HomeActivity.class);
-            PendingIntent reminderPendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification notification = new Notification.Builder(getContext())
-                    .setContentTitle(getContext().getString(R.string.reminder_content_title))
-                    .setContentText(getContext().getString(R.string.reminder_content))
-                    .setSmallIcon(R.drawable.ic_notification)
-                    .setContentIntent(reminderPendingIntent)
-                    .setTicker(getContext().getString(R.string.reminder_ticker))
-                    .setAutoCancel(true)
-                    .setVibrate(new long[]{
-                            0, BIP, GAP, BIP, GAP, BIP, GAP, BIP,
-                            MINI_GAP, BIP, MINI_GAP, BIP,
-                            GAP, BIP, GAP, BIP
-                    })
-                    .setStyle(new Notification.InboxStyle())
-                    .setSound(soundToBugEsther)
-                    .build();
-
-            NotificationManager notificationManager =
-                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-            notificationManager.notify(1, notification);
-
-            mTimingModel.onNotified();
-            log("Reminder sent");
-        }
-    }
+    private Context mContext;
+    private Environment mModelEnvironment = new Environment();
+    private volatile TimingModel mTimingModel = null;
 
     private static DateTime makeLocal(DateTime time) {
         if (time == null) {
@@ -141,9 +53,17 @@ public enum TimingManager {
         return time.withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
     }
 
-    private Context mContext;
-    private Environment mModelEnvironment = new Environment();
-    private volatile TimingModel mTimingModel = null;
+    private static void log(String message) {
+        if (BuildConfig.DEBUG) {
+            Log.d(LOG_TAG, message);
+        }
+    }
+
+    private static void log(String message, Throwable e) {
+        if (BuildConfig.DEBUG) {
+            Log.d(LOG_TAG, message, e);
+        }
+    }
 
     public void applicationCreated(Context context) {
         log("applicationCreated");
@@ -181,12 +101,12 @@ public enum TimingManager {
         return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private void setContext(Context context) {
-        this.mContext = context;
-    }
-
     private Context getContext() {
         return mContext;
+    }
+
+    private void setContext(Context context) {
+        this.mContext = context;
     }
 
     private DateTime getTime(String key) {
@@ -223,15 +143,94 @@ public enum TimingManager {
         return mTimingModel;
     }
 
-    private static void log(String message) {
-        if (BuildConfig.DEBUG) {
-            Log.d(LOG_TAG, message);
-        }
-    }
+    private class Environment implements TimingModel.Environment {
 
-    private static void log(String message, Throwable e) {
-        if (BuildConfig.DEBUG) {
-            Log.d(LOG_TAG, message, e);
+        @Override
+        public DateTime getNow() {
+            DateTime now = Utils.Time.localNow();
+            log("getNow returning " + now);
+            return now;
+        }
+
+        @Override
+        public DateTime getLastNotifiedTime() {
+            DateTime lastNotified = makeLocal(getTime(PREVIOUS_REMINDER));
+            log("getLastNotifiedTime " + lastNotified);
+            return lastNotified;
+        }
+
+        @Override
+        public void setLastNotifiedTime(DateTime time) {
+            time = makeLocal(time);
+            setTime(PREVIOUS_REMINDER, time);
+            log("setLastNotifiedTime " + time);
+        }
+
+        @Override
+        public DateTime getNextNotificationTime() {
+            DateTime nextNotificationTime = makeLocal(getTime(NEXT_REMINDER));
+            log("getNextNotificationTime" + nextNotificationTime);
+            return nextNotificationTime;
+        }
+
+        @Override
+        public void setNextNotificationTime(DateTime time) {
+            time = makeLocal(time);
+            log("setNextNotificationTime(" + time + ")");
+            setTime(NEXT_REMINDER, time);
+        }
+
+        @Override
+        public boolean appInForeground() {
+            return App.getInForeGround();
+        }
+
+        @Override
+        public void setAlarm(DateTime alarmTime) {
+            alarmTime = makeLocal(alarmTime);
+            AlarmManager alarmManager =
+                    (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+
+            if (BuildConfig.DEBUG) {
+                long millisUntil = alarmTime.getMillis() - getNow().getMillis();
+                int seconds = Math.round(millisUntil / 1000);
+                int minutes = Math.round(seconds / 60);
+
+                log("setting new notification in " + millisUntil + "ms, expected to trigger at " + alarmTime);
+            }
+
+            // Use time elapsed since boot.
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME, Utils.Time.toBootRealTimeElapsedMillis(alarmTime), getOperation());
+        }
+
+        @Override
+        public void sendReminder() {
+            Uri soundToBugEsther = Uri.parse("android.resource://com.robwilliamson.healthyesther/" + R.raw.hello);
+            Intent intent = new Intent(getContext(), HomeActivity.class);
+            PendingIntent reminderPendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification notification = new Notification.Builder(getContext())
+                    .setContentTitle(getContext().getString(R.string.reminder_content_title))
+                    .setContentText(getContext().getString(R.string.reminder_content))
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentIntent(reminderPendingIntent)
+                    .setTicker(getContext().getString(R.string.reminder_ticker))
+                    .setAutoCancel(true)
+                    .setVibrate(new long[]{
+                            0, BIP, GAP, BIP, GAP, BIP, GAP, BIP,
+                            MINI_GAP, BIP, MINI_GAP, BIP,
+                            GAP, BIP, GAP, BIP
+                    })
+                    .setStyle(new Notification.InboxStyle())
+                    .setSound(soundToBugEsther)
+                    .build();
+
+            NotificationManager notificationManager =
+                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            notificationManager.notify(1, notification);
+
+            mTimingModel.onNotified();
+            log("Reminder sent");
         }
     }
 }

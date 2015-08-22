@@ -14,12 +14,6 @@ public abstract class DataAbstraction {
     private boolean mInDb = false;
     private boolean mModified = false;
 
-    public static class BadDataAbstractionException extends RuntimeException {
-        public BadDataAbstractionException(Throwable causedBy) {
-            super("Implementations must have accessible no-value constructors.", causedBy);
-        }
-    }
-
     public static <T extends DataAbstraction> T from(Bundle bundle, Class<T> type) {
         T value = newInstance(type);
         value.setInDb(bundle.getBoolean(IN_DB));
@@ -38,7 +32,7 @@ public abstract class DataAbstraction {
                 value.populateFrom(cursor);
                 values.add(value);
             }
-            while(cursor.moveToNext());
+            while (cursor.moveToNext());
         }
 
         return values;
@@ -82,5 +76,11 @@ public abstract class DataAbstraction {
 
     public void setModified(boolean modified) {
         this.mModified = modified;
+    }
+
+    public static class BadDataAbstractionException extends RuntimeException {
+        public BadDataAbstractionException(Throwable causedBy) {
+            super("Implementations must have accessible no-value constructors.", causedBy);
+        }
     }
 }

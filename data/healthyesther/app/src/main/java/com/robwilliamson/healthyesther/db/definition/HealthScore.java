@@ -11,6 +11,69 @@ import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 
 public class HealthScore extends Table {
 
+    public static final int MAX = 5;
+    public static final int MID = 3;
+    public static final int MIN = 1;
+    public static final String TABLE_NAME = "health_score";
+    public static final String _ID = "_id";
+    public static final String NAME = "name";
+    public static final String BEST_VALUE = "best_value";
+    public static final String RANDOM_QUERY = "random_query";
+    public static final String MIN_LABEL = "min_label";
+    public static final String MAX_LABEL = "max_label";
+
+    @Override
+    public String getName() {
+        return TABLE_NAME;
+    }
+
+    @Override
+    public void create(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE health_score ( \n" +
+                "    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n" +
+                "    name         TEXT( 140 )  NOT NULL\n" +
+                "                              UNIQUE,\n" +
+                "    best_value   INTEGER      NOT NULL,\n" +
+                "    random_query BOOLEAN      NOT NULL\n" +
+                "                              DEFAULT ( 0 ),\n" +
+                "    min_label    TEXT( 140 ),\n" +
+                "    max_label    TEXT( 140 ) \n" +
+                ");");
+
+        insert(db, "Happiness", MAX, true, "Sad", "Happy");
+        insert(db, "Energy", MAX, true, "Tired", "Energetic");
+        insert(db, "Drowsiness", MAX, true, "Sleepy", "Awake");
+    }
+
+    @Override
+    public void upgrade(SQLiteDatabase db, int from, int to) {
+        if (from == 1) {
+            create(db);
+        }
+    }
+
+    public long insert(
+            SQLiteDatabase db,
+            String name,
+            int bestValue,
+            boolean randomQuery,
+            String minLabel,
+            String maxLabel) {
+        return insert(db, new Value(name, bestValue, randomQuery, minLabel, maxLabel));
+    }
+
+    public long insert(
+            SQLiteDatabase db,
+            Value score) {
+        return insert(db, score.asContentValues());
+    }
+
+    public void update(SQLiteDatabase db,
+                       Value score) {
+
+        update(db, score.asContentValues(), score._id);
+    }
+
     public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
 
         private Value mScore;
@@ -85,7 +148,8 @@ public class HealthScore extends Table {
         public String minLabel;
         public String maxLabel;
 
-        public Value() {}
+        public Value() {
+        }
 
         public Value(String name,
                      int bestValue,
@@ -144,12 +208,12 @@ public class HealthScore extends Table {
                 return false;
             }
 
-            Value other = (Value)o;
+            Value other = (Value) o;
 
             if (
                     _id != other._id &&
                             (_id == null ||
-                            !_id.equals(other._id))) {
+                                    !_id.equals(other._id))) {
                 return false;
             }
 
@@ -249,69 +313,5 @@ public class HealthScore extends Table {
             minLabel = bundle.getString(MIN_LABEL, null);
             maxLabel = bundle.getString(MAX_LABEL, null);
         }
-    }
-
-    public static final int MAX = 5;
-    public static final int MID = 3;
-    public static final int MIN = 1;
-
-    public static final String TABLE_NAME = "health_score";
-    public static final String _ID = "_id";
-    public static final String NAME = "name";
-    public static final String BEST_VALUE = "best_value";
-    public static final String RANDOM_QUERY = "random_query";
-    public static final String MIN_LABEL = "min_label";
-    public static final String MAX_LABEL = "max_label";
-
-    @Override
-    public String getName() {
-        return TABLE_NAME;
-    }
-
-    @Override
-    public void create(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE health_score ( \n" +
-                "    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n" +
-                "    name         TEXT( 140 )  NOT NULL\n" +
-                "                              UNIQUE,\n" +
-                "    best_value   INTEGER      NOT NULL,\n" +
-                "    random_query BOOLEAN      NOT NULL\n" +
-                "                              DEFAULT ( 0 ),\n" +
-                "    min_label    TEXT( 140 ),\n" +
-                "    max_label    TEXT( 140 ) \n" +
-                ");");
-
-        insert(db, "Happiness", MAX, true, "Sad", "Happy");
-        insert(db, "Energy", MAX, true, "Tired", "Energetic");
-        insert(db, "Drowsiness", MAX, true, "Sleepy", "Awake");
-    }
-
-    @Override
-    public void upgrade(SQLiteDatabase db, int from, int to) {
-        if (from == 1) {
-            create(db);
-        }
-    }
-
-    public long insert(
-            SQLiteDatabase db,
-            String name,
-            int bestValue,
-            boolean randomQuery,
-            String minLabel,
-            String maxLabel) {
-        return insert(db, new Value(name, bestValue, randomQuery, minLabel, maxLabel));
-    }
-
-    public long insert(
-            SQLiteDatabase db,
-            Value score) {
-        return insert(db, score.asContentValues());
-    }
-
-    public void update(SQLiteDatabase db,
-                       Value score) {
-
-        update(db, score.asContentValues(), score._id);
     }
 }

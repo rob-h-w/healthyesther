@@ -3,11 +3,11 @@ package com.robwilliamson.healthyesther.db.use;
 public abstract class GetWithColumnIdQuery extends GetSomeValuesQuery {
     private final long mId;
 
-    public abstract String getIdColumnName();
-
     public GetWithColumnIdQuery(long id) {
         mId = id;
     }
+
+    public abstract String getIdColumnName();
 
     @Override
     public String[] getResultColumns() {

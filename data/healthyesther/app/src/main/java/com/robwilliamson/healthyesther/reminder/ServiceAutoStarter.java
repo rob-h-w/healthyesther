@@ -7,6 +7,7 @@ import android.content.Intent;
 public class ServiceAutoStarter extends BroadcastReceiver {
     private static final String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
     private static final String SCREEN_ON = "android.intent.action.SCREEN_ON";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         final String action = intent.getAction();

@@ -21,7 +21,7 @@ public abstract class GetAllMedicationsQuery extends GetAllValuesQuery {
 
     @Override
     public String[] getResultColumns() {
-        return Table.cleanName(new String[] {
+        return Table.cleanName(new String[]{
                 Medication._ID,
                 Medication.NAME
         });

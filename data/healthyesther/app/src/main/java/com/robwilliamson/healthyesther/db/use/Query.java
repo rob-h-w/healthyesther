@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 public interface Query {
     /**
      * Does the actual query. Transactions should begin and end within this method.
+     *
      * @param db
      * @return
      */
@@ -20,12 +21,14 @@ public interface Query {
      * {@link #onQueryComplete(android.database.Cursor)} has not yet been called.<br/>
      * If this method throws, no further callbacks will be called; the thrown object will not be
      * handled.
+     *
      * @param cursor
      */
     public void postQueryProcessing(final Cursor cursor);
 
     /**
      * Called in the UI thread after successful processing of the query.
+     *
      * @param cursor
      */
     public void onQueryComplete(final Cursor cursor);
@@ -33,6 +36,7 @@ public interface Query {
     /**
      * Called in the UI thread after processing the query threw. It is assumed that the query was
      * rolled back.
+     *
      * @param error
      */
     public void onQueryFailed(final Throwable error);

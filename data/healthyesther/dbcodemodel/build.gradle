@@ -21,7 +21,7 @@ task(clearGenerated, type: Delete) {
 
 task(sqlite2Java, type: JavaExec, dependsOn: [assemble, clearGenerated]) {
     classpath = sourceSets.main.runtimeClasspath
-    classpath += ((Task)getTasksByName('jar', false).toArray()[0]).getOutputs().files
+    classpath += ((Task) getTasksByName('jar', false).toArray()[0]).getOutputs().files
     args = [
             dbDefinition,
             appJava,

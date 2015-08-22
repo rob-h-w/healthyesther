@@ -12,6 +12,7 @@ import java.util.Set;
 
 /**
  * Use with fragments that have an auto complete box with suggestions.
+ *
  * @param <T> Watcher for this fragment.
  */
 public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
@@ -67,7 +68,7 @@ public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
         }
 
         Set<String> set = mSuggestionIds.keySet();
-        String [] suggestions = new String[set.size()];
+        String[] suggestions = new String[set.size()];
         set.toArray(suggestions);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),

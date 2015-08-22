@@ -33,15 +33,14 @@ import java.util.Set;
 import java.util.TimeZone;
 
 public final class Utils {
-    private Utils() {}
-
-    public static class StringMissingException extends RuntimeException {}
+    private Utils() {
+    }
 
     public static void nonnull(Object... values) {
         for (int i = 0; i < values.length; i++) {
             Object value = values[i];
 
-            if (value == null){
+            if (value == null) {
                 throw new NullPointerException("Value at index " + i + " was null.");
             }
         }
@@ -94,6 +93,9 @@ public final class Utils {
         return !(left == null || right == null) && left.equals(right);
     }
 
+    public static class StringMissingException extends RuntimeException {
+    }
+
     public static class Time {
         private static final String LOG_TAG = Time.class.getSimpleName();
         private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";
@@ -142,6 +144,7 @@ public final class Utils {
          * The database's default time format does not provide a zone offset, and assumes UTC. For
          * this reason, we must be able to parse 2 string formats when reading DateTimes from the
          * database.
+         *
          * @param string The DB String representation of the DateTime.
          * @return The JodaTime DateTime or null if string is null.
          */
@@ -205,6 +208,22 @@ public final class Utils {
     }
 
     public static class Db {
+        public static HashMap<String, Long> cursorToSuggestionList(Cursor cursor,
+                                                                   String suggestionColumnName,
+                                                                   String rowIdColumnName) {
+            final HashMap<String, Long> suggestionIds = new HashMap<String, Long>(cursor.getCount());
+            final int suggestionIndex = cursor.getColumnIndex(suggestionColumnName);
+            final int rowIdIndex = cursor.getColumnIndex(rowIdColumnName);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    suggestionIds.put(cursor.getString(suggestionIndex), cursor.getLong(rowIdIndex));
+                } while (cursor.moveToNext());
+            }
+
+            return suggestionIds;
+        }
+
         public static class TestData {
             private static final int pseudoRandomMax = 1000;
             private static int pseudoRandom;
@@ -241,19 +260,19 @@ public final class Utils {
                     public void run() {
                         Contract c = Contract.getInstance();
 
-                        long[] breakfast = new long[] {
+                        long[] breakfast = new long[]{
                                 insertMeal(c, db, "Toppas"),
                                 insertMeal(c, db, "Toast"),
                                 insertMeal(c, db, "Yoghurt"),
                                 insertMeal(c, db, "Melon")
                         };
 
-                        long[] lunch = new long[] {
+                        long[] lunch = new long[]{
                                 insertMeal(c, db, "Sandwiches"),
                                 insertMeal(c, db, "Soup")
                         };
 
-                        long[] dinner = new long[] {
+                        long[] dinner = new long[]{
                                 insertMeal(c, db, "Coq au vin"),
                                 insertMeal(c, db, "Spaghetti bolognese"),
                                 insertMeal(c, db, "Beef and prune casserole"),
@@ -262,7 +281,7 @@ public final class Utils {
                                 insertMeal(c, db, "Männer pizza")
                         };
 
-                        long[] medication = new long[] {
+                        long[] medication = new long[]{
                                 c.MEDICATION.insert(db, "Paracetamol"),
                                 c.MEDICATION.insert(db, "Ibuprofen"),
                                 c.MEDICATION.insert(db, "ACC Akut"),
@@ -297,7 +316,7 @@ public final class Utils {
                                     boolean hadLunch = false;
                                     boolean hadDinner = false;
                                     for (int hour = 0; hour < 24; hour++) {
-                                        pseudoRandom = pseudoRandom + 31*hour*day*month*year;
+                                        pseudoRandom = pseudoRandom + 31 * hour * day * month * year;
                                         pseudoRandom |= pseudoRandom << 17;
                                         pseudoRandom |= pseudoRandom >> 23;
                                         pseudoRandom %= pseudoRandomMax;
@@ -470,22 +489,6 @@ public final class Utils {
                 });
             }
         }
-
-        public static HashMap<String, Long> cursorToSuggestionList(Cursor cursor,
-                                                                   String suggestionColumnName,
-                                                                   String rowIdColumnName) {
-            final HashMap<String, Long> suggestionIds = new HashMap<String, Long>(cursor.getCount());
-            final int suggestionIndex = cursor.getColumnIndex(suggestionColumnName);
-            final int rowIdIndex = cursor.getColumnIndex(rowIdColumnName);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    suggestionIds.put(cursor.getString(suggestionIndex), cursor.getLong(rowIdIndex));
-                } while(cursor.moveToNext());
-            }
-
-            return suggestionIds;
-        }
     }
 
     public static class File {
@@ -514,7 +517,7 @@ public final class Utils {
             }
         }
 
-        public static void copy (InputStream from, String to) throws IOException {
+        public static void copy(InputStream from, String to) throws IOException {
             OutputStream out = new FileOutputStream(new java.io.File(to));
 
             try {

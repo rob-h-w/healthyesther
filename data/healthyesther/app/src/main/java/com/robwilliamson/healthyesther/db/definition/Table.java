@@ -8,10 +8,37 @@ import android.database.sqlite.SQLiteException;
  * Details of a particular SQLite table.
  */
 public abstract class Table {
+    public static String[] cleanName(String[] names) {
+        for (int i = 0; i < names.length; i++) {
+            names[i] = cleanName(names[i]);
+        }
+
+        return names;
+    }
+
+    public static String cleanName(String name) {
+        // Strip square brackets, if present.
+        if (name.startsWith("[")) {
+            name = name.substring(1);
+        }
+
+        if (name.endsWith("]")) {
+            name = name.substring(0, name.length() - 1);
+        }
+
+        return name;
+    }
+
+    public static String getQualifiedName(String qualifier, String name) {
+        return qualifier + "." + name;
+    }
+
     public abstract String getName();
 
     public abstract void create(SQLiteDatabase db);
+
     public abstract void upgrade(SQLiteDatabase db, int from, int to);
+
     public void delete(SQLiteDatabase db) {
         db.execSQL("drop table if exists " + getName());
     }
@@ -48,30 +75,6 @@ public abstract class Table {
         }
 
         return rows;
-    }
-
-    public static String[] cleanName(String[] names) {
-        for (int i = 0; i < names.length; i++) {
-            names[i] = cleanName(names[i]);
-        }
-
-        return names;
-    }
-    public static String cleanName(String name) {
-        // Strip square brackets, if present.
-        if (name.startsWith("[")) {
-            name = name.substring(1);
-        }
-
-        if (name.endsWith("]")) {
-            name = name.substring(0, name.length() - 1);
-        }
-
-        return name;
-    }
-
-    public static String getQualifiedName(String qualifier, String name) {
-        return qualifier + "." + name;
     }
 
     public String getQualifiedName(String name) {

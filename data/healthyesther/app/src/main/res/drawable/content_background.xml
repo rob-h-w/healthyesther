@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:right="@dimen/border_margin"
-        android:bottom="@dimen/border_margin">
-        <shape
-            android:shape="rectangle">
-            <solid
-                android:color="@color/content_background"/>
-            <corners
-                android:radius="@dimen/border_corner_radius"/>
+        android:bottom="@dimen/border_margin"
+        android:right="@dimen/border_margin">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/content_background" />
+            <corners android:radius="@dimen/border_corner_radius" />
             <stroke
                 android:width="@dimen/border_stroke_width"
-                android:color="@android:color/white"/>
+                android:color="@android:color/white" />
         </shape>
     </item>
 </layer-list>

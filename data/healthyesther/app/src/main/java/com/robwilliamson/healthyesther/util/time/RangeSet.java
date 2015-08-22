@@ -16,6 +16,34 @@ public class RangeSet extends TimeRegion {
         mTimeRegions = new HashSet<>(Arrays.asList(timeRegions));
     }
 
+    private static DateTime getFrom(TimeRegion... timeRegions) {
+        DateTime from = null;
+
+        for (TimeRegion region : timeRegions) {
+            if (from == null || region.from.isBefore(from)) {
+                from = region.from;
+            }
+        }
+
+        return from;
+    }
+
+    private static DateTime getTo(TimeRegion... timeRegions) {
+        DateTime to = null;
+
+        for (TimeRegion region : timeRegions) {
+            if (to == null || region.to.isAfter(to)) {
+                to = region.to;
+            }
+        }
+
+        return to;
+    }
+
+    private static boolean afterOrEqualTo(ReadableInstant lhs, ReadableInstant rhs) {
+        return lhs.isAfter(rhs) || lhs.isEqual(rhs);
+    }
+
     @Override
     public boolean overlaps(TimeRegion region, Comparison comparison) {
         for (TimeRegion subRegion : mTimeRegions) {
@@ -53,12 +81,12 @@ public class RangeSet extends TimeRegion {
         Duration shift = Duration.millis(from.withDate(year, monthOfYear, dayOfMonth).getMillis() - from.getMillis());
         Set<TimeRegion> regions = new HashSet<>(mTimeRegions.size());
 
-        for(TimeRegion region : mTimeRegions) {
+        for (TimeRegion region : mTimeRegions) {
             DateTime newFrom = region.from.plus(shift);
             regions.add(region.startingFrom(newFrom.getYear(), newFrom.getMonthOfYear(), newFrom.getDayOfMonth()));
         }
 
-        return new RangeSet(regions.toArray(new TimeRegion[] {}));
+        return new RangeSet(regions.toArray(new TimeRegion[]{}));
     }
 
     public DateTime getEdgeAfter(DateTime instant) {
@@ -99,33 +127,5 @@ public class RangeSet extends TimeRegion {
         }
 
         return true;
-    }
-
-    private static DateTime getFrom(TimeRegion... timeRegions) {
-        DateTime from = null;
-
-        for (TimeRegion region : timeRegions) {
-            if (from == null || region.from.isBefore(from)) {
-                from = region.from;
-            }
-        }
-
-        return from;
-    }
-
-    private static DateTime getTo(TimeRegion... timeRegions) {
-        DateTime to = null;
-
-        for (TimeRegion region : timeRegions) {
-            if (to == null || region.to.isAfter(to)) {
-                to = region.to;
-            }
-        }
-
-        return to;
-    }
-
-    private static boolean afterOrEqualTo(ReadableInstant lhs, ReadableInstant rhs) {
-        return lhs.isAfter(rhs) || lhs.isEqual(rhs);
     }
 }

@@ -2,16 +2,14 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android"
+            android:shape="rectangle">
 
-            <solid
-                android:color="@color/button_enabled" />
+            <solid android:color="@color/button_enabled" />
 
-            <stroke
-                style="@style/button.stroke" />
+            <stroke style="@style/button.stroke" />
 
-            <corners
-                style="@style/button.corners"/>
+            <corners style="@style/button.corners" />
 
         </shape>
     </item>

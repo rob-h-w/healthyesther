@@ -17,82 +17,10 @@ import java.util.TimeZone;
 
 /**
  * Table detailing event ids, times and types.
- *
+ * <p/>
  * Note that internal times are in UTC, while user-displayed or analytical times use the local TZ.
  */
 public class Event extends Table {
-    public enum Type {
-        MEAL(1),
-        MEDICATION(2),
-        HEALTH_SCORE(3),
-        NOTE(4),;
-
-        private final long m_id;
-
-        Type(long _id) {
-            m_id = _id;
-        }
-
-        public long id() {
-            return m_id;
-        }
-
-        @NonNull
-        public static Type valueOf(long _id) {
-            return Type.values()[(int) _id - 1];
-        }
-    }
-
-    public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
-        private final EventData mValue;
-
-        public Modification(EventData value) {
-            mValue = value;
-            setRowId(mValue.get_id());
-        }
-
-        public Modification(String name, DateTime when) {
-            assertValidName(name);
-
-            mValue = new EventData(when, Utils.Time.localNow(), null, 0, name);
-        }
-
-        public void setTypeId(long id) {
-            mValue.setTypeId(id);
-        }
-
-        @Override
-        protected void onRowIdChanged(Long rowId) {
-            // TODO: find a way to avoid setting ids here - this is bad because we don't know if the
-            // row was really created.
-            mValue.set_id(rowId);
-        }
-
-        @Override
-        protected DataAbstraction getData() {
-            return mValue;
-        }
-
-        @Override
-        protected void update(SQLiteDatabase db) {
-            preDbWriteCheck();
-            mValue.set_id(getRowId());
-            Contract.getInstance().EVENT.update(db, mValue);
-        }
-
-        @Override
-        protected long insert(SQLiteDatabase db) {
-            preDbWriteCheck();
-            return Contract.getInstance().EVENT.insert(db, mValue);
-        }
-
-        private void preDbWriteCheck() {
-            if (mValue.getTypeId() == 0) {
-                throw new IllegalArgumentException("An event must have a type.");
-            }
-        }
-    }
-
     public final static String TABLE_NAME = "event";
     public final static String _ID = "_id";
     public final static String WHEN = "[when]";         // This is in the local time zone.
@@ -108,6 +36,26 @@ public class Event extends Table {
     private static void assertValidName(String name) {
         if (!validateName(name)) {
             throw new IllegalArgumentException("Name must be present and less than 141 characters.");
+        }
+    }
+
+    private static DateTime utcToLocalTime(String utcTime) {
+        return utcToZoneTime(utcTime, DateTimeZone.forTimeZone(TimeZone.getDefault()));
+    }
+
+    private static DateTime utcToUtcTime(String utcTime) {
+        return utcToZoneTime(utcTime, DateTimeZone.UTC);
+    }
+
+    private static DateTime utcToZoneTime(String utcTime, DateTimeZone zone) {
+        if (utcTime == null) {
+            return null;
+        }
+
+        try {
+            return Utils.Time.fromUtcString(utcTime).withZone(zone);
+        } catch (IllegalArgumentException ignored) {
+            return Utils.Time.fromDatabaseDefaultString(utcTime).withZone(zone);
         }
     }
 
@@ -178,23 +126,75 @@ public class Event extends Table {
         }
     }
 
-    private static DateTime utcToLocalTime(String utcTime) {
-        return utcToZoneTime(utcTime, DateTimeZone.forTimeZone(TimeZone.getDefault()));
-    }
+    public enum Type {
+        MEAL(1),
+        MEDICATION(2),
+        HEALTH_SCORE(3),
+        NOTE(4),;
 
-    private static DateTime utcToUtcTime(String utcTime) {
-        return utcToZoneTime(utcTime, DateTimeZone.UTC);
-    }
+        private final long m_id;
 
-    private static DateTime utcToZoneTime(String utcTime, DateTimeZone zone) {
-        if (utcTime == null) {
-            return null;
+        Type(long _id) {
+            m_id = _id;
         }
 
-        try {
-            return Utils.Time.fromUtcString(utcTime).withZone(zone);
-        } catch (IllegalArgumentException ignored) {
-            return Utils.Time.fromDatabaseDefaultString(utcTime).withZone(zone);
+        @NonNull
+        public static Type valueOf(long _id) {
+            return Type.values()[(int) _id - 1];
+        }
+
+        public long id() {
+            return m_id;
+        }
+    }
+
+    public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
+        private final EventData mValue;
+
+        public Modification(EventData value) {
+            mValue = value;
+            setRowId(mValue.get_id());
+        }
+
+        public Modification(String name, DateTime when) {
+            assertValidName(name);
+
+            mValue = new EventData(when, Utils.Time.localNow(), null, 0, name);
+        }
+
+        public void setTypeId(long id) {
+            mValue.setTypeId(id);
+        }
+
+        @Override
+        protected void onRowIdChanged(Long rowId) {
+            // TODO: find a way to avoid setting ids here - this is bad because we don't know if the
+            // row was really created.
+            mValue.set_id(rowId);
+        }
+
+        @Override
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            preDbWriteCheck();
+            mValue.set_id(getRowId());
+            Contract.getInstance().EVENT.update(db, mValue);
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            preDbWriteCheck();
+            return Contract.getInstance().EVENT.insert(db, mValue);
+        }
+
+        private void preDbWriteCheck() {
+            if (mValue.getTypeId() == 0) {
+                throw new IllegalArgumentException("An event must have a type.");
+            }
         }
     }
 }

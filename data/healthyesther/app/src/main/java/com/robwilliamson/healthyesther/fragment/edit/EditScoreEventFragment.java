@@ -17,31 +17,33 @@ import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
-    public interface Watcher {
-        void onFragmentUpdate(EditScoreEventFragment fragment);
-        void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
-        void onFragmentRemoveRequest(EditScoreEventFragment fragment);
-    }
-
     private static final String VALUE = "value";
     private static final String SCORE = "score";
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
-
     private int mValue;
     private HealthScore.Value mScore = new HealthScore.Value();
     private ContextMenu mContextMenu;
+    public EditScoreEventFragment() {
+        super(EditScoreEventFragment.Watcher.class);
+    }
+
+    public static EditScoreEventFragment newInstance(HealthScore.Value score) {
+        EditScoreEventFragment fragment = new EditScoreEventFragment();
+        fragment.mScore = score;
+        return fragment;
+    }
 
     public String getName() {
         return mScore.name;
     }
 
+    public HealthScore.Value getScore() {
+        return mScore;
+    }
+
     public void setScore(HealthScore.Value score) {
         mScore = score;
         updateUi();
-    }
-
-    public HealthScore.Value getScore() {
-        return mScore;
     }
 
     private void updateUi() {
@@ -59,16 +61,6 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     @Override
     public Query[] getQueries() {
         return new Query[0];
-    }
-
-    public static EditScoreEventFragment newInstance(HealthScore.Value score) {
-        EditScoreEventFragment fragment = new EditScoreEventFragment();
-        fragment.mScore = score;
-        return fragment;
-    }
-
-    public EditScoreEventFragment() {
-        super(EditScoreEventFragment.Watcher.class);
     }
 
     @Override
@@ -120,7 +112,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.score, menu);
         mContextMenu = menu; // Remember the menu we created to check if we should handle the
-                             // callback.
+        // callback.
     }
 
     @Override
@@ -184,5 +176,13 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
 
     private RatingBar getRatingBar() {
         return Utils.View.getTypeSafeView(getView(), R.id.score_bar, RatingBar.class);
+    }
+
+    public interface Watcher {
+        void onFragmentUpdate(EditScoreEventFragment fragment);
+
+        void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
+
+        void onFragmentRemoveRequest(EditScoreEventFragment fragment);
     }
 }

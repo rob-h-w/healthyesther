@@ -10,7 +10,8 @@ public class DbObject {
     private Column[] columns;
     private Constraint[] constraints;
 
-    public DbObject() {}
+    public DbObject() {
+    }
 
     public boolean isTable() {
         return type.equals("table");
@@ -31,7 +32,7 @@ public class DbObject {
 
     public Column[] getColumns() {
         if (columns == null) {
-            columns = new Column[] {};
+            columns = new Column[]{};
         }
 
         return columns;
@@ -39,7 +40,7 @@ public class DbObject {
 
     public Constraint[] getConstraints() {
         if (constraints == null) {
-            constraints = new Constraint[] {};
+            constraints = new Constraint[]{};
         }
 
         return constraints;

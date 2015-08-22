@@ -13,7 +13,7 @@ public class AsyncExecutor {
     public void execute() {
         Set<Runnable> tasks;
 
-        while(!mTasks.isEmpty()) {
+        while (!mTasks.isEmpty()) {
             synchronized (mLock) {
                 tasks = new HashSet<>(mTasks);
                 mTasks.clear();
@@ -27,6 +27,7 @@ public class AsyncExecutor {
 
     /**
      * Schedule a task for subsequent execution.
+     *
      * @param task Task that will be run later.
      */
     public void schedule(Runnable task) {

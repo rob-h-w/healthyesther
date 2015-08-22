@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment"
+    style="@style/AppTheme.contentLayout"
     android:orientation="vertical"
-    style="@style/AppTheme.contentLayout">
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment">
 
     <LinearLayout
-        android:orientation="vertical"
-        style="@style/AppTheme.sectionLayout">
+        style="@style/AppTheme.sectionLayout"
+        android:orientation="vertical">
 
         <TextView
-            android:text="@string/note"
             android:id="@+id/note_name_title"
-            style="@style/AppTheme.text"/>
+            style="@style/AppTheme.text"
+            android:text="@string/note" />
 
         <AutoCompleteTextView
             android:id="@+id/note_name"
-            android:hint="@string/descriptive_name_for_the_note"
-            style="@style/AppTheme.text.textEditor" />
+            style="@style/AppTheme.text.textEditor"
+            android:hint="@string/descriptive_name_for_the_note" />
 
         <EditText
             android:id="@+id/note_content"
-            android:hint="@string/descriptive_name_for_the_note_detail"
-            style="@style/AppTheme.text.textEditor.multiline" />
+            style="@style/AppTheme.text.textEditor.multiline"
+            android:hint="@string/descriptive_name_for_the_note_detail" />
 
     </LinearLayout>
 

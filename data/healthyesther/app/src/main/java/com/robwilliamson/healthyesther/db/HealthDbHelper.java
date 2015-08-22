@@ -10,11 +10,15 @@ import java.io.IOException;
  * Accessor for the health database.
  */
 public final class HealthDbHelper extends SQLiteOpenHelper {
-    private static volatile HealthDbHelper sInstance = null;
     private static final Object sSync = new Object();
     public static boolean sDebug = false;
-
+    private static volatile HealthDbHelper sInstance = null;
     private final Context mContext;
+
+    private HealthDbHelper(Context context) {
+        super(context.getApplicationContext(), Contract.NAME, null, Contract.VERSION);
+        mContext = context;
+    }
 
     public static HealthDbHelper getInstance(Context context) {
         synchronized (sSync) {
@@ -24,11 +28,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
             return sInstance;
         }
-    }
-
-    private HealthDbHelper(Context context) {
-        super(context.getApplicationContext(), Contract.NAME, null, Contract.VERSION);
-        mContext = context;
     }
 
     @Override

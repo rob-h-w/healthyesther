@@ -11,47 +11,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Column {
-    public static class Comparator implements java.util.Comparator<Column> {
-        @Override
-        public int compare(Column c1, Column c2) {
-            if (!c1.isPrimaryKey() && c2.isPrimaryKey()) {
-                return -1;
-            }
-
-            if (c1.isPrimaryKey() && !c2.isPrimaryKey()) {
-                return 1;
-            }
-
-            if (!c1.isNotNull() && c2.isNotNull()) {
-                return -1;
-            }
-
-            if (c1.isNotNull() && !c2.isNotNull()) {
-                return 1;
-            }
-
-            if (!c1.isForeignKey() && c2.isForeignKey()) {
-                return -1;
-            }
-
-            if (c1.isForeignKey() && !c2.isForeignKey()) {
-                return 1;
-            }
-
-            return c1.getName().compareTo(c2.getName());
-        }
-    }
-
     private String name;
     private String type;
     private Constraint[] constraints;
-
     private transient ColumnDependency mColumnDependency;
     private transient boolean mNotNull = false;
     private transient Table mTable;
     private transient boolean mPrimaryKey = false;
-
-    Column() {}
+    Column() {
+    }
 
     public String getName() {
         return name;
@@ -92,12 +60,12 @@ public class Column {
         return mColumnDependency;
     }
 
-    public void setTable(Table table) {
-        mTable = table;
-    }
-
     public Table getTable() {
         return mTable;
+    }
+
+    public void setTable(Table table) {
+        mTable = table;
     }
 
     public boolean isNotNull() {
@@ -111,6 +79,7 @@ public class Column {
 
     /**
      * Get the codemodel type of the column.
+     *
      * @param model The model to use to generate basic types.
      * @return The primitive type that represents the SQLite type of this column.
      */
@@ -119,7 +88,7 @@ public class Column {
             return model.LONG;
         }
 
-        switch(getType()) {
+        switch (getType()) {
             case "BOOLEAN":
                 return model.BOOLEAN;
             case "DATETIME":
@@ -167,6 +136,7 @@ public class Column {
 
     /**
      * Like {@link #getPrimitiveType(JCodeModel)}, but resolves dependencies.
+     *
      * @param model The model to use to generate basic types.
      * @return The type that should be written in places that use this column.
      */
@@ -183,6 +153,7 @@ public class Column {
 
     /**
      * Like {@link #getNullableType(JCodeModel)}, but resolves dependencies.
+     *
      * @param model The model to use to generate basic types.
      * @return The type that should be written in places that use this column.
      */
@@ -204,5 +175,36 @@ public class Column {
     public boolean isPrimaryKey() {
         getColumnDependency();
         return mPrimaryKey || getTable().isPrimaryKey(this);
+    }
+
+    public static class Comparator implements java.util.Comparator<Column> {
+        @Override
+        public int compare(Column c1, Column c2) {
+            if (!c1.isPrimaryKey() && c2.isPrimaryKey()) {
+                return -1;
+            }
+
+            if (c1.isPrimaryKey() && !c2.isPrimaryKey()) {
+                return 1;
+            }
+
+            if (!c1.isNotNull() && c2.isNotNull()) {
+                return -1;
+            }
+
+            if (c1.isNotNull() && !c2.isNotNull()) {
+                return 1;
+            }
+
+            if (!c1.isForeignKey() && c2.isForeignKey()) {
+                return -1;
+            }
+
+            if (c1.isForeignKey() && !c2.isForeignKey()) {
+                return 1;
+            }
+
+            return c1.getName().compareTo(c2.getName());
+        }
     }
 }

@@ -33,7 +33,7 @@ public class AddValueFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        
+
         getLayout().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,12 +48,12 @@ public class AddValueFragment extends BaseFragment {
         return getTextView().getText().toString();
     }
 
-    public void setTitle(int stringId) {
-        setTitle(getString(stringId));
-    }
-
     public void setTitle(String title) {
         getTextView().setText(title);
+    }
+
+    public void setTitle(int stringId) {
+        setTitle(getString(stringId));
     }
 
     private TextView getTextView() {

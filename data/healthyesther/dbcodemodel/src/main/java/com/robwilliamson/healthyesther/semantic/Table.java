@@ -12,63 +12,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Table extends DbObject {
-    public static class DependencyLoopException extends RuntimeException {
-        private final String mMessage;
+    private TableGenerator mGenerator;
+    private List<String> mPrimaryKeyColumnNames = null;
 
-        DependencyLoopException(List<Table> unsatisifiedDependencies) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("One or more tables had dependencies that could not be satisfied. ")
-                    .append("These were:\n")
-                    .append("\n");
-
-            for (Table table : unsatisifiedDependencies) {
-                builder.append(table.getName()).append("\n");
-            }
-
-            builder.append("\n")
-                    .append("These have dependencies:\n");
-
-            String separator = "";
-            for (Table table: unsatisifiedDependencies) {
-                builder.append(separator);
-                builder.append(table.getName()).append(":{\n");
-                final String columnIndent = "    ";
-                final String dependencyIndent = "        ";
-
-                for (Column column : table.getColumns()) {
-                    if (!column.isForeignKey()) {
-                        continue;
-                    }
-
-                    builder.append(columnIndent).append(column.getName()).append(":{\n");
-
-                    ColumnDependency dependency = column.getColumnDependency();
-                    builder.append(dependencyIndent)
-                            .append(dependency.table)
-                            .append(": ")
-                            .append(dependency.column);
-
-                    builder.append(columnIndent).append("}\n");
-                }
-
-                builder.append("}\n");
-
-                separator = "\n";
-            }
-
-            mMessage = builder.toString();
+    public Table(DbObject table) {
+        if (!table.isTable()) {
+            throw new IllegalArgumentException("The DbObject must be a table object.");
         }
 
-        /**
-         * Returns the detail message string of this throwable.
-         *
-         * @return the detail message string of this {@code Throwable} instance
-         * (which may be {@code null}).
-         */
-        @Override
-        public String getMessage() {
-            return mMessage;
+        table.copyTo(this);
+
+        for (Column column : getColumns()) {
+            column.setTable(this);
         }
+
+        // Sort the columns.
+        Arrays.sort(getColumns(), new Column.Comparator());
     }
 
     public static List<Table> getTables(DbObject[] objects) {
@@ -93,11 +52,11 @@ public class Table extends DbObject {
                 dependency.setDependency(columnDependendOn);
             }
         }
-        
+
         // Sort by dependencies. Zero dependencies first.
         List<Table> sortedTables = new ArrayList<>(tables.size());
         int remainingTries = tables.size();
-        while(remainingTries > 0) {
+        while (remainingTries > 0) {
             for (Table table : tables) {
                 if (!table.hasDependencies() ||
                         sortedTables.containsAll(table.getTableDependencies())) {
@@ -148,24 +107,6 @@ public class Table extends DbObject {
         return null;
     }
 
-    private TableGenerator mGenerator;
-    private List<String> mPrimaryKeyColumnNames = null;
-
-    public Table(DbObject table) {
-        if (!table.isTable()) {
-            throw new IllegalArgumentException("The DbObject must be a table object.");
-        }
-
-        table.copyTo(this);
-
-        for (Column column : getColumns()) {
-            column.setTable(this);
-        }
-
-        // Sort the columns.
-        Arrays.sort(getColumns(), new Column.Comparator());
-    }
-
     public void init() {
     }
 
@@ -190,12 +131,12 @@ public class Table extends DbObject {
         return tableDependencies;
     }
 
-    public void setGenerator(TableGenerator generator) {
-        mGenerator = generator;
-    }
-
     public TableGenerator getGenerator() {
         return mGenerator;
+    }
+
+    public void setGenerator(TableGenerator generator) {
+        mGenerator = generator;
     }
 
     public boolean isPrimaryKey(Column column) {
@@ -215,5 +156,64 @@ public class Table extends DbObject {
         }
 
         return mPrimaryKeyColumnNames.contains(column.getName());
+    }
+
+    public static class DependencyLoopException extends RuntimeException {
+        private final String mMessage;
+
+        DependencyLoopException(List<Table> unsatisifiedDependencies) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("One or more tables had dependencies that could not be satisfied. ")
+                    .append("These were:\n")
+                    .append("\n");
+
+            for (Table table : unsatisifiedDependencies) {
+                builder.append(table.getName()).append("\n");
+            }
+
+            builder.append("\n")
+                    .append("These have dependencies:\n");
+
+            String separator = "";
+            for (Table table : unsatisifiedDependencies) {
+                builder.append(separator);
+                builder.append(table.getName()).append(":{\n");
+                final String columnIndent = "    ";
+                final String dependencyIndent = "        ";
+
+                for (Column column : table.getColumns()) {
+                    if (!column.isForeignKey()) {
+                        continue;
+                    }
+
+                    builder.append(columnIndent).append(column.getName()).append(":{\n");
+
+                    ColumnDependency dependency = column.getColumnDependency();
+                    builder.append(dependencyIndent)
+                            .append(dependency.table)
+                            .append(": ")
+                            .append(dependency.column);
+
+                    builder.append(columnIndent).append("}\n");
+                }
+
+                builder.append("}\n");
+
+                separator = "\n";
+            }
+
+            mMessage = builder.toString();
+        }
+
+        /**
+         * Returns the detail message string of this throwable.
+         *
+         * @return the detail message string of this {@code Throwable} instance
+         * (which may be {@code null}).
+         */
+        @Override
+        public String getMessage() {
+            return mMessage;
+        }
     }
 }

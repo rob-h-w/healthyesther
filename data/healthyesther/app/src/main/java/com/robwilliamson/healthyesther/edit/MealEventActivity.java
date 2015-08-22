@@ -73,7 +73,7 @@ public class MealEventActivity extends AbstractEditEventActivity
 
     @Override
     public QueryUser[] getQueryUsers() {
-        return new QueryUser[] {
+        return new QueryUser[]{
                 getMealFragment()
         };
     }

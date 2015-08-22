@@ -6,7 +6,8 @@ import android.os.Bundle;
 
 public class MedicationEventData extends DataAbstraction {
     @Override
-    protected void asBundle(Bundle bundle) {}
+    protected void asBundle(Bundle bundle) {
+    }
 
     @Override
     public ContentValues asContentValues() {

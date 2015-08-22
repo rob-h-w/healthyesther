@@ -13,17 +13,6 @@ public class TimingModel {
     private final RangeSet mAllowedNotificationTimes;
     private final Duration mPeriod;
 
-    public static interface Environment {
-        public DateTime getNow();
-        public void setLastNotifiedTime(DateTime time);
-        public DateTime getLastNotifiedTime();
-        public void setNextNotificationTime(DateTime time);
-        public DateTime getNextNotificationTime();
-        public boolean appInForeground();
-        public void setAlarm(DateTime alarmTime);
-        public void sendReminder();
-    }
-
     public TimingModel(Environment environment,
                        Duration period,
                        Duration minTimeBetweenNotifications,
@@ -149,5 +138,23 @@ public class TimingModel {
     private void setAlarm(DateTime alarmTime) {
         mEnvironment.setAlarm(alarmTime);
         mEnvironment.setNextNotificationTime(alarmTime);
+    }
+
+    public static interface Environment {
+        public DateTime getNow();
+
+        public DateTime getLastNotifiedTime();
+
+        public void setLastNotifiedTime(DateTime time);
+
+        public DateTime getNextNotificationTime();
+
+        public void setNextNotificationTime(DateTime time);
+
+        public boolean appInForeground();
+
+        public void setAlarm(DateTime alarmTime);
+
+        public void sendReminder();
     }
 }

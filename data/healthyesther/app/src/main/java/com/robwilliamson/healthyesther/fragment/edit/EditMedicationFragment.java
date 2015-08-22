@@ -21,11 +21,6 @@ import java.util.HashMap;
 
 public class EditMedicationFragment extends SuggestionEditFragment<EditMedicationFragment.Watcher> {
 
-    public interface Watcher {
-        void onFragmentUpdate(EditMedicationFragment fragment);
-        void onQueryFailed(EditMedicationFragment fragment, Throwable error);
-    }
-
     public EditMedicationFragment() {
         super(EditMedicationFragment.Watcher.class);
     }
@@ -37,9 +32,10 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
 
     @Override
     public Query[] getQueries() {
-        return new Query[] {
+        return new Query[]{
                 new GetAllMedicationsQuery() {
                     HashMap<String, Long> mSuggestionIds;
+
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         mSuggestionIds = new HashMap<>();
@@ -65,6 +61,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                 },
                 new GetAllMedicationNamesQuery() {
                     HashMap<String, Long> mSuggestionIds;
+
                     @Override
                     public void postQueryProcessing(Cursor cursor) {
                         mSuggestionIds = new HashMap<>();
@@ -152,5 +149,11 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
     @Override
     protected AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.medication_name, AutoCompleteTextView.class);
+    }
+
+    public interface Watcher {
+        void onFragmentUpdate(EditMedicationFragment fragment);
+
+        void onQueryFailed(EditMedicationFragment fragment, Throwable error);
     }
 }

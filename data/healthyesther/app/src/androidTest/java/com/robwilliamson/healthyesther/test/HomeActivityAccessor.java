@@ -23,6 +23,22 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 
 public class HomeActivityAccessor {
+    public static void openNavigationDrawer() {
+        onView(withContentDescription("Esther's Health App, Open navigation drawer")).perform(click());
+    }
+
+    public static void setShowNavigationDrawer(Boolean show, Context targetContext) {
+        PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
+    }
+
+    public static void checkUnmodifiedMenuContent(Context context) {
+        openActionBarOverflowOrOptionsMenu(context);
+        onView(MenuAccessor.backupToDropbox()).check(matches(isEnabled()));
+        onView(MenuAccessor.restoreFromDropbox()).check(matches(not(isEnabled())));
+        onView(MenuAccessor.settings()).check(matches(isEnabled()));
+        Espresso.pressBack();
+    }
+
     public static class AddMode {
         public static void start() {
             openNavigationDrawer();
@@ -62,21 +78,5 @@ public class HomeActivityAccessor {
             onView(eventList()).check(matches(isEnabled()));
             onView(AddMode.healthScoreButton()).check(doesNotExist());
         }
-    }
-
-    public static void openNavigationDrawer() {
-        onView(withContentDescription("Esther's Health App, Open navigation drawer")).perform(click());
-    }
-
-    public static void setShowNavigationDrawer(Boolean show, Context targetContext) {
-        PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
-    }
-
-    public static void checkUnmodifiedMenuContent(Context context) {
-        openActionBarOverflowOrOptionsMenu(context);
-        onView(MenuAccessor.backupToDropbox()).check(matches(isEnabled()));
-        onView(MenuAccessor.restoreFromDropbox()).check(matches(not(isEnabled())));
-        onView(MenuAccessor.settings()).check(matches(isEnabled()));
-        Espresso.pressBack();
     }
 }

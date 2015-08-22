@@ -8,12 +8,10 @@ import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Meal;
 
 public class MealData extends DataAbstraction {
-    public static class BadNameLength extends IllegalArgumentException {}
-
     private Long m_id;
     private String mName;
-
-    public MealData() {}
+    public MealData() {
+    }
 
     public MealData(String name) {
         this(null, name);
@@ -90,5 +88,8 @@ public class MealData extends DataAbstraction {
     public void setName(String name) {
         setModified(true);
         this.mName = name;
+    }
+
+    public static class BadNameLength extends IllegalArgumentException {
     }
 }

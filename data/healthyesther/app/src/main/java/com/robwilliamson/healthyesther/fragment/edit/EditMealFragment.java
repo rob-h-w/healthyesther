@@ -29,14 +29,12 @@ import java.util.List;
 
 public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> {
 
-    public interface Watcher extends QueuedQueryExecutor {
-        void onFragmentUpdate(EditMealFragment fragment);
-        void onQueryFailed(EditMealFragment fragment, Throwable error);
-    }
-
     private EventData mEventData;
     private MealEventData mMealEventData;
     private MealData mMealData;
+    public EditMealFragment() {
+        super(EditMealFragment.Watcher.class);
+    }
 
     public void setEventData(EventData eventData) {
         this.mEventData = eventData;
@@ -64,7 +62,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
                         public void onQueryComplete(Cursor cursor) {
                             if (mMealEvents.isEmpty()) {
                                 mMealEventData = null;
-                            } else if(mMealEvents.size() == 1) {
+                            } else if (mMealEvents.size() == 1) {
                                 mMealEventData = mMealEvents.get(0);
                             }
 
@@ -86,7 +84,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         callWatcher(new WatcherCaller<Watcher>() {
             @Override
             public void call(Watcher watcher) {
-                watcher.enqueueQueries(Arrays.asList(new Query[] {
+                watcher.enqueueQueries(Arrays.asList(new Query[]{
                         new GetOneWithColumnIdQuery(mMealEventData.getMealId()) {
                             private MealData mMealData;
 
@@ -138,10 +136,6 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         });
     }
 
-    public EditMealFragment() {
-        super(EditMealFragment.Watcher.class);
-    }
-
     @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_edit_meal;
@@ -149,7 +143,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
     @Override
     public Query[] getQueries() {
-        return new Query[] {
+        return new Query[]{
                 new GetAllMealsQuery() {
                     HashMap<String, Long> mSuggestionIds;
 
@@ -231,5 +225,11 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     @Override
     protected AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.meal_name, AutoCompleteTextView.class);
+    }
+
+    public interface Watcher extends QueuedQueryExecutor {
+        void onFragmentUpdate(EditMealFragment fragment);
+
+        void onQueryFailed(EditMealFragment fragment, Throwable error);
     }
 }

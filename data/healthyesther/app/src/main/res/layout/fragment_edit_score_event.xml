@@ -1,14 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment"
-    android:orientation="vertical"
     android:id="@+id/edit_score_layout"
+    style="@style/AppTheme.sectionLayout"
     android:longClickable="true"
-    style="@style/AppTheme.sectionLayout">
+    android:orientation="vertical"
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment">
 
     <TextView
         android:id="@+id/score_name_title"
-        style="@style/AppTheme.text"/>
+        style="@style/AppTheme.text" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,19 +17,19 @@
         <TextView
             android:id="@+id/score_minimum_label"
             style="@style/AppTheme.text.small"
-            android:layout_gravity="start"/>
+            android:layout_gravity="start" />
 
         <TextView
             android:id="@+id/score_maximum_label"
             style="@style/AppTheme.text.small"
-            android:layout_gravity="end"/>
+            android:layout_gravity="end" />
 
     </FrameLayout>
 
     <RatingBar
+        android:id="@+id/score_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/score_bar"
         android:layout_gravity="center_horizontal"
-        android:isIndicator="false"/>
+        android:isIndicator="false" />
 </LinearLayout>

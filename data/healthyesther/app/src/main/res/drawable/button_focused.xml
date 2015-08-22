@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
 
-    <solid
-        android:color="@color/button_focused" />
+    <solid android:color="@color/button_focused" />
 
-    <stroke
-        style="@style/button.stroke.focused" />
+    <stroke style="@style/button.stroke.focused" />
 
-    <corners
-        style="@style/button.corners"/>
+    <corners style="@style/button.corners" />
 
 </shape>

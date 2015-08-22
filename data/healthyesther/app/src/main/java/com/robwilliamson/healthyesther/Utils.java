@@ -54,16 +54,6 @@ public final class Utils {
 
     public static final class View {
 
-        public static class NonUiThreadException extends RuntimeException {}
-
-        public interface RadioButtonHandler {
-            /**
-             * @param button
-             * @return true to loop through the other buttons, false to exit with this one.
-             */
-            public boolean handleRadioButton(RadioButton button);
-        }
-
         public static void forEachRadioButton(RadioGroup radioGroup, RadioButtonHandler handler) {
             final int count = radioGroup.getChildCount();
             for (int i = 0; i < count; i++) {
@@ -72,7 +62,7 @@ public final class Utils {
                     continue;
                 }
 
-                if (!handler.handleRadioButton((RadioButton)view)) {
+                if (!handler.handleRadioButton((RadioButton) view)) {
                     break;
                 }
             }
@@ -114,19 +104,22 @@ public final class Utils {
                 throw new NonUiThreadException();
             }
         }
+
+        public interface RadioButtonHandler {
+            /**
+             * @param button
+             * @return true to loop through the other buttons, false to exit with this one.
+             */
+            public boolean handleRadioButton(RadioButton button);
+        }
+
+        public static class NonUiThreadException extends RuntimeException {
+        }
     }
 
     public static final class Bundles {
-        public interface HashPutter {
-            public void put(Bundle bundle, String bundleKey, String key);
-        }
-
-        public interface HashGetter <T> {
-            public T get(Bundle bundle, String bundleKey);
-        }
-
         public static <V> void put(Bundle bundle, String bundleKey, HashMap<String, V> map, HashPutter putter) {
-            String [] keys = new String [map.keySet().size()];
+            String[] keys = new String[map.keySet().size()];
             map.keySet().toArray(keys);
 
             bundle.putStringArray(keysName(bundleKey), keys);
@@ -142,7 +135,7 @@ public final class Utils {
                 return null;
             }
 
-            String [] keys = bundle.getStringArray(keysName(bundleKey));
+            String[] keys = bundle.getStringArray(keysName(bundleKey));
             HashMap<String, V> map = new HashMap<String, V>(keys.length);
 
             for (String k : keys) {
@@ -158,6 +151,14 @@ public final class Utils {
 
         private static String valueName(String bundleKey, String key) {
             return bundleKey + "Value_" + key;
+        }
+
+        public interface HashPutter {
+            public void put(Bundle bundle, String bundleKey, String key);
+        }
+
+        public interface HashGetter<T> {
+            public T get(Bundle bundle, String bundleKey);
         }
     }
 }

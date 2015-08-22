@@ -20,14 +20,6 @@ public class EventHistoryListFragment extends EventListFragment {
 
     private DateTime mFrom;
 
-    public static EventHistoryListFragment getInstance(DateTime from) {
-        EventHistoryListFragment fragment = new EventHistoryListFragment();
-        Bundle arguments = new Bundle();
-        arguments.putString(FROM, Utils.Time.toDatabaseString(from));
-        fragment.setArguments(arguments);
-        return fragment;
-    }
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -36,9 +28,17 @@ public class EventHistoryListFragment extends EventListFragment {
         mFrom = DateTime.now().minus(WEEK);
     }
 
+    public static EventHistoryListFragment getInstance(DateTime from) {
+        EventHistoryListFragment fragment = new EventHistoryListFragment();
+        Bundle arguments = new Bundle();
+        arguments.putString(FROM, Utils.Time.toDatabaseString(from));
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
     @Override
     public Query[] getQueries() {
-        return new Query[] {
+        return new Query[]{
                 new GetEventsAfterDateTimeQuery(mFrom) {
                     List<EventData> mResults;
 

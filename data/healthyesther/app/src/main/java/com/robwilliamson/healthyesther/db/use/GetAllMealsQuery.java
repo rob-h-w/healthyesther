@@ -21,7 +21,7 @@ public abstract class GetAllMealsQuery extends GetAllValuesQuery {
 
     @Override
     public String[] getResultColumns() {
-        return Table.cleanName(new String [] {
+        return Table.cleanName(new String[]{
                 Meal._ID,
                 Meal.NAME
         });

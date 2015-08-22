@@ -3,36 +3,36 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="vertical"
-        style="@style/AppTheme.sectionLayout">
+        style="@style/AppTheme.sectionLayout"
+        android:orientation="vertical">
 
         <TextView
-            android:text="@string/log_an_event"
-            style="@style/AppTheme.text.title"/>
+            style="@style/AppTheme.text.title"
+            android:text="@string/log_an_event" />
 
         <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/create_meal_event_button"
-            android:text="@string/meal"/>
-
-        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/medication"
-            android:id="@+id/create_medication_event_button" />
+            android:text="@string/meal" />
 
         <Button
+            android:id="@+id/create_medication_event_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/health_score"
-            android:id="@+id/create_health_score_event_button" />
+            android:text="@string/medication" />
 
         <Button
+            android:id="@+id/create_health_score_event_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/note"
-            android:id="@+id/create_note_event_button" />
+            android:text="@string/health_score" />
+
+        <Button
+            android:id="@+id/create_note_event_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/note" />
 
     </LinearLayout>
 

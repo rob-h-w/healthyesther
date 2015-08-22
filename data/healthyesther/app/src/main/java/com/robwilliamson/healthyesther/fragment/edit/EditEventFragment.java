@@ -23,22 +23,17 @@ import org.joda.time.format.DateTimeFormat;
 /**
  * Allows the user to edit an event's name and when properties.
  */
-public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> implements DateTimePickerListener {
+public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> implements DateTimePickerListener {
     private EventData mEvent = new EventData();
     private boolean mUserEditedEventName;
+
+    public EditEventFragment() {
+        super(EditEventFragment.Watcher.class);
+    }
 
     @Override
     public Query[] getQueries() {
         return new Query[0];
-    }
-
-    public interface Watcher {
-        EventData getIntentEventData();
-        void onUseIntentEventData(EventData eventData);
-    }
-
-    public EditEventFragment() {
-        super(EditEventFragment.Watcher.class);
     }
 
     @Override
@@ -169,6 +164,10 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         setName(name);
     }
 
+    public String getName() {
+        return getNameView().getText().toString();
+    }
+
     public void setName(String name) {
         getNameView().getText().clear();
         getNameView().getText().append(name);
@@ -176,19 +175,14 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
         updateUi();
     }
 
-    public String getName() {
-        return getNameView().getText().toString();
+    public DateTime getWhen() {
+        return mEvent.getWhen();
     }
 
     public void setWhen(DateTime when) {
         mEvent.setWhen(when);
         updateUi();
     }
-
-    public DateTime getWhen() {
-        return mEvent.getWhen();
-    }
-
 
     public boolean isEventNameEditedByUser() {
         return mUserEditedEventName;
@@ -231,5 +225,11 @@ public class EditEventFragment extends EditFragment <EditEventFragment.Watcher> 
 
     private AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.edit_event_name, AutoCompleteTextView.class);
+    }
+
+    public interface Watcher {
+        EventData getIntentEventData();
+
+        void onUseIntentEventData(EventData eventData);
     }
 }

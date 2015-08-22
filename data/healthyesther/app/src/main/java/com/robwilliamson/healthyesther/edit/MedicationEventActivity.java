@@ -60,7 +60,7 @@ public class MedicationEventActivity extends AbstractEditEventActivity
 
     @Override
     public QueryUser[] getQueryUsers() {
-        return new QueryUser[] {
+        return new QueryUser[]{
                 getMedicationFragment()
         };
     }

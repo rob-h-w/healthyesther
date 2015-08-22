@@ -15,14 +15,6 @@ import java.util.List;
 
 public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditScoreEventGroupListAdapter.Tag, View, Pair<HealthScore.Value, Integer>> {
 
-    protected static class Tag {
-        public TextView title;
-        public TextView minLabel;
-        public TextView maxLabel;
-        public RatingBar ratingBar;
-        public LinearLayout layout;
-    }
-
     public EditScoreEventGroupListAdapter(Activity context) {
         super(context, R.layout.fragment_edit_score_event, EditScoreEventGroupListAdapter.Tag.class, View.class);
     }
@@ -51,5 +43,13 @@ public class EditScoreEventGroupListAdapter extends OptimizedListAdapter<EditSco
         tag.maxLabel.setText(data.first.maxLabel);
         tag.ratingBar.setMax(HealthScore.MAX);
         tag.ratingBar.setRating(data.second);
+    }
+
+    protected static class Tag {
+        public TextView title;
+        public TextView minLabel;
+        public TextView maxLabel;
+        public RatingBar ratingBar;
+        public LinearLayout layout;
     }
 }

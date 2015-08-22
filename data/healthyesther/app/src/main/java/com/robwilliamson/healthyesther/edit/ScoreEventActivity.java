@@ -25,7 +25,7 @@ import java.util.List;
 
 public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreEventGroupFragment.Watcher,
         EditScoreEventFragment.Watcher,
-        EditEventFragment.Watcher{
+        EditEventFragment.Watcher {
     private final static String SCORE_GROUP_TAG = "score group";
     private final static String EVENT_TAG = "event";
 
@@ -76,7 +76,7 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
 
     @Override
     public QueryUser[] getQueryUsers() {
-        return new QueryUser[] {
+        return new QueryUser[]{
                 getScoreGroupFragment()
         };
     }

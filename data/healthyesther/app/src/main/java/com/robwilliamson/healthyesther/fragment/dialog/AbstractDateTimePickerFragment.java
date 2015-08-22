@@ -30,10 +30,6 @@ public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment
         show(manager, getName());
     }
 
-    public void setListener(DateTimePickerListener listener) {
-        mListener = listener;
-    }
-
     protected DateTime getLocalDateTime() {
         return mDateTime;
     }
@@ -46,6 +42,10 @@ public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment
 
     protected DateTimePickerListener getListener() {
         return mListener;
+    }
+
+    public void setListener(DateTimePickerListener listener) {
+        mListener = listener;
     }
 
     protected void callCallback() {

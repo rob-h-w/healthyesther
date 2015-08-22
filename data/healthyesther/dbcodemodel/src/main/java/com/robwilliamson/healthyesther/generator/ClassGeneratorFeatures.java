@@ -11,5 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ClassGeneratorFeatures {
     String name();
+
     String parameterName();
 }

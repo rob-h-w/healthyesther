@@ -13,6 +13,7 @@ public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<Ho
     private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
             "/Android/data/com.dropbox.android";
     private static final String DB_PATH = DROPBOX_PATH + "/files/scratch";
+
     public HomeActivityAddModeTest() {
         super(HomeActivity.class);
     }

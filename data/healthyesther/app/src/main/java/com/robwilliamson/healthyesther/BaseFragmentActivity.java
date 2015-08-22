@@ -63,7 +63,7 @@ public class BaseFragmentActivity extends FragmentActivity {
     }
 
     protected LinearLayout getActivityContentLayout() {
-        return (LinearLayout)findViewById(getActivityContentLayoutResourceId());
+        return (LinearLayout) findViewById(getActivityContentLayoutResourceId());
     }
 
     protected <T extends Fragment> T getFragment(String tag, Class<T> type) {

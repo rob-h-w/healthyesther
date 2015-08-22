@@ -20,10 +20,22 @@ import com.robwilliamson.healthyesther.db.definition.Units;
  * Contains database table and column names, and other database-definition data.
  */
 public final class Contract {
+    public static final String NAME = "health.db3";
+    public static final int VERSION = 4;
     private static volatile Contract sContract = null;
-
-    private static class NotInitializedException extends NullPointerException {}
-
+    public final Event EVENT;
+    public final EventType EVENT_TYPE;
+    public final HealthScore HEALTH_SCORE;
+    public final HealthScoreEvent HEALTH_SCORE_EVENT;
+    public final Meal MEAL;
+    public final MealEvent MEAL_EVENT;
+    public final Medication MEDICATION;
+    public final MedicationName MEDICATION_NAME;
+    public final MedicationEvent MEDICATION_EVENT;
+    public final Note NOTE;
+    public final NoteEvent NOTE_EVENT;
+    public final Units UNITS;
+    public final Table[] TABLES;
     private Contract() {
         EVENT = new Event();
         EVENT_TYPE = new EventType();
@@ -38,7 +50,7 @@ public final class Contract {
         NOTE_EVENT = new NoteEvent();
         UNITS = new Units();
 
-        TABLES = new Table[] {
+        TABLES = new Table[]{
                 EVENT,
                 EVENT_TYPE,
                 HEALTH_SCORE_EVENT,
@@ -65,24 +77,6 @@ public final class Contract {
         }
     }
 
-    public static final String NAME = "health.db3";
-    public static final int VERSION = 4;
-
-    public final Event EVENT;
-    public final EventType EVENT_TYPE;
-    public final HealthScore HEALTH_SCORE;
-    public final HealthScoreEvent HEALTH_SCORE_EVENT;
-    public final Meal MEAL;
-    public final MealEvent MEAL_EVENT;
-    public final Medication MEDICATION;
-    public final MedicationName MEDICATION_NAME;
-    public final MedicationEvent MEDICATION_EVENT;
-    public final Note NOTE;
-    public final NoteEvent NOTE_EVENT;
-    public final Units UNITS;
-
-    public final Table[] TABLES;
-
     public void create(SQLiteDatabase db) {
         for (Table table : TABLES) {
             table.create(db);
@@ -99,5 +93,8 @@ public final class Contract {
         for (Table table : TABLES) {
             table.upgrade(db, from, to);
         }
+    }
+
+    private static class NotInitializedException extends NullPointerException {
     }
 }

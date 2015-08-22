@@ -4,15 +4,8 @@ import java.io.File;
 
 public class Destination {
 
-    public static class DestinationException extends RuntimeException {
-        public DestinationException(String message, Object ... parameters) {
-            super(String.format(message, parameters));
-        }
-    }
-
     private final File mFolder;
     private final String mPackage;
-
     Destination(String destinationFolder, String destinationPackage) {
         mFolder = new File(Strings.checkNotEmpty(destinationFolder, "destinationFolder"));
         mPackage = Strings.checkNotEmpty(destinationPackage, "destinationPackage");
@@ -28,5 +21,11 @@ public class Destination {
 
     public String getPackage() {
         return mPackage;
+    }
+
+    public static class DestinationException extends RuntimeException {
+        public DestinationException(String message, Object... parameters) {
+            super(String.format(message, parameters));
+        }
     }
 }

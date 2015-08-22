@@ -130,17 +130,17 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
         getNameTextView().setText(name);
     }
 
-    protected void setSuggestions(HashMap<String, Long> suggestions) {
-        mSuggestions = suggestions;
-        updateSuggestionAdapter();
-    }
-
     protected void setValid(boolean valid) {
         getOkButton().setEnabled(valid);
     }
 
     protected HashMap<String, Long> getSuggestions() {
         return mSuggestions;
+    }
+
+    protected void setSuggestions(HashMap<String, Long> suggestions) {
+        mSuggestions = suggestions;
+        updateSuggestionAdapter();
     }
 
     protected abstract Query getQuery();
@@ -163,6 +163,7 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
 
     /**
      * Layout id of the content of the dialog.
+     *
      * @return Implementors should return null if no layout resource is in use.
      */
     protected abstract Integer contentLayoutId();
@@ -193,7 +194,7 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
         }
 
         Set<String> set = mSuggestions.keySet();
-        String [] suggestions = new String[set.size()];
+        String[] suggestions = new String[set.size()];
         set.toArray(suggestions);
 
         View view = Utils.checkNotNull(getView());

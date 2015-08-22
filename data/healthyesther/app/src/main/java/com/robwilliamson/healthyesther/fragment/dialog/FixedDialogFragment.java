@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
 public class FixedDialogFragment extends DialogFragment {
-    public FixedDialogFragment() {}
+    public FixedDialogFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

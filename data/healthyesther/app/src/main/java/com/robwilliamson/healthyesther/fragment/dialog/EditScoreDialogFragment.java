@@ -24,25 +24,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
-    public interface Watcher extends QueuedQueryExecutor {
-        void onScoreModified(HealthScore.Value score);
-        void onQueryFailed(EditScoreDialogFragment fragment, Throwable error);
-    }
-
     private static final String SCORES = "scores";
     private static final String INITIAL_SCORE = "initial_score";
-
     private HealthScore.Value mInitialScore = null;
     private HashMap<String, HealthScore.Value> mScores = null;
+    public EditScoreDialogFragment() {
+        super();
+    }
 
     public static EditScoreDialogFragment createDialog(HealthScore.Value score) {
         EditScoreDialogFragment dialog = new EditScoreDialogFragment();
         dialog.mInitialScore = score;
         return dialog;
-    }
-
-    public EditScoreDialogFragment() {
-        super();
     }
 
     @Override
@@ -116,13 +109,14 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     protected Query getQuery() {
         return new GetHealthScoresQuery() {
             HashMap<String, Long> mSuggestions;
+
             @Override
             public void postQueryProcessing(final Cursor cursor) {
                 List<HealthScore.Value> scoresList = DataAbstraction.listFrom(cursor, HealthScore.Value.class);
                 mSuggestions = new HashMap<>(scoresList.size());
                 mScores = new HashMap<>(scoresList.size());
 
-                for (HealthScore.Value score: scoresList) {
+                for (HealthScore.Value score : scoresList) {
                     mSuggestions.put(score.name, score._id);
                     mScores.put(score.name, score);
                 }
@@ -287,5 +281,11 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
     private Watcher getWatcher() {
         return (Watcher) getActivity();
+    }
+
+    public interface Watcher extends QueuedQueryExecutor {
+        void onScoreModified(HealthScore.Value score);
+
+        void onQueryFailed(EditScoreDialogFragment fragment, Throwable error);
     }
 }

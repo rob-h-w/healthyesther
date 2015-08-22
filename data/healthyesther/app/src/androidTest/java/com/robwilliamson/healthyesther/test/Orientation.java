@@ -5,11 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.test.InstrumentationTestCase;
 
 public class Orientation {
-    public static interface Subject {
-        InstrumentationTestCase getTestCase();
-        void checkContent();
-    }
-
     public static void check(Subject subject) {
         setOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, subject);
         subject.checkContent();
@@ -25,5 +20,11 @@ public class Orientation {
         if (initialOrientation != orientation) {
             initial.setRequestedOrientation(orientation);
         }
+    }
+
+    public static interface Subject {
+        InstrumentationTestCase getTestCase();
+
+        void checkContent();
     }
 }

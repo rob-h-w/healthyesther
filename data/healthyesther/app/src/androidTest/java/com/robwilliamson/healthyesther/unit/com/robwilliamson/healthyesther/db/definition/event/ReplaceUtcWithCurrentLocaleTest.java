@@ -20,6 +20,77 @@ import java.util.TimeZone;
 
 public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
 
+    private SQLiteDatabase mDb;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        mDb = HealthDbHelper.getInstance(
+                getInstrumentation().getTargetContext()).getWritableDatabase();
+        Utils.Db.TestData.cleanOldData(mDb);
+        Utils.Db.TestData.insertV3FakeData(mDb);
+    }
+
+    public void testNormalUpgradePath() throws Exception {
+        Event event = Contract.getInstance().EVENT;
+        Method replaceUtcWithCurrentLocale = Event.class.getDeclaredMethod("replaceUtcWithCurrentLocale", SQLiteDatabase.class);
+        replaceUtcWithCurrentLocale.setAccessible(true);
+
+        Cursor c = mDb.query(Event.TABLE_NAME, null, null, null, null, null, null);
+        final Set<Integer> oldEventHashes = new HashSet<>(c.getCount());
+        final Set<EventDates> oldEvents = getEvents(c);
+        for (EventDates dates : oldEvents) {
+            dates.assertIsNullOrUtc();
+            oldEventHashes.add(dates.hashCode());
+        }
+
+        replaceUtcWithCurrentLocale.invoke(event, mDb);
+
+        c = mDb.query(Event.TABLE_NAME, null, null, null, null, null, null);
+        final Set<EventDates> newEvents = getEvents(c);
+        for (EventDates dates : newEvents) {
+            // Assert the dates are null or local.
+            dates.assertIsNullOrLocal();
+
+            // Assert the dates are the same.
+            EventDates utcVersion = new EventDates();
+            utcVersion.when = toUtcString(dates.when);
+            utcVersion.created = toUtcString(dates.created);
+            utcVersion.modified = toUtcString(dates.modified);
+
+            assertTrue("Expect the old event dates set to contain an equivalent to each new date, like the one at " +
+                            dates + ". This has UTC equivalent " + utcVersion,
+                    oldEventHashes.contains(utcVersion.hashCode()));
+        }
+    }
+
+    private String toUtcString(String timeString) {
+        if (timeString == null) {
+            return null;
+        }
+
+        return Utils.Time.toUtcString(Utils.Time.fromLocalString(timeString).withZone(DateTimeZone.UTC));
+    }
+
+    private Set<EventDates> getEvents(Cursor c) {
+        Set<EventDates> set = new HashSet<>(c.getCount());
+        if (c.moveToFirst()) {
+            final int whenIndex = c.getColumnIndex(Table.cleanName(Event.WHEN));
+            final int createdIndex = c.getColumnIndex(Event.CREATED);
+            final int modifiedIndex = c.getColumnIndex(Event.MODIFIED);
+
+            do {
+                EventDates dates = new EventDates();
+                dates.when = c.getString(whenIndex);
+                dates.created = c.getString(createdIndex);
+                dates.modified = c.getString(modifiedIndex);
+                set.add(dates);
+            } while (c.moveToNext());
+        }
+        return set;
+    }
+
     private class EventDates {
         public String when;
         public String created;
@@ -35,8 +106,8 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
 
             return
                     equals(when, other.when) &&
-                    equals(created, other.created) &&
-                    equals(modified, other.modified);
+                            equals(created, other.created) &&
+                            equals(modified, other.modified);
         }
 
         @Override
@@ -113,76 +184,5 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
 
             return left.equals(right);
         }
-    }
-
-    private SQLiteDatabase mDb;
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        mDb = HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase();
-        Utils.Db.TestData.cleanOldData(mDb);
-        Utils.Db.TestData.insertV3FakeData(mDb);
-    }
-
-    public void testNormalUpgradePath() throws Exception {
-        Event event = Contract.getInstance().EVENT;
-        Method replaceUtcWithCurrentLocale = Event.class.getDeclaredMethod("replaceUtcWithCurrentLocale", SQLiteDatabase.class);
-        replaceUtcWithCurrentLocale.setAccessible(true);
-
-        Cursor c = mDb.query(Event.TABLE_NAME, null, null, null, null, null, null);
-        final Set<Integer> oldEventHashes = new HashSet<>(c.getCount());
-        final Set<EventDates> oldEvents = getEvents(c);
-        for (EventDates dates : oldEvents) {
-            dates.assertIsNullOrUtc();
-            oldEventHashes.add(dates.hashCode());
-        }
-
-        replaceUtcWithCurrentLocale.invoke(event, mDb);
-
-        c = mDb.query(Event.TABLE_NAME, null, null, null, null, null, null);
-        final Set<EventDates> newEvents = getEvents(c);
-        for (EventDates dates : newEvents) {
-            // Assert the dates are null or local.
-            dates.assertIsNullOrLocal();
-
-            // Assert the dates are the same.
-            EventDates utcVersion = new EventDates();
-            utcVersion.when = toUtcString(dates.when);
-            utcVersion.created = toUtcString(dates.created);
-            utcVersion.modified = toUtcString(dates.modified);
-
-            assertTrue("Expect the old event dates set to contain an equivalent to each new date, like the one at " +
-                            dates + ". This has UTC equivalent " + utcVersion,
-                    oldEventHashes.contains(utcVersion.hashCode()));
-        }
-    }
-
-    private String toUtcString(String timeString) {
-        if (timeString == null) {
-            return null;
-        }
-
-        return Utils.Time.toUtcString(Utils.Time.fromLocalString(timeString).withZone(DateTimeZone.UTC));
-    }
-
-    private Set<EventDates> getEvents(Cursor c) {
-        Set<EventDates> set = new HashSet<>(c.getCount());
-        if (c.moveToFirst()) {
-            final int whenIndex = c.getColumnIndex(Table.cleanName(Event.WHEN));
-            final int createdIndex = c.getColumnIndex(Event.CREATED);
-            final int modifiedIndex = c.getColumnIndex(Event.MODIFIED);
-
-            do {
-                EventDates dates = new EventDates();
-                dates.when = c.getString(whenIndex);
-                dates.created = c.getString(createdIndex);
-                dates.modified = c.getString(modifiedIndex);
-                set.add(dates);
-            } while (c.moveToNext());
-        }
-        return set;
     }
 }

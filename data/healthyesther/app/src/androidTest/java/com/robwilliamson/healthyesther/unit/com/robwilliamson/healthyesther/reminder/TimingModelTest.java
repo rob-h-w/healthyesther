@@ -28,81 +28,6 @@ public class TimingModelTest extends AndroidTestCase {
     private MockTimingModelEnvironment mEnvironment;
     private TimingModel mSubject;
 
-    private static class MockTimingModelEnvironment implements TimingModel.Environment {
-        public DateTime now = MORNING_8AM_21;
-        public boolean appInForeground = false;
-        public DateTime lastNotifiedTime = null;
-        public DateTime nextNotificationTime = null;
-
-        public SetLastNotifiedTimeParams setLastNotifiedTimeParams = null;
-        public SetNextNotificationTimeParams setNextNotificationTimeParams = null;
-        public SetAlarmParams setAlarmParams = null;
-        public int sendReminderCallCount = 0;
-
-        public static class SetLastNotifiedTimeParams {
-            public DateTime time;
-        }
-
-        public static class SetNextNotificationTimeParams {
-            public DateTime alarmTime;
-        }
-
-        public static class SetAlarmParams {
-            public DateTime alarmTime;
-        }
-
-        @Override
-        public DateTime getNow() {
-            return now;
-        }
-
-        @Override
-        public void setLastNotifiedTime(final DateTime time) {
-            setLastNotifiedTimeParams = new SetLastNotifiedTimeParams();
-            setLastNotifiedTimeParams.time = time;
-        }
-
-        @Override
-        public DateTime getLastNotifiedTime() {
-            if (lastNotifiedTime != null) {
-                return lastNotifiedTime;
-            }
-
-            return setLastNotifiedTimeParams == null ? null : setLastNotifiedTimeParams.time;
-        }
-
-        @Override
-        public void setNextNotificationTime(DateTime time) {
-            setNextNotificationTimeParams = new SetNextNotificationTimeParams();
-            setNextNotificationTimeParams.alarmTime = time;
-        }
-
-        @Override
-        public DateTime getNextNotificationTime() {
-            if (nextNotificationTime != null) {
-                return nextNotificationTime;
-            }
-
-            return setNextNotificationTimeParams == null ? null : setNextNotificationTimeParams.alarmTime;
-        }
-
-        @Override
-        public boolean appInForeground() {
-            return appInForeground;
-        }
-
-        @Override
-        public void setAlarm(DateTime alarmTime) {
-            setAlarmParams = new SetAlarmParams();
-            setAlarmParams.alarmTime = alarmTime;
-        }
-
-        @Override
-        public void sendReminder() {
-            sendReminderCallCount++;
-        }
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -232,5 +157,80 @@ public class TimingModelTest extends AndroidTestCase {
         Method method = TimingModel.class.getDeclaredMethod("ensureNotificationIsPending");
         method.setAccessible(true);
         method.invoke(model);
+    }
+
+    private static class MockTimingModelEnvironment implements TimingModel.Environment {
+        public DateTime now = MORNING_8AM_21;
+        public boolean appInForeground = false;
+        public DateTime lastNotifiedTime = null;
+        public DateTime nextNotificationTime = null;
+
+        public SetLastNotifiedTimeParams setLastNotifiedTimeParams = null;
+        public SetNextNotificationTimeParams setNextNotificationTimeParams = null;
+        public SetAlarmParams setAlarmParams = null;
+        public int sendReminderCallCount = 0;
+
+        @Override
+        public DateTime getNow() {
+            return now;
+        }
+
+        @Override
+        public DateTime getLastNotifiedTime() {
+            if (lastNotifiedTime != null) {
+                return lastNotifiedTime;
+            }
+
+            return setLastNotifiedTimeParams == null ? null : setLastNotifiedTimeParams.time;
+        }
+
+        @Override
+        public void setLastNotifiedTime(final DateTime time) {
+            setLastNotifiedTimeParams = new SetLastNotifiedTimeParams();
+            setLastNotifiedTimeParams.time = time;
+        }
+
+        @Override
+        public DateTime getNextNotificationTime() {
+            if (nextNotificationTime != null) {
+                return nextNotificationTime;
+            }
+
+            return setNextNotificationTimeParams == null ? null : setNextNotificationTimeParams.alarmTime;
+        }
+
+        @Override
+        public void setNextNotificationTime(DateTime time) {
+            setNextNotificationTimeParams = new SetNextNotificationTimeParams();
+            setNextNotificationTimeParams.alarmTime = time;
+        }
+
+        @Override
+        public boolean appInForeground() {
+            return appInForeground;
+        }
+
+        @Override
+        public void setAlarm(DateTime alarmTime) {
+            setAlarmParams = new SetAlarmParams();
+            setAlarmParams.alarmTime = alarmTime;
+        }
+
+        @Override
+        public void sendReminder() {
+            sendReminderCallCount++;
+        }
+
+        public static class SetLastNotifiedTimeParams {
+            public DateTime time;
+        }
+
+        public static class SetNextNotificationTimeParams {
+            public DateTime alarmTime;
+        }
+
+        public static class SetAlarmParams {
+            public DateTime alarmTime;
+        }
     }
 }

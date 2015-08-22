@@ -50,6 +50,7 @@ public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAd
     /**
      * Get a tag for a view. A tag should contain references to every view modified when new data is
      * used.
+     *
      * @param view The view requiring a tag.
      * @return A new tag for the view.
      */
@@ -58,7 +59,8 @@ public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAd
     /**
      * Use a tag to populate the features of a view. The tag will have been returned by
      * {@link #getTagFor(V view)}.
-     * @param tag The tag to use with the view.
+     *
+     * @param tag  The tag to use with the view.
      * @param data The data to populate the tag's views with.
      */
     protected abstract void populateTag(T tag, D data);

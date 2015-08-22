@@ -32,13 +32,8 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 
-    public void removeScore(EditScoreEventFragment fragment) {
-        getFragmentManager().beginTransaction().remove(fragment).commit();
-    }
-
-    public interface Watcher extends EditScoreDialogFragment.Watcher {
-        void onFragmentUpdate(EditScoreEventGroupFragment fragment);
-        void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);
+    public EditScoreEventGroupFragment() {
+        super(EditScoreEventGroupFragment.Watcher.class);
     }
 
     public static EditScoreEventGroupFragment newInstance() {
@@ -47,8 +42,8 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         return fragment;
     }
 
-    public EditScoreEventGroupFragment() {
-        super(EditScoreEventGroupFragment.Watcher.class);
+    public void removeScore(EditScoreEventFragment fragment) {
+        getFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
     @Override
@@ -154,7 +149,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                             Set<String> excludedEditScoreTitles = Settings.INSTANCE.getDefaultExcludedEditScores();
 
                             for (HealthScore.Value score : scores) {
-                                if (excludedEditScoreTitles.contains(score.name)){
+                                if (excludedEditScoreTitles.contains(score.name)) {
                                     continue;
                                 }
 
@@ -208,7 +203,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         transaction.commit();
     }
 
-    public void addFragment(final EditFragment fragment, final FragmentTransaction transaction){
+    public void addFragment(final EditFragment fragment, final FragmentTransaction transaction) {
         FragmentTransaction t = transaction;
         if (transaction == null) {
             t = getFragmentManager().beginTransaction();
@@ -258,5 +253,11 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
 
     private AddValueFragment getAddValueFragment() {
         return Utils.View.getTypeSafeFragment(getFragmentManager(), ADD_VALUE_FRAGMENT, AddValueFragment.class);
+    }
+
+    public interface Watcher extends EditScoreDialogFragment.Watcher {
+        void onFragmentUpdate(EditScoreEventGroupFragment fragment);
+
+        void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);
     }
 }

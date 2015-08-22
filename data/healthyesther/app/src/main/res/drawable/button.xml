@@ -5,23 +5,22 @@
         <selector>
 
             <item
-                android:state_enabled="false"
-                android:drawable="@drawable/button_disabled" />
+                android:drawable="@drawable/button_disabled"
+                android:state_enabled="false" />
 
             <item
-                android:state_pressed="true"
-                android:drawable="@drawable/button_pressed" />
+                android:drawable="@drawable/button_pressed"
+                android:state_pressed="true" />
 
             <item
-                android:state_focused="true"
-                android:drawable="@drawable/button_focused" />
+                android:drawable="@drawable/button_focused"
+                android:state_focused="true" />
 
             <item
-                android:state_hovered="true"
-                android:drawable="@drawable/button_focused" />
+                android:drawable="@drawable/button_focused"
+                android:state_hovered="true" />
 
-            <item
-                android:drawable="@drawable/button_enabled" />
+            <item android:drawable="@drawable/button_enabled" />
 
         </selector>
 
@@ -32,12 +31,11 @@
         <shape android:shape="rectangle">
 
             <gradient
-                android:type="linear"
+                android:endColor="@color/button_overlay_gradient_1_end"
                 android:startColor="@color/button_overlay_gradient_1_start"
-                android:endColor="@color/button_overlay_gradient_1_end"/>
+                android:type="linear" />
 
-            <corners
-                style="@style/button.corners"/>
+            <corners style="@style/button.corners" />
 
         </shape>
 
@@ -48,13 +46,12 @@
         <shape android:shape="rectangle">
 
             <gradient
-                android:type="linear"
-                android:startColor="@color/button_overlay_gradient_2_start"
+                android:angle="270"
                 android:endColor="@color/button_overlay_gradient_2_end"
-                android:angle="270"/>
+                android:startColor="@color/button_overlay_gradient_2_start"
+                android:type="linear" />
 
-            <corners
-                style="@style/button.corners"/>
+            <corners style="@style/button.corners" />
 
         </shape>
     </item>

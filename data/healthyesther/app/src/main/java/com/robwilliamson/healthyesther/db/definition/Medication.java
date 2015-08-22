@@ -9,33 +9,6 @@ import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.data.MedicationData;
 
 public class Medication extends Table {
-    public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
-        private MedicationData mValue;
-
-        public Modification(long rowId) {
-            setRowId(rowId);
-        }
-
-        public Modification(MedicationData data) {
-            mValue = data;
-        }
-
-        @Override
-        protected DataAbstraction getData() {
-            return mValue;
-        }
-
-        @Override
-        protected void update(SQLiteDatabase db) {
-            Contract.getInstance().MEDICATION.update(db, mValue.asContentValues(), mValue.get_id());
-        }
-
-        @Override
-        protected long insert(SQLiteDatabase db) {
-            return Contract.getInstance().MEDICATION.insert(db, mValue.asContentValues());
-        }
-    }
-
     public static final String TABLE_NAME = "medication";
     public static final String _ID = "_id";
     public static final String NAME = "name";
@@ -72,5 +45,32 @@ public class Medication extends Table {
         ContentValues values = new ContentValues();
         values.put(NAME, name);
         return insert(db, values);
+    }
+
+    public static class Modification extends com.robwilliamson.healthyesther.db.definition.Modification {
+        private MedicationData mValue;
+
+        public Modification(long rowId) {
+            setRowId(rowId);
+        }
+
+        public Modification(MedicationData data) {
+            mValue = data;
+        }
+
+        @Override
+        protected DataAbstraction getData() {
+            return mValue;
+        }
+
+        @Override
+        protected void update(SQLiteDatabase db) {
+            Contract.getInstance().MEDICATION.update(db, mValue.asContentValues(), mValue.get_id());
+        }
+
+        @Override
+        protected long insert(SQLiteDatabase db) {
+            return Contract.getInstance().MEDICATION.insert(db, mValue.asContentValues());
+        }
     }
 }

@@ -2,21 +2,20 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".DbActivity"
     android:id="@+id/base_activity_root_layout"
+    style="@style/AppTheme.rootLayout"
     android:orientation="vertical"
-    style="@style/AppTheme.rootLayout">
+    tools:context=".DbActivity">
 
-    <ScrollView
-        style="@style/AppTheme.rootScrollView">
+    <ScrollView style="@style/AppTheme.rootScrollView">
 
         <LinearLayout
+            android:id="@+id/base_activity_content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:id="@+id/base_activity_content_layout"/>
+            android:orientation="vertical" />
 
     </ScrollView>
 

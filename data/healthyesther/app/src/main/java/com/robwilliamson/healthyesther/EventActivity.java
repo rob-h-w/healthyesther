@@ -35,8 +35,8 @@ public class EventActivity extends DbActivity {
                     mEventListView.setAdapter(new SimpleCursorAdapter(
                             EventActivity.this,
                             R.layout.list_item, cursor,
-                            new String[] { allColumns[2],                allColumns[3] },
-                            new int[]    { R.id.event_list_element_name, R.id.event_list_element_type}));
+                            new String[]{allColumns[2], allColumns[3]},
+                            new int[]{R.id.event_list_element_name, R.id.event_list_element_type}));
                 }
             }
 

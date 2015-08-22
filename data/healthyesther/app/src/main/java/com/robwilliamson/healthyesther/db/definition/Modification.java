@@ -44,12 +44,21 @@ public abstract class Modification implements RowIdProvider {
         onEndModify(db);
     }
 
-    protected void onRowIdChanged(Long rowId) {}
-    protected void onStartModify(SQLiteDatabase db) {}
-    protected void onNullModify(SQLiteDatabase db) {}
-    protected void onEndModify(SQLiteDatabase db) {}
+    protected void onRowIdChanged(Long rowId) {
+    }
+
+    protected void onStartModify(SQLiteDatabase db) {
+    }
+
+    protected void onNullModify(SQLiteDatabase db) {
+    }
+
+    protected void onEndModify(SQLiteDatabase db) {
+    }
 
     protected abstract DataAbstraction getData();
+
     protected abstract void update(SQLiteDatabase db);
+
     protected abstract long insert(SQLiteDatabase db);
 }

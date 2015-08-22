@@ -34,6 +34,14 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
         // Required empty public constructor
     }
 
+    private static DateTime today() {
+        return Utils.Time.localNow().withTime(0, 0, 0, 0);
+    }
+
+    private static DateTimeFormatter format() {
+        return ISODateTimeFormat.dateTime();
+    }
+
     @Override
     protected int getFragmentLayout() {
         return R.layout.fragment_activity_graph;
@@ -44,7 +52,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
         super.onAttach(activity);
 
         //noinspection unchecked
-        mWatcher = (QueuedQueryExecutor)activity;
+        mWatcher = (QueuedQueryExecutor) activity;
     }
 
     private LinearLayout getLayout() {
@@ -68,7 +76,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
 
     @Override
     public Query[] getQueries() {
-        return new Query[] {
+        return new Query[]{
                 new SelectEventAndType(today().minusDays(DAYS - 1).withTime(0, 0, 0, 0),
                         Utils.Time.localNow()) {
                     private HashMap<String, Integer> mEntriesPerDay = new HashMap<>(DAYS); // 7 days.
@@ -87,7 +95,7 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                                 DateTime when = Utils.Time.fromDatabaseString(cursor.getString(whenIndex)).withTime(0, 0, 0, 0);
                                 Integer count = mEntriesPerDay.get(format().print(when));
                                 count = count == null ? 0 : count;
-                                count ++;
+                                count++;
                                 mEntriesPerDay.put(format().print(when), count);
 
                                 if (count > mMax) {
@@ -101,8 +109,8 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                     @Override
                     public void onQueryComplete(Cursor cursor) {// init example series data
                         GraphView.GraphViewData[] data = new GraphView.GraphViewData[DAYS];
-                        String [] dateStrings = new String[DAYS];
-                        String [] integerStrings = new String[mMax + 1];
+                        String[] dateStrings = new String[DAYS];
+                        String[] integerStrings = new String[mMax + 1];
                         DateTimeFormatter formatter = DateTimeFormat.forPattern("E");
 
                         for (int i = 0; i < DAYS; i++) {
@@ -150,13 +158,5 @@ public class ActivityGraphFragment extends AbstractQueryFragment {
                     }
                 }
         };
-    }
-
-    private static DateTime today() {
-        return Utils.Time.localNow().withTime(0, 0, 0, 0);
-    }
-
-    private static DateTimeFormatter format() {
-        return ISODateTimeFormat.dateTime();
     }
 }

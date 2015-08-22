@@ -4,15 +4,13 @@ import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
 
 public abstract class BaseClassGenerator implements ClassOwner {
-    public static class MissingAnnotationException extends RuntimeException {
-        private static String message = "Class generators must have ClassGeneratorFeatures annotations!";
+    private JDefinedClass mClass;
 
-        public MissingAnnotationException() {
-            super(message);
-        }
-
-        public MissingAnnotationException(Throwable e) {
-            super(message, e);
+    public BaseClassGenerator() {
+        try {
+            getFeatures(getClass());
+        } catch (NullPointerException e) {
+            throw new MissingAnnotationException(e);
         }
     }
 
@@ -32,16 +30,6 @@ public abstract class BaseClassGenerator implements ClassOwner {
         }
 
         return features;
-    }
-
-    private JDefinedClass mClass;
-
-    public BaseClassGenerator() {
-        try {
-            getFeatures(getClass());
-        } catch (NullPointerException e) {
-            throw new MissingAnnotationException(e);
-        }
     }
 
     @Override
@@ -67,5 +55,17 @@ public abstract class BaseClassGenerator implements ClassOwner {
 
     protected JCodeModel model() {
         return mClass.owner();
+    }
+
+    public static class MissingAnnotationException extends RuntimeException {
+        private static String message = "Class generators must have ClassGeneratorFeatures annotations!";
+
+        public MissingAnnotationException() {
+            super(message);
+        }
+
+        public MissingAnnotationException(Throwable e) {
+            super(message, e);
+        }
     }
 }

@@ -8,8 +8,11 @@ import com.robwilliamson.healthyesther.db.Utils;
 
 public abstract class GetSomeValuesQuery implements SelectQuery {
     public abstract String getTableName();
+
     public abstract String getWhereSelection();
+
     public abstract String getOrderColumn();
+
     public abstract String getOrder();
 
     @Override

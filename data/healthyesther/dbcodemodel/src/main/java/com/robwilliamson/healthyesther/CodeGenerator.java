@@ -14,17 +14,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CodeGenerator {
-    public static class GenerationException extends RuntimeException {
-        public GenerationException(Throwable t) {
-            super(t);
-        }
-    }
-
     public static final AsyncExecutor ASYNC = new AsyncExecutor();
-
     private final Source mSource;
     private final Destination mDestination;
-
     CodeGenerator(Source source, Destination destination) {
         mSource = source;
         mDestination = destination;
@@ -79,5 +71,11 @@ public class CodeGenerator {
         }
 
         return dbFromJson;
+    }
+
+    public static class GenerationException extends RuntimeException {
+        public GenerationException(Throwable t) {
+            super(t);
+        }
     }
 }

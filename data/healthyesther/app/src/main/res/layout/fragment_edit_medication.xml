@@ -1,22 +1,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment"
+    style="@style/AppTheme.contentLayout"
     android:orientation="vertical"
-    style="@style/AppTheme.contentLayout">
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment">
 
     <LinearLayout
-        android:orientation="vertical"
-        style="@style/AppTheme.sectionLayout">
+        style="@style/AppTheme.sectionLayout"
+        android:orientation="vertical">
 
         <TextView
-            android:text="@string/medication"
             android:id="@+id/medication_name_title"
-            style="@style/AppTheme.text"/>
+            style="@style/AppTheme.text"
+            android:text="@string/medication" />
 
         <AutoCompleteTextView
             android:id="@+id/medication_name"
-            android:hint="@string/enter_medication_name"
-            style="@style/AppTheme.text.textEditor" />
+            style="@style/AppTheme.text.textEditor"
+            android:hint="@string/enter_medication_name" />
 
     </LinearLayout>
 

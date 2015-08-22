@@ -27,6 +27,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
             "/Android/data/com.dropbox.android";
     private static final String DB_PATH = DROPBOX_PATH + "/files/scratch";
+
     public HomeActivityTest() {
         super(HomeActivity.class);
     }

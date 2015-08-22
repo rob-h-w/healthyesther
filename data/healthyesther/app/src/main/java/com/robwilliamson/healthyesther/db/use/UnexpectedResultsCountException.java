@@ -11,7 +11,7 @@ public class UnexpectedResultsCountException extends RuntimeException {
 
     public UnexpectedResultsCountException(int expected, int actual, Cursor cursor) {
         super("Expected " + expected + ", but actually received " + actual + ".");
-        String [] columnNames = cursor.getColumnNames();
+        String[] columnNames = cursor.getColumnNames();
         StringBuilder columns = new StringBuilder();
         String separator = "";
         for (String columnName : columnNames) {

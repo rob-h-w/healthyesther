@@ -30,21 +30,6 @@ import java.util.Arrays;
 public abstract class EventListFragment extends EditFragment<EventListFragment.Watcher> implements AbsListView.OnItemClickListener {
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface Watcher extends QueuedQueryExecutor {
-        void onEventSelected(EventData eventData);
-        void onQueryFailure(Throwable failure);
-    }
-
-    /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
@@ -92,7 +77,8 @@ public abstract class EventListFragment extends EditFragment<EventListFragment.W
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {}
+    protected void updateWatcher(Watcher watcher) {
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -145,5 +131,21 @@ public abstract class EventListFragment extends EditFragment<EventListFragment.W
 
     protected EventListAdapter getAdapter() {
         return mAdapter;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface Watcher extends QueuedQueryExecutor {
+        void onEventSelected(EventData eventData);
+
+        void onQueryFailure(Throwable failure);
     }
 }

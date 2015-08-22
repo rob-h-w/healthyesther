@@ -26,7 +26,9 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
     private EventData mIntentEventData = null;
 
     protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
+
     protected abstract void onModifySelected(SQLiteDatabase db);
+
     protected abstract int getModifyFailedStringId();
 
     @Override
@@ -88,7 +90,7 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
                     Toast.makeText(
                             AbstractEditEventActivity.this,
                             getText(getModifyFailedStringId())
-                            + "/n" + Utils.format(error),
+                                    + "/n" + Utils.format(error),
                             Toast.LENGTH_LONG).show();
                 }
             });

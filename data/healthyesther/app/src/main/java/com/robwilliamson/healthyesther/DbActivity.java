@@ -27,10 +27,18 @@ import java.util.List;
 public abstract class DbActivity extends BusyActivity
         implements QueuedQueryExecutor, QueryUserProvider, ConfirmationDialogFragment.Observer {
     private static final String LOG_TAG = DbActivity.class.getName();
-    private static final String CONFIRMATION_DIALOG =  "CONFIRMATION_DIALOG";
+    private static final String CONFIRMATION_DIALOG = "CONFIRMATION_DIALOG";
 
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
+
+    private static void setEnabled(Menu menu, int itemId, boolean enabled) {
+        MenuItem item = menu.findItem(itemId);
+
+        if (item != null) {
+            item.setEnabled(enabled);
+        }
+    }
 
     @Override
     public void enqueueQueries(List<Query> queries) {
@@ -178,8 +186,8 @@ public abstract class DbActivity extends BusyActivity
             return;
         }
 
-        final Throwable[] error = new Throwable[] { null };
-        final Cursor[] cursor = new Cursor[] { null };
+        final Throwable[] error = new Throwable[]{null};
+        final Cursor[] cursor = new Cursor[]{null};
 
         try {
             cursor[0] = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
@@ -219,14 +227,6 @@ public abstract class DbActivity extends BusyActivity
     private void cancel(AsyncTask<Void, Void, Void> task) {
         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
             task.cancel(true);
-        }
-    }
-
-    private static void setEnabled(Menu menu, int itemId, boolean enabled) {
-        MenuItem item = menu.findItem(itemId);
-
-        if (item != null) {
-            item.setEnabled(enabled);
         }
     }
 }

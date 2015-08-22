@@ -21,7 +21,7 @@ public abstract class GetAllNotesQuery extends GetAllValuesQuery {
 
     @Override
     public String[] getResultColumns() {
-        return Table.cleanName(new String[] {
+        return Table.cleanName(new String[]{
                 Note._ID,
                 Note.NAME,
                 Note.NOTE

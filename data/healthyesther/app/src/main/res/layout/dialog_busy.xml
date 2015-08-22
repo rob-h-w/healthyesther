@@ -5,11 +5,11 @@
     android:clickable="true">
 
     <ProgressBar
+        android:id="@+id/busyProgress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/busyProgress"
         android:layout_gravity="center"
-        android:indeterminate="true"
-        android:background="@android:color/transparent" />
+        android:background="@android:color/transparent"
+        android:indeterminate="true" />
 </FrameLayout>

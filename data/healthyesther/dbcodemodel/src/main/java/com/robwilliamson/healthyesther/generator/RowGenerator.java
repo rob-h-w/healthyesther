@@ -28,20 +28,14 @@ import java.util.Map;
 @ClassGeneratorFeatures(name = "Row", parameterName = "row")
 public class RowGenerator extends BaseClassGenerator {
 
-    private static String name(RowGenerator rowGenerator) {
-        return Strings.lowerCase(rowGenerator.getTableGenerator().getPreferredParameterName()) +
-                "Row";
-    }
-
     private final TableGenerator mTableGenerator;
-    private List<ColumnField> mSortedFields;
     private final JMethod mRowConstructor;
     private final JMethod mJoinConstructor;
+    private List<ColumnField> mSortedFields;
     private JFieldVar mColumnNames;
     private List<ColumnField> mPrimaryKeyFields = new ArrayList<>();
     private List<RowField> mSortedRowDependencies = new ArrayList<>();
     private Map<ColumnField, RowField> mPrimaryKeyFieldToRowMap = new HashMap<>();
-
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
 
@@ -59,6 +53,11 @@ public class RowGenerator extends BaseClassGenerator {
         } else {
             mJoinConstructor = null;
         }
+    }
+
+    private static String name(RowGenerator rowGenerator) {
+        return Strings.lowerCase(rowGenerator.getTableGenerator().getPreferredParameterName()) +
+                "Row";
     }
 
     public void init() {

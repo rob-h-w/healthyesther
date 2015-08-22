@@ -17,38 +17,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class Espresso {
-    static class Both<T> extends BaseMatcher<T> {
-        private final Matcher<T> mLeft;
-        private final Matcher<T> mRight;
-
-        public Both(Matcher<T> left, Matcher<T> right) {
-            mLeft = left;
-            mRight = right;
-        }
-
-        @Override
-        public boolean matches(Object o) {
-            try {
-                return mLeft.matches(o) && mRight.matches(o);
-            } catch (ClassCastException e) {
-                return false;
-            }
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendDescriptionOf(mLeft);
-            description.appendDescriptionOf(mRight);
-        }
-    }
-
     public static <T> Matcher<T> both(Matcher<T> left, Matcher<T> right) {
         return new Both<T>(left, right);
     }
 
     public static Activity waitForActivityToResume(InstrumentationTestCase testCase) {
         Collection<Activity> resumed = getResumed(testCase);
-        while(resumed.isEmpty()) {
+        while (resumed.isEmpty()) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -62,9 +37,9 @@ public class Espresso {
 
     private static Collection<Activity> getResumed(InstrumentationTestCase testCase) {
         final Instrumentation instrumentation = testCase.getInstrumentation();
-        final ActivityLifecycleMonitor monitor =  monitor((AndroidJUnitRunner) instrumentation);
+        final ActivityLifecycleMonitor monitor = monitor((AndroidJUnitRunner) instrumentation);
         final CountDownLatch latch = new CountDownLatch(1);
-        final Object[] resumed = { null };
+        final Object[] resumed = {null};
 
         try {
             testCase.runTestOnUiThread(new Runnable() {
@@ -96,9 +71,34 @@ public class Espresso {
         }
         lifecycleMonitor.setAccessible(true);
         try {
-            return (ActivityLifecycleMonitor)lifecycleMonitor.get(instrumentation);
+            return (ActivityLifecycleMonitor) lifecycleMonitor.get(instrumentation);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static class Both<T> extends BaseMatcher<T> {
+        private final Matcher<T> mLeft;
+        private final Matcher<T> mRight;
+
+        public Both(Matcher<T> left, Matcher<T> right) {
+            mLeft = left;
+            mRight = right;
+        }
+
+        @Override
+        public boolean matches(Object o) {
+            try {
+                return mLeft.matches(o) && mRight.matches(o);
+            } catch (ClassCastException e) {
+                return false;
+            }
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendDescriptionOf(mLeft);
+            description.appendDescriptionOf(mRight);
         }
     }
 }

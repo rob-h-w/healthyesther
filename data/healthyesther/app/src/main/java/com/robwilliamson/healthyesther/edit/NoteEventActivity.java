@@ -44,8 +44,8 @@ public class NoteEventActivity extends AbstractEditEventActivity
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        Note.Modification note = (Note.Modification)getNoteFragment().getModification();
-        Event.Modification event = (Event.Modification)getEventFragment().getModification();
+        Note.Modification note = (Note.Modification) getNoteFragment().getModification();
+        Event.Modification event = (Event.Modification) getEventFragment().getModification();
         NoteEvent.Modification noteEvent = new NoteEvent.Modification(note, event);
         noteEvent.modify(db);
     }
@@ -62,7 +62,7 @@ public class NoteEventActivity extends AbstractEditEventActivity
      */
     @Override
     public QueryUser[] getQueryUsers() {
-        return new QueryUser[] {
+        return new QueryUser[]{
                 getNoteFragment()
         };
     }

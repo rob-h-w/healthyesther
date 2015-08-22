@@ -11,7 +11,8 @@ public class Database {
 
     private transient List<Table> mTables;
 
-    public Database() {}
+    public Database() {
+    }
 
     public String getName() {
         return name;

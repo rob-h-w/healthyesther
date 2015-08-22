@@ -36,77 +36,30 @@ import java.util.ArrayList;
  */
 public class NavigationDrawerFragment extends Fragment {
 
-    private NavigationDrawerMode mMode = NavigationDrawerMode.ADD;
-
-    public static enum NavigationDrawerMode {
-        ADD(R.string.title_log_events, AddFragment.class),
-        EDIT(R.string.title_review_events, EditFragment.class);
-
-        public static class DrawerModeException extends RuntimeException {
-            DrawerModeException(Throwable t) {
-                super(t);
-            }
-        };
-
-        public final int stringId;
-        public final Class<?>  fragmentClass;
-
-        <T extends AbstractHomeFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
-            this.stringId = stringId;
-            this.fragmentClass = fragmentClass;
-        }
-
-        public AbstractHomeFragment getFragment(FragmentManager manager) {
-            Fragment fragment = manager.findFragmentByTag(name());
-            if (fragment == null) {
-                try {
-                    return (AbstractHomeFragment) fragmentClass.newInstance();
-                } catch (java.lang.InstantiationException | IllegalAccessException e) {
-                    throw new DrawerModeException(e);
-                }
-            }
-
-            return (AbstractHomeFragment) fragment;
-        }
-
-        public void replace (int containerId, FragmentManager manager) {
-            manager.beginTransaction().replace(containerId, getFragment(manager), name()).commit();
-        }
-
-        public static NavigationDrawerMode fromInt(int index) {
-            return values()[index];
-        }
-    }
-
-    /**
-     * Remember the position of the selected item.
-     */
-    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
      * expands it. This shared preference tracks this.
      */
     public static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-
+    /**
+     * Remember the position of the selected item.
+     */
+    private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
+    private NavigationDrawerMode mMode = NavigationDrawerMode.ADD;
     /**
      * A pointer to the current callbacks instance (the Activity).
      */
     private NavigationDrawerCallbacks mCallbacks;
-
     /**
      * Helper component that ties the action bar to the navigation drawer.
      */
     private ActionBarDrawerToggle mDrawerToggle;
-
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
-
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
-
     public NavigationDrawerFragment() {
     }
 
@@ -137,7 +90,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated (Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
@@ -145,7 +98,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(
                 R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -321,6 +274,47 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBar getActionBar() {
         return getActivity().getActionBar();
+    }
+
+    public static enum NavigationDrawerMode {
+        ADD(R.string.title_log_events, AddFragment.class),
+        EDIT(R.string.title_review_events, EditFragment.class);
+
+        public final int stringId;
+
+        ;
+        public final Class<?> fragmentClass;
+        <T extends AbstractHomeFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
+            this.stringId = stringId;
+            this.fragmentClass = fragmentClass;
+        }
+
+        public static NavigationDrawerMode fromInt(int index) {
+            return values()[index];
+        }
+
+        public AbstractHomeFragment getFragment(FragmentManager manager) {
+            Fragment fragment = manager.findFragmentByTag(name());
+            if (fragment == null) {
+                try {
+                    return (AbstractHomeFragment) fragmentClass.newInstance();
+                } catch (java.lang.InstantiationException | IllegalAccessException e) {
+                    throw new DrawerModeException(e);
+                }
+            }
+
+            return (AbstractHomeFragment) fragment;
+        }
+
+        public void replace(int containerId, FragmentManager manager) {
+            manager.beginTransaction().replace(containerId, getFragment(manager), name()).commit();
+        }
+
+        public static class DrawerModeException extends RuntimeException {
+            DrawerModeException(Throwable t) {
+                super(t);
+            }
+        }
     }
 
     /**

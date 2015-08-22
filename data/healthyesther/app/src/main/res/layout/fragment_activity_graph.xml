@@ -5,9 +5,9 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/activity_graph_layout"
         style="@style/AppTheme.sectionLayout"
-        android:id="@+id/activity_graph_layout">
+        android:orientation="vertical">
 
     </LinearLayout>
 

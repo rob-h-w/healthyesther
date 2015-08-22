@@ -8,14 +8,18 @@ import java.util.concurrent.CountDownLatch;
 
 public class BusyActivity extends BaseFragmentActivity {
     private static final String BUSY_TAG = "Busy";
-    private volatile int mBusy = 0;
     private static volatile Dialog mDialog;
+    private volatile int mBusy = 0;
 
     @Override
     protected void onResume() {
         super.onResume();
 
         updateUi();
+    }
+
+    protected boolean isBusy() {
+        return mBusy > 0;
     }
 
     protected void setBusy(final boolean busy) {
@@ -51,10 +55,6 @@ public class BusyActivity extends BaseFragmentActivity {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-    }
-
-    protected boolean isBusy() {
-        return mBusy > 0;
     }
 
     private Fragment getBusyFragment() {

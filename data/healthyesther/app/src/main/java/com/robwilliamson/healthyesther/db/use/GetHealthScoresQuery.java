@@ -22,7 +22,7 @@ public abstract class GetHealthScoresQuery extends GetAllValuesQuery {
 
     @Override
     public String[] getResultColumns() {
-        return Table.cleanName(new String[] {
+        return Table.cleanName(new String[]{
                 HealthScore._ID,
                 HealthScore.BEST_VALUE,
                 HealthScore.MAX_LABEL,

@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.robwilliamson.healthyesther.fragment.edit.EventListFragment"
-    style="@style/AppTheme.contentLayout">
+    style="@style/AppTheme.contentLayout"
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EventListFragment">
 
     <ListView
         android:id="@android:id/list"
+        style="@style/AppTheme.sectionLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/AppTheme.sectionLayout" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@android:id/empty"
+        style="@style/AppTheme.sectionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        style="@style/AppTheme.sectionLayout" />
+        android:gravity="center" />
 
 </FrameLayout>

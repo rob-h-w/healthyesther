@@ -18,11 +18,11 @@ public class ColumnDependency {
         this.column = column;
     }
 
-    public void setDependency(Column dependency) {
-        mDependency = dependency;
-    }
-
     public Column getDependency() {
         return mDependency;
+    }
+
+    public void setDependency(Column dependency) {
+        mDependency = dependency;
     }
 }

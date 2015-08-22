@@ -25,6 +25,7 @@ public abstract class SelectEventAndType implements SelectQuery {
 
     /**
      * Show events that occurred on or later than the earliest date provided.
+     *
      * @param earliest
      */
     public SelectEventAndType(final DateTime earliest) {
@@ -43,7 +44,7 @@ public abstract class SelectEventAndType implements SelectQuery {
         try {
             db.beginTransaction();
 
-            String[] qualifiedUniqueColumns = new String[] {
+            String[] qualifiedUniqueColumns = new String[]{
                     c.EVENT.getQualifiedName(Event._ID),
                     c.EVENT.getQualifiedName(Event.WHEN),
                     c.EVENT.getQualifiedName(Event.NAME),
@@ -93,7 +94,7 @@ public abstract class SelectEventAndType implements SelectQuery {
 
     @Override
     public String[] getResultColumns() {
-        return Table.cleanName(new String[] {
+        return Table.cleanName(new String[]{
                 Event._ID,
                 Event.WHEN,
                 Event.NAME,
