@@ -110,6 +110,7 @@ public final class MedicationTable
 
                 public void onCompleted() {
                     mId = primaryKey;
+                    setIsInDatabase(true);
                 }
 
             }

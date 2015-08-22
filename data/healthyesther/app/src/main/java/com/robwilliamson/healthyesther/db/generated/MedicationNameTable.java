@@ -140,6 +140,7 @@ public final class MedicationNameTable
 
                 public void onCompleted() {
                     mMedicationId = medicationId[ 0 ];
+                    setIsInDatabase(true);
                 }
 
             }

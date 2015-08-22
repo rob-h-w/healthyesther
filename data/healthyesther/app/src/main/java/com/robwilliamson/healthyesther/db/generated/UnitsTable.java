@@ -77,6 +77,7 @@ public final class UnitsTable
 
                 public void onCompleted() {
                     mId = primaryKey;
+                    setIsInDatabase(true);
                 }
 
             }

@@ -150,6 +150,7 @@ public final class NoteEventTable
                 public void onCompleted() {
                     mEventId = eventId[ 0 ];
                     mNoteId = noteId[ 0 ];
+                    setIsInDatabase(true);
                 }
 
             }

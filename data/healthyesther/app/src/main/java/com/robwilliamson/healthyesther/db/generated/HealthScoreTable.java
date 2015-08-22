@@ -158,6 +158,7 @@ public final class HealthScoreTable
 
                 public void onCompleted() {
                     mId = primaryKey;
+                    setIsInDatabase(true);
                 }
 
             }

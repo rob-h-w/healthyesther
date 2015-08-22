@@ -174,6 +174,7 @@ public final class EventTable
 
                 public void onCompleted() {
                     mId = primaryKey;
+                    setIsInDatabase(true);
                 }
 
             }

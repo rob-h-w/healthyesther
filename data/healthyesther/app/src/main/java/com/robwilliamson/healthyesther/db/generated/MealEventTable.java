@@ -175,6 +175,7 @@ public final class MealEventTable
                 public void onCompleted() {
                     mEventId = eventId[ 0 ];
                     mMealId = mealId[ 0 ];
+                    setIsInDatabase(true);
                 }
 
             }

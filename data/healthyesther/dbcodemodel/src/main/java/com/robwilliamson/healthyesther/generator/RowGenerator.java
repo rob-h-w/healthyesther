@@ -179,6 +179,8 @@ public class RowGenerator extends BaseClassGenerator {
                         temporaryPrimaryKeys.get(field).component(JExpr.lit(0)));
             }
 
+            callback.invoke("setIsInDatabase").arg(JExpr.lit(true));
+
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
             body._return(primaryKey);
         } else {

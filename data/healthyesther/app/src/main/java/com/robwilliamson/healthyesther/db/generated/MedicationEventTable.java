@@ -150,6 +150,7 @@ public final class MedicationEventTable
                 public void onCompleted() {
                     mEventId = eventId[ 0 ];
                     mMedicationId = medicationId[ 0 ];
+                    setIsInDatabase(true);
                 }
 
             }

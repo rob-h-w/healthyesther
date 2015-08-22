@@ -121,6 +121,7 @@ public final class EventTypeTable
 
                 public void onCompleted() {
                     mId = primaryKey;
+                    setIsInDatabase(true);
                 }
 
             }

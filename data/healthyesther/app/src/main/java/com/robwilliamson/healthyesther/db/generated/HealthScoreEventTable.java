@@ -162,6 +162,7 @@ public final class HealthScoreEventTable
                 public void onCompleted() {
                     mEventId = eventId[ 0 ];
                     mHealthScoreId = healthScoreId[ 0 ];
+                    setIsInDatabase(true);
                 }
 
             }

@@ -121,6 +121,7 @@ public final class NoteTable
 
                 public void onCompleted() {
                     mId = primaryKey;
+                    setIsInDatabase(true);
                 }
 
             }
