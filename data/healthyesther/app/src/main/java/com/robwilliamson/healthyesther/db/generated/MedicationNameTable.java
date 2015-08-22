@@ -126,7 +126,7 @@ public final class MedicationNameTable
                 medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
             }
             final long rowId = transaction.insert(COLUMN_NAMES, medicationId[ 0 ], mName);
-            final MedicationNameTable.MedicationNameTablePrimaryKey primaryKey = new MedicationNameTable.MedicationNameTablePrimaryKey(medicationId[ 0 ]);
+            final MedicationNameTable.MedicationNameTablePrimaryKey primaryKey = new MedicationNameTable.MedicationNameTablePrimaryKey(medicationId[ 0 ], mName);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

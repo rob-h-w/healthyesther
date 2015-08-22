@@ -36,6 +36,7 @@ public class RowGenerator extends BaseClassGenerator {
     private List<ColumnField> mPrimaryKeyFields = new ArrayList<>();
     private List<RowField> mSortedRowDependencies = new ArrayList<>();
     private Map<ColumnField, RowField> mPrimaryKeyFieldToRowMap = new HashMap<>();
+
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
 
@@ -121,6 +122,10 @@ public class RowGenerator extends BaseClassGenerator {
             for (ColumnField field : mSortedFields) {
                 if (!field.column.isForeignKey() || !field.column.isPrimaryKey()) {
                     insertionCall.arg(field.fieldVar);
+
+                    if (field.column.isPrimaryKey() && !hasSingleRowIdPrimaryKey()) {
+                        newPrimaryKeyTypeCall.arg(field.fieldVar);
+                    }
                     continue;
                 }
 
