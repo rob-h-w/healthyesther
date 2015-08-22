@@ -115,6 +115,9 @@ public final class HealthScoreEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreTablePrimaryKey, long score) {
+            mEventId = eventTablePrimaryKey;
+            mHealthScoreId = healthScoreTablePrimaryKey;
+            mScore = score;
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {

@@ -112,6 +112,8 @@ public final class NoteEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
+            mEventId = eventTablePrimaryKey;
+            mNoteId = noteTablePrimaryKey;
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {

@@ -112,6 +112,8 @@ public final class MedicationEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+            mEventId = eventTablePrimaryKey;
+            mMedicationId = medicationTablePrimaryKey;
         }
 
         public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {

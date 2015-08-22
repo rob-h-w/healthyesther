@@ -36,7 +36,6 @@ public class RowGenerator extends BaseClassGenerator {
     private List<ColumnField> mSortedFields;
     private JFieldVar mColumnNames;
     private List<ColumnField> mPrimaryKeyFields = new ArrayList<>();
-    private List<RowField> mSortedRowDependencies = new ArrayList<>();
     private Map<ColumnField, RowField> mPrimaryKeyFieldToRowMap = new HashMap<>();
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
@@ -231,31 +230,27 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private void implementJoinConstructorFor(ColumnField field, boolean nullable) {
-        JVar param = null;
+        if (mJoinConstructor == null) {
+            return;
+        }
+
+        JVar param;
         if (field.column.isForeignKey()) {
             // Always there is a join constructor if there are foreign keys.
             ColumnDependency dependency = field.column.getColumnDependency();
             param = addJoinConstructorParam(dependency);
-        } else if (field.column.isPrimaryKey()) {
-            PrimaryKeyGenerator keyGenerator = field.column
-                    .getTable().getGenerator().getPrimaryKeyGenerator();
-            if (mJoinConstructor != null) {
-                param = mJoinConstructor.param(keyGenerator.getJClass(), field.name);
-            }
+            mJoinConstructor.body().assign(field.fieldVar, param);
         } else {
-            if (mJoinConstructor != null) {
-                param = mJoinConstructor.param(field.column.getDependentJtype(model()), field.name);
-            }
+            param = mJoinConstructor.param(field.fieldVar.type(), field.name);
+            mJoinConstructor.body().assign(field.fieldVar, param);
         }
 
-        if (param != null) {
-            annotateNonull(param, !nullable);
-        }
+        annotateNonull(param, !nullable);
     }
 
     private void implementRowConstructorFor(ColumnField field, boolean nullable) {
         ColumnDependency dependency = field.column.getColumnDependency();
-        JVar param = null;
+        JVar param;
         if (field.column.isForeignKey()) {
 
             RowGenerator row = field.column
@@ -263,7 +258,6 @@ public class RowGenerator extends BaseClassGenerator {
             RowField rowField = new RowField(getJClass(), row, field.name + "Row");
             param = addRowConstructorParam(dependency);
             mRowConstructor.body().assign(rowField.fieldVar, param);
-            mSortedRowDependencies.add(rowField);
             mPrimaryKeyFieldToRowMap.put(field, rowField);
         } else {
             param = mRowConstructor.param(field.fieldVar.type(), field.name);

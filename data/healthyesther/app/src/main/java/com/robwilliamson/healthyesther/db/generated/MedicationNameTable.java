@@ -106,7 +106,9 @@ public final class MedicationNameTable
 
         public Row(
             @Nonnull
-            MedicationNameTable.MedicationNameTablePrimaryKey name, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+            mName = name;
+            mMedicationId = medicationTablePrimaryKey;
         }
 
         public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {

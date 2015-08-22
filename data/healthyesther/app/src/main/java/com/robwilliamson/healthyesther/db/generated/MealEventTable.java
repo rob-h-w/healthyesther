@@ -119,6 +119,10 @@ public final class MealEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealTablePrimaryKey, double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
+            mEventId = eventTablePrimaryKey;
+            mMealId = mealTablePrimaryKey;
+            mAmount = amount;
+            mUnitsId = unitsTablePrimaryKey;
         }
 
         public void setAmount(double amount) {

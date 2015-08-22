@@ -109,6 +109,12 @@ public final class EventTable
             com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey eventTypeTablePrimaryKey,
             @Nonnull
             DateTime when, EventTable.EventTablePrimaryKey id, DateTime modified, String name) {
+            mCreated = created;
+            mTypeId = eventTypeTablePrimaryKey;
+            mWhen = when;
+            mId = id;
+            mModified = modified;
+            mName = name;
         }
 
         public void setId(EventTable.EventTablePrimaryKey id) {
