@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.robwilliamson.healthyesther.type.Column;
@@ -33,6 +34,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         mTableGenerator = tableGenerator;
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
+        getJClass()._implements(Where.class);
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
@@ -40,8 +42,30 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
                 makeConstructors();
                 makeValueAccessors();
                 makeEquals();
+                implementWhere();
             }
         });
+    }
+
+    private void implementWhere() {
+        JMethod getWhere = getJClass().method(JMod.PUBLIC, String.class, "getWhere");
+        JBlock body = getWhere.body();
+        JVar where = body.decl(model()._ref(StringBuilder.class), "where", JExpr._new(model()._ref(StringBuilder.class)));
+        String separator = "";
+
+        for (ColumnField field : mSortedPrimaryKeyFields) {
+            body.invoke(where, "append").arg(JExpr.lit(separator + "(" + field.column.getName() + " = "));
+            if (field.column.isForeignKey()) {
+                body.invoke(where, "append").arg(field.fieldVar.invoke("getId"));
+            } else {
+                body.invoke(where, "append").arg(field.fieldVar);
+            }
+            body.invoke(where, "append").arg(JExpr.lit(")"));
+
+            separator = " AND ";
+        }
+
+        body._return(where.invoke("toString"));
     }
 
     private void makeConstructors() {

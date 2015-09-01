@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -20,7 +21,9 @@ public final class AndroidMetadataTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class AndroidMetadataTablePrimaryKey {
+    public final static class AndroidMetadataTablePrimaryKey
+        implements Where
+    {
 
 
         public boolean equals(Object other) {
@@ -34,6 +37,11 @@ public final class AndroidMetadataTable
                 return false;
             }
             return true;
+        }
+
+        public String getWhere() {
+            StringBuilder where = new StringBuilder();
+            return where.toString();
         }
 
     }

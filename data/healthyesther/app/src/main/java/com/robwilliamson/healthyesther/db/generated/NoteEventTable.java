@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -21,7 +22,9 @@ public final class NoteEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class NoteEventTablePrimaryKey {
+    public final static class NoteEventTablePrimaryKey
+        implements Where
+    {
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey mNoteId;
@@ -74,6 +77,17 @@ public final class NoteEventTable
                 }
             }
             return true;
+        }
+
+        public String getWhere() {
+            StringBuilder where = new StringBuilder();
+            where.append("(event_id = ");
+            where.append(mEventId.getId());
+            where.append(")");
+            where.append(" AND (note_id = ");
+            where.append(mNoteId.getId());
+            where.append(")");
+            return where.toString();
         }
 
     }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -128,7 +129,9 @@ public final class UnitsTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class UnitsTablePrimaryKey {
+    public final static class UnitsTablePrimaryKey
+        implements Where
+    {
 
         private long mId;
 
@@ -163,6 +166,14 @@ public final class UnitsTable
                 return false;
             }
             return true;
+        }
+
+        public String getWhere() {
+            StringBuilder where = new StringBuilder();
+            where.append("(_id = ");
+            where.append(mId);
+            where.append(")");
+            return where.toString();
         }
 
     }

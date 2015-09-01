@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -21,7 +22,9 @@ public final class HealthScoreTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class HealthScoreTablePrimaryKey {
+    public final static class HealthScoreTablePrimaryKey
+        implements Where
+    {
 
         private long mId;
 
@@ -56,6 +59,14 @@ public final class HealthScoreTable
                 return false;
             }
             return true;
+        }
+
+        public String getWhere() {
+            StringBuilder where = new StringBuilder();
+            where.append("(_id = ");
+            where.append(mId);
+            where.append(")");
+            return where.toString();
         }
 
     }
