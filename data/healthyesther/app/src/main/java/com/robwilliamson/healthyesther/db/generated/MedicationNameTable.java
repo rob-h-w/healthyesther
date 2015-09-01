@@ -79,6 +79,7 @@ public final class MedicationNameTable
             return true;
         }
 
+        @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
             where.append("(medication_id = ");

@@ -61,6 +61,7 @@ public final class EventTypeTable
             return true;
         }
 
+        @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
             where.append("(_id = ");

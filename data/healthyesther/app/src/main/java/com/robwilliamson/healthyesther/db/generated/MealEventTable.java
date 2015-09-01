@@ -79,6 +79,7 @@ public final class MealEventTable
             return true;
         }
 
+        @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
             where.append("(event_id = ");

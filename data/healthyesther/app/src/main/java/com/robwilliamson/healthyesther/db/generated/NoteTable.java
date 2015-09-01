@@ -61,6 +61,7 @@ public final class NoteTable
             return true;
         }
 
+        @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
             where.append("(_id = ");

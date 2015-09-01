@@ -168,6 +168,7 @@ public final class UnitsTable
             return true;
         }
 
+        @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
             where.append("(_id = ");

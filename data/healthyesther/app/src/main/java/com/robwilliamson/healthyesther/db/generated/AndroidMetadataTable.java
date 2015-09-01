@@ -39,6 +39,7 @@ public final class AndroidMetadataTable
             return true;
         }
 
+        @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
             return where.toString();
