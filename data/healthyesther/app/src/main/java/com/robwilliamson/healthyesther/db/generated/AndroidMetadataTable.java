@@ -85,6 +85,11 @@ public final class AndroidMetadataTable
             return transaction.insert(COLUMN_NAMES, mLocale);
         }
 
+        @Override
+        public void remove(Transaction transaction) {
+            throw new UnsupportedOperationException();
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

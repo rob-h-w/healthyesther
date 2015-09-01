@@ -22,7 +22,7 @@ public abstract class BaseTransactable {
         } else if (modify) {
             //modify(transaction);
         } else if (remove) {
-            //remove(transaction);
+            remove(transaction);
         }
     }
 
@@ -31,8 +31,9 @@ public abstract class BaseTransactable {
     }
 
     protected abstract Object insert(Transaction transaction);
-    /*protected abstract void modify(Transaction transaction);
-    protected abstract void remove(Transaction transaction);*/
+
+    /*protected abstract void modify(Transaction transaction);*/
+    protected abstract void remove(Transaction transaction);
 
     protected void setIsInDatabase(boolean inDatabase) {
         mIsInDatabase = inDatabase;
@@ -50,7 +51,21 @@ public abstract class BaseTransactable {
         return mIsModified;
     }
 
+    protected void setIsDeleted(boolean deleted) {
+        mDeleted = deleted;
+    }
+
     protected boolean isDeleted() {
         return mDeleted;
+    }
+
+    public final class RemoveFailed extends RuntimeException {
+        public RemoveFailed(int expected, int actual) {
+            super("Attempted to remove " + expected + " rows, actually " + actual + " rows were selected.");
+        }
+
+        public RemoveFailed(Throwable cause) {
+            super(cause);
+        }
     }
 }

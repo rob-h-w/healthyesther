@@ -2,8 +2,10 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.RowField;
@@ -13,6 +15,7 @@ import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
@@ -95,10 +98,67 @@ public class RowGenerator extends BaseClassGenerator {
                 makeAccessors();
                 makeInsert();
                 //makeModify();
-                //makeRemove();
+                makeRemove();
                 makeEquals();
             }
         });
+    }
+
+    private void makeRemove() {
+        JMethod remove = getJClass().method(JMod.PUBLIC, model().VOID, "remove");
+        remove.annotate(Override.class);
+        JVar transaction = remove.param(Transaction.class, "transaction");
+        JBlock body = remove.body();
+
+        if (mPrimaryKeyFields.isEmpty()) {
+            body._throw(JExpr._new(model()._ref(UnsupportedOperationException.class)));
+            return;
+        }
+
+        body._if(JExpr._this().invoke("isInDatabase").not())._then()._return();
+
+        JExpression where = null;
+        if (mPrimaryKeyFields.size() > 1) {
+            JInvocation newAndWhere = JExpr._new(model()._ref(AndWhere.class));
+            for (ColumnField field : mPrimaryKeyFields) {
+                newAndWhere.arg(ensureWhere(field));
+            }
+            where = newAndWhere;
+        } else {
+            where = ensureWhere(mPrimaryKeyFields.get(0));
+        }
+
+        JVar actual = body.decl(model().INT, "actual", transaction.invoke(remove).arg(where));
+
+        JExpression expected = JExpr.lit(1);
+        body._if(actual.ne(expected))._then()._throw(JExpr._new(model()._ref(BaseTransactable.RemoveFailed.class)).arg(expected).arg(actual));
+
+        JDefinedClass anonymousType = model().anonymousClass(
+                Transaction.CompletionHandler.class);
+        JBlock callback = anonymousType.method(
+                JMod.PUBLIC,
+                model().VOID,
+                "onCompleted").body();
+
+        setIsInDatabaseCall(callback, false);
+        setIsDeletedCall(callback, true);
+
+        body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
+    }
+
+    private JExpression ensureWhere(ColumnField field) {
+        if (model()._ref(Where.class).boxify().isAssignableFrom(field.fieldVar.type().boxify())) {
+            return field.fieldVar;
+        }
+
+        JDefinedClass where = model().anonymousClass(Where.class);
+        JMethod getWhere = where.method(JMod.PUBLIC, model()._ref(String.class), "getWhere");
+        getWhere.body()._return(JExpr.lit(field.column.getName() + " = ").plus(field.fieldVar));
+        return JExpr._new(where);
+    }
+
+    private void setIsDeletedCall(JBlock block, boolean isDeleted) {
+        block.invoke("setIsDeleted").arg(JExpr.lit(isDeleted));
     }
 
     private void makeEquals() {

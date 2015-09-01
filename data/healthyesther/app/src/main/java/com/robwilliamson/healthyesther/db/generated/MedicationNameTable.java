@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
@@ -170,6 +171,35 @@ public final class MedicationNameTable
             }
             );
             return primaryKey;
+        }
+
+        @Override
+        public void remove(Transaction transaction) {
+            if (!this.isInDatabase()) {
+                return ;
+            }
+            int actual = transaction.remove(new AndWhere(mMedicationId, new Where() {
+
+
+                public String getWhere() {
+                    return ("name = "+ mName);
+                }
+
+            }
+            ));
+            if (actual!= 1) {
+                throw new BaseTransactable.RemoveFailed(1, actual);
+            }
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    setIsInDatabase(false);
+                    setIsDeleted(true);
+                }
+
+            }
+            );
         }
 
         public boolean equals(Object other) {

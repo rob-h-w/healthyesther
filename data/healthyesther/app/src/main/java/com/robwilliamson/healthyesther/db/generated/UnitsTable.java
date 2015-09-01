@@ -99,6 +99,27 @@ public final class UnitsTable
             return primaryKey;
         }
 
+        @Override
+        public void remove(Transaction transaction) {
+            if (!this.isInDatabase()) {
+                return ;
+            }
+            int actual = transaction.remove(mId);
+            if (actual!= 1) {
+                throw new BaseTransactable.RemoveFailed(1, actual);
+            }
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    setIsInDatabase(false);
+                    setIsDeleted(true);
+                }
+
+            }
+            );
+        }
+
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -129,8 +150,7 @@ public final class UnitsTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class UnitsTablePrimaryKey
-        implements Where
+    public final static class UnitsTablePrimaryKey implements Where
     {
 
         private long mId;

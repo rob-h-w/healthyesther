@@ -10,6 +10,8 @@ public interface Transaction {
 
     public long insert(List<String> columnNames, Object... columnValues);
 
+    public int remove(Where where);
+
     public static interface CompletionHandler {
         public void onCompleted();
     }
