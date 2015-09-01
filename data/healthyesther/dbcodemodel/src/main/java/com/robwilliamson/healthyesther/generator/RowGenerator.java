@@ -97,11 +97,57 @@ public class RowGenerator extends BaseClassGenerator {
                 makeConstructors();
                 makeAccessors();
                 makeInsert();
-                //makeModify();
+                makeUpdate();
                 makeRemove();
                 makeEquals();
             }
         });
+    }
+
+    private void makeUpdate() {
+        JMethod update = getJClass().method(JMod.PUBLIC, model().VOID, "update");
+        update.annotate(Override.class);
+        JVar transaction = update.param(Transaction.class, "transaction");
+        JBlock body = update.body();
+
+        if (mPrimaryKeyFields.isEmpty()) {
+            body._throw(JExpr._new(model()._ref(UnsupportedOperationException.class)));
+            return;
+        }
+
+        body._if(JExpr._this().invoke("isInDatabase").not())._then()._throw(JExpr._new(model()._ref(BaseTransactable.UpdateFailed.class)).arg(JExpr.lit("Could not update because the row is not in the database.")));
+
+        JExpression where = null;
+        if (mPrimaryKeyFields.size() > 1) {
+            JInvocation newAndWhere = JExpr._new(model()._ref(AndWhere.class));
+            for (ColumnField field : mPrimaryKeyFields) {
+                newAndWhere.arg(ensureWhere(field));
+            }
+            where = newAndWhere;
+        } else {
+            where = ensureWhere(mPrimaryKeyFields.get(0));
+        }
+
+        JInvocation updateInvocation = transaction.invoke(update).arg(where);
+        updateInvocation = updateInvocation.arg(mColumnNames);
+        for (ColumnField field : mSortedFields) {
+            updateInvocation.arg(field.fieldVar);
+        }
+        JVar actual = body.decl(model().INT, "actual", updateInvocation);
+
+        JExpression expected = JExpr.lit(1);
+        body._if(actual.ne(expected))._then()._throw(JExpr._new(model()._ref(BaseTransactable.UpdateFailed.class)).arg(expected).arg(actual));
+
+        JDefinedClass anonymousType = model().anonymousClass(
+                Transaction.CompletionHandler.class);
+        JBlock callback = anonymousType.method(
+                JMod.PUBLIC,
+                model().VOID,
+                "onCompleted").body();
+
+        setIsModifiedCall(callback, false);
+
+        body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
     }
 
     private void makeRemove() {

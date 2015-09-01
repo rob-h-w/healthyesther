@@ -86,6 +86,11 @@ public final class AndroidMetadataTable
         }
 
         @Override
+        public void update(Transaction transaction) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
         public void remove(Transaction transaction) {
             throw new UnsupportedOperationException();
         }

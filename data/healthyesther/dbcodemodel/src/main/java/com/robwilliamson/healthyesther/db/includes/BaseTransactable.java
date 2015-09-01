@@ -20,7 +20,7 @@ public abstract class BaseTransactable {
         if (insert) {
             insert(transaction);
         } else if (modify) {
-            //modify(transaction);
+            update(transaction);
         } else if (remove) {
             remove(transaction);
         }
@@ -32,7 +32,8 @@ public abstract class BaseTransactable {
 
     protected abstract Object insert(Transaction transaction);
 
-    /*protected abstract void modify(Transaction transaction);*/
+    protected abstract void update(Transaction transaction);
+
     protected abstract void remove(Transaction transaction);
 
     protected void setIsInDatabase(boolean inDatabase) {
@@ -66,6 +67,16 @@ public abstract class BaseTransactable {
 
         public RemoveFailed(Throwable cause) {
             super(cause);
+        }
+    }
+
+    public final class UpdateFailed extends RuntimeException {
+        public UpdateFailed(String message) {
+            super(message);
+        }
+
+        public UpdateFailed(int expected, int actual) {
+            super("Attempted to update " + expected + " rows, actually " + actual + " rows were selected.");
         }
     }
 }

@@ -217,6 +217,26 @@ public final class MealEventTable
         }
 
         @Override
+        public void update(Transaction transaction) {
+            if (!this.isInDatabase()) {
+                throw new BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
+            }
+            int actual = transaction.update(new AndWhere(mEventId, mMealId), COLUMN_NAMES, mAmount, mEventId, mMealId, mUnitsId);
+            if (actual!= 1) {
+                throw new BaseTransactable.UpdateFailed(1, actual);
+            }
+            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
+
+
+                public void onCompleted() {
+                    setIsModified(false);
+                }
+
+            }
+            );
+        }
+
+        @Override
         public void remove(Transaction transaction) {
             if (!this.isInDatabase()) {
                 return ;
