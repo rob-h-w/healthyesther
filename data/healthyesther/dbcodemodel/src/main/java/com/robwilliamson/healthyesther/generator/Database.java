@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.sun.codemodel.JArray;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JExpr;
@@ -16,7 +17,6 @@ import java.util.Map;
 @ClassGeneratorFeatures(name = "Database", parameterName = "Db")
 public class Database extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.type.Database mDb;
-    private final DbTransactable mTransactable;
 
     private final JFieldVar mFileName;
 
@@ -25,10 +25,8 @@ public class Database extends BaseClassGenerator {
 
     public Database(
             com.robwilliamson.healthyesther.type.Database database,
-            DbTransactable transactable,
             JPackage jPackage) throws JClassAlreadyExistsException {
         mDb = database;
-        mTransactable = transactable;
 
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
 
@@ -60,7 +58,7 @@ public class Database extends BaseClassGenerator {
 
     private JMethod makeCreateMethod() {
         JMethod create = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "create");
-        create.param(mTransactable.getJClass(), mTransactable.getPreferredParameterName());
+        create.param(model()._ref(Transaction.class), "transaction");
         return create;
     }
 

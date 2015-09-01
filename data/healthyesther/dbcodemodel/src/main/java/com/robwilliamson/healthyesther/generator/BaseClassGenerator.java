@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.generator;
 
-import com.sun.codemodel.JAssignmentTarget;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;

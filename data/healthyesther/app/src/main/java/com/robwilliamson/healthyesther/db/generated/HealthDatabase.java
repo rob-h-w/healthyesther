@@ -1,6 +1,7 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
@@ -28,7 +29,7 @@ public final class HealthDatabase {
     public HealthDatabase() {
     }
 
-    public final void create(DbTransactable transaction) {
+    public final void create(Transaction transaction) {
     }
 
 }
