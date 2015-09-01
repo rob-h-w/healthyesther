@@ -60,6 +60,7 @@ public class NavigationDrawerFragment extends Fragment {
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+
     public NavigationDrawerFragment() {
     }
 
@@ -284,6 +285,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         ;
         public final Class<?> fragmentClass;
+
         <T extends AbstractHomeFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
             this.stringId = stringId;
             this.fragmentClass = fragmentClass;

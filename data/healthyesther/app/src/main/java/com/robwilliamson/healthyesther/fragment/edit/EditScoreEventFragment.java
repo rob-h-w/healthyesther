@@ -23,6 +23,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     private int mValue;
     private HealthScore.Value mScore = new HealthScore.Value();
     private ContextMenu mContextMenu;
+
     public EditScoreEventFragment() {
         super(EditScoreEventFragment.Watcher.class);
     }

@@ -32,6 +32,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     private EventData mEventData;
     private MealEventData mMealEventData;
     private MealData mMealData;
+
     public EditMealFragment() {
         super(EditMealFragment.Watcher.class);
     }

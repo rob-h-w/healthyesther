@@ -28,6 +28,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     private static final String INITIAL_SCORE = "initial_score";
     private HealthScore.Value mInitialScore = null;
     private HashMap<String, HealthScore.Value> mScores = null;
+
     public EditScoreDialogFragment() {
         super();
     }

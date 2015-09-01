@@ -36,6 +36,7 @@ public final class Contract {
     public final NoteEvent NOTE_EVENT;
     public final Units UNITS;
     public final Table[] TABLES;
+
     private Contract() {
         EVENT = new Event();
         EVENT_TYPE = new EventType();

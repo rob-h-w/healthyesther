@@ -10,6 +10,7 @@ import com.robwilliamson.healthyesther.db.definition.Meal;
 public class MealData extends DataAbstraction {
     private Long m_id;
     private String mName;
+
     public MealData() {
     }
 
