@@ -4,7 +4,8 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.AndWhere;
-import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
 
@@ -24,7 +25,7 @@ public final class MedicationNameTable
      * 
      */
     public final static class MedicationNameTablePrimaryKey
-        implements Where
+        implements Key
     {
 
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
@@ -100,12 +101,12 @@ public final class MedicationNameTable
      * 
      */
     public final static class Row
-        extends BaseTransactable
+        extends BaseRow<MedicationNameTable.MedicationNameTablePrimaryKey>
     {
 
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         private String mName;
-        public final static ArrayList COLUMN_NAMES = new ArrayList(2);
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
 
         static {
@@ -176,7 +177,7 @@ public final class MedicationNameTable
         @Override
         public void update(Transaction transaction) {
             if (!this.isInDatabase()) {
-                throw new BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             int actual = transaction.update(new AndWhere(mMedicationId, new Where() {
 
@@ -188,7 +189,7 @@ public final class MedicationNameTable
             }
             ), COLUMN_NAMES, mMedicationId, mName);
             if (actual!= 1) {
-                throw new BaseTransactable.UpdateFailed(1, actual);
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -216,7 +217,7 @@ public final class MedicationNameTable
             }
             ));
             if (actual!= 1) {
-                throw new BaseTransactable.RemoveFailed(1, actual);
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 

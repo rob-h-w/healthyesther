@@ -2,7 +2,7 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
-import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.robwilliamson.healthyesther.type.Column;
@@ -34,7 +34,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         mTableGenerator = tableGenerator;
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
-        getJClass()._implements(Where.class);
+        getJClass()._implements(Key.class);
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
@@ -119,9 +119,13 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return !mSortedPrimaryKeyFields.isEmpty();
     }
 
+    public static String getName(TableGenerator tableGenerator) {
+        return tableGenerator.getName() + Strings.capitalize(getName(PrimaryKeyGenerator.class));
+    }
+
     @Override
     public String getName() {
-        return getTableGenerator().getName() + Strings.capitalize(super.getName());
+        return getName(getTableGenerator());
     }
 
     @Override

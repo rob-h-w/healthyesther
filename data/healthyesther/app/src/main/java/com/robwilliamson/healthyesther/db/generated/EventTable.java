@@ -3,9 +3,9 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -22,7 +22,7 @@ public final class EventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class EventTablePrimaryKey implements Where
+    public final static class EventTablePrimaryKey implements Key
     {
 
         private long mId;
@@ -77,7 +77,7 @@ public final class EventTable
      * 
      */
     public final static class Row
-        extends BaseTransactable
+        extends BaseRow<EventTable.EventTablePrimaryKey>
     {
 
         private DateTime mModified;
@@ -86,7 +86,7 @@ public final class EventTable
         private DateTime mWhen;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.EventTypeTablePrimaryKey mTypeId;
         private EventTable.EventTablePrimaryKey mId;
-        public final static ArrayList COLUMN_NAMES = new ArrayList(6);
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row mTypeIdRow;
 
         static {
@@ -221,11 +221,11 @@ public final class EventTable
         @Override
         public void update(Transaction transaction) {
             if (!this.isInDatabase()) {
-                throw new BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             int actual = transaction.update(mId, COLUMN_NAMES, mId, mCreated, mModified, mName, mTypeId, mWhen);
             if (actual!= 1) {
-                throw new BaseTransactable.UpdateFailed(1, actual);
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -245,7 +245,7 @@ public final class EventTable
             }
             int actual = transaction.remove(mId);
             if (actual!= 1) {
-                throw new BaseTransactable.RemoveFailed(1, actual);
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 

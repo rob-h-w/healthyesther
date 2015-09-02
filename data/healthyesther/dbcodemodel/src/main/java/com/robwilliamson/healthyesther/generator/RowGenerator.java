@@ -3,12 +3,14 @@ package com.robwilliamson.healthyesther.generator;
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.AndWhere;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.RowField;
+import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JAssignmentTarget;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
@@ -47,14 +49,13 @@ public class RowGenerator extends BaseClassGenerator {
         JDefinedClass clazz = mTableGenerator.getJClass()._class(
                 JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
                 getName());
-        clazz._extends(BaseTransactable.class);
 
         setJClass(clazz);
 
-        mRowConstructor = getJClass().constructor(JMod.PUBLIC);
+        mRowConstructor = clazz.constructor(JMod.PUBLIC);
 
         if (getTableGenerator().getTable().hasDependencies()) {
-            mJoinConstructor = getJClass().constructor(JMod.PUBLIC);
+            mJoinConstructor = clazz.constructor(JMod.PUBLIC);
         } else {
             mJoinConstructor = null;
         }
@@ -70,7 +71,7 @@ public class RowGenerator extends BaseClassGenerator {
                 Arrays.asList(getTableGenerator().getTable().getColumns()));
         // Create a static list of field names.
         JClass stringListType = model().ref(ArrayList.class);
-        stringListType.narrow(String.class);
+        stringListType = stringListType.narrow(String.class);
         mColumnNames = getJClass().field(
                 JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
                 stringListType,
@@ -94,6 +95,7 @@ public class RowGenerator extends BaseClassGenerator {
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
+                asyncInit();
                 makeConstructors();
                 makeAccessors();
                 makeInsert();
@@ -102,6 +104,11 @@ public class RowGenerator extends BaseClassGenerator {
                 makeEquals();
             }
         });
+    }
+
+    private void asyncInit() {
+        JClass baseClass = model().ref(BaseRow.class).narrow(mTableGenerator.getPrimaryKeyGenerator().getJClass());
+        getJClass()._extends(baseClass);
     }
 
     private void makeUpdate() {

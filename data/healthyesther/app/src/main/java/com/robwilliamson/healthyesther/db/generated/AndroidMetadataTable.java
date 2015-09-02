@@ -2,9 +2,9 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
-import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -22,7 +22,7 @@ public final class AndroidMetadataTable
      * 
      */
     public final static class AndroidMetadataTablePrimaryKey
-        implements Where
+        implements Key
     {
 
 
@@ -53,11 +53,11 @@ public final class AndroidMetadataTable
      * 
      */
     public final static class Row
-        extends BaseTransactable
+        extends BaseRow<AndroidMetadataTable.AndroidMetadataTablePrimaryKey>
     {
 
         private String mLocale;
-        public final static ArrayList COLUMN_NAMES = new ArrayList(1);
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(1);
 
         static {
             COLUMN_NAMES.add("locale");

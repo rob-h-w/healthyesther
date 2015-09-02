@@ -4,9 +4,9 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.AndWhere;
-import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -24,7 +24,7 @@ public final class MealEventTable
      * 
      */
     public final static class MealEventTablePrimaryKey
-        implements Where
+        implements Key
     {
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
@@ -100,14 +100,14 @@ public final class MealEventTable
      * 
      */
     public final static class Row
-        extends BaseTransactable
+        extends BaseRow<MealEventTable.MealEventTablePrimaryKey>
     {
 
         private double mAmount;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
-        public final static ArrayList COLUMN_NAMES = new ArrayList(4);
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(4);
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
         private com.robwilliamson.healthyesther.db.generated.MealTable.Row mMealIdRow;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.Row mUnitsIdRow;
@@ -219,11 +219,11 @@ public final class MealEventTable
         @Override
         public void update(Transaction transaction) {
             if (!this.isInDatabase()) {
-                throw new BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             int actual = transaction.update(new AndWhere(mEventId, mMealId), COLUMN_NAMES, mAmount, mEventId, mMealId, mUnitsId);
             if (actual!= 1) {
-                throw new BaseTransactable.UpdateFailed(1, actual);
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -243,7 +243,7 @@ public final class MealEventTable
             }
             int actual = transaction.remove(new AndWhere(mEventId, mMealId));
             if (actual!= 1) {
-                throw new BaseTransactable.RemoveFailed(1, actual);
+                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
