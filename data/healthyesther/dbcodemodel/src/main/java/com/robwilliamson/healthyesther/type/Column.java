@@ -182,27 +182,27 @@ public class Column {
         @Override
         public int compare(Column c1, Column c2) {
             if (!c1.isPrimaryKey() && c2.isPrimaryKey()) {
-                return -1;
+                return 1;
             }
 
             if (c1.isPrimaryKey() && !c2.isPrimaryKey()) {
-                return 1;
+                return -1;
             }
 
             if (!c1.isNotNull() && c2.isNotNull()) {
-                return -1;
+                return 1;
             }
 
             if (c1.isNotNull() && !c2.isNotNull()) {
-                return 1;
-            }
-
-            if (!c1.isForeignKey() && c2.isForeignKey()) {
                 return -1;
             }
 
-            if (c1.isForeignKey() && !c2.isForeignKey()) {
+            if (!c1.isForeignKey() && c2.isForeignKey()) {
                 return 1;
+            }
+
+            if (c1.isForeignKey() && !c2.isForeignKey()) {
+                return -1;
             }
 
             return c1.getName().compareTo(c2.getName());
