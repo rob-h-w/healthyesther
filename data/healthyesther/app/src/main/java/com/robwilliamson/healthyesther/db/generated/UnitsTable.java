@@ -22,14 +22,70 @@ public final class UnitsTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row
-        extends BaseRow<UnitsTable.UnitsTablePrimaryKey>
+    public final static class PrimaryKey
+        implements Key
     {
 
-        private double mSiFactor;
-        private String mName;
-        private UnitsTable.UnitsTablePrimaryKey mId;
+        private long mId;
+
+        public PrimaryKey(UnitsTable.PrimaryKey other) {
+            mId = other.mId;
+        }
+
+        public PrimaryKey(long id) {
+            mId = id;
+        }
+
+        public void setId(long id) {
+            mId = id;
+        }
+
+        public long getId() {
+            return mId;
+        }
+
+        public boolean equals(Object other) {
+            if (other == null) {
+                return false;
+            }
+            if (other == this) {
+                return true;
+            }
+            if (!(other instanceof UnitsTable.PrimaryKey)) {
+                return false;
+            }
+            UnitsTable.PrimaryKey thePrimaryKey = ((UnitsTable.PrimaryKey) other);
+            if (thePrimaryKey.mId!= mId) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getWhere() {
+            StringBuilder where = new StringBuilder();
+            where.append("(_id = ");
+            where.append(mId);
+            where.append(")");
+            return where.toString();
+        }
+
+    }
+
+
+    /**
+     * This class is generated, and should not be edited. Edits will be overwritten
+     * 
+     */
+    public final static class Row
+        extends BaseRow<UnitsTable.PrimaryKey>
+    {
+
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        private UnitsTable.PrimaryKey mId;
+        @Nonnull
+        private String mName;
+        private double mSiFactor;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -39,22 +95,10 @@ public final class UnitsTable
 
         public Row(
             @Nonnull
-            String name, UnitsTable.UnitsTablePrimaryKey id, double siFactor) {
+            String name, double siFactor) {
+            setPrimaryKey(new UnitsTable.PrimaryKey());
             mName = name;
-            mId = id;
             mSiFactor = siFactor;
-        }
-
-        public void setId(UnitsTable.UnitsTablePrimaryKey id) {
-            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
-                return ;
-            }
-            mId = id;
-            setIsModified(true);
-        }
-
-        public UnitsTable.UnitsTablePrimaryKey getId() {
-            return mId;
         }
 
         public void setName(String name) {
@@ -83,13 +127,20 @@ public final class UnitsTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName, mSiFactor);
-            final UnitsTable.UnitsTablePrimaryKey primaryKey = new UnitsTable.UnitsTablePrimaryKey(rowId);
+            getConcretePrimaryKey();
+            UnitsTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new UnitsTable.PrimaryKey(primaryKey.getId(), rowId));
+                primaryKey = setPrimaryKey(new UnitsTable.PrimaryKey(primaryKey.getId(), rowId));
+            }
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mSiFactor);
+            final UnitsTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mId = primaryKey;
+                    primaryKey.setId(rowId);
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -104,7 +155,7 @@ public final class UnitsTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(mId, COLUMN_NAMES, mId, mName, mSiFactor);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName, mSiFactor);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -124,7 +175,7 @@ public final class UnitsTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(mId);
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -151,9 +202,6 @@ public final class UnitsTable
                 return false;
             }
             UnitsTable.Row theRow = ((UnitsTable.Row) other);
-            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
-                return false;
-            }
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
@@ -161,60 +209,6 @@ public final class UnitsTable
                 return false;
             }
             return true;
-        }
-
-    }
-
-
-    /**
-     * This class is generated, and should not be edited. Edits will be overwritten
-     * 
-     */
-    public final static class UnitsTablePrimaryKey implements Key
-    {
-
-        private long mId;
-
-        public UnitsTablePrimaryKey(UnitsTable.UnitsTablePrimaryKey other) {
-            mId = other.mId;
-        }
-
-        public UnitsTablePrimaryKey(long id) {
-            mId = id;
-        }
-
-        public void setId(long id) {
-            mId = id;
-        }
-
-        public long getId() {
-            return mId;
-        }
-
-        public boolean equals(Object other) {
-            if (other == null) {
-                return false;
-            }
-            if (other == this) {
-                return true;
-            }
-            if (!(other instanceof UnitsTable.UnitsTablePrimaryKey)) {
-                return false;
-            }
-            UnitsTable.UnitsTablePrimaryKey theUnitsTablePrimaryKey = ((UnitsTable.UnitsTablePrimaryKey) other);
-            if (theUnitsTablePrimaryKey.mId!= mId) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String getWhere() {
-            StringBuilder where = new StringBuilder();
-            where.append("(_id = ");
-            where.append(mId);
-            where.append(")");
-            return where.toString();
         }
 
     }

@@ -22,16 +22,17 @@ public final class NoteTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class NoteTablePrimaryKey implements Key
+    public final static class PrimaryKey
+        implements Key
     {
 
         private long mId;
 
-        public NoteTablePrimaryKey(NoteTable.NoteTablePrimaryKey other) {
+        public PrimaryKey(NoteTable.PrimaryKey other) {
             mId = other.mId;
         }
 
-        public NoteTablePrimaryKey(long id) {
+        public PrimaryKey(long id) {
             mId = id;
         }
 
@@ -50,11 +51,11 @@ public final class NoteTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof NoteTable.NoteTablePrimaryKey)) {
+            if (!(other instanceof NoteTable.PrimaryKey)) {
                 return false;
             }
-            NoteTable.NoteTablePrimaryKey theNoteTablePrimaryKey = ((NoteTable.NoteTablePrimaryKey) other);
-            if (theNoteTablePrimaryKey.mId!= mId) {
+            NoteTable.PrimaryKey thePrimaryKey = ((NoteTable.PrimaryKey) other);
+            if (thePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;
@@ -77,13 +78,14 @@ public final class NoteTable
      * 
      */
     public final static class Row
-        extends BaseRow<NoteTable.NoteTablePrimaryKey>
+        extends BaseRow<NoteTable.PrimaryKey>
     {
 
-        private String mNote;
-        private String mName;
-        private NoteTable.NoteTablePrimaryKey mId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        private NoteTable.PrimaryKey mId;
+        @Nonnull
+        private String mName;
+        private String mNote;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -93,22 +95,10 @@ public final class NoteTable
 
         public Row(
             @Nonnull
-            String name, NoteTable.NoteTablePrimaryKey id, String note) {
+            String name, String note) {
+            setPrimaryKey(new NoteTable.PrimaryKey());
             mName = name;
-            mId = id;
             mNote = note;
-        }
-
-        public void setId(NoteTable.NoteTablePrimaryKey id) {
-            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
-                return ;
-            }
-            mId = id;
-            setIsModified(true);
-        }
-
-        public NoteTable.NoteTablePrimaryKey getId() {
-            return mId;
         }
 
         public void setName(String name) {
@@ -137,13 +127,20 @@ public final class NoteTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName, mNote);
-            final NoteTable.NoteTablePrimaryKey primaryKey = new NoteTable.NoteTablePrimaryKey(rowId);
+            getConcretePrimaryKey();
+            NoteTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new NoteTable.PrimaryKey(primaryKey.getId(), rowId));
+                primaryKey = setPrimaryKey(new NoteTable.PrimaryKey(primaryKey.getId(), rowId));
+            }
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mNote);
+            final NoteTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mId = primaryKey;
+                    primaryKey.setId(rowId);
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -158,7 +155,7 @@ public final class NoteTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(mId, COLUMN_NAMES, mId, mName, mNote);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName, mNote);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -178,7 +175,7 @@ public final class NoteTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(mId);
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -205,9 +202,6 @@ public final class NoteTable
                 return false;
             }
             NoteTable.Row theRow = ((NoteTable.Row) other);
-            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
-                return false;
-            }
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }

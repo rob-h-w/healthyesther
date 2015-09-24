@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
@@ -23,36 +22,36 @@ public final class MedicationEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class MedicationEventTablePrimaryKey
+    public final static class PrimaryKey
         implements Key
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
 
-        public MedicationEventTablePrimaryKey(MedicationEventTable.MedicationEventTablePrimaryKey other) {
+        public PrimaryKey(MedicationEventTable.PrimaryKey other) {
             mEventId = other.mEventId;
             mMedicationId = other.mMedicationId;
         }
 
-        public MedicationEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+        public PrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
             mEventId = eventId;
             mMedicationId = medicationId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId) {
             mEventId = eventId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+        public com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
             mMedicationId = medicationId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey getMedicationId() {
             return mMedicationId;
         }
 
@@ -63,17 +62,17 @@ public final class MedicationEventTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof MedicationEventTable.MedicationEventTablePrimaryKey)) {
+            if (!(other instanceof MedicationEventTable.PrimaryKey)) {
                 return false;
             }
-            MedicationEventTable.MedicationEventTablePrimaryKey theMedicationEventTablePrimaryKey = ((MedicationEventTable.MedicationEventTablePrimaryKey) other);
-            if (theMedicationEventTablePrimaryKey.mEventId!= mEventId) {
-                if ((theMedicationEventTablePrimaryKey.mEventId == null)||(!theMedicationEventTablePrimaryKey.mEventId.equals(mEventId))) {
+            MedicationEventTable.PrimaryKey thePrimaryKey = ((MedicationEventTable.PrimaryKey) other);
+            if (thePrimaryKey.mEventId!= mEventId) {
+                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
                     return false;
                 }
             }
-            if (theMedicationEventTablePrimaryKey.mMedicationId!= mMedicationId) {
-                if ((theMedicationEventTablePrimaryKey.mMedicationId == null)||(!theMedicationEventTablePrimaryKey.mMedicationId.equals(mMedicationId))) {
+            if (thePrimaryKey.mMedicationId!= mMedicationId) {
+                if ((thePrimaryKey.mMedicationId == null)||(!thePrimaryKey.mMedicationId.equals(mMedicationId))) {
                     return false;
                 }
             }
@@ -100,13 +99,13 @@ public final class MedicationEventTable
      * 
      */
     public final static class Row
-        extends BaseRow<MedicationEventTable.MedicationEventTablePrimaryKey>
+        extends BaseRow<MedicationEventTable.PrimaryKey>
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
 
         static {
@@ -116,64 +115,36 @@ public final class MedicationEventTable
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
-            mEventIdRow = eventTableRow;
-            mMedicationIdRow = medicationTableRow;
+            com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
+            setPrimaryKey(new MedicationEventTable.PrimaryKey(eventId, medicationId));
         }
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
-            mEventId = eventTablePrimaryKey;
-            mMedicationId = medicationTablePrimaryKey;
-        }
-
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            if (((mEventId == null)&&(eventId == null))||((mEventId!= null)&&mEventId.equals(eventId))) {
-                return ;
-            }
-            mEventId = eventId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
-            return mEventId;
-        }
-
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
-            if (((mMedicationId == null)&&(medicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(medicationId))) {
-                return ;
-            }
-            mMedicationId = medicationId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
-            return mMedicationId;
+            com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
+            mEventIdRow = eventId;
+            mMedicationIdRow = medicationId;
         }
 
         @Override
         public Object insert(Transaction transaction) {
-            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId == null) {
-                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
+            getConcretePrimaryKey();
+            MedicationEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new MedicationEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMedicationId()));
+                primaryKey = setPrimaryKey(new MedicationEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMedicationId()));
             }
-            final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
-            if (mMedicationId == null) {
-                medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
-            }
-            final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], medicationId[ 0 ]);
-            final MedicationEventTable.MedicationEventTablePrimaryKey primaryKey = new MedicationEventTable.MedicationEventTablePrimaryKey(eventId[ 0 ], medicationId[ 0 ]);
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getMedicationId());
+            final MedicationEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 0 ];
-                    mMedicationId = medicationId[ 0 ];
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -188,7 +159,7 @@ public final class MedicationEventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(new AndWhere(mEventId, mMedicationId), COLUMN_NAMES, mEventId, mMedicationId);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -208,7 +179,7 @@ public final class MedicationEventTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(new AndWhere(mEventId, mMedicationId));
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -235,12 +206,6 @@ public final class MedicationEventTable
                 return false;
             }
             MedicationEventTable.Row theRow = ((MedicationEventTable.Row) other);
-            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
-                return false;
-            }
-            if (!(((mMedicationId == null)&&(theRow.mMedicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(theRow.mMedicationId)))) {
-                return false;
-            }
             return true;
         }
 

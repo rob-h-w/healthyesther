@@ -22,16 +22,17 @@ public final class MealTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class MealTablePrimaryKey implements Key
+    public final static class PrimaryKey
+        implements Key
     {
 
         private long mId;
 
-        public MealTablePrimaryKey(MealTable.MealTablePrimaryKey other) {
+        public PrimaryKey(MealTable.PrimaryKey other) {
             mId = other.mId;
         }
 
-        public MealTablePrimaryKey(long id) {
+        public PrimaryKey(long id) {
             mId = id;
         }
 
@@ -50,11 +51,11 @@ public final class MealTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof MealTable.MealTablePrimaryKey)) {
+            if (!(other instanceof MealTable.PrimaryKey)) {
                 return false;
             }
-            MealTable.MealTablePrimaryKey theMealTablePrimaryKey = ((MealTable.MealTablePrimaryKey) other);
-            if (theMealTablePrimaryKey.mId!= mId) {
+            MealTable.PrimaryKey thePrimaryKey = ((MealTable.PrimaryKey) other);
+            if (thePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;
@@ -77,12 +78,13 @@ public final class MealTable
      * 
      */
     public final static class Row
-        extends BaseRow<MealTable.MealTablePrimaryKey>
+        extends BaseRow<MealTable.PrimaryKey>
     {
 
-        private String mName;
-        private MealTable.MealTablePrimaryKey mId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
+        private MealTable.PrimaryKey mId;
+        @Nonnull
+        private String mName;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -91,21 +93,9 @@ public final class MealTable
 
         public Row(
             @Nonnull
-            String name, MealTable.MealTablePrimaryKey id) {
+            String name) {
+            setPrimaryKey(new MealTable.PrimaryKey());
             mName = name;
-            mId = id;
-        }
-
-        public void setId(MealTable.MealTablePrimaryKey id) {
-            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
-                return ;
-            }
-            mId = id;
-            setIsModified(true);
-        }
-
-        public MealTable.MealTablePrimaryKey getId() {
-            return mId;
         }
 
         public void setName(String name) {
@@ -122,13 +112,20 @@ public final class MealTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final long rowId = transaction.insert(COLUMN_NAMES, mId, mName);
-            final MealTable.MealTablePrimaryKey primaryKey = new MealTable.MealTablePrimaryKey(rowId);
+            getConcretePrimaryKey();
+            MealTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new MealTable.PrimaryKey(primaryKey.getId(), rowId));
+                primaryKey = setPrimaryKey(new MealTable.PrimaryKey(primaryKey.getId(), rowId));
+            }
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName);
+            final MealTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mId = primaryKey;
+                    primaryKey.setId(rowId);
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -143,7 +140,7 @@ public final class MealTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(mId, COLUMN_NAMES, mId, mName);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -163,7 +160,7 @@ public final class MealTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(mId);
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -190,9 +187,6 @@ public final class MealTable
                 return false;
             }
             MealTable.Row theRow = ((MealTable.Row) other);
-            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
-                return false;
-            }
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }

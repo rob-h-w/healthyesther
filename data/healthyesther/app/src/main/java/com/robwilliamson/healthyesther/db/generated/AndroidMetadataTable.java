@@ -21,7 +21,7 @@ public final class AndroidMetadataTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class AndroidMetadataTablePrimaryKey
+    public final static class PrimaryKey
         implements Key
     {
 
@@ -33,7 +33,7 @@ public final class AndroidMetadataTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof AndroidMetadataTable.AndroidMetadataTablePrimaryKey)) {
+            if (!(other instanceof AndroidMetadataTable.PrimaryKey)) {
                 return false;
             }
             return true;
@@ -53,17 +53,18 @@ public final class AndroidMetadataTable
      * 
      */
     public final static class Row
-        extends BaseRow<AndroidMetadataTable.AndroidMetadataTablePrimaryKey>
+        extends BaseRow<AndroidMetadataTable.PrimaryKey>
     {
 
-        private String mLocale;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(1);
+        private String mLocale;
 
         static {
             COLUMN_NAMES.add("locale");
         }
 
         public Row(String locale) {
+            setPrimaryKey(new AndroidMetadataTable.PrimaryKey());
             mLocale = locale;
         }
 

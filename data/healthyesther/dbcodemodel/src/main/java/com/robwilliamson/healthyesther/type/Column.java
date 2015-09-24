@@ -26,6 +26,10 @@ public class Column {
         return name;
     }
 
+    public String getVarName() {
+        return Strings.lowerCase(Strings.underscoresToCamel(getName()));
+    }
+
     public ColumnDependency getColumnDependency() {
         if (mColumnDependency == null) {
 

@@ -22,16 +22,17 @@ public final class EventTypeTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class EventTypeTablePrimaryKey implements Key
+    public final static class PrimaryKey
+        implements Key
     {
 
         private long mId;
 
-        public EventTypeTablePrimaryKey(EventTypeTable.EventTypeTablePrimaryKey other) {
+        public PrimaryKey(EventTypeTable.PrimaryKey other) {
             mId = other.mId;
         }
 
-        public EventTypeTablePrimaryKey(long id) {
+        public PrimaryKey(long id) {
             mId = id;
         }
 
@@ -50,11 +51,11 @@ public final class EventTypeTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof EventTypeTable.EventTypeTablePrimaryKey)) {
+            if (!(other instanceof EventTypeTable.PrimaryKey)) {
                 return false;
             }
-            EventTypeTable.EventTypeTablePrimaryKey theEventTypeTablePrimaryKey = ((EventTypeTable.EventTypeTablePrimaryKey) other);
-            if (theEventTypeTablePrimaryKey.mId!= mId) {
+            EventTypeTable.PrimaryKey thePrimaryKey = ((EventTypeTable.PrimaryKey) other);
+            if (thePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;
@@ -77,50 +78,27 @@ public final class EventTypeTable
      * 
      */
     public final static class Row
-        extends BaseRow<EventTypeTable.EventTypeTablePrimaryKey>
+        extends BaseRow<EventTypeTable.PrimaryKey>
     {
 
-        private String mIcon;
-        private String mName;
-        private EventTypeTable.EventTypeTablePrimaryKey mId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        private EventTypeTable.PrimaryKey mId;
+        @Nonnull
+        private String mName;
+        private String mIcon;
 
         static {
             COLUMN_NAMES.add("_id");
-            COLUMN_NAMES.add("icon");
             COLUMN_NAMES.add("name");
+            COLUMN_NAMES.add("icon");
         }
 
         public Row(
             @Nonnull
-            String name, EventTypeTable.EventTypeTablePrimaryKey id, String icon) {
+            String name, String icon) {
+            setPrimaryKey(new EventTypeTable.PrimaryKey());
             mName = name;
-            mId = id;
             mIcon = icon;
-        }
-
-        public void setId(EventTypeTable.EventTypeTablePrimaryKey id) {
-            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
-                return ;
-            }
-            mId = id;
-            setIsModified(true);
-        }
-
-        public EventTypeTable.EventTypeTablePrimaryKey getId() {
-            return mId;
-        }
-
-        public void setIcon(String icon) {
-            if (((mIcon == null)&&(icon == null))||((mIcon!= null)&&mIcon.equals(icon))) {
-                return ;
-            }
-            mIcon = icon;
-            setIsModified(true);
-        }
-
-        public String getIcon() {
-            return mIcon;
         }
 
         public void setName(String name) {
@@ -135,15 +113,34 @@ public final class EventTypeTable
             return mName;
         }
 
+        public void setIcon(String icon) {
+            if (((mIcon == null)&&(icon == null))||((mIcon!= null)&&mIcon.equals(icon))) {
+                return ;
+            }
+            mIcon = icon;
+            setIsModified(true);
+        }
+
+        public String getIcon() {
+            return mIcon;
+        }
+
         @Override
         public Object insert(Transaction transaction) {
-            final long rowId = transaction.insert(COLUMN_NAMES, mId, mIcon, mName);
-            final EventTypeTable.EventTypeTablePrimaryKey primaryKey = new EventTypeTable.EventTypeTablePrimaryKey(rowId);
+            getConcretePrimaryKey();
+            EventTypeTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new EventTypeTable.PrimaryKey(primaryKey.getId(), rowId));
+                primaryKey = setPrimaryKey(new EventTypeTable.PrimaryKey(primaryKey.getId(), rowId));
+            }
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mIcon);
+            final EventTypeTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mId = primaryKey;
+                    primaryKey.setId(rowId);
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -158,7 +155,7 @@ public final class EventTypeTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(mId, COLUMN_NAMES, mId, mIcon, mName);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName, mIcon);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -178,7 +175,7 @@ public final class EventTypeTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(mId);
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -205,13 +202,10 @@ public final class EventTypeTable
                 return false;
             }
             EventTypeTable.Row theRow = ((EventTypeTable.Row) other);
-            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
+            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
             if (!(((mIcon == null)&&(theRow.mIcon == null))||((mIcon!= null)&&mIcon.equals(theRow.mIcon)))) {
-                return false;
-            }
-            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
             return true;

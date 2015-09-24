@@ -3,11 +3,9 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -24,28 +22,28 @@ public final class MedicationNameTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class MedicationNameTablePrimaryKey
+    public final static class PrimaryKey
         implements Key
     {
 
-        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
         private String mName;
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
 
-        public MedicationNameTablePrimaryKey(MedicationNameTable.MedicationNameTablePrimaryKey other) {
+        public PrimaryKey(MedicationNameTable.PrimaryKey other) {
             mMedicationId = other.mMedicationId;
             mName = other.mName;
         }
 
-        public MedicationNameTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId, String name) {
+        public PrimaryKey(com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId, String name) {
             mMedicationId = medicationId;
             mName = name;
         }
 
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
             mMedicationId = medicationId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey getMedicationId() {
             return mMedicationId;
         }
 
@@ -64,17 +62,17 @@ public final class MedicationNameTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof MedicationNameTable.MedicationNameTablePrimaryKey)) {
+            if (!(other instanceof MedicationNameTable.PrimaryKey)) {
                 return false;
             }
-            MedicationNameTable.MedicationNameTablePrimaryKey theMedicationNameTablePrimaryKey = ((MedicationNameTable.MedicationNameTablePrimaryKey) other);
-            if (theMedicationNameTablePrimaryKey.mMedicationId!= mMedicationId) {
-                if ((theMedicationNameTablePrimaryKey.mMedicationId == null)||(!theMedicationNameTablePrimaryKey.mMedicationId.equals(mMedicationId))) {
+            MedicationNameTable.PrimaryKey thePrimaryKey = ((MedicationNameTable.PrimaryKey) other);
+            if (thePrimaryKey.mMedicationId!= mMedicationId) {
+                if ((thePrimaryKey.mMedicationId == null)||(!thePrimaryKey.mMedicationId.equals(mMedicationId))) {
                     return false;
                 }
             }
-            if (theMedicationNameTablePrimaryKey.mName!= mName) {
-                if ((theMedicationNameTablePrimaryKey.mName == null)||(!theMedicationNameTablePrimaryKey.mName.equals(mName))) {
+            if (thePrimaryKey.mName!= mName) {
+                if ((thePrimaryKey.mName == null)||(!thePrimaryKey.mName.equals(mName))) {
                     return false;
                 }
             }
@@ -101,70 +99,48 @@ public final class MedicationNameTable
      * 
      */
     public final static class Row
-        extends BaseRow<MedicationNameTable.MedicationNameTablePrimaryKey>
+        extends BaseRow<MedicationNameTable.PrimaryKey>
     {
 
-        private com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey mMedicationId;
-        private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
+        @Nonnull
+        private String mName;
+        private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
 
         static {
-            COLUMN_NAMES.add("medication_id");
             COLUMN_NAMES.add("name");
+            COLUMN_NAMES.add("medication_id");
         }
 
         public Row(
             @Nonnull
-            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationTableRow) {
-            mName = name;
-            mMedicationIdRow = medicationTableRow;
+            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
+            setPrimaryKey(new MedicationNameTable.PrimaryKey(name, medicationId));
         }
 
         public Row(
             @Nonnull
-            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationTablePrimaryKey) {
+            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
             mName = name;
-            mMedicationId = medicationTablePrimaryKey;
-        }
-
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey medicationId) {
-            if (((mMedicationId == null)&&(medicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(medicationId))) {
-                return ;
-            }
-            mMedicationId = medicationId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey getMedicationId() {
-            return mMedicationId;
-        }
-
-        public void setName(String name) {
-            if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
-                return ;
-            }
-            mName = name;
-            setIsModified(true);
-        }
-
-        public String getName() {
-            return mName;
+            mMedicationIdRow = medicationId;
         }
 
         @Override
         public Object insert(Transaction transaction) {
-            final com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] medicationId = new com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey[] {mMedicationId };
-            if (mMedicationId == null) {
-                medicationId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MedicationTable.MedicationTablePrimaryKey) mMedicationIdRow.insert(transaction));
+            getConcretePrimaryKey();
+            MedicationNameTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new MedicationNameTable.PrimaryKey(primaryKey.getName(), primaryKey.getMedicationId()));
+                primaryKey = setPrimaryKey(new MedicationNameTable.PrimaryKey(primaryKey.getName(), primaryKey.getMedicationId()));
             }
-            final long rowId = transaction.insert(COLUMN_NAMES, medicationId[ 0 ], mName);
-            final MedicationNameTable.MedicationNameTablePrimaryKey primaryKey = new MedicationNameTable.MedicationNameTablePrimaryKey(medicationId[ 0 ], mName);
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getName(), primaryKey.getMedicationId());
+            final MedicationNameTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mMedicationId = medicationId[ 0 ];
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -179,15 +155,7 @@ public final class MedicationNameTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(new AndWhere(mMedicationId, new Where() {
-
-
-                public String getWhere() {
-                    return ("name = "+ mName);
-                }
-
-            }
-            ), COLUMN_NAMES, mMedicationId, mName);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -207,15 +175,7 @@ public final class MedicationNameTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(new AndWhere(mMedicationId, new Where() {
-
-
-                public String getWhere() {
-                    return ("name = "+ mName);
-                }
-
-            }
-            ));
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -242,12 +202,6 @@ public final class MedicationNameTable
                 return false;
             }
             MedicationNameTable.Row theRow = ((MedicationNameTable.Row) other);
-            if (!(((mMedicationId == null)&&(theRow.mMedicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(theRow.mMedicationId)))) {
-                return false;
-            }
-            if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
-                return false;
-            }
             return true;
         }
 

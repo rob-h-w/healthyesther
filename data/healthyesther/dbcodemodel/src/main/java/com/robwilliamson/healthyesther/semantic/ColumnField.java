@@ -28,23 +28,26 @@ public class ColumnField extends BaseField {
         this.column = other.column;
     }
 
-    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns) {
-        return makeMap(columns, new DefaultMaker(owningClass));
+    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns, boolean excludePrimaryKey) {
+        return makeMap(columns, new DefaultMaker(owningClass), excludePrimaryKey);
     }
 
-    public static Map<String, ColumnField> makeMap(List<Column> columns, Maker maker) {
+    public static Map<String, ColumnField> makeMap(List<Column> columns, Maker maker, boolean excludePrimaryKey) {
         Map<String, ColumnField> map = new HashMap<>(columns.size());
         for (Column column : columns) {
+            if (excludePrimaryKey && column.isPrimaryKey()) {
+                continue;
+            }
             map.put(column.getName(), maker.make(column));
         }
         return map;
     }
 
-    public static List<ColumnField> makeSortedList(JDefinedClass owningClass, List<Column> columns) {
-        return makeSortedList(makeMap(owningClass, columns));
+    public static List<ColumnField> makeSortedList(JDefinedClass owningClass, List<Column> columns, boolean excludePrimaryKey) {
+        return makeSortedList(makeMap(owningClass, columns, excludePrimaryKey), excludePrimaryKey);
     }
 
-    public static List<ColumnField> makeSortedList(Map<String, ColumnField> map) {
+    public static List<ColumnField> makeSortedList(Map<String, ColumnField> map, boolean excludePrimaryKey) {
         List<ColumnField> list = new ArrayList<>(map.size());
 
         String[] names = new String[map.size()];
@@ -52,7 +55,12 @@ public class ColumnField extends BaseField {
         Arrays.sort(names);
 
         for (String name : names) {
-            list.add(map.get(name));
+            ColumnField field = map.get(name);
+            if (excludePrimaryKey && field.column.isPrimaryKey()) {
+                continue;
+            }
+
+            list.add(field);
         }
 
         return list;

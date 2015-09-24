@@ -1,8 +1,13 @@
 package com.robwilliamson.healthyesther.db.includes;
 
-public abstract class BaseRow <T extends Key> extends BaseTransactable implements PrimaryKeyOwner {
+public abstract class BaseRow<T extends Key> extends BaseTransactable implements PrimaryKeyOwner {
     private T mKey;
     private T mNextKey;
+
+    @Override
+    public Key getPrimaryKey() {
+        return mKey;
+    }
 
     protected void setPrimaryKey(T key) {
         if (mKey == key || (mKey != null && mKey.equals(key))) {
@@ -13,13 +18,12 @@ public abstract class BaseRow <T extends Key> extends BaseTransactable implement
         setIsModified(true);
     }
 
-    @Override
-    public Key getPrimaryKey() {
+    protected T getConcretePrimaryKey() {
         return mKey;
     }
 
-    protected T getConcretePrimaryKey() {
-        return mKey;
+    protected T getNextPrimaryKey() {
+        return mNextKey;
     }
 
     protected void setNextPrimaryKey(T key) {
@@ -29,7 +33,8 @@ public abstract class BaseRow <T extends Key> extends BaseTransactable implement
         mNextKey = key;
     }
 
-    protected T getNextPrimaryKey() {
-        return mNextKey;
+    protected void updatePrimaryKeyFromNext() {
+        mKey = mNextKey;
+        mNextKey = null;
     }
 }

@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
@@ -23,36 +22,36 @@ public final class NoteEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class NoteEventTablePrimaryKey
+    public final static class PrimaryKey
         implements Key
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey mNoteId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey mNoteId;
 
-        public NoteEventTablePrimaryKey(NoteEventTable.NoteEventTablePrimaryKey other) {
+        public PrimaryKey(NoteEventTable.PrimaryKey other) {
             mEventId = other.mEventId;
             mNoteId = other.mNoteId;
         }
 
-        public NoteEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteId) {
+        public PrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey noteId) {
             mEventId = eventId;
             mNoteId = noteId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId) {
             mEventId = eventId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+        public com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteId) {
+        public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey noteId) {
             mNoteId = noteId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey getNoteId() {
+        public com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey getNoteId() {
             return mNoteId;
         }
 
@@ -63,17 +62,17 @@ public final class NoteEventTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof NoteEventTable.NoteEventTablePrimaryKey)) {
+            if (!(other instanceof NoteEventTable.PrimaryKey)) {
                 return false;
             }
-            NoteEventTable.NoteEventTablePrimaryKey theNoteEventTablePrimaryKey = ((NoteEventTable.NoteEventTablePrimaryKey) other);
-            if (theNoteEventTablePrimaryKey.mEventId!= mEventId) {
-                if ((theNoteEventTablePrimaryKey.mEventId == null)||(!theNoteEventTablePrimaryKey.mEventId.equals(mEventId))) {
+            NoteEventTable.PrimaryKey thePrimaryKey = ((NoteEventTable.PrimaryKey) other);
+            if (thePrimaryKey.mEventId!= mEventId) {
+                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
                     return false;
                 }
             }
-            if (theNoteEventTablePrimaryKey.mNoteId!= mNoteId) {
-                if ((theNoteEventTablePrimaryKey.mNoteId == null)||(!theNoteEventTablePrimaryKey.mNoteId.equals(mNoteId))) {
+            if (thePrimaryKey.mNoteId!= mNoteId) {
+                if ((thePrimaryKey.mNoteId == null)||(!thePrimaryKey.mNoteId.equals(mNoteId))) {
                     return false;
                 }
             }
@@ -100,13 +99,13 @@ public final class NoteEventTable
      * 
      */
     public final static class Row
-        extends BaseRow<NoteEventTable.NoteEventTablePrimaryKey>
+        extends BaseRow<NoteEventTable.PrimaryKey>
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey mNoteId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey mNoteId;
         private com.robwilliamson.healthyesther.db.generated.NoteTable.Row mNoteIdRow;
 
         static {
@@ -116,64 +115,36 @@ public final class NoteEventTable
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteTableRow) {
-            mEventIdRow = eventTableRow;
-            mNoteIdRow = noteTableRow;
+            com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey noteId) {
+            setPrimaryKey(new NoteEventTable.PrimaryKey(eventId, noteId));
         }
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteTablePrimaryKey) {
-            mEventId = eventTablePrimaryKey;
-            mNoteId = noteTablePrimaryKey;
-        }
-
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            if (((mEventId == null)&&(eventId == null))||((mEventId!= null)&&mEventId.equals(eventId))) {
-                return ;
-            }
-            mEventId = eventId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
-            return mEventId;
-        }
-
-        public void setNoteId(com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey noteId) {
-            if (((mNoteId == null)&&(noteId == null))||((mNoteId!= null)&&mNoteId.equals(noteId))) {
-                return ;
-            }
-            mNoteId = noteId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey getNoteId() {
-            return mNoteId;
+            com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteId) {
+            mEventIdRow = eventId;
+            mNoteIdRow = noteId;
         }
 
         @Override
         public Object insert(Transaction transaction) {
-            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId == null) {
-                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
+            getConcretePrimaryKey();
+            NoteEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new NoteEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getNoteId()));
+                primaryKey = setPrimaryKey(new NoteEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getNoteId()));
             }
-            final com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] noteId = new com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey[] {mNoteId };
-            if (mNoteId == null) {
-                noteId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.NoteTable.NoteTablePrimaryKey) mNoteIdRow.insert(transaction));
-            }
-            final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], noteId[ 0 ]);
-            final NoteEventTable.NoteEventTablePrimaryKey primaryKey = new NoteEventTable.NoteEventTablePrimaryKey(eventId[ 0 ], noteId[ 0 ]);
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getNoteId());
+            final NoteEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 0 ];
-                    mNoteId = noteId[ 0 ];
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -188,7 +159,7 @@ public final class NoteEventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(new AndWhere(mEventId, mNoteId), COLUMN_NAMES, mEventId, mNoteId);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -208,7 +179,7 @@ public final class NoteEventTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(new AndWhere(mEventId, mNoteId));
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -235,12 +206,6 @@ public final class NoteEventTable
                 return false;
             }
             NoteEventTable.Row theRow = ((NoteEventTable.Row) other);
-            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
-                return false;
-            }
-            if (!(((mNoteId == null)&&(theRow.mNoteId == null))||((mNoteId!= null)&&mNoteId.equals(theRow.mNoteId)))) {
-                return false;
-            }
             return true;
         }
 

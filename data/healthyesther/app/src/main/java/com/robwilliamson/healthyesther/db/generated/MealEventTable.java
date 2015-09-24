@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
@@ -23,36 +22,36 @@ public final class MealEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class MealEventTablePrimaryKey
+    public final static class PrimaryKey
         implements Key
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mMealId;
 
-        public MealEventTablePrimaryKey(MealEventTable.MealEventTablePrimaryKey other) {
+        public PrimaryKey(MealEventTable.PrimaryKey other) {
             mEventId = other.mEventId;
             mMealId = other.mMealId;
         }
 
-        public MealEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
+        public PrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId) {
             mEventId = eventId;
             mMealId = mealId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId) {
             mEventId = eventId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+        public com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
+        public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId) {
             mMealId = mealId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey getMealId() {
+        public com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey getMealId() {
             return mMealId;
         }
 
@@ -63,17 +62,17 @@ public final class MealEventTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof MealEventTable.MealEventTablePrimaryKey)) {
+            if (!(other instanceof MealEventTable.PrimaryKey)) {
                 return false;
             }
-            MealEventTable.MealEventTablePrimaryKey theMealEventTablePrimaryKey = ((MealEventTable.MealEventTablePrimaryKey) other);
-            if (theMealEventTablePrimaryKey.mEventId!= mEventId) {
-                if ((theMealEventTablePrimaryKey.mEventId == null)||(!theMealEventTablePrimaryKey.mEventId.equals(mEventId))) {
+            MealEventTable.PrimaryKey thePrimaryKey = ((MealEventTable.PrimaryKey) other);
+            if (thePrimaryKey.mEventId!= mEventId) {
+                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
                     return false;
                 }
             }
-            if (theMealEventTablePrimaryKey.mMealId!= mMealId) {
-                if ((theMealEventTablePrimaryKey.mMealId == null)||(!theMealEventTablePrimaryKey.mMealId.equals(mMealId))) {
+            if (thePrimaryKey.mMealId!= mMealId) {
+                if ((thePrimaryKey.mMealId == null)||(!thePrimaryKey.mMealId.equals(mMealId))) {
                     return false;
                 }
             }
@@ -100,45 +99,56 @@ public final class MealEventTable
      * 
      */
     public final static class Row
-        extends BaseRow<MealEventTable.MealEventTablePrimaryKey>
+        extends BaseRow<MealEventTable.PrimaryKey>
     {
 
-        private double mAmount;
-        private com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey mUnitsId;
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mMealId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(4);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mMealId;
         private com.robwilliamson.healthyesther.db.generated.MealTable.Row mMealIdRow;
+        private com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.Row mUnitsIdRow;
+        private double mAmount;
 
         static {
-            COLUMN_NAMES.add("amount");
             COLUMN_NAMES.add("event_id");
             COLUMN_NAMES.add("meal_id");
             COLUMN_NAMES.add("units_id");
+            COLUMN_NAMES.add("amount");
         }
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.MealTable.Row mealTableRow, double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsTableRow) {
-            mEventIdRow = eventTableRow;
-            mMealIdRow = mealTableRow;
+            com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId, com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId, double amount) {
+            setPrimaryKey(new MealEventTable.PrimaryKey(eventId, mealId));
+            mUnitsId = unitsId;
             mAmount = amount;
-            mUnitsIdRow = unitsTableRow;
         }
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealTablePrimaryKey, double amount, com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsTablePrimaryKey) {
-            mEventId = eventTablePrimaryKey;
-            mMealId = mealTablePrimaryKey;
+            com.robwilliamson.healthyesther.db.generated.MealTable.Row mealId, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId, double amount) {
+            mEventIdRow = eventId;
+            mMealIdRow = mealId;
+            mUnitsIdRow = unitsId;
             mAmount = amount;
-            mUnitsId = unitsTablePrimaryKey;
+        }
+
+        public void setUnitsId(com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId) {
+            if (((mUnitsId == null)&&(unitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(unitsId))) {
+                return ;
+            }
+            mUnitsId = unitsId;
+            setIsModified(true);
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey getUnitsId() {
+            return mUnitsId;
         }
 
         public void setAmount(double amount) {
@@ -153,60 +163,21 @@ public final class MealEventTable
             return mAmount;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            if (((mEventId == null)&&(eventId == null))||((mEventId!= null)&&mEventId.equals(eventId))) {
-                return ;
-            }
-            mEventId = eventId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
-            return mEventId;
-        }
-
-        public void setMealId(com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey mealId) {
-            if (((mMealId == null)&&(mealId == null))||((mMealId!= null)&&mMealId.equals(mealId))) {
-                return ;
-            }
-            mMealId = mealId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey getMealId() {
-            return mMealId;
-        }
-
-        public void setUnitsId(com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey unitsId) {
-            if (((mUnitsId == null)&&(unitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(unitsId))) {
-                return ;
-            }
-            mUnitsId = unitsId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.UnitsTable.UnitsTablePrimaryKey getUnitsId() {
-            return mUnitsId;
-        }
-
         @Override
         public Object insert(Transaction transaction) {
-            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId == null) {
-                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
+            getConcretePrimaryKey();
+            MealEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new MealEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMealId()));
+                primaryKey = setPrimaryKey(new MealEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMealId()));
             }
-            final com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] mealId = new com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey[] {mMealId };
-            if (mMealId == null) {
-                mealId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.MealTable.MealTablePrimaryKey) mMealIdRow.insert(transaction));
-            }
-            final long rowId = transaction.insert(COLUMN_NAMES, mAmount, eventId[ 0 ], mealId[ 0 ], mUnitsId);
-            final MealEventTable.MealEventTablePrimaryKey primaryKey = new MealEventTable.MealEventTablePrimaryKey(eventId[ 0 ], mealId[ 0 ]);
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getMealId(), mUnitsId, mAmount);
+            final MealEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 0 ];
-                    mMealId = mealId[ 0 ];
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -221,7 +192,7 @@ public final class MealEventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(new AndWhere(mEventId, mMealId), COLUMN_NAMES, mAmount, mEventId, mMealId, mUnitsId);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mUnitsId, mAmount);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -241,7 +212,7 @@ public final class MealEventTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(new AndWhere(mEventId, mMealId));
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -268,16 +239,10 @@ public final class MealEventTable
                 return false;
             }
             MealEventTable.Row theRow = ((MealEventTable.Row) other);
-            if (!(mAmount == theRow.mAmount)) {
-                return false;
-            }
-            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
-                return false;
-            }
-            if (!(((mMealId == null)&&(theRow.mMealId == null))||((mMealId!= null)&&mMealId.equals(theRow.mMealId)))) {
-                return false;
-            }
             if (!(((mUnitsId == null)&&(theRow.mUnitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(theRow.mUnitsId)))) {
+                return false;
+            }
+            if (!(mAmount == theRow.mAmount)) {
                 return false;
             }
             return true;

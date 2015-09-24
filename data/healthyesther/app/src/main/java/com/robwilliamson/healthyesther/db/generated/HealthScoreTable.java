@@ -22,16 +22,17 @@ public final class HealthScoreTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class HealthScoreTablePrimaryKey implements Key
+    public final static class PrimaryKey
+        implements Key
     {
 
         private long mId;
 
-        public HealthScoreTablePrimaryKey(HealthScoreTable.HealthScoreTablePrimaryKey other) {
+        public PrimaryKey(HealthScoreTable.PrimaryKey other) {
             mId = other.mId;
         }
 
-        public HealthScoreTablePrimaryKey(long id) {
+        public PrimaryKey(long id) {
             mId = id;
         }
 
@@ -50,11 +51,11 @@ public final class HealthScoreTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof HealthScoreTable.HealthScoreTablePrimaryKey)) {
+            if (!(other instanceof HealthScoreTable.PrimaryKey)) {
                 return false;
             }
-            HealthScoreTable.HealthScoreTablePrimaryKey theHealthScoreTablePrimaryKey = ((HealthScoreTable.HealthScoreTablePrimaryKey) other);
-            if (theHealthScoreTablePrimaryKey.mId!= mId) {
+            HealthScoreTable.PrimaryKey thePrimaryKey = ((HealthScoreTable.PrimaryKey) other);
+            if (thePrimaryKey.mId!= mId) {
                 return false;
             }
             return true;
@@ -77,24 +78,27 @@ public final class HealthScoreTable
      * 
      */
     public final static class Row
-        extends BaseRow<HealthScoreTable.HealthScoreTablePrimaryKey>
+        extends BaseRow<HealthScoreTable.PrimaryKey>
     {
 
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
+        private HealthScoreTable.PrimaryKey mId;
+        @Nonnull
+        private long mBestValue;
+        @Nonnull
+        private String mName;
+        @Nonnull
+        private boolean mRandomQuery;
         private String mMaxLabel;
         private String mMinLabel;
-        private long mBestValue;
-        private String mName;
-        private boolean mRandomQuery;
-        private HealthScoreTable.HealthScoreTablePrimaryKey mId;
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("best_value");
-            COLUMN_NAMES.add("max_label");
-            COLUMN_NAMES.add("min_label");
             COLUMN_NAMES.add("name");
             COLUMN_NAMES.add("random_query");
+            COLUMN_NAMES.add("max_label");
+            COLUMN_NAMES.add("min_label");
         }
 
         public Row(
@@ -103,25 +107,13 @@ public final class HealthScoreTable
             @Nonnull
             String name,
             @Nonnull
-            boolean randomQuery, HealthScoreTable.HealthScoreTablePrimaryKey id, String maxLabel, String minLabel) {
+            boolean randomQuery, String maxLabel, String minLabel) {
+            setPrimaryKey(new HealthScoreTable.PrimaryKey());
             mBestValue = bestValue;
             mName = name;
             mRandomQuery = randomQuery;
-            mId = id;
             mMaxLabel = maxLabel;
             mMinLabel = minLabel;
-        }
-
-        public void setId(HealthScoreTable.HealthScoreTablePrimaryKey id) {
-            if (((mId == null)&&(id == null))||((mId!= null)&&mId.equals(id))) {
-                return ;
-            }
-            mId = id;
-            setIsModified(true);
-        }
-
-        public HealthScoreTable.HealthScoreTablePrimaryKey getId() {
-            return mId;
         }
 
         public void setBestValue(long bestValue) {
@@ -134,30 +126,6 @@ public final class HealthScoreTable
 
         public long getBestValue() {
             return mBestValue;
-        }
-
-        public void setMaxLabel(String maxLabel) {
-            if (((mMaxLabel == null)&&(maxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(maxLabel))) {
-                return ;
-            }
-            mMaxLabel = maxLabel;
-            setIsModified(true);
-        }
-
-        public String getMaxLabel() {
-            return mMaxLabel;
-        }
-
-        public void setMinLabel(String minLabel) {
-            if (((mMinLabel == null)&&(minLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(minLabel))) {
-                return ;
-            }
-            mMinLabel = minLabel;
-            setIsModified(true);
-        }
-
-        public String getMinLabel() {
-            return mMinLabel;
         }
 
         public void setName(String name) {
@@ -184,15 +152,46 @@ public final class HealthScoreTable
             return mRandomQuery;
         }
 
+        public void setMaxLabel(String maxLabel) {
+            if (((mMaxLabel == null)&&(maxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(maxLabel))) {
+                return ;
+            }
+            mMaxLabel = maxLabel;
+            setIsModified(true);
+        }
+
+        public String getMaxLabel() {
+            return mMaxLabel;
+        }
+
+        public void setMinLabel(String minLabel) {
+            if (((mMinLabel == null)&&(minLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(minLabel))) {
+                return ;
+            }
+            mMinLabel = minLabel;
+            setIsModified(true);
+        }
+
+        public String getMinLabel() {
+            return mMinLabel;
+        }
+
         @Override
         public Object insert(Transaction transaction) {
-            final long rowId = transaction.insert(COLUMN_NAMES, mId, mBestValue, mMaxLabel, mMinLabel, mName, mRandomQuery);
-            final HealthScoreTable.HealthScoreTablePrimaryKey primaryKey = new HealthScoreTable.HealthScoreTablePrimaryKey(rowId);
+            getConcretePrimaryKey();
+            HealthScoreTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new HealthScoreTable.PrimaryKey(primaryKey.getId(), rowId));
+                primaryKey = setPrimaryKey(new HealthScoreTable.PrimaryKey(primaryKey.getId(), rowId));
+            }
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
+            final HealthScoreTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mId = primaryKey;
+                    primaryKey.setId(rowId);
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -207,7 +206,7 @@ public final class HealthScoreTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(mId, COLUMN_NAMES, mId, mBestValue, mMaxLabel, mMinLabel, mName, mRandomQuery);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -227,7 +226,7 @@ public final class HealthScoreTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(mId);
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -254,22 +253,19 @@ public final class HealthScoreTable
                 return false;
             }
             HealthScoreTable.Row theRow = ((HealthScoreTable.Row) other);
-            if (!(((mId == null)&&(theRow.mId == null))||((mId!= null)&&mId.equals(theRow.mId)))) {
-                return false;
-            }
             if (!(mBestValue == theRow.mBestValue)) {
-                return false;
-            }
-            if (!(((mMaxLabel == null)&&(theRow.mMaxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(theRow.mMaxLabel)))) {
-                return false;
-            }
-            if (!(((mMinLabel == null)&&(theRow.mMinLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(theRow.mMinLabel)))) {
                 return false;
             }
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
             if (!(mRandomQuery == theRow.mRandomQuery)) {
+                return false;
+            }
+            if (!(((mMaxLabel == null)&&(theRow.mMaxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(theRow.mMaxLabel)))) {
+                return false;
+            }
+            if (!(((mMinLabel == null)&&(theRow.mMinLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(theRow.mMinLabel)))) {
                 return false;
             }
             return true;

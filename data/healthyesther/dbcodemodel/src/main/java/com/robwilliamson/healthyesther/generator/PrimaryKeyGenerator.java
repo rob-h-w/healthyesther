@@ -18,6 +18,7 @@ import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,9 @@ import java.util.Map;
 public class PrimaryKeyGenerator extends BaseClassGenerator {
     private final TableGenerator mTableGenerator;
     private List<ColumnField> mSortedPrimaryKeyFields;
+    private ColumnField mRowId;
+    private Map<Column, JMethod> mGetters = new HashMap<>();
+    private Map<Column, JMethod> mSetters = new HashMap<>();
     private JMethod mCopyConstructor;
     private JMethod mValueConstructor;
 
@@ -47,6 +51,10 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         });
     }
 
+    public static String getName(TableGenerator tableGenerator) {
+        return Strings.capitalize(getName(PrimaryKeyGenerator.class));
+    }
+
     private void implementWhere() {
         JMethod getWhere = getJClass().method(JMod.PUBLIC, String.class, "getWhere");
         getWhere.annotate(Override.class);
@@ -67,6 +75,14 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         }
 
         body._return(where.invoke("toString"));
+    }
+
+    public boolean hasRowId() {
+        return mRowId != null;
+    }
+
+    public ColumnField getRowId() {
+        return mRowId;
     }
 
     private void makeConstructors() {
@@ -94,12 +110,14 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
                     "set" + Strings.capitalize(field.name));
             JVar value = setter.param(field.fieldVar.type(), field.name);
             setter.body().assign(field.fieldVar, value);
+            mSetters.put(field.column, setter);
 
             JMethod getter = getJClass().method(
                     JMod.PUBLIC,
                     field.fieldVar.type(),
                     "get" + Strings.capitalize(field.name));
             getter.body()._return(field.fieldVar);
+            mGetters.put(field.column, getter);
         }
     }
 
@@ -115,12 +133,16 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return mValueConstructor;
     }
 
-    public boolean hasPrimaryKeys() {
-        return !mSortedPrimaryKeyFields.isEmpty();
+    public JMethod getGetterFor(Column column) {
+        return mGetters.get(column);
     }
 
-    public static String getName(TableGenerator tableGenerator) {
-        return tableGenerator.getName() + Strings.capitalize(getName(PrimaryKeyGenerator.class));
+    public JMethod getSetterFor(Column column) {
+        return mSetters.get(column);
+    }
+
+    public boolean hasPrimaryKeys() {
+        return !mSortedPrimaryKeyFields.isEmpty();
     }
 
     @Override
@@ -144,10 +166,16 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
                 JType type = column.getPrimitiveType(model());
                 JFieldVar fieldVar = getJClass().field(JMod.PRIVATE, type, ColumnField.memberName(column.getName()));
-                return new ColumnField(fieldVar, column);
+                ColumnField columnField = new ColumnField(fieldVar, column);
+
+                if (column.getName().equals("_id")) {
+                    mRowId = columnField;
+                }
+
+                return columnField;
             }
-        });
-        mSortedPrimaryKeyFields = ColumnField.makeSortedList(fieldMap);
+        }, false);
+        mSortedPrimaryKeyFields = ColumnField.makeSortedList(fieldMap, false);
     }
 
     private List<Column> getPrimaryKeyColumns() {

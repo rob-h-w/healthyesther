@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
-import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
@@ -23,36 +22,36 @@ public final class HealthScoreEventTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class HealthScoreEventTablePrimaryKey
+    public final static class PrimaryKey
         implements Key
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey mHealthScoreId;
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey mHealthScoreId;
 
-        public HealthScoreEventTablePrimaryKey(HealthScoreEventTable.HealthScoreEventTablePrimaryKey other) {
+        public PrimaryKey(HealthScoreEventTable.PrimaryKey other) {
             mEventId = other.mEventId;
             mHealthScoreId = other.mHealthScoreId;
         }
 
-        public HealthScoreEventTablePrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
+        public PrimaryKey(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId, com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey healthScoreId) {
             mEventId = eventId;
             mHealthScoreId = healthScoreId;
         }
 
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
+        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId) {
             mEventId = eventId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
+        public com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey getEventId() {
             return mEventId;
         }
 
-        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
+        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey healthScoreId) {
             mHealthScoreId = healthScoreId;
         }
 
-        public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey getHealthScoreId() {
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey getHealthScoreId() {
             return mHealthScoreId;
         }
 
@@ -63,17 +62,17 @@ public final class HealthScoreEventTable
             if (other == this) {
                 return true;
             }
-            if (!(other instanceof HealthScoreEventTable.HealthScoreEventTablePrimaryKey)) {
+            if (!(other instanceof HealthScoreEventTable.PrimaryKey)) {
                 return false;
             }
-            HealthScoreEventTable.HealthScoreEventTablePrimaryKey theHealthScoreEventTablePrimaryKey = ((HealthScoreEventTable.HealthScoreEventTablePrimaryKey) other);
-            if (theHealthScoreEventTablePrimaryKey.mEventId!= mEventId) {
-                if ((theHealthScoreEventTablePrimaryKey.mEventId == null)||(!theHealthScoreEventTablePrimaryKey.mEventId.equals(mEventId))) {
+            HealthScoreEventTable.PrimaryKey thePrimaryKey = ((HealthScoreEventTable.PrimaryKey) other);
+            if (thePrimaryKey.mEventId!= mEventId) {
+                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
                     return false;
                 }
             }
-            if (theHealthScoreEventTablePrimaryKey.mHealthScoreId!= mHealthScoreId) {
-                if ((theHealthScoreEventTablePrimaryKey.mHealthScoreId == null)||(!theHealthScoreEventTablePrimaryKey.mHealthScoreId.equals(mHealthScoreId))) {
+            if (thePrimaryKey.mHealthScoreId!= mHealthScoreId) {
+                if ((thePrimaryKey.mHealthScoreId == null)||(!thePrimaryKey.mHealthScoreId.equals(mHealthScoreId))) {
                     return false;
                 }
             }
@@ -100,15 +99,15 @@ public final class HealthScoreEventTable
      * 
      */
     public final static class Row
-        extends BaseRow<HealthScoreEventTable.HealthScoreEventTablePrimaryKey>
+        extends BaseRow<HealthScoreEventTable.PrimaryKey>
     {
 
-        private long mScore;
-        private com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey mEventId;
-        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey mHealthScoreId;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey mHealthScoreId;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
+        private long mScore;
 
         static {
             COLUMN_NAMES.add("event_id");
@@ -118,46 +117,21 @@ public final class HealthScoreEventTable
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventTableRow,
+            com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreTableRow, long score) {
-            mEventIdRow = eventTableRow;
-            mHealthScoreIdRow = healthScoreTableRow;
+            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey healthScoreId, long score) {
+            setPrimaryKey(new HealthScoreEventTable.PrimaryKey(eventId, healthScoreId));
             mScore = score;
         }
 
         public Row(
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventTablePrimaryKey,
+            com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreTablePrimaryKey, long score) {
-            mEventId = eventTablePrimaryKey;
-            mHealthScoreId = healthScoreTablePrimaryKey;
+            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreId, long score) {
+            mEventIdRow = eventId;
+            mHealthScoreIdRow = healthScoreId;
             mScore = score;
-        }
-
-        public void setEventId(com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey eventId) {
-            if (((mEventId == null)&&(eventId == null))||((mEventId!= null)&&mEventId.equals(eventId))) {
-                return ;
-            }
-            mEventId = eventId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey getEventId() {
-            return mEventId;
-        }
-
-        public void setHealthScoreId(com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey healthScoreId) {
-            if (((mHealthScoreId == null)&&(healthScoreId == null))||((mHealthScoreId!= null)&&mHealthScoreId.equals(healthScoreId))) {
-                return ;
-            }
-            mHealthScoreId = healthScoreId;
-            setIsModified(true);
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey getHealthScoreId() {
-            return mHealthScoreId;
         }
 
         public void setScore(long score) {
@@ -174,22 +148,19 @@ public final class HealthScoreEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            final com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] eventId = new com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey[] {mEventId };
-            if (mEventId == null) {
-                eventId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.EventTable.EventTablePrimaryKey) mEventIdRow.insert(transaction));
+            getConcretePrimaryKey();
+            HealthScoreEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            boolean constructPrimaryKey = (!(primaryKey == null));
+            if (constructPrimaryKey) {
+                setPrimaryKey(new HealthScoreEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getHealthScoreId()));
+                primaryKey = setPrimaryKey(new HealthScoreEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getHealthScoreId()));
             }
-            final com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] healthScoreId = new com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey[] {mHealthScoreId };
-            if (mHealthScoreId == null) {
-                healthScoreId[ 0 ] = ((com.robwilliamson.healthyesther.db.generated.HealthScoreTable.HealthScoreTablePrimaryKey) mHealthScoreIdRow.insert(transaction));
-            }
-            final long rowId = transaction.insert(COLUMN_NAMES, eventId[ 0 ], healthScoreId[ 0 ], mScore);
-            final HealthScoreEventTable.HealthScoreEventTablePrimaryKey primaryKey = new HealthScoreEventTable.HealthScoreEventTablePrimaryKey(eventId[ 0 ], healthScoreId[ 0 ]);
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getHealthScoreId(), mScore);
+            final HealthScoreEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    mEventId = eventId[ 0 ];
-                    mHealthScoreId = healthScoreId[ 0 ];
                     setIsInDatabase(true);
                     setIsModified(false);
                 }
@@ -204,7 +175,7 @@ public final class HealthScoreEventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(new AndWhere(mEventId, mHealthScoreId), COLUMN_NAMES, mEventId, mHealthScoreId, mScore);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mScore);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -224,7 +195,7 @@ public final class HealthScoreEventTable
             if (!this.isInDatabase()) {
                 return ;
             }
-            int actual = transaction.remove(new AndWhere(mEventId, mHealthScoreId));
+            int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
@@ -251,12 +222,6 @@ public final class HealthScoreEventTable
                 return false;
             }
             HealthScoreEventTable.Row theRow = ((HealthScoreEventTable.Row) other);
-            if (!(((mEventId == null)&&(theRow.mEventId == null))||((mEventId!= null)&&mEventId.equals(theRow.mEventId)))) {
-                return false;
-            }
-            if (!(((mHealthScoreId == null)&&(theRow.mHealthScoreId == null))||((mHealthScoreId!= null)&&mHealthScoreId.equals(theRow.mHealthScoreId)))) {
-                return false;
-            }
             if (!(mScore == theRow.mScore)) {
                 return false;
             }
