@@ -82,7 +82,6 @@ public final class UnitsTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        private UnitsTable.PrimaryKey mId;
         @Nonnull
         private String mName;
         private double mSiFactor;
@@ -96,7 +95,6 @@ public final class UnitsTable
         public Row(
             @Nonnull
             String name, double siFactor) {
-            setPrimaryKey(new UnitsTable.PrimaryKey());
             mName = name;
             mSiFactor = siFactor;
         }
@@ -127,22 +125,20 @@ public final class UnitsTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            UnitsTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new UnitsTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new UnitsTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
+            UnitsTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mSiFactor);
-            final UnitsTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new UnitsTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

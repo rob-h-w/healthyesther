@@ -18,12 +18,12 @@ public abstract class BaseRow<T extends Key> extends BaseTransactable implements
         setIsModified(true);
     }
 
-    protected T getConcretePrimaryKey() {
+    public T getConcretePrimaryKey() {
         return mKey;
     }
 
-    protected T getNextPrimaryKey() {
-        return mNextKey;
+    public T getNextPrimaryKey() {
+        return mNextKey == null ? mKey : mNextKey;
     }
 
     protected void setNextPrimaryKey(T key) {

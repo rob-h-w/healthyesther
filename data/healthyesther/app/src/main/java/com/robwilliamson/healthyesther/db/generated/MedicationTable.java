@@ -82,7 +82,6 @@ public final class MedicationTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
-        private MedicationTable.PrimaryKey mId;
         @Nonnull
         private String mName;
 
@@ -94,7 +93,6 @@ public final class MedicationTable
         public Row(
             @Nonnull
             String name) {
-            setPrimaryKey(new MedicationTable.PrimaryKey());
             mName = name;
         }
 
@@ -112,22 +110,20 @@ public final class MedicationTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            MedicationTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new MedicationTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new MedicationTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
+            MedicationTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName);
-            final MedicationTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new MedicationTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

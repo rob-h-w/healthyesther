@@ -132,21 +132,21 @@ public final class NoteEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            NoteEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
+            NoteEventTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             if (constructPrimaryKey) {
-                setPrimaryKey(new NoteEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getNoteId()));
-                primaryKey = setPrimaryKey(new NoteEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getNoteId()));
+                mEventIdRow.applyTo(transaction);
+                mNoteIdRow.applyTo(transaction);
+                setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mNoteIdRow.getNextPrimaryKey()));
+                primaryKey = getNextPrimaryKey();
             }
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getNoteId());
-            final NoteEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

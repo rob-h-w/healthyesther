@@ -148,21 +148,21 @@ public final class HealthScoreEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            HealthScoreEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
+            HealthScoreEventTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             if (constructPrimaryKey) {
-                setPrimaryKey(new HealthScoreEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getHealthScoreId()));
-                primaryKey = setPrimaryKey(new HealthScoreEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getHealthScoreId()));
+                mEventIdRow.applyTo(transaction);
+                mHealthScoreIdRow.applyTo(transaction);
+                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mHealthScoreIdRow.getNextPrimaryKey()));
+                primaryKey = getNextPrimaryKey();
             }
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getHealthScoreId(), mScore);
-            final HealthScoreEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

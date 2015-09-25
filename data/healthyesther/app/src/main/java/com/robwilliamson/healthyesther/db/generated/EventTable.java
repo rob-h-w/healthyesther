@@ -82,7 +82,6 @@ public final class EventTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
-        private EventTable.PrimaryKey mId;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey mTypeId;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row mTypeIdRow;
         @Nonnull
@@ -108,7 +107,6 @@ public final class EventTable
             DateTime created,
             @Nonnull
             DateTime when, DateTime modified, String name) {
-            setPrimaryKey(new EventTable.PrimaryKey());
             mTypeId = typeId;
             mCreated = created;
             mWhen = when;
@@ -192,22 +190,20 @@ public final class EventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            EventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new EventTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new EventTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mTypeId, mCreated, mWhen, mModified, mName);
-            final EventTable.PrimaryKey primaryKey = primaryKey;
+            EventTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
+            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mTypeId.getId(), mCreated, mWhen, mModified, mName);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new EventTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

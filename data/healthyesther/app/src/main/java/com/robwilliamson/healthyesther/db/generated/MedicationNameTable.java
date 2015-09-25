@@ -128,21 +128,20 @@ public final class MedicationNameTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            MedicationNameTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
+            MedicationNameTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             if (constructPrimaryKey) {
-                setPrimaryKey(new MedicationNameTable.PrimaryKey(primaryKey.getName(), primaryKey.getMedicationId()));
-                primaryKey = setPrimaryKey(new MedicationNameTable.PrimaryKey(primaryKey.getName(), primaryKey.getMedicationId()));
+                mMedicationIdRow.applyTo(transaction);
+                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationIdRow.getNextPrimaryKey()));
+                primaryKey = getNextPrimaryKey();
             }
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getName(), primaryKey.getMedicationId());
-            final MedicationNameTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

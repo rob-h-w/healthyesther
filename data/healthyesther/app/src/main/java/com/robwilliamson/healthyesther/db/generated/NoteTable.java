@@ -82,7 +82,6 @@ public final class NoteTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        private NoteTable.PrimaryKey mId;
         @Nonnull
         private String mName;
         private String mNote;
@@ -96,7 +95,6 @@ public final class NoteTable
         public Row(
             @Nonnull
             String name, String note) {
-            setPrimaryKey(new NoteTable.PrimaryKey());
             mName = name;
             mNote = note;
         }
@@ -127,22 +125,20 @@ public final class NoteTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            NoteTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new NoteTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new NoteTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
+            NoteTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mNote);
-            final NoteTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new NoteTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

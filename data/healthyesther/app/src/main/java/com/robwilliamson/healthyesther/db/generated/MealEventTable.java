@@ -165,21 +165,21 @@ public final class MealEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            MealEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
+            MealEventTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             if (constructPrimaryKey) {
-                setPrimaryKey(new MealEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMealId()));
-                primaryKey = setPrimaryKey(new MealEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMealId()));
+                mEventIdRow.applyTo(transaction);
+                mMealIdRow.applyTo(transaction);
+                setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMealIdRow.getNextPrimaryKey()));
+                primaryKey = getNextPrimaryKey();
             }
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getMealId(), mUnitsId, mAmount);
-            final MealEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

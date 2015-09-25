@@ -132,21 +132,21 @@ public final class MedicationEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            MedicationEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
+            MedicationEventTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             if (constructPrimaryKey) {
-                setPrimaryKey(new MedicationEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMedicationId()));
-                primaryKey = setPrimaryKey(new MedicationEventTable.PrimaryKey(primaryKey.getEventId(), primaryKey.getMedicationId()));
+                mEventIdRow.applyTo(transaction);
+                mMedicationIdRow.applyTo(transaction);
+                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMedicationIdRow.getNextPrimaryKey()));
+                primaryKey = getNextPrimaryKey();
             }
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getEventId(), primaryKey.getMedicationId());
-            final MedicationEventTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

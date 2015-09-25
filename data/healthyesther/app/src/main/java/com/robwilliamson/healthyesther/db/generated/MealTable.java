@@ -82,7 +82,6 @@ public final class MealTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
-        private MealTable.PrimaryKey mId;
         @Nonnull
         private String mName;
 
@@ -94,7 +93,6 @@ public final class MealTable
         public Row(
             @Nonnull
             String name) {
-            setPrimaryKey(new MealTable.PrimaryKey());
             mName = name;
         }
 
@@ -112,22 +110,20 @@ public final class MealTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            MealTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new MealTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new MealTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
+            MealTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName);
-            final MealTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new MealTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

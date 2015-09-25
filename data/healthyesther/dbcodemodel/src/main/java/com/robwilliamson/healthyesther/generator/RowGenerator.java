@@ -214,37 +214,49 @@ public class RowGenerator extends BaseClassGenerator {
 
         if (keyGenerator.hasPrimaryKeys()) {
             JInvocation insertionCall = JExpr.invoke(transaction, "insert");
-            JInvocation newPrimaryKey = JExpr._new(primaryKeyType);
 
             insertionCall.arg(mColumnNames);
-            JVar primaryKey = body.decl(primaryKeyType, "primaryKey", body.invoke(null, "getConcretePrimaryKey"));
-            JVar doConstructPrimaryKey = body.decl(model().BOOLEAN, "constructPrimaryKey", primaryKey.eq(JExpr._null()).not());
+            JVar primaryKey = body.decl(primaryKeyType, "primaryKey", callGetNextPrimaryKey(null, null));
+            JVar doConstructPrimaryKey = body.decl(JMod.FINAL, model().BOOLEAN, "constructPrimaryKey", primaryKey.ne(JExpr._null()));
 
-            JConditional ifConstruct = body._if(doConstructPrimaryKey);
-            JBlock doConstruction = ifConstruct._then();
-            doConstruction.assign(primaryKey, doConstruction.invoke(null, "setPrimaryKey").arg(newPrimaryKey));
+            // If we need to create a primary key upfront:
+            if (!hasRowIdPrimaryKey()) {
+                JConditional ifConstruct = body._if(doConstructPrimaryKey);
+                JBlock doConstruction = ifConstruct._then();
+                JInvocation newPrimaryKey = JExpr._new(primaryKeyType);
+                for (Column column : mPrimaryKeys.columns) {
+                    RowField rowField = mPrimaryKeys.rowFieldFor(column);
+                    if (rowField != null) {
+                        if (!rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator().hasRowId()) {
+                            throw new RuntimeException("The primary key generator for " + rowField.name + " should have a row ID.");
+                        }
+                        doConstruction.invoke(rowField.fieldVar, "applyTo").arg(transaction);
+                        newPrimaryKey.arg(callGetNextPrimaryKey(null, rowField.fieldVar));
+                    } else {
+                        if (!column.isRowId()) {
+                            newPrimaryKey.arg(mPrimaryKeys.columnFieldFor(column).fieldVar);
+                        }
+                    }
+                }
+                doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
+                doConstruction.assign(primaryKey, callGetNextPrimaryKey(null, null));
+            }
 
             for (Column column : mPrimaryKeys.columns) {
                 JInvocation i = primaryKey.invoke(keyGenerator.getGetterFor(column));
                 insertionCall.arg(i);
-                newPrimaryKey.arg(i);
             }
 
             for (Column column : mBasicKeys.columns) {
                 ColumnField field = mBasicKeys.columnFieldFor(column);
-                insertionCall.arg(field.fieldVar);
+                if (column.isForeignKey()) {
+                    PrimaryKeyGenerator dependentPrimaryKey = field.column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
+                    insertionCall.arg(field.fieldVar.invoke(dependentPrimaryKey.getRowIdGetter()));
+                } else {
+                    insertionCall.arg(field.fieldVar);
+                }
             }
 
-            JVar insertionId = body.decl(JMod.FINAL, model().LONG, "rowId", insertionCall);
-            if (hasSingleRowIdPrimaryKey()) {
-                newPrimaryKey.arg(insertionId);
-            }
-
-            JVar finalPrimaryKey = body.decl(
-                    JMod.FINAL,
-                    primaryKeyType,
-                    "primaryKey",
-                    primaryKey);
             JDefinedClass anonymousType = model().anonymousClass(
                     Transaction.CompletionHandler.class);
             JBlock callback = anonymousType.method(
@@ -253,11 +265,35 @@ public class RowGenerator extends BaseClassGenerator {
                     "onCompleted").body();
 
             if (keyGenerator.hasRowId()) {
-                callback.invoke(finalPrimaryKey, keyGenerator.getSetterFor(keyGenerator.getRowId().column)).arg(insertionId);
+                JVar insertionId = body.decl(JMod.FINAL, model().LONG, "rowId", insertionCall);
+                callback.invoke(callGetNextPrimaryKey(null, null), keyGenerator.getSetterFor(keyGenerator.getRowId().column)).arg(insertionId);
+
+                // If we have to create a primary key after insertion:
+                JConditional ifConstruct = callback._if(doConstructPrimaryKey);
+                JBlock doConstruction = ifConstruct._then();
+                JInvocation newPrimaryKey = JExpr._new(primaryKeyType);
+                for (Column column : mPrimaryKeys.columns) {
+                    RowField rowField = mPrimaryKeys.rowFieldFor(column);
+                    if (rowField != null) {
+                        if (!rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator().hasRowId()) {
+                            throw new RuntimeException("The primary key generator for " + rowField.name + " should have a row ID.");
+                        }
+                        doConstruction.invoke(rowField.fieldVar, "applyTo").arg(transaction);
+                        newPrimaryKey.arg(callGetNextPrimaryKey(null, rowField.fieldVar));
+                    } else {
+                        if (column.isRowId()) {
+                            newPrimaryKey.arg(insertionId);
+                        } else {
+                            newPrimaryKey.arg(mPrimaryKeys.columnFieldFor(column).fieldVar);
+                        }
+                    }
+                }
+                doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
             }
 
             setIsInDatabaseCall(callback, true);
             setIsModifiedCall(callback, false);
+            callMethod("updatePrimaryKeyFromNext", callback, null);
 
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
             body._return(primaryKey);
@@ -345,15 +381,17 @@ public class RowGenerator extends BaseClassGenerator {
         Map<Column, JVar> primaryParams = mPrimaryKeys.makeValueParamsFor(mValueConstructor, picker);
         Map<Column, JVar> basicParams = mBasicKeys.makeValueParamsFor(mValueConstructor, picker);
         PrimaryKeyGenerator primaryKeyGenerator = mTableGenerator.getPrimaryKeyGenerator();
-        JInvocation primaryKeyConstruction = JExpr._new(primaryKeyGenerator.getJClass());
-        for (Column column : mPrimaryKeys.columns) {
-            JVar param = primaryParams.get(column);
-            if (param != null) {
-                primaryKeyConstruction.arg(primaryParams.get(column));
-            }
-        }
 
-        callSetPrimaryKey(mValueConstructor.body(), null).arg(primaryKeyConstruction);
+        if (!hasRowIdPrimaryKey()) {
+            JInvocation primaryKeyConstruction = JExpr._new(primaryKeyGenerator.getJClass());
+            for (Column column : mPrimaryKeys.columns) {
+                JVar param = primaryParams.get(column);
+                if (param != null) {
+                    primaryKeyConstruction.arg(primaryParams.get(column));
+                }
+            }
+            callSetPrimaryKey(mValueConstructor.body(), null).arg(primaryKeyConstruction);
+        }
 
         for (Column column : mBasicKeys.columns) {
             JVar param = basicParams.get(column);
@@ -366,6 +404,22 @@ public class RowGenerator extends BaseClassGenerator {
 
     private JInvocation callSetPrimaryKey(JBlock body, JExpression expression) {
         return body.invoke(expression, "setPrimaryKey");
+    }
+
+    private JInvocation callGetConcretePrimaryKey(JBlock body, JExpression expression) {
+        return callMethod("getConcretePrimaryKey", body, expression);
+    }
+
+    private JInvocation callGetNextPrimaryKey(JBlock body, JExpression expression) {
+        return callMethod("getNextPrimaryKey", body, expression);
+    }
+
+    private JInvocation callMethod(String name, JBlock body, JExpression expression) {
+        if (body == null) {
+            return JExpr.invoke(expression, name);
+        }
+
+        return body.invoke(expression, name);
     }
 
     private void implementValueConstructorFor(ColumnField field) {
@@ -426,8 +480,8 @@ public class RowGenerator extends BaseClassGenerator {
                         .getPreferredParameterName())));
     }
 
-    private boolean hasSingleRowIdPrimaryKey() {
-        return mTableGenerator.getPrimaryKeyGenerator().getValueConstructor().listParams().length == 1;
+    private boolean hasRowIdPrimaryKey() {
+        return mPrimaryKeys.columns.size() == 1 && mPrimaryKeys.columns.get(0).isRowId();
     }
 
     private JVar addConstructorParam(JMethod constructor, Column column) {
@@ -449,7 +503,9 @@ public class RowGenerator extends BaseClassGenerator {
             for (Column column : mTableGenerator.getTable().getColumns()) {
                 if (addToColumns(column)) {
                     this.columns.add(column);
-                    mColumnToColumnFieldMap.put(column, makeColumnFieldFor(column));
+                    if (!column.isRowId()) {
+                        mColumnToColumnFieldMap.put(column, makeColumnFieldFor(column));
+                    }
                     if (column.isForeignKey()) {
                         mColumnToRowFieldMap.put(column, makeRowFieldFor(column));
                     }

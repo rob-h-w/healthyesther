@@ -82,7 +82,6 @@ public final class EventTypeTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        private EventTypeTable.PrimaryKey mId;
         @Nonnull
         private String mName;
         private String mIcon;
@@ -96,7 +95,6 @@ public final class EventTypeTable
         public Row(
             @Nonnull
             String name, String icon) {
-            setPrimaryKey(new EventTypeTable.PrimaryKey());
             mName = name;
             mIcon = icon;
         }
@@ -127,22 +125,20 @@ public final class EventTypeTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            EventTypeTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new EventTypeTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new EventTypeTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
+            EventTypeTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mIcon);
-            final EventTypeTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new EventTypeTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

@@ -82,7 +82,6 @@ public final class HealthScoreTable
     {
 
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
-        private HealthScoreTable.PrimaryKey mId;
         @Nonnull
         private long mBestValue;
         @Nonnull
@@ -108,7 +107,6 @@ public final class HealthScoreTable
             String name,
             @Nonnull
             boolean randomQuery, String maxLabel, String minLabel) {
-            setPrimaryKey(new HealthScoreTable.PrimaryKey());
             mBestValue = bestValue;
             mName = name;
             mRandomQuery = randomQuery;
@@ -178,22 +176,20 @@ public final class HealthScoreTable
 
         @Override
         public Object insert(Transaction transaction) {
-            getConcretePrimaryKey();
-            HealthScoreTable.PrimaryKey primaryKey = getConcretePrimaryKey();
-            boolean constructPrimaryKey = (!(primaryKey == null));
-            if (constructPrimaryKey) {
-                setPrimaryKey(new HealthScoreTable.PrimaryKey(primaryKey.getId(), rowId));
-                primaryKey = setPrimaryKey(new HealthScoreTable.PrimaryKey(primaryKey.getId(), rowId));
-            }
+            HealthScoreTable.PrimaryKey primaryKey = getNextPrimaryKey();
+            final boolean constructPrimaryKey = (primaryKey!= null);
             final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
-            final HealthScoreTable.PrimaryKey primaryKey = primaryKey;
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    primaryKey.setId(rowId);
+                    getNextPrimaryKey().setId(rowId);
+                    if (constructPrimaryKey) {
+                        setNextPrimaryKey(new HealthScoreTable.PrimaryKey(rowId));
+                    }
                     setIsInDatabase(true);
                     setIsModified(false);
+                    updatePrimaryKeyFromNext();
                 }
 
             }

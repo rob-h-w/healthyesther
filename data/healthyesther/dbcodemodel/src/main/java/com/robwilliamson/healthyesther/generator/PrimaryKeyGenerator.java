@@ -137,6 +137,10 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return mGetters.get(column);
     }
 
+    public JMethod getRowIdGetter() {
+        return getGetterFor(getRowId().column);
+    }
+
     public JMethod getSetterFor(Column column) {
         return mSetters.get(column);
     }
@@ -168,7 +172,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
                 JFieldVar fieldVar = getJClass().field(JMod.PRIVATE, type, ColumnField.memberName(column.getName()));
                 ColumnField columnField = new ColumnField(fieldVar, column);
 
-                if (column.getName().equals("_id")) {
+                if (column.isRowId()) {
                     mRowId = columnField;
                 }
 
