@@ -173,6 +173,10 @@ public class Column {
         return type;
     }
 
+    public boolean isRowId() {
+        return getName().equals("_id");
+    }
+
     public boolean isForeignKey() {
         return getColumnDependency() != null;
     }
