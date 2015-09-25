@@ -186,6 +186,10 @@ public class Column {
         return mPrimaryKey || getTable().isPrimaryKey(this);
     }
 
+    public interface Picker {
+        boolean pick(Column column);
+    }
+
     public static class Comparator implements java.util.Comparator<Column> {
         @Override
         public int compare(Column c1, Column c2) {

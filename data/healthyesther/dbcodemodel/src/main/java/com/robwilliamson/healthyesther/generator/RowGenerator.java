@@ -325,7 +325,7 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private void makeConstructors() {
-        ColumnPicker picker = new ColumnPicker() {
+        Column.Picker picker = new Column.Picker() {
             @Override
             public boolean pick(Column column) {
                 if (column.isPrimaryKey() && !column.isForeignKey() && column.getName().equals("_id")) {
@@ -340,7 +340,7 @@ public class RowGenerator extends BaseClassGenerator {
         makeValueConstructor(picker);
     }
 
-    private void makeJoinConstructor(ColumnPicker picker) {
+    private void makeJoinConstructor(Column.Picker picker) {
         if (mJoinConstructor == null) {
             return;
         }
@@ -377,7 +377,7 @@ public class RowGenerator extends BaseClassGenerator {
         }
     }
 
-    private void makeValueConstructor(ColumnPicker picker) {
+    private void makeValueConstructor(Column.Picker picker) {
         Map<Column, JVar> primaryParams = mPrimaryKeys.makeValueParamsFor(mValueConstructor, picker);
         Map<Column, JVar> basicParams = mBasicKeys.makeValueParamsFor(mValueConstructor, picker);
         PrimaryKeyGenerator primaryKeyGenerator = mTableGenerator.getPrimaryKeyGenerator();
@@ -490,10 +490,6 @@ public class RowGenerator extends BaseClassGenerator {
         return param;
     }
 
-    public interface ColumnPicker {
-        boolean pick(Column column);
-    }
-
     private abstract class BaseColumns {
         public final List<Column> columns = new ArrayList<>();
         private Map<Column, RowField> mColumnToRowFieldMap = new HashMap<>();
@@ -522,7 +518,7 @@ public class RowGenerator extends BaseClassGenerator {
             return mColumnToColumnFieldMap.get(column);
         }
 
-        public Map<Column, JVar> makeValueParamsFor(JMethod method, ColumnPicker picker) {
+        public Map<Column, JVar> makeValueParamsFor(JMethod method, Column.Picker picker) {
             Map<Column, JVar> map = new HashMap<>(columns.size());
             for (Column column : columns) {
                 if (!picker.pick(column)) {
@@ -563,7 +559,7 @@ public class RowGenerator extends BaseClassGenerator {
             }
         }
 
-        public Map<Column, JVar> makeRowParamsFor(JMethod method, ColumnPicker picker) {
+        public Map<Column, JVar> makeRowParamsFor(JMethod method, Column.Picker picker) {
             Map<Column, JVar> map = new HashMap<>(columns.size());
             for (Column column : columns) {
                 if (!picker.pick(column)) {
