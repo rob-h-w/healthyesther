@@ -55,7 +55,7 @@ public final class UnitsTable
                 return false;
             }
             UnitsTable.PrimaryKey thePrimaryKey = ((UnitsTable.PrimaryKey) other);
-            if (thePrimaryKey.mId!= mId) {
+            if (!(mId == thePrimaryKey.mId)) {
                 return false;
             }
             return true;

@@ -55,7 +55,7 @@ public final class HealthScoreTable
                 return false;
             }
             HealthScoreTable.PrimaryKey thePrimaryKey = ((HealthScoreTable.PrimaryKey) other);
-            if (thePrimaryKey.mId!= mId) {
+            if (!(mId == thePrimaryKey.mId)) {
                 return false;
             }
             return true;

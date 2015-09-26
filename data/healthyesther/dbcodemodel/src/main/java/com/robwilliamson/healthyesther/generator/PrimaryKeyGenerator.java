@@ -202,7 +202,6 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     private void makeEquals() {
         JMethod eqMethod = makeBasicEquals();
         JDefinedClass theClass = getJClass();
-        JCodeModel model = theClass.owner();
         JBlock equals = eqMethod.body();
         JVar other = eqMethod.listParams()[0];
 
@@ -213,16 +212,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             // Check each primary key column.
             for (ColumnField field : mSortedPrimaryKeyFields) {
                 JFieldVar primaryKeyField = field.fieldVar;
-                JBlock ifBlock = equals._if(otherType.ref(primaryKeyField).ne(primaryKeyField))._then();
-
-                if (primaryKeyField.type().isPrimitive()) {
-                    ifBlock._return(JExpr.lit(false));
-                } else {
-                    // Check nullness.
-                    // if (otherType.key == null || !otherType.key.equals(key) { return false }
-                    ifBlock = ifBlock._if(otherType.ref(primaryKeyField).eq(JExpr._null()).cor(otherType.ref(primaryKeyField).invoke("equals").arg(primaryKeyField).not()))._then();
-                    ifBlock._return(JExpr.lit(false));
-                }
+                equals._if(makeEquals(primaryKeyField, otherType.ref(primaryKeyField)).not())._then()._return(JExpr.lit(false));
             }
         }
 

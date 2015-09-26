@@ -55,7 +55,7 @@ public final class MealTable
                 return false;
             }
             MealTable.PrimaryKey thePrimaryKey = ((MealTable.PrimaryKey) other);
-            if (thePrimaryKey.mId!= mId) {
+            if (!(mId == thePrimaryKey.mId)) {
                 return false;
             }
             return true;

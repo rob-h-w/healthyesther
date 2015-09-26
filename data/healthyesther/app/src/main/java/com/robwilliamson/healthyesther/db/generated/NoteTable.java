@@ -55,7 +55,7 @@ public final class NoteTable
                 return false;
             }
             NoteTable.PrimaryKey thePrimaryKey = ((NoteTable.PrimaryKey) other);
-            if (thePrimaryKey.mId!= mId) {
+            if (!(mId == thePrimaryKey.mId)) {
                 return false;
             }
             return true;

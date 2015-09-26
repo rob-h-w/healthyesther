@@ -66,15 +66,11 @@ public final class HealthScoreEventTable
                 return false;
             }
             HealthScoreEventTable.PrimaryKey thePrimaryKey = ((HealthScoreEventTable.PrimaryKey) other);
-            if (thePrimaryKey.mEventId!= mEventId) {
-                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
-                    return false;
-                }
+            if (!(((mEventId == null)&&(thePrimaryKey.mEventId == null))||((mEventId!= null)&&mEventId.equals(thePrimaryKey.mEventId)))) {
+                return false;
             }
-            if (thePrimaryKey.mHealthScoreId!= mHealthScoreId) {
-                if ((thePrimaryKey.mHealthScoreId == null)||(!thePrimaryKey.mHealthScoreId.equals(mHealthScoreId))) {
-                    return false;
-                }
+            if (!(((mHealthScoreId == null)&&(thePrimaryKey.mHealthScoreId == null))||((mHealthScoreId!= null)&&mHealthScoreId.equals(thePrimaryKey.mHealthScoreId)))) {
+                return false;
             }
             return true;
         }

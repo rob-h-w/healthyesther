@@ -55,7 +55,7 @@ public final class MedicationTable
                 return false;
             }
             MedicationTable.PrimaryKey thePrimaryKey = ((MedicationTable.PrimaryKey) other);
-            if (thePrimaryKey.mId!= mId) {
+            if (!(mId == thePrimaryKey.mId)) {
                 return false;
             }
             return true;

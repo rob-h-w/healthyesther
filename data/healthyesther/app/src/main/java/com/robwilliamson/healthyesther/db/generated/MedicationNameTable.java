@@ -66,15 +66,11 @@ public final class MedicationNameTable
                 return false;
             }
             MedicationNameTable.PrimaryKey thePrimaryKey = ((MedicationNameTable.PrimaryKey) other);
-            if (thePrimaryKey.mName!= mName) {
-                if ((thePrimaryKey.mName == null)||(!thePrimaryKey.mName.equals(mName))) {
-                    return false;
-                }
+            if (!(((mName == null)&&(thePrimaryKey.mName == null))||((mName!= null)&&mName.equals(thePrimaryKey.mName)))) {
+                return false;
             }
-            if (thePrimaryKey.mMedicationId!= mMedicationId) {
-                if ((thePrimaryKey.mMedicationId == null)||(!thePrimaryKey.mMedicationId.equals(mMedicationId))) {
-                    return false;
-                }
+            if (!(((mMedicationId == null)&&(thePrimaryKey.mMedicationId == null))||((mMedicationId!= null)&&mMedicationId.equals(thePrimaryKey.mMedicationId)))) {
+                return false;
             }
             return true;
         }

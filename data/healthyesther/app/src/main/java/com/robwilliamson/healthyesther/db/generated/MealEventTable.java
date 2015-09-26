@@ -66,15 +66,11 @@ public final class MealEventTable
                 return false;
             }
             MealEventTable.PrimaryKey thePrimaryKey = ((MealEventTable.PrimaryKey) other);
-            if (thePrimaryKey.mEventId!= mEventId) {
-                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
-                    return false;
-                }
+            if (!(((mEventId == null)&&(thePrimaryKey.mEventId == null))||((mEventId!= null)&&mEventId.equals(thePrimaryKey.mEventId)))) {
+                return false;
             }
-            if (thePrimaryKey.mMealId!= mMealId) {
-                if ((thePrimaryKey.mMealId == null)||(!thePrimaryKey.mMealId.equals(mMealId))) {
-                    return false;
-                }
+            if (!(((mMealId == null)&&(thePrimaryKey.mMealId == null))||((mMealId!= null)&&mMealId.equals(thePrimaryKey.mMealId)))) {
+                return false;
             }
             return true;
         }

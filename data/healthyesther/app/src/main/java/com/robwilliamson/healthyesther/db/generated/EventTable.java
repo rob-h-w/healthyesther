@@ -55,7 +55,7 @@ public final class EventTable
                 return false;
             }
             EventTable.PrimaryKey thePrimaryKey = ((EventTable.PrimaryKey) other);
-            if (thePrimaryKey.mId!= mId) {
+            if (!(mId == thePrimaryKey.mId)) {
                 return false;
             }
             return true;

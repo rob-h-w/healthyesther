@@ -66,15 +66,11 @@ public final class NoteEventTable
                 return false;
             }
             NoteEventTable.PrimaryKey thePrimaryKey = ((NoteEventTable.PrimaryKey) other);
-            if (thePrimaryKey.mEventId!= mEventId) {
-                if ((thePrimaryKey.mEventId == null)||(!thePrimaryKey.mEventId.equals(mEventId))) {
-                    return false;
-                }
+            if (!(((mEventId == null)&&(thePrimaryKey.mEventId == null))||((mEventId!= null)&&mEventId.equals(thePrimaryKey.mEventId)))) {
+                return false;
             }
-            if (thePrimaryKey.mNoteId!= mNoteId) {
-                if ((thePrimaryKey.mNoteId == null)||(!thePrimaryKey.mNoteId.equals(mNoteId))) {
-                    return false;
-                }
+            if (!(((mNoteId == null)&&(thePrimaryKey.mNoteId == null))||((mNoteId!= null)&&mNoteId.equals(thePrimaryKey.mNoteId)))) {
+                return false;
             }
             return true;
         }
