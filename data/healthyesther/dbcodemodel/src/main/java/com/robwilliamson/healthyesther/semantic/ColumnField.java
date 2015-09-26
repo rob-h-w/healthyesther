@@ -5,7 +5,7 @@ import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JFieldVar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +28,14 @@ public class ColumnField extends BaseField {
         this.column = other.column;
     }
 
-    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns, boolean excludePrimaryKey) {
-        return makeMap(columns, new DefaultMaker(owningClass), excludePrimaryKey);
+    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns, Column.Picker picker) {
+        return makeMap(columns, new DefaultMaker(owningClass), picker);
     }
 
-    public static Map<String, ColumnField> makeMap(List<Column> columns, Maker maker, boolean excludePrimaryKey) {
+    public static Map<String, ColumnField> makeMap(List<Column> columns, Maker maker, Column.Picker picker) {
         Map<String, ColumnField> map = new HashMap<>(columns.size());
         for (Column column : columns) {
-            if (excludePrimaryKey && column.isPrimaryKey()) {
+            if (!picker.pick(column)) {
                 continue;
             }
             map.put(column.getName(), maker.make(column));
@@ -43,20 +43,23 @@ public class ColumnField extends BaseField {
         return map;
     }
 
-    public static List<ColumnField> makeSortedList(JDefinedClass owningClass, List<Column> columns, boolean excludePrimaryKey) {
-        return makeSortedList(makeMap(owningClass, columns, excludePrimaryKey), excludePrimaryKey);
+    public static List<ColumnField> makeSortedList(JDefinedClass owningClass, List<Column> columns, Column.Picker picker) {
+        return makeSortedList(makeMap(owningClass, columns, picker), picker);
     }
 
-    public static List<ColumnField> makeSortedList(Map<String, ColumnField> map, boolean excludePrimaryKey) {
+    public static List<ColumnField> makeSortedList(Map<String, ColumnField> map, Column.Picker picker) {
         List<ColumnField> list = new ArrayList<>(map.size());
+        List<Column> columns = new ArrayList<>(map.size());
 
-        String[] names = new String[map.size()];
-        map.keySet().toArray(names);
-        Arrays.sort(names);
+        for (Map.Entry<String, ColumnField> entry : map.entrySet()) {
+            columns.add(entry.getValue().column);
+        }
 
-        for (String name : names) {
-            ColumnField field = map.get(name);
-            if (excludePrimaryKey && field.column.isPrimaryKey()) {
+        Collections.sort(columns, new Column.Comparator());
+
+        for (Column column : columns) {
+            ColumnField field = map.get(column.getName());
+            if (!picker.pick(field.column)) {
                 continue;
             }
 

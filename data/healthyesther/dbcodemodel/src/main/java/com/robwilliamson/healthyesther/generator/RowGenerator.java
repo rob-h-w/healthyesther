@@ -496,8 +496,9 @@ public class RowGenerator extends BaseClassGenerator {
         private Map<Column, ColumnField> mColumnToColumnFieldMap = new HashMap<>();
 
         public BaseColumns() {
+            Column.Picker picker = getColumnPicker();
             for (Column column : mTableGenerator.getTable().getColumns()) {
-                if (addToColumns(column)) {
+                if (picker.pick(column)) {
                     this.columns.add(column);
                     if (!column.isRowId()) {
                         mColumnToColumnFieldMap.put(column, makeColumnFieldFor(column));
@@ -549,7 +550,7 @@ public class RowGenerator extends BaseClassGenerator {
             return rowField;
         }
 
-        protected abstract boolean addToColumns(Column column);
+        protected abstract Column.Picker getColumnPicker();
 
         private JType getValueParamType(Column column) {
             if (column.isForeignKey()) {
@@ -585,16 +586,16 @@ public class RowGenerator extends BaseClassGenerator {
 
     private class BasicColumns extends BaseColumns {
         @Override
-        protected boolean addToColumns(Column column) {
-            return !column.isPrimaryKey();
+        protected Column.Picker getColumnPicker() {
+            return new Column.BasicPicker();
         }
     }
 
     private class PrimaryColumns extends BaseColumns {
 
         @Override
-        protected boolean addToColumns(Column column) {
-            return column.isPrimaryKey();
+        protected Column.Picker getColumnPicker() {
+            return new Column.PrimaryPicker();
         }
     }
 }

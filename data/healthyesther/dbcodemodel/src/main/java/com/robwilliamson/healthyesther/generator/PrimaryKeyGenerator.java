@@ -160,26 +160,29 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     }
 
     private void makePrimaryKeyValues() {
+        Column.Picker picker = new Column.AllPicker();
         final ColumnField.Maker def = new ColumnField.DefaultMaker(getJClass());
-        Map<String, ColumnField> fieldMap = ColumnField.makeMap(getPrimaryKeyColumns(), new ColumnField.Maker() {
-            @Override
-            public ColumnField make(Column column) {
-                if (column.isForeignKey()) {
-                    return def.make(column);
-                }
+        Map<String, ColumnField> fieldMap = ColumnField.makeMap(getPrimaryKeyColumns(),
+                new ColumnField.Maker() {
+                    @Override
+                    public ColumnField make(Column column) {
+                        if (column.isForeignKey()) {
+                            return def.make(column);
+                        }
 
-                JType type = column.getPrimitiveType(model());
-                JFieldVar fieldVar = getJClass().field(JMod.PRIVATE, type, ColumnField.memberName(column.getName()));
-                ColumnField columnField = new ColumnField(fieldVar, column);
+                        JType type = column.getPrimitiveType(model());
+                        JFieldVar fieldVar = getJClass().field(JMod.PRIVATE, type, ColumnField.memberName(column.getName()));
+                        ColumnField columnField = new ColumnField(fieldVar, column);
 
-                if (column.isRowId()) {
-                    mRowId = columnField;
-                }
+                        if (column.isRowId()) {
+                            mRowId = columnField;
+                        }
 
-                return columnField;
-            }
-        }, false);
-        mSortedPrimaryKeyFields = ColumnField.makeSortedList(fieldMap, false);
+                        return columnField;
+                    }
+                },
+                picker);
+        mSortedPrimaryKeyFields = ColumnField.makeSortedList(fieldMap, picker);
     }
 
     private List<Column> getPrimaryKeyColumns() {

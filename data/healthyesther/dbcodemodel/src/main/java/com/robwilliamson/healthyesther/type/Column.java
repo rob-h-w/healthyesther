@@ -190,6 +190,29 @@ public class Column {
         boolean pick(Column column);
     }
 
+    public static class AllPicker implements Picker {
+
+        @Override
+        public boolean pick(Column column) {
+            return true;
+        }
+    }
+
+    public static class BasicPicker implements Picker {
+
+        @Override
+        public boolean pick(Column column) {
+            return !column.isPrimaryKey();
+        }
+    }
+
+    public static class PrimaryPicker implements Picker {
+        @Override
+        public boolean pick(Column column) {
+            return column.isPrimaryKey();
+        }
+    }
+
     public static class Comparator implements java.util.Comparator<Column> {
         @Override
         public int compare(Column c1, Column c2) {

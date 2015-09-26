@@ -30,21 +30,13 @@ public final class MedicationNameTable
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
 
         public PrimaryKey(MedicationNameTable.PrimaryKey other) {
-            mMedicationId = other.mMedicationId;
             mName = other.mName;
+            mMedicationId = other.mMedicationId;
         }
 
-        public PrimaryKey(com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId, String name) {
-            mMedicationId = medicationId;
+        public PrimaryKey(String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
             mName = name;
-        }
-
-        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
             mMedicationId = medicationId;
-        }
-
-        public com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey getMedicationId() {
-            return mMedicationId;
         }
 
         public void setName(String name) {
@@ -53,6 +45,14 @@ public final class MedicationNameTable
 
         public String getName() {
             return mName;
+        }
+
+        public void setMedicationId(com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
+            mMedicationId = medicationId;
+        }
+
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey getMedicationId() {
+            return mMedicationId;
         }
 
         public boolean equals(Object other) {
@@ -66,13 +66,13 @@ public final class MedicationNameTable
                 return false;
             }
             MedicationNameTable.PrimaryKey thePrimaryKey = ((MedicationNameTable.PrimaryKey) other);
-            if (thePrimaryKey.mMedicationId!= mMedicationId) {
-                if ((thePrimaryKey.mMedicationId == null)||(!thePrimaryKey.mMedicationId.equals(mMedicationId))) {
+            if (thePrimaryKey.mName!= mName) {
+                if ((thePrimaryKey.mName == null)||(!thePrimaryKey.mName.equals(mName))) {
                     return false;
                 }
             }
-            if (thePrimaryKey.mName!= mName) {
-                if ((thePrimaryKey.mName == null)||(!thePrimaryKey.mName.equals(mName))) {
+            if (thePrimaryKey.mMedicationId!= mMedicationId) {
+                if ((thePrimaryKey.mMedicationId == null)||(!thePrimaryKey.mMedicationId.equals(mMedicationId))) {
                     return false;
                 }
             }
@@ -82,11 +82,11 @@ public final class MedicationNameTable
         @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();
-            where.append("(medication_id = ");
-            where.append(mMedicationId.getId());
-            where.append(")");
-            where.append(" AND (name = ");
+            where.append("(name = ");
             where.append(mName);
+            where.append(")");
+            where.append(" AND (medication_id = ");
+            where.append(mMedicationId.getId());
             where.append(")");
             return where.toString();
         }
