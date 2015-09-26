@@ -81,7 +81,6 @@ public final class HealthScoreTable
         extends BaseRow<HealthScoreTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         @Nonnull
         private long mBestValue;
         @Nonnull
@@ -90,6 +89,7 @@ public final class HealthScoreTable
         private boolean mRandomQuery;
         private String mMaxLabel;
         private String mMinLabel;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
 
         static {
             COLUMN_NAMES.add("_id");
@@ -176,17 +176,15 @@ public final class HealthScoreTable
 
         @Override
         public Object insert(Transaction transaction) {
-            HealthScoreTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
+            HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+            }
+            // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    getNextPrimaryKey().setId(rowId);
-                    if (constructPrimaryKey) {
-                        setNextPrimaryKey(new HealthScoreTable.PrimaryKey(rowId));
-                    }
                     setIsInDatabase(true);
                     setIsModified(false);
                     updatePrimaryKeyFromNext();
@@ -194,7 +192,7 @@ public final class HealthScoreTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

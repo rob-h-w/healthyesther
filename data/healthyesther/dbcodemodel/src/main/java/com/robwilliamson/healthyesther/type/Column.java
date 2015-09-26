@@ -190,6 +190,10 @@ public class Column {
         boolean pick(Column column);
     }
 
+    public static interface Visitor<T> {
+        void visit(Column column, T context);
+    }
+
     public static class AllPicker implements Picker {
 
         @Override

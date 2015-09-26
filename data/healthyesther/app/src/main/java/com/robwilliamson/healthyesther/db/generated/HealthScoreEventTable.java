@@ -102,12 +102,12 @@ public final class HealthScoreEventTable
         extends BaseRow<HealthScoreEventTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey mHealthScoreId;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
         private long mScore;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
 
         static {
             COLUMN_NAMES.add("event_id");
@@ -148,14 +148,21 @@ public final class HealthScoreEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            HealthScoreEventTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            if (constructPrimaryKey) {
+            if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
-                mHealthScoreIdRow.applyTo(transaction);
-                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mHealthScoreIdRow.getNextPrimaryKey()));
-                primaryKey = getNextPrimaryKey();
+                mEventId = mEventIdRow.getNextPrimaryKey();
             }
+            if (mHealthScoreIdRow!= null) {
+                mHealthScoreIdRow.applyTo(transaction);
+                mHealthScoreId = mHealthScoreIdRow.getNextPrimaryKey();
+            }
+            HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mHealthScoreIdRow.getNextPrimaryKey()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getHealthScoreId(), mScore);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
@@ -167,7 +174,7 @@ public final class HealthScoreEventTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

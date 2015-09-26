@@ -81,9 +81,9 @@ public final class MealTable
         extends BaseRow<MealTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         @Nonnull
         private String mName;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
@@ -110,17 +110,15 @@ public final class MealTable
 
         @Override
         public Object insert(Transaction transaction) {
-            MealTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName);
+            MealTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new MealTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName)));
+            }
+            // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    getNextPrimaryKey().setId(rowId);
-                    if (constructPrimaryKey) {
-                        setNextPrimaryKey(new MealTable.PrimaryKey(rowId));
-                    }
                     setIsInDatabase(true);
                     setIsModified(false);
                     updatePrimaryKeyFromNext();
@@ -128,7 +126,7 @@ public final class MealTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

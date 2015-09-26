@@ -81,10 +81,10 @@ public final class EventTypeTable
         extends BaseRow<EventTypeTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         @Nonnull
         private String mName;
         private String mIcon;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
 
         static {
             COLUMN_NAMES.add("_id");
@@ -125,17 +125,15 @@ public final class EventTypeTable
 
         @Override
         public Object insert(Transaction transaction) {
-            EventTypeTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mIcon);
+            EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName, mIcon)));
+            }
+            // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    getNextPrimaryKey().setId(rowId);
-                    if (constructPrimaryKey) {
-                        setNextPrimaryKey(new EventTypeTable.PrimaryKey(rowId));
-                    }
                     setIsInDatabase(true);
                     setIsModified(false);
                     updatePrimaryKeyFromNext();
@@ -143,7 +141,7 @@ public final class EventTypeTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

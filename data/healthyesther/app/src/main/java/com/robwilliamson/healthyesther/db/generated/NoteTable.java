@@ -81,10 +81,10 @@ public final class NoteTable
         extends BaseRow<NoteTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         @Nonnull
         private String mName;
         private String mNote;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
 
         static {
             COLUMN_NAMES.add("_id");
@@ -125,17 +125,15 @@ public final class NoteTable
 
         @Override
         public Object insert(Transaction transaction) {
-            NoteTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mName, mNote);
+            NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName, mNote)));
+            }
+            // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    getNextPrimaryKey().setId(rowId);
-                    if (constructPrimaryKey) {
-                        setNextPrimaryKey(new NoteTable.PrimaryKey(rowId));
-                    }
                     setIsInDatabase(true);
                     setIsModified(false);
                     updatePrimaryKeyFromNext();
@@ -143,7 +141,7 @@ public final class NoteTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

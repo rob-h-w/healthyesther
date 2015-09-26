@@ -56,8 +56,8 @@ public final class AndroidMetadataTable
         extends BaseRow<AndroidMetadataTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(1);
         private String mLocale;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(1);
 
         static {
             COLUMN_NAMES.add("locale");

@@ -102,11 +102,11 @@ public final class MedicationNameTable
         extends BaseRow<MedicationNameTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         @Nonnull
         private String mName;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("name");
@@ -128,13 +128,17 @@ public final class MedicationNameTable
 
         @Override
         public Object insert(Transaction transaction) {
-            MedicationNameTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            if (constructPrimaryKey) {
+            if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
-                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationIdRow.getNextPrimaryKey()));
-                primaryKey = getNextPrimaryKey();
+                mMedicationId = mMedicationIdRow.getNextPrimaryKey();
             }
+            MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationIdRow.getNextPrimaryKey()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId());
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
@@ -146,7 +150,7 @@ public final class MedicationNameTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

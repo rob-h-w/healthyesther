@@ -102,11 +102,11 @@ public final class MedicationEventTable
         extends BaseRow<MedicationEventTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("event_id");
@@ -132,14 +132,21 @@ public final class MedicationEventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            MedicationEventTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            if (constructPrimaryKey) {
+            if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
-                mMedicationIdRow.applyTo(transaction);
-                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMedicationIdRow.getNextPrimaryKey()));
-                primaryKey = getNextPrimaryKey();
+                mEventId = mEventIdRow.getNextPrimaryKey();
             }
+            if (mMedicationIdRow!= null) {
+                mMedicationIdRow.applyTo(transaction);
+                mMedicationId = mMedicationIdRow.getNextPrimaryKey();
+            }
+            MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMedicationIdRow.getNextPrimaryKey()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getMedicationId());
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
@@ -151,7 +158,7 @@ public final class MedicationEventTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override

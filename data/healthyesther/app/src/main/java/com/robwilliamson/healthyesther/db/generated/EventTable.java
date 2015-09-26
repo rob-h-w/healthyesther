@@ -81,7 +81,6 @@ public final class EventTable
         extends BaseRow<EventTable.PrimaryKey>
     {
 
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey mTypeId;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row mTypeIdRow;
         @Nonnull
@@ -90,6 +89,7 @@ public final class EventTable
         private DateTime mWhen;
         private DateTime mModified;
         private String mName;
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
 
         static {
             COLUMN_NAMES.add("_id");
@@ -190,17 +190,19 @@ public final class EventTable
 
         @Override
         public Object insert(Transaction transaction) {
-            EventTable.PrimaryKey primaryKey = getNextPrimaryKey();
-            final boolean constructPrimaryKey = (primaryKey!= null);
-            final long rowId = transaction.insert(COLUMN_NAMES, primaryKey.getId(), mTypeId.getId(), mCreated, mWhen, mModified, mName);
+            if (mTypeIdRow!= null) {
+                mTypeIdRow.applyTo(transaction);
+                mTypeId = mTypeIdRow.getNextPrimaryKey();
+            }
+            EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mTypeId.getId(), mCreated, mWhen, mModified, mName)));
+            }
+            // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
-                    getNextPrimaryKey().setId(rowId);
-                    if (constructPrimaryKey) {
-                        setNextPrimaryKey(new EventTable.PrimaryKey(rowId));
-                    }
                     setIsInDatabase(true);
                     setIsModified(false);
                     updatePrimaryKeyFromNext();
@@ -208,7 +210,7 @@ public final class EventTable
 
             }
             );
-            return primaryKey;
+            return nextPrimaryKey;
         }
 
         @Override
