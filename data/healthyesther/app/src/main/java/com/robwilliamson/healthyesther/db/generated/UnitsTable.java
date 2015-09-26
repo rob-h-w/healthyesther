@@ -85,11 +85,14 @@ public final class UnitsTable
         private String mName;
         private double mSiFactor;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
+            INSERT_LIST.add("name");
             COLUMN_NAMES.add("si_factor");
+            INSERT_LIST.add("si_factor");
         }
 
         public Row(
@@ -127,7 +130,7 @@ public final class UnitsTable
         public Object insert(Transaction transaction) {
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName, mSiFactor)));
+                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mSiFactor)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

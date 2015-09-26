@@ -85,11 +85,14 @@ public final class EventTypeTable
         private String mName;
         private String mIcon;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
+            INSERT_LIST.add("name");
             COLUMN_NAMES.add("icon");
+            INSERT_LIST.add("icon");
         }
 
         public Row(
@@ -127,7 +130,7 @@ public final class EventTypeTable
         public Object insert(Transaction transaction) {
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName, mIcon)));
+                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mIcon)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

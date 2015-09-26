@@ -85,11 +85,14 @@ public final class NoteTable
         private String mName;
         private String mNote;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
+            INSERT_LIST.add("name");
             COLUMN_NAMES.add("note");
+            INSERT_LIST.add("note");
         }
 
         public Row(
@@ -127,7 +130,7 @@ public final class NoteTable
         public Object insert(Transaction transaction) {
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName, mNote)));
+                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mNote)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

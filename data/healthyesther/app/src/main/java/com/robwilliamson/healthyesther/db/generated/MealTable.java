@@ -84,10 +84,12 @@ public final class MealTable
         @Nonnull
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
+        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(1);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
+            INSERT_LIST.add("name");
         }
 
         public Row(
@@ -112,7 +114,7 @@ public final class MealTable
         public Object insert(Transaction transaction) {
             MealTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new MealTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mName)));
+                setNextPrimaryKey(new MealTable.PrimaryKey(transaction.insert(INSERT_LIST, mName)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

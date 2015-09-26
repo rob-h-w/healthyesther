@@ -179,7 +179,7 @@ public final class MealEventTable
                 nextPrimaryKey = getNextPrimaryKey();
             }
             // This table does not use a row ID as a primary key.
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getMealId(), mUnitsId.getId(), mAmount);
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getMealId(), mUnitsId, mAmount);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

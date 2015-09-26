@@ -90,14 +90,20 @@ public final class HealthScoreTable
         private String mMaxLabel;
         private String mMinLabel;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
+        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(5);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("best_value");
+            INSERT_LIST.add("best_value");
             COLUMN_NAMES.add("name");
+            INSERT_LIST.add("name");
             COLUMN_NAMES.add("random_query");
+            INSERT_LIST.add("random_query");
             COLUMN_NAMES.add("max_label");
+            INSERT_LIST.add("max_label");
             COLUMN_NAMES.add("min_label");
+            INSERT_LIST.add("min_label");
         }
 
         public Row(
@@ -178,7 +184,7 @@ public final class HealthScoreTable
         public Object insert(Transaction transaction) {
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(INSERT_LIST, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

@@ -90,14 +90,20 @@ public final class EventTable
         private DateTime mModified;
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
+        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(5);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("type_id");
+            INSERT_LIST.add("type_id");
             COLUMN_NAMES.add("created");
+            INSERT_LIST.add("created");
             COLUMN_NAMES.add("when");
+            INSERT_LIST.add("when");
             COLUMN_NAMES.add("modified");
+            INSERT_LIST.add("modified");
             COLUMN_NAMES.add("name");
+            INSERT_LIST.add("name");
         }
 
         public Row(
@@ -196,7 +202,7 @@ public final class EventTable
             }
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(COLUMN_NAMES, nextPrimaryKey.getId(), mTypeId.getId(), mCreated, mWhen, mModified, mName)));
+                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(INSERT_LIST, mTypeId, mCreated, mWhen, mModified, mName)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
