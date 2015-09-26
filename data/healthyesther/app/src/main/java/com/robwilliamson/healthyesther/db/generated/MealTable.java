@@ -184,6 +184,16 @@ public final class MealTable
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
+            MealTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            MealTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            MealTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            MealTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

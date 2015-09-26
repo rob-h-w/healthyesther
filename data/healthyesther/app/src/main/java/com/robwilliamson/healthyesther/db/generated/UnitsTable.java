@@ -202,6 +202,16 @@ public final class UnitsTable
             if (!(mSiFactor == theRow.mSiFactor)) {
                 return false;
             }
+            UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            UnitsTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            UnitsTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            UnitsTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

@@ -205,6 +205,16 @@ public final class MedicationNameTable
                 return false;
             }
             MedicationNameTable.Row theRow = ((MedicationNameTable.Row) other);
+            MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            MedicationNameTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            MedicationNameTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            MedicationNameTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

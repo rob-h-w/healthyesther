@@ -202,6 +202,16 @@ public final class EventTypeTable
             if (!(((mIcon == null)&&(theRow.mIcon == null))||((mIcon!= null)&&mIcon.equals(theRow.mIcon)))) {
                 return false;
             }
+            EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            EventTypeTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            EventTypeTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            EventTypeTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

@@ -280,6 +280,16 @@ public final class EventTable
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
+            EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            EventTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            EventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            EventTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

@@ -256,6 +256,16 @@ public final class MealEventTable
             if (!(mAmount == theRow.mAmount)) {
                 return false;
             }
+            MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            MealEventTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            MealEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            MealEventTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

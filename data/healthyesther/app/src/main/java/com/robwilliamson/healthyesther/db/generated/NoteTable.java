@@ -202,6 +202,16 @@ public final class NoteTable
             if (!(((mNote == null)&&(theRow.mNote == null))||((mNote!= null)&&mNote.equals(theRow.mNote)))) {
                 return false;
             }
+            NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            NoteTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            NoteTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            NoteTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

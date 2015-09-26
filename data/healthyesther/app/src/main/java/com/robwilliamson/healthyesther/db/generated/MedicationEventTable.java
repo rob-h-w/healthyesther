@@ -213,6 +213,16 @@ public final class MedicationEventTable
                 return false;
             }
             MedicationEventTable.Row theRow = ((MedicationEventTable.Row) other);
+            MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            MedicationEventTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            MedicationEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            MedicationEventTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

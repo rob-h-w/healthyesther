@@ -232,6 +232,16 @@ public final class HealthScoreEventTable
             if (!(mScore == theRow.mScore)) {
                 return false;
             }
+            HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            HealthScoreEventTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            HealthScoreEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            HealthScoreEventTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

@@ -110,6 +110,16 @@ public final class AndroidMetadataTable
             if (!(((mLocale == null)&&(theRow.mLocale == null))||((mLocale!= null)&&mLocale.equals(theRow.mLocale)))) {
                 return false;
             }
+            AndroidMetadataTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            AndroidMetadataTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            AndroidMetadataTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            AndroidMetadataTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 

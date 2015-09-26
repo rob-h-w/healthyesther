@@ -190,15 +190,27 @@ public class RowGenerator extends BaseClassGenerator {
     private void makeEquals() {
         JMethod eqMethod = makeBasicEquals();
         JDefinedClass theClass = getJClass();
-        JBlock body = eqMethod.body();
-        JVar other = eqMethod.listParams()[0];
-        JVar otherType = body.decl(theClass, "the" + theClass.name(), JExpr.cast(theClass, other));
+        final JBlock body = eqMethod.body();
+        final JVar other = eqMethod.listParams()[0];
+        final JVar otherType = body.decl(theClass, "the" + theClass.name(), JExpr.cast(theClass, other));
 
-        for (Column column : mBasicColumns.columns) {
-            ColumnField field = mBasicColumns.columnFieldFor(column);
-            JBlock ifBlock = body._if(makeEquals(field.fieldVar, otherType.ref(field.fieldVar)).not())._then();
-            ifBlock._return(JExpr.lit(false));
-        }
+        Column.Visitor<BaseColumns> makeEqualsCheck = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                ColumnField field = context.columnFieldFor(column);
+                JBlock ifBlock = body._if(makeEquals(field.fieldVar, otherType.ref(field.fieldVar)).not())._then();
+                ifBlock._return(JExpr.lit(false));
+            }
+        };
+        mBasicColumns.forEach(makeEqualsCheck);
+
+        JVar nextPrimaryKey = body.decl(getTableGenerator().getPrimaryKeyGenerator().getJClass(), "nextPrimaryKey", callGetNextPrimaryKey(null, null));
+        JVar oNextPrimaryKey = body.decl(getTableGenerator().getPrimaryKeyGenerator().getJClass(), "otherNextPrimaryKey", callGetNextPrimaryKey(null, otherType));
+        body._if(makeEquals(nextPrimaryKey, oNextPrimaryKey).not())._then()._return(JExpr.lit(false));
+
+        JVar primaryKey = body.decl(getTableGenerator().getPrimaryKeyGenerator().getJClass(), "primaryKey", callGetConcretePrimaryKey(null, null));
+        JVar oPrimaryKey = body.decl(getTableGenerator().getPrimaryKeyGenerator().getJClass(), "otherPrimaryKey", callGetConcretePrimaryKey(null, otherType));
+        body._if(makeEquals(primaryKey, oPrimaryKey).not())._then()._return(JExpr.lit(false));
 
         body._return(JExpr.lit(true));
     }

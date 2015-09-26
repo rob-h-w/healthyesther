@@ -213,6 +213,16 @@ public final class NoteEventTable
                 return false;
             }
             NoteEventTable.Row theRow = ((NoteEventTable.Row) other);
+            NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            NoteEventTable.PrimaryKey otherNextPrimaryKey = theRow.getNextPrimaryKey();
+            if (!(((nextPrimaryKey == null)&&(otherNextPrimaryKey == null))||((nextPrimaryKey!= null)&&nextPrimaryKey.equals(otherNextPrimaryKey)))) {
+                return false;
+            }
+            NoteEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            NoteEventTable.PrimaryKey otherPrimaryKey = theRow.getConcretePrimaryKey();
+            if (!(((primaryKey == null)&&(otherPrimaryKey == null))||((primaryKey!= null)&&primaryKey.equals(otherPrimaryKey)))) {
+                return false;
+            }
             return true;
         }
 
