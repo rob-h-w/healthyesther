@@ -142,8 +142,7 @@ public final class HealthScoreEventTable
             return mScore;
         }
 
-        @Override
-        protected Object insert(Transaction transaction) {
+        private void applyToRows(Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
                 mEventId = mEventIdRow.getNextPrimaryKey();
@@ -152,6 +151,12 @@ public final class HealthScoreEventTable
                 mHealthScoreIdRow.applyTo(transaction);
                 mHealthScoreId = mHealthScoreIdRow.getNextPrimaryKey();
             }
+        }
+
+        @Override
+        protected Object insert(Transaction transaction) {
+            // Ensure all keys are updated from any rows passed.
+            applyToRows(transaction);
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventId, mHealthScoreId));
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();

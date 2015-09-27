@@ -194,12 +194,17 @@ public final class EventTable
             return mName;
         }
 
-        @Override
-        protected Object insert(Transaction transaction) {
+        private void applyToRows(Transaction transaction) {
             if (mTypeIdRow!= null) {
                 mTypeIdRow.applyTo(transaction);
                 mTypeId = mTypeIdRow.getNextPrimaryKey();
             }
+        }
+
+        @Override
+        protected Object insert(Transaction transaction) {
+            // Ensure all keys are updated from any rows passed.
+            applyToRows(transaction);
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(INSERT_LIST, mTypeId.getId(), mCreated, mWhen, mModified, mName)));

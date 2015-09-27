@@ -122,12 +122,17 @@ public final class MedicationNameTable
             mMedicationIdRow = medicationId;
         }
 
-        @Override
-        protected Object insert(Transaction transaction) {
+        private void applyToRows(Transaction transaction) {
             if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
                 mMedicationId = mMedicationIdRow.getNextPrimaryKey();
             }
+        }
+
+        @Override
+        protected Object insert(Transaction transaction) {
+            // Ensure all keys are updated from any rows passed.
+            applyToRows(transaction);
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationId));
             MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();

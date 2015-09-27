@@ -44,6 +44,7 @@ public class RowGenerator extends BaseClassGenerator {
     private List<Column> mAllColumns;
     private JFieldVar mColumnNames;
     private JFieldVar mInsertNames;
+    private JMethod mApplyToRows;
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
@@ -95,12 +96,44 @@ public class RowGenerator extends BaseClassGenerator {
                 asyncInit();
                 makeConstructors();
                 makeAccessors();
+                makeApplyToRows();
                 makeInsert();
                 makeUpdate();
                 makeRemove();
                 makeEquals();
             }
         });
+    }
+
+    private void makeApplyToRows() {
+        if (!mTableGenerator.getTable().hasDependencies()) {
+            return;
+        }
+
+        mApplyToRows = getJClass().method(JMod.PRIVATE, model().VOID, "applyToRows");
+        final JVar transaction = mApplyToRows.param(Transaction.class, "transaction");
+        final JBlock body = mApplyToRows.body();
+
+        // Ensure row dependencies are up to date.
+        Column.Visitor<BaseColumns> rowDependencyUpdater = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                RowField rowField = context.rowFieldFor(column);
+                if (rowField == null) {
+                    return;
+                }
+
+                JBlock rowPresent = body._if(rowField.fieldVar.ne(JExpr._null()))._then();
+                rowPresent.invoke(rowField.fieldVar, "applyTo").arg(transaction);
+                ColumnField columnField = context.columnFieldFor(column);
+                if (columnField != null && rowField.rowGenerator.hasRowIdPrimaryKey()) {
+                    rowPresent.assign(columnField.fieldVar, callGetNextPrimaryKey(null, rowField.fieldVar));
+                }
+            }
+        };
+
+        mPrimaryKeyColumns.forEach(rowDependencyUpdater);
+        mBasicColumns.forEach(rowDependencyUpdater);
     }
 
     private void asyncInit() {
@@ -238,30 +271,13 @@ public class RowGenerator extends BaseClassGenerator {
         final JVar transaction = insert.param(Transaction.class, "transaction");
         final JBlock body = insert.body();
 
+        // Ensure row dependencies are up to date.
+        if (mApplyToRows != null) {
+            body.directStatement("// Ensure all keys are updated from any rows passed.");
+            body.invoke(mApplyToRows).arg(transaction);
+        }
+
         if (keyGenerator.hasPrimaryKeys()) {
-
-            // Ensure row dependencies are up to date.
-            Column.Visitor<BaseColumns> rowDependencyUpdater = new Column.Visitor<BaseColumns>() {
-                @Override
-                public void visit(Column column, BaseColumns context) {
-                    RowField rowField = context.rowFieldFor(column);
-                    if (rowField == null) {
-                        return;
-                    }
-
-                    JBlock rowPresent = body._if(rowField.fieldVar.ne(JExpr._null()))._then();
-                    rowPresent.invoke(rowField.fieldVar, "applyTo").arg(transaction);
-                    ColumnField columnField = context.columnFieldFor(column);
-                    if (columnField != null && rowField.rowGenerator.hasRowIdPrimaryKey()) {
-                        rowPresent.assign(columnField.fieldVar, callGetNextPrimaryKey(null, rowField.fieldVar));
-                    }
-                }
-            };
-
-            mPrimaryKeyColumns.forEach(rowDependencyUpdater);
-            mBasicColumns.forEach(rowDependencyUpdater);
-
-
             // If we need to create a primary key upfront:
             final JVar nextPrimaryKey;
             final JBlock doConstruction;

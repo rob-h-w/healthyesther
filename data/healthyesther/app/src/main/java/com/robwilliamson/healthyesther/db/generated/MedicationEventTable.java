@@ -126,8 +126,7 @@ public final class MedicationEventTable
             mMedicationIdRow = medicationId;
         }
 
-        @Override
-        protected Object insert(Transaction transaction) {
+        private void applyToRows(Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
                 mEventId = mEventIdRow.getNextPrimaryKey();
@@ -136,6 +135,12 @@ public final class MedicationEventTable
                 mMedicationIdRow.applyTo(transaction);
                 mMedicationId = mMedicationIdRow.getNextPrimaryKey();
             }
+        }
+
+        @Override
+        protected Object insert(Transaction transaction) {
+            // Ensure all keys are updated from any rows passed.
+            applyToRows(transaction);
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventId, mMedicationId));
             MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();

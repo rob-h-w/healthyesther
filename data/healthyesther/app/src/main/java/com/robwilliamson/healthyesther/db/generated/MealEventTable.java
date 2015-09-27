@@ -159,8 +159,7 @@ public final class MealEventTable
             return mAmount;
         }
 
-        @Override
-        protected Object insert(Transaction transaction) {
+        private void applyToRows(Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
                 mEventId = mEventIdRow.getNextPrimaryKey();
@@ -173,6 +172,12 @@ public final class MealEventTable
                 mUnitsIdRow.applyTo(transaction);
                 mUnitsId = mUnitsIdRow.getNextPrimaryKey();
             }
+        }
+
+        @Override
+        protected Object insert(Transaction transaction) {
+            // Ensure all keys are updated from any rows passed.
+            applyToRows(transaction);
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventId, mMealId));
             MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
