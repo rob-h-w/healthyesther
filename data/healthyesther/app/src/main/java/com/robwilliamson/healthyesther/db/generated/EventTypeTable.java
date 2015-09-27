@@ -166,19 +166,19 @@ public final class EventTypeTable
 
         @Override
         protected void remove(Transaction transaction) {
-            if (!this.isInDatabase()) {
+            if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
             int actual = transaction.remove(getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
+            setIsDeleted(true);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(false);
-                    setIsDeleted(true);
                 }
 
             }

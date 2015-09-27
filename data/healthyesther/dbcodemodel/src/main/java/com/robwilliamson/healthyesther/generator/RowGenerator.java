@@ -226,7 +226,7 @@ public class RowGenerator extends BaseClassGenerator {
             return;
         }
 
-        body._if(JExpr._this().invoke("isInDatabase").not())._then()._return();
+        body._if(JExpr.invoke("isInDatabase").not().cor(JExpr.invoke("isDeleted")))._then()._return();
 
         JInvocation where = JExpr.invoke(null, "getConcretePrimaryKey");
 
@@ -234,6 +234,7 @@ public class RowGenerator extends BaseClassGenerator {
 
         JExpression expected = JExpr.lit(1);
         body._if(actual.ne(expected))._then()._throw(JExpr._new(model()._ref(BaseTransactable.RemoveFailed.class)).arg(expected).arg(actual));
+        setIsDeletedCall(body, true);
 
         JDefinedClass anonymousType = model().anonymousClass(
                 Transaction.CompletionHandler.class);
@@ -243,7 +244,6 @@ public class RowGenerator extends BaseClassGenerator {
                 "onCompleted").body();
 
         setIsInDatabaseCall(callback, false);
-        setIsDeletedCall(callback, true);
 
         body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
     }
