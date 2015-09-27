@@ -130,11 +130,11 @@ public final class MedicationNameTable
             }
             MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationIdRow.getNextPrimaryKey()));
+                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationId));
                 nextPrimaryKey = getNextPrimaryKey();
             }
             // This table does not use a row ID as a primary key.
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId());
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId().getId());
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

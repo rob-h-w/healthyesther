@@ -202,7 +202,7 @@ public final class EventTable
             }
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(INSERT_LIST, mTypeId, mCreated, mWhen, mModified, mName)));
+                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(INSERT_LIST, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

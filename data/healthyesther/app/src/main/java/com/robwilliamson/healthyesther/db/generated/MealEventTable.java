@@ -175,11 +175,11 @@ public final class MealEventTable
             }
             MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMealIdRow.getNextPrimaryKey()));
+                setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventId, mMealId));
                 nextPrimaryKey = getNextPrimaryKey();
             }
             // This table does not use a row ID as a primary key.
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getMealId(), mUnitsId, mAmount);
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMealId().getId(), mUnitsId.getId(), mAmount);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

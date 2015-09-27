@@ -138,11 +138,11 @@ public final class NoteEventTable
             }
             NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mNoteIdRow.getNextPrimaryKey()));
+                setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventId, mNoteId));
                 nextPrimaryKey = getNextPrimaryKey();
             }
             // This table does not use a row ID as a primary key.
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getNoteId());
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getNoteId().getId());
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

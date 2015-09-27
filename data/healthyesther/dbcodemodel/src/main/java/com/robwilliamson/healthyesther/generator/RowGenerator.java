@@ -274,17 +274,7 @@ public class RowGenerator extends BaseClassGenerator {
                 Column.Visitor<BaseColumns> addConstructorArgument = new Column.Visitor<BaseColumns>() {
                     @Override
                     public void visit(Column column, BaseColumns context) {
-                        RowField rowField = context.rowFieldFor(column);
-                        if (rowField != null) {
-                            if (!rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator().hasRowId()) {
-                                throw new RuntimeException("The primary key generator for " + rowField.name + " should have a row ID.");
-                            }
-                            newPrimaryKey.arg(callGetNextPrimaryKey(null, rowField.fieldVar));
-                        } else {
-                            if (!column.isRowId()) {
-                                newPrimaryKey.arg(context.columnFieldFor(column).fieldVar);
-                            }
-                        }
+                        newPrimaryKey.arg(context.columnFieldFor(column).fieldVar);
                     }
                 };
 
@@ -308,13 +298,25 @@ public class RowGenerator extends BaseClassGenerator {
             Column.Visitor<BaseColumns> addInsertionArgument = new Column.Visitor<BaseColumns>() {
                 @Override
                 public void visit(Column column, BaseColumns context) {
+                    if (column.isRowId()) {
+                        return;
+                    }
+
+                    ColumnField field = context.columnFieldFor(column);
                     if (column.isPrimaryKey()) {
-                        if (column.isRowId()) {
-                            return;
+
+                        if (column.isForeignKey()) {
+                            PrimaryKeyGenerator foreignKeyGenerator = context.rowFieldFor(column).rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
+                            insertionCall.arg(nextPrimaryKey.invoke(keyGenerator.getGetterFor(column)).invoke(foreignKeyGenerator.getRowIdGetter()));
+                        } else {
+                            insertionCall.arg(nextPrimaryKey.invoke(keyGenerator.getGetterFor(column)));
                         }
-                        insertionCall.arg(nextPrimaryKey.invoke(keyGenerator.getGetterFor(column)));
                     } else {
-                        insertionCall.arg(context.columnFieldFor(column).fieldVar);
+                        if (column.isForeignKey()) {
+                            insertionCall.arg(field.fieldVar.invoke("getId"));
+                        } else {
+                            insertionCall.arg(field.fieldVar);
+                        }
                     }
                 }
             };
@@ -334,19 +336,10 @@ public class RowGenerator extends BaseClassGenerator {
 
                 // If we have to create a primary key after insertion:
                 for (Column column : mPrimaryKeyColumns.columns) {
-                    RowField rowField = mPrimaryKeyColumns.rowFieldFor(column);
-                    if (rowField != null) {
-                        if (!rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator().hasRowId()) {
-                            throw new RuntimeException("The primary key generator for " + rowField.name + " should have a row ID.");
-                        }
-                        doConstruction.invoke(rowField.fieldVar, "applyTo").arg(transaction);
-                        newPrimaryKey.arg(callGetNextPrimaryKey(null, rowField.fieldVar));
+                    if (column.isRowId()) {
+                        newPrimaryKey.arg(insertionCall);
                     } else {
-                        if (column.isRowId()) {
-                            newPrimaryKey.arg(insertionCall);
-                        } else {
-                            newPrimaryKey.arg(mPrimaryKeyColumns.columnFieldFor(column).fieldVar);
-                        }
+                        newPrimaryKey.arg(mPrimaryKeyColumns.columnFieldFor(column).fieldVar);
                     }
                 }
                 doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);

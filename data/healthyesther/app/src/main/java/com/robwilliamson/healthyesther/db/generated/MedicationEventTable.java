@@ -138,11 +138,11 @@ public final class MedicationEventTable
             }
             MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMedicationIdRow.getNextPrimaryKey()));
+                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventId, mMedicationId));
                 nextPrimaryKey = getNextPrimaryKey();
             }
             // This table does not use a row ID as a primary key.
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getMedicationId());
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMedicationId().getId());
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 

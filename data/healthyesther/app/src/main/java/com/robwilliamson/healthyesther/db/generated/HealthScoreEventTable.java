@@ -154,11 +154,11 @@ public final class HealthScoreEventTable
             }
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mHealthScoreIdRow.getNextPrimaryKey()));
+                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventId, mHealthScoreId));
                 nextPrimaryKey = getNextPrimaryKey();
             }
             // This table does not use a row ID as a primary key.
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId(), nextPrimaryKey.getHealthScoreId(), mScore);
+            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), mScore);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
