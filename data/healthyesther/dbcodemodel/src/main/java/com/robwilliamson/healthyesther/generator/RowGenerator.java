@@ -6,7 +6,6 @@ import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.BaseField;
-import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.RowField;
 import com.robwilliamson.healthyesther.type.Column;
@@ -62,11 +61,6 @@ public class RowGenerator extends BaseClassGenerator {
         } else {
             mJoinConstructor = null;
         }
-    }
-
-    private static String name(RowGenerator rowGenerator) {
-        return Strings.lowerCase(rowGenerator.getTableGenerator().getPreferredParameterName()) +
-                "Row";
     }
 
     public void init() {
@@ -367,7 +361,7 @@ public class RowGenerator extends BaseClassGenerator {
                     model().VOID,
                     "onCompleted").body();
 
-            if (hasRowIdPrimaryKey()) {
+            if (hasRowIdPrimaryKey() && doConstruction != null) { // Null check added to remove warning.
                 body.directStatement("// This table uses a row ID as a primary key.");
 
                 // If we have to create a primary key after insertion:
@@ -422,11 +416,8 @@ public class RowGenerator extends BaseClassGenerator {
         Column.Picker picker = new Column.Picker() {
             @Override
             public boolean pick(Column column) {
-                if (column.isPrimaryKey() && !column.isForeignKey() && column.getName().equals("_id")) {
-                    return false;
-                }
+                return !(column.isPrimaryKey() && !column.isForeignKey() && column.getName().equals("_id"));
 
-                return true;
             }
         };
 
@@ -516,20 +507,6 @@ public class RowGenerator extends BaseClassGenerator {
         return body.invoke(expression, name);
     }
 
-    private void implementValueConstructorFor(ColumnField field) {
-        JVar param;
-        if (field.column.isForeignKey()) {
-            ColumnDependency dependency = field.column.getColumnDependency();
-            param = addValueConstructorParam(dependency);
-            mValueConstructor.body().assign(field.fieldVar, param);
-        } else {
-            param = mValueConstructor.param(field.fieldVar.type(), field.name);
-            mValueConstructor.body().assign(field.fieldVar, param);
-        }
-
-        annotateNonull(param, field.column.isNotNull());
-    }
-
     private void annotateNonull(JVar param, boolean nonnull) {
         if (nonnull) {
             param.annotate(Nonnull.class);
@@ -564,19 +541,6 @@ public class RowGenerator extends BaseClassGenerator {
 
     public TableGenerator getTableGenerator() {
         return mTableGenerator;
-    }
-
-    private JVar addValueConstructorParam(ColumnDependency columnDependency) {
-        RowGenerator rowGenerator = columnDependency
-                .getDependency().getTable().getGenerator().getRow();
-
-        com.robwilliamson.healthyesther.semantic.Table table = rowGenerator
-                .getTableGenerator().getTable();
-        PrimaryKeyGenerator primaryKeyGenerator = table.getGenerator().getPrimaryKeyGenerator();
-        return mValueConstructor.param(
-                primaryKeyGenerator.getJClass(),
-                Strings.lowerCase(Strings.underscoresToCamel(table.getName()) + Strings.capitalize(primaryKeyGenerator
-                        .getPreferredParameterName())));
     }
 
     private boolean hasRowIdPrimaryKey() {
@@ -645,8 +609,7 @@ public class RowGenerator extends BaseClassGenerator {
         protected RowField makeRowFieldFor(Column column) {
             RowGenerator row = column
                     .getColumnDependency().getDependency().getTable().getGenerator().getRow();
-            RowField rowField = new RowField(getJClass(), column, row, BaseField.name(column.getName()) + "Row");
-            return rowField;
+            return new RowField(getJClass(), column, row, BaseField.name(column.getName()) + "Row");
         }
 
         protected abstract Column.Picker getColumnPicker();
