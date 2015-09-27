@@ -201,7 +201,7 @@ public final class MealEventTable
 
         @Override
         protected void update(Transaction transaction) {
-            if (!this.isInDatabase()) {
+            if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             applyToRows(transaction);

@@ -137,7 +137,7 @@ public final class MedicationTable
 
         @Override
         protected void update(Transaction transaction) {
-            if (!this.isInDatabase()) {
+            if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName);

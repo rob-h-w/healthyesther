@@ -181,7 +181,7 @@ public class RowGenerator extends BaseClassGenerator {
             return;
         }
 
-        body._if(JExpr._this().invoke("isInDatabase").not())._then()._throw(JExpr._new(model()._ref(BaseTransactable.UpdateFailed.class)).arg(JExpr.lit("Could not update because the row is not in the database.")));
+        body._if(JExpr.invoke("isInDatabase").not())._then()._throw(JExpr._new(model()._ref(BaseTransactable.UpdateFailed.class)).arg(JExpr.lit("Could not update because the row is not in the database.")));
 
         if (mApplyToRows != null) {
             body.invoke(mApplyToRows).arg(transaction);
@@ -208,9 +208,6 @@ public class RowGenerator extends BaseClassGenerator {
 
         JExpression expected = JExpr.lit(1);
         body._if(actual.ne(expected))._then()._throw(JExpr._new(model()._ref(BaseTransactable.UpdateFailed.class)).arg(expected).arg(actual));
-
-        JDefinedClass anonymousType = model().anonymousClass(
-                Transaction.CompletionHandler.class);
 
         setIsModifiedCall(body, false);
     }
