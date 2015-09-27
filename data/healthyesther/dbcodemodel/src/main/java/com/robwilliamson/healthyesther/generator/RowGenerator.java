@@ -41,9 +41,9 @@ public class RowGenerator extends BaseClassGenerator {
     private final JMethod mValueConstructor;
     private PrimaryColumns mPrimaryKeyColumns;
     private BasicColumns mBasicColumns;
-    private List<Column> mAllColumns;
     private JFieldVar mColumnNames;
     private JFieldVar mInsertNames;
+    private JFieldVar mUpdateNames;
     private JMethod mApplyToRows;
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
@@ -86,9 +86,15 @@ public class RowGenerator extends BaseClassGenerator {
             mInsertNames = getJClass().field(
                     JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
                     stringListType,
-                    "INSERT_LIST");
+                    "COLUMN_NAMES_FOR_INSERTION");
             mInsertNames.init(JExpr._new(stringListType).arg(JExpr.lit(mTableGenerator.getTable().getColumns().length - 1)));
         }
+
+        mUpdateNames = getJClass().field(
+                JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
+                stringListType,
+                "COLUMN_NAMES_FOR_UPDATE");
+        mUpdateNames.init(JExpr._new(stringListType).arg(JExpr.lit(mBasicColumns.columns.size())));
 
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
@@ -142,12 +148,12 @@ public class RowGenerator extends BaseClassGenerator {
         clazz._extends(baseClass);
 
         // Sort the columns
-        mAllColumns = Arrays.asList(getTableGenerator().getTable().getColumns());
-        Collections.sort(mAllColumns, new Column.Comparator());
+        List<Column> allColumns = Arrays.asList(getTableGenerator().getTable().getColumns());
+        Collections.sort(allColumns, new Column.Comparator());
 
         // Get a class constructor body.
         JBlock classConstructor = clazz.init();
-        for (Column column : mAllColumns) {
+        for (Column column : allColumns) {
             // Populate the field names.
             classConstructor
                     .invoke(mColumnNames, "add")
@@ -156,6 +162,10 @@ public class RowGenerator extends BaseClassGenerator {
             if (mInsertNames != null && !column.isRowId()) {
                 classConstructor.invoke(mInsertNames, "add")
                         .arg(JExpr.lit(column.getName()));
+            }
+
+            if (!column.isPrimaryKey()) {
+                classConstructor.invoke(mUpdateNames, "add").arg(JExpr.lit(column.getName()));
             }
         }
     }
@@ -166,20 +176,34 @@ public class RowGenerator extends BaseClassGenerator {
         JVar transaction = update.param(Transaction.class, "transaction");
         JBlock body = update.body();
 
-        if (mPrimaryKeyColumns.columns.isEmpty()) {
+        if (mPrimaryKeyColumns.columns.isEmpty() || mBasicColumns.columns.isEmpty()) {
             body._throw(JExpr._new(model()._ref(UnsupportedOperationException.class)));
             return;
         }
 
         body._if(JExpr._this().invoke("isInDatabase").not())._then()._throw(JExpr._new(model()._ref(BaseTransactable.UpdateFailed.class)).arg(JExpr.lit("Could not update because the row is not in the database.")));
 
-        JInvocation where = JExpr.invoke(null, "getConcretePrimaryKey");
-
-        JInvocation updateInvocation = transaction.invoke(update).arg(where);
-        updateInvocation = updateInvocation.arg(mColumnNames);
-        for (Column column : mBasicColumns.columns) {
-            updateInvocation.arg(mBasicColumns.columnFieldFor(column).fieldVar);
+        if (mApplyToRows != null) {
+            body.invoke(mApplyToRows).arg(transaction);
         }
+
+        JInvocation where = callGetConcretePrimaryKey(null, null);
+
+        final JInvocation updateInvocation = transaction.invoke(update).arg(where).arg(mUpdateNames);
+
+        Column.Visitor<BaseColumns> addUpdateArg = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                if (column.isForeignKey()) {
+                    PrimaryKeyGenerator foreignKeyGenerator = context.rowFieldFor(column).rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
+                    updateInvocation.arg(context.columnFieldFor(column).fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
+                } else {
+                    updateInvocation.arg(context.columnFieldFor(column).fieldVar);
+                }
+            }
+        };
+        mBasicColumns.forEach(addUpdateArg);
+
         JVar actual = body.decl(model().INT, "actual", updateInvocation);
 
         JExpression expected = JExpr.lit(1);

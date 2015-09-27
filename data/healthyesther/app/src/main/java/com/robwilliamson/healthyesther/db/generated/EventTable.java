@@ -90,20 +90,26 @@ public final class EventTable
         private DateTime mModified;
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
-        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(5);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("type_id");
-            INSERT_LIST.add("type_id");
+            COLUMN_NAMES_FOR_INSERTION.add("type_id");
+            COLUMN_NAMES_FOR_UPDATE.add("type_id");
             COLUMN_NAMES.add("created");
-            INSERT_LIST.add("created");
+            COLUMN_NAMES_FOR_INSERTION.add("created");
+            COLUMN_NAMES_FOR_UPDATE.add("created");
             COLUMN_NAMES.add("when");
-            INSERT_LIST.add("when");
+            COLUMN_NAMES_FOR_INSERTION.add("when");
+            COLUMN_NAMES_FOR_UPDATE.add("when");
             COLUMN_NAMES.add("modified");
-            INSERT_LIST.add("modified");
+            COLUMN_NAMES_FOR_INSERTION.add("modified");
+            COLUMN_NAMES_FOR_UPDATE.add("modified");
             COLUMN_NAMES.add("name");
-            INSERT_LIST.add("name");
+            COLUMN_NAMES_FOR_INSERTION.add("name");
+            COLUMN_NAMES_FOR_UPDATE.add("name");
         }
 
         public Row(
@@ -207,9 +213,9 @@ public final class EventTable
             applyToRows(transaction);
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(INSERT_LIST, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
+                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mTypeId.getId(), mCreated, mWhen, mModified, mName));
+                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
@@ -231,7 +237,8 @@ public final class EventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mTypeId, mCreated, mWhen, mModified, mName);
+            applyToRows(transaction);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mTypeId.getId(), mCreated, mWhen, mModified, mName);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

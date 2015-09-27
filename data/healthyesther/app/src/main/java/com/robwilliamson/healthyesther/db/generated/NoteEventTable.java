@@ -103,6 +103,7 @@ public final class NoteEventTable
         private com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey mNoteId;
         private com.robwilliamson.healthyesther.db.generated.NoteTable.Row mNoteIdRow;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(0);
 
         static {
             COLUMN_NAMES.add("event_id");
@@ -161,22 +162,7 @@ public final class NoteEventTable
 
         @Override
         protected void update(Transaction transaction) {
-            if (!this.isInDatabase()) {
-                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
-            }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES);
-            if (actual!= 1) {
-                throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
-            }
-            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
-
-
-                public void onCompleted() {
-                    setIsModified(false);
-                }
-
-            }
-            );
+            throw new UnsupportedOperationException();
         }
 
         @Override

@@ -85,14 +85,17 @@ public final class UnitsTable
         private String mName;
         private double mSiFactor;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
-            INSERT_LIST.add("name");
+            COLUMN_NAMES_FOR_INSERTION.add("name");
+            COLUMN_NAMES_FOR_UPDATE.add("name");
             COLUMN_NAMES.add("si_factor");
-            INSERT_LIST.add("si_factor");
+            COLUMN_NAMES_FOR_INSERTION.add("si_factor");
+            COLUMN_NAMES_FOR_UPDATE.add("si_factor");
         }
 
         public Row(
@@ -130,9 +133,9 @@ public final class UnitsTable
         protected Object insert(Transaction transaction) {
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mSiFactor)));
+                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName, mSiFactor));
+                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
@@ -154,7 +157,7 @@ public final class UnitsTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName, mSiFactor);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mSiFactor);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

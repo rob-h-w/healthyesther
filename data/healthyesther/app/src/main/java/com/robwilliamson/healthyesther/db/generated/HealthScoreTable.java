@@ -90,20 +90,26 @@ public final class HealthScoreTable
         private String mMaxLabel;
         private String mMinLabel;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
-        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(5);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("best_value");
-            INSERT_LIST.add("best_value");
+            COLUMN_NAMES_FOR_INSERTION.add("best_value");
+            COLUMN_NAMES_FOR_UPDATE.add("best_value");
             COLUMN_NAMES.add("name");
-            INSERT_LIST.add("name");
+            COLUMN_NAMES_FOR_INSERTION.add("name");
+            COLUMN_NAMES_FOR_UPDATE.add("name");
             COLUMN_NAMES.add("random_query");
-            INSERT_LIST.add("random_query");
+            COLUMN_NAMES_FOR_INSERTION.add("random_query");
+            COLUMN_NAMES_FOR_UPDATE.add("random_query");
             COLUMN_NAMES.add("max_label");
-            INSERT_LIST.add("max_label");
+            COLUMN_NAMES_FOR_INSERTION.add("max_label");
+            COLUMN_NAMES_FOR_UPDATE.add("max_label");
             COLUMN_NAMES.add("min_label");
-            INSERT_LIST.add("min_label");
+            COLUMN_NAMES_FOR_INSERTION.add("min_label");
+            COLUMN_NAMES_FOR_UPDATE.add("min_label");
         }
 
         public Row(
@@ -184,9 +190,9 @@ public final class HealthScoreTable
         protected Object insert(Transaction transaction) {
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(INSERT_LIST, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
+                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
@@ -208,7 +214,7 @@ public final class HealthScoreTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

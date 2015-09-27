@@ -84,12 +84,14 @@ public final class MedicationTable
         @Nonnull
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
-        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(1);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(1);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
-            INSERT_LIST.add("name");
+            COLUMN_NAMES_FOR_INSERTION.add("name");
+            COLUMN_NAMES_FOR_UPDATE.add("name");
         }
 
         public Row(
@@ -114,9 +116,9 @@ public final class MedicationTable
         protected Object insert(Transaction transaction) {
             MedicationTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new MedicationTable.PrimaryKey(transaction.insert(INSERT_LIST, mName)));
+                setNextPrimaryKey(new MedicationTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName));
+                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
@@ -138,7 +140,7 @@ public final class MedicationTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

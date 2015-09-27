@@ -58,9 +58,11 @@ public final class AndroidMetadataTable
 
         private String mLocale;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(1);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
 
         static {
             COLUMN_NAMES.add("locale");
+            COLUMN_NAMES_FOR_UPDATE.add("locale");
         }
 
         public Row(String locale) {

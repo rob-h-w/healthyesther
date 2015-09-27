@@ -106,12 +106,15 @@ public final class MealEventTable
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.Row mUnitsIdRow;
         private double mAmount;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(4);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("event_id");
             COLUMN_NAMES.add("meal_id");
             COLUMN_NAMES.add("units_id");
+            COLUMN_NAMES_FOR_UPDATE.add("units_id");
             COLUMN_NAMES.add("amount");
+            COLUMN_NAMES_FOR_UPDATE.add("amount");
         }
 
         public Row(
@@ -201,7 +204,8 @@ public final class MealEventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mUnitsId, mAmount);
+            applyToRows(transaction);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mUnitsId.getId(), mAmount);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

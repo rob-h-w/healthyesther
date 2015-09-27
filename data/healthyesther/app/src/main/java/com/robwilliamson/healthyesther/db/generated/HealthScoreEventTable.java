@@ -104,11 +104,13 @@ public final class HealthScoreEventTable
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
         private long mScore;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
 
         static {
             COLUMN_NAMES.add("event_id");
             COLUMN_NAMES.add("health_score_id");
             COLUMN_NAMES.add("score");
+            COLUMN_NAMES_FOR_UPDATE.add("score");
         }
 
         public Row(
@@ -180,7 +182,8 @@ public final class HealthScoreEventTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mScore);
+            applyToRows(transaction);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mScore);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

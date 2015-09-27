@@ -85,14 +85,17 @@ public final class EventTypeTable
         private String mName;
         private String mIcon;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
-            INSERT_LIST.add("name");
+            COLUMN_NAMES_FOR_INSERTION.add("name");
+            COLUMN_NAMES_FOR_UPDATE.add("name");
             COLUMN_NAMES.add("icon");
-            INSERT_LIST.add("icon");
+            COLUMN_NAMES_FOR_INSERTION.add("icon");
+            COLUMN_NAMES_FOR_UPDATE.add("icon");
         }
 
         public Row(
@@ -130,9 +133,9 @@ public final class EventTypeTable
         protected Object insert(Transaction transaction) {
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mIcon)));
+                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mIcon)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName, mIcon));
+                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mIcon));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
@@ -154,7 +157,7 @@ public final class EventTypeTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName, mIcon);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mIcon);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

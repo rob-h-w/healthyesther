@@ -85,14 +85,17 @@ public final class NoteTable
         private String mName;
         private String mNote;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        public final static ArrayList<String> INSERT_LIST = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES.add("name");
-            INSERT_LIST.add("name");
+            COLUMN_NAMES_FOR_INSERTION.add("name");
+            COLUMN_NAMES_FOR_UPDATE.add("name");
             COLUMN_NAMES.add("note");
-            INSERT_LIST.add("note");
+            COLUMN_NAMES_FOR_INSERTION.add("note");
+            COLUMN_NAMES_FOR_UPDATE.add("note");
         }
 
         public Row(
@@ -130,9 +133,9 @@ public final class NoteTable
         protected Object insert(Transaction transaction) {
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mNote)));
+                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mNote)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName, mNote));
+                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mNote));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
@@ -154,7 +157,7 @@ public final class NoteTable
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES, mName, mNote);
+            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mNote);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
