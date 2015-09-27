@@ -211,14 +211,8 @@ public class RowGenerator extends BaseClassGenerator {
 
         JDefinedClass anonymousType = model().anonymousClass(
                 Transaction.CompletionHandler.class);
-        JBlock callback = anonymousType.method(
-                JMod.PUBLIC,
-                model().VOID,
-                "onCompleted").body();
 
-        setIsModifiedCall(callback, false);
-
-        body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
+        setIsModifiedCall(body, false);
     }
 
     private void makeRemove() {

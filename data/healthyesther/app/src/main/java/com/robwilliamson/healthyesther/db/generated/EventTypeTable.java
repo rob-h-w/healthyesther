@@ -161,15 +161,7 @@ public final class EventTypeTable
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
-            transaction.addCompletionHandler(new Transaction.CompletionHandler() {
-
-
-                public void onCompleted() {
-                    setIsModified(false);
-                }
-
-            }
-            );
+            setIsModified(false);
         }
 
         @Override
