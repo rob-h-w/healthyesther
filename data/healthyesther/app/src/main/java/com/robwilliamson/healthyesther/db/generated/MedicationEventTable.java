@@ -146,12 +146,12 @@ public final class MedicationEventTable
             setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventId, mMedicationId));
             MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMedicationId().getId());
+            setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
-                    setIsModified(false);
                     updatePrimaryKeyFromNext();
                 }
 

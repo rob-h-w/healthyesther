@@ -163,12 +163,12 @@ public final class HealthScoreEventTable
             setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventId, mHealthScoreId));
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), mScore);
+            setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
-                    setIsModified(false);
                     updatePrimaryKeyFromNext();
                 }
 

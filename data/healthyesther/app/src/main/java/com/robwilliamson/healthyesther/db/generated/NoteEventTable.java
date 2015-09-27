@@ -146,12 +146,12 @@ public final class NoteEventTable
             setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventId, mNoteId));
             NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getNoteId().getId());
+            setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
-                    setIsModified(false);
                     updatePrimaryKeyFromNext();
                 }
 

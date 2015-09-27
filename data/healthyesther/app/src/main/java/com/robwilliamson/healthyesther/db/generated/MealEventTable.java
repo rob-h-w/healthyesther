@@ -185,12 +185,12 @@ public final class MealEventTable
             setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventId, mMealId));
             MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMealId().getId(), mUnitsId.getId(), mAmount);
+            setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
-                    setIsModified(false);
                     updatePrimaryKeyFromNext();
                 }
 

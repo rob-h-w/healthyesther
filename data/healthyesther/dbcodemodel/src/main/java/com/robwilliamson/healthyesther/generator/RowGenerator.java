@@ -393,8 +393,8 @@ public class RowGenerator extends BaseClassGenerator {
                 }
             }
 
+            setIsModifiedCall(body, false);
             setIsInDatabaseCall(callback, true);
-            setIsModifiedCall(callback, false);
             callMethod("updatePrimaryKeyFromNext", callback, null);
 
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
@@ -402,6 +402,7 @@ public class RowGenerator extends BaseClassGenerator {
         } else {
             body._return(populateArgumentsFor(body.invoke(transaction, "insert")));
         }
+
     }
 
     private void setIsModifiedCall(JBlock block, boolean isModified) {

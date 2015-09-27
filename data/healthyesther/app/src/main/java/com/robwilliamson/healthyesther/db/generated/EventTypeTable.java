@@ -138,12 +138,12 @@ public final class EventTypeTable
                 nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mIcon));
             }
             // This table uses a row ID as a primary key.
+            setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
 
                 public void onCompleted() {
                     setIsInDatabase(true);
-                    setIsModified(false);
                     updatePrimaryKeyFromNext();
                 }
 
