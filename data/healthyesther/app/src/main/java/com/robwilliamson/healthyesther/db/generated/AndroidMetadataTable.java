@@ -81,18 +81,18 @@ public final class AndroidMetadataTable
         }
 
         @Override
-        public Object insert(Transaction transaction) {
+        protected Object insert(Transaction transaction) {
             transaction.insert(COLUMN_NAMES, mLocale);
             return transaction.insert(COLUMN_NAMES, mLocale);
         }
 
         @Override
-        public void update(Transaction transaction) {
+        protected void update(Transaction transaction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public void remove(Transaction transaction) {
+        protected void remove(Transaction transaction) {
             throw new UnsupportedOperationException();
         }
 

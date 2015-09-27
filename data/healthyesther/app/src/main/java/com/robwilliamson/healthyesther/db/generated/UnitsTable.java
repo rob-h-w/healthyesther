@@ -127,7 +127,7 @@ public final class UnitsTable
         }
 
         @Override
-        public Object insert(Transaction transaction) {
+        protected Object insert(Transaction transaction) {
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mSiFactor)));
@@ -148,7 +148,7 @@ public final class UnitsTable
         }
 
         @Override
-        public void update(Transaction transaction) {
+        protected void update(Transaction transaction) {
             if (!this.isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
@@ -168,7 +168,7 @@ public final class UnitsTable
         }
 
         @Override
-        public void remove(Transaction transaction) {
+        protected void remove(Transaction transaction) {
             if (!this.isInDatabase()) {
                 return ;
             }

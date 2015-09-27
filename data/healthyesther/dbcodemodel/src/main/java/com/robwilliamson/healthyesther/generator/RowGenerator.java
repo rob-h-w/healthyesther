@@ -128,7 +128,7 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private void makeUpdate() {
-        JMethod update = getJClass().method(JMod.PUBLIC, model().VOID, "update");
+        JMethod update = getJClass().method(JMod.PROTECTED, model().VOID, "update");
         update.annotate(Override.class);
         JVar transaction = update.param(Transaction.class, "transaction");
         JBlock body = update.body();
@@ -165,7 +165,7 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private void makeRemove() {
-        JMethod remove = getJClass().method(JMod.PUBLIC, model().VOID, "remove");
+        JMethod remove = getJClass().method(JMod.PROTECTED, model().VOID, "remove");
         remove.annotate(Override.class);
         JVar transaction = remove.param(Transaction.class, "transaction");
         JBlock body = remove.body();
@@ -233,7 +233,7 @@ public class RowGenerator extends BaseClassGenerator {
         TableGenerator generator = getTableGenerator();
         final PrimaryKeyGenerator keyGenerator = generator.getPrimaryKeyGenerator();
         JDefinedClass primaryKeyType = keyGenerator.getJClass();
-        JMethod insert = getJClass().method(JMod.PUBLIC, Object.class, "insert");
+        JMethod insert = getJClass().method(JMod.PROTECTED, Object.class, "insert");
         insert.annotate(Override.class);
         final JVar transaction = insert.param(Transaction.class, "transaction");
         final JBlock body = insert.body();
