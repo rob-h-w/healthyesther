@@ -131,6 +131,8 @@ public final class EventTypeTable
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mIcon)));
+            } else {
+                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName, mIcon));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

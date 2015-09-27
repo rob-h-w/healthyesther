@@ -131,6 +131,8 @@ public final class NoteTable
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mNote)));
+            } else {
+                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName, mNote));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

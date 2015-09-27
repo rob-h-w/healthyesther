@@ -115,6 +115,8 @@ public final class MedicationTable
             MedicationTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new MedicationTable.PrimaryKey(transaction.insert(INSERT_LIST, mName)));
+            } else {
+                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

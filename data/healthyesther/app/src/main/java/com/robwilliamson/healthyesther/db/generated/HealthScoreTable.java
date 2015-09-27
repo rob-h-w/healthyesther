@@ -185,6 +185,8 @@ public final class HealthScoreTable
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(INSERT_LIST, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+            } else {
+                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

@@ -263,12 +263,23 @@ public class RowGenerator extends BaseClassGenerator {
 
 
             // If we need to create a primary key upfront:
-            final JVar nextPrimaryKey = body.decl(primaryKeyType, "nextPrimaryKey", callGetNextPrimaryKey(null, null));
-            final JConditional ifConstruct = body._if(nextPrimaryKey.eq(JExpr._null()));
-            final JBlock doConstruction = ifConstruct._then();
+            final JVar nextPrimaryKey;
+            final JBlock doConstruction;
+            final JBlock updateRowId;
+
             final JInvocation newPrimaryKey = JExpr._new(primaryKeyType);
 
-            if (!hasRowIdPrimaryKey()) {
+            final JInvocation insertionCall;
+
+            if (hasRowIdPrimaryKey()) {
+                nextPrimaryKey = body.decl(primaryKeyType, "nextPrimaryKey", callGetNextPrimaryKey(null, null));
+                JConditional ifConstruct = body._if(nextPrimaryKey.eq(JExpr._null()));
+                doConstruction = ifConstruct._then();
+                updateRowId = ifConstruct._else();
+                insertionCall = JExpr.invoke(transaction, "insert");
+            } else {
+                doConstruction = null;
+                updateRowId = null;
                 body.directStatement("// This table does not use a row ID as a primary key.");
 
                 Column.Visitor<BaseColumns> addConstructorArgument = new Column.Visitor<BaseColumns>() {
@@ -279,14 +290,8 @@ public class RowGenerator extends BaseClassGenerator {
                 };
 
                 mPrimaryKeyColumns.forEach(addConstructorArgument);
-                doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
-                doConstruction.assign(nextPrimaryKey, callGetNextPrimaryKey(null, null));
-            }
-
-            final JInvocation insertionCall;
-            if (keyGenerator.hasRowId()) {
-                insertionCall = JExpr.invoke(transaction, "insert");
-            } else {
+                body.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
+                nextPrimaryKey = body.decl(primaryKeyType, "nextPrimaryKey", callGetNextPrimaryKey(null, null));
                 insertionCall = body.invoke(transaction, "insert");
             }
 
@@ -343,6 +348,9 @@ public class RowGenerator extends BaseClassGenerator {
                     }
                 }
                 doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
+                if (updateRowId != null) {
+                    updateRowId.invoke(nextPrimaryKey, "setId").arg(insertionCall);
+                }
             }
 
             setIsInDatabaseCall(callback, true);

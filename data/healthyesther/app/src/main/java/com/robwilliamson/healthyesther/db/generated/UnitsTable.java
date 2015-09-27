@@ -131,6 +131,8 @@ public final class UnitsTable
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(INSERT_LIST, mName, mSiFactor)));
+            } else {
+                nextPrimaryKey.setId(transaction.insert(INSERT_LIST, mName, mSiFactor));
             }
             // This table uses a row ID as a primary key.
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
