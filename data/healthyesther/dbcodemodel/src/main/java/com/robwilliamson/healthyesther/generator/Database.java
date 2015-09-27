@@ -18,11 +18,6 @@ import java.util.Map;
 public class Database extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.type.Database mDb;
 
-    private final JFieldVar mFileName;
-
-    private final JMethod mConstructor;
-    private final JMethod mCreate;
-
     public Database(
             com.robwilliamson.healthyesther.type.Database database,
             JPackage jPackage) throws JClassAlreadyExistsException {
@@ -30,10 +25,10 @@ public class Database extends BaseClassGenerator {
 
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
 
-        mFileName = makeStaticFileName();
+        makeStaticFileName();
 
-        mConstructor = makeConstructor();
-        mCreate = makeCreateMethod();
+        makeConstructor();
+        makeCreateMethod();
         makeTables();
     }
 
@@ -52,8 +47,7 @@ public class Database extends BaseClassGenerator {
     }
 
     private JMethod makeConstructor() {
-        JMethod constructor = getJClass().constructor(JMod.PUBLIC);
-        return constructor;
+        return getJClass().constructor(JMod.PUBLIC);
     }
 
     private JMethod makeCreateMethod() {
@@ -89,9 +83,9 @@ public class Database extends BaseClassGenerator {
         }
 
         for (Map.Entry<String, TableGenerator> generator : tableGenerators.entrySet()) {
-            generator.getValue().init(tableGenerators);
+            generator.getValue().init();
         }
 
-        JFieldVar tablesListField = getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, baseTable.getJClass().array(), "TABLES", tablesList);
+        getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, baseTable.getJClass().array(), "TABLES", tablesList);
     }
 }

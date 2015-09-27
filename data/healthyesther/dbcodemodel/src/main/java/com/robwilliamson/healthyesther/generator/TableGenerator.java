@@ -6,14 +6,9 @@ import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
 public class TableGenerator extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.semantic.Table mTable;
-    private final List<TableGenerator> mDependencies = new ArrayList<>();
     private RowGenerator mRowGenerator;
     private PrimaryKeyGenerator mPrimaryKeyGenerator;
 
@@ -46,19 +41,7 @@ public class TableGenerator extends BaseClassGenerator {
         return mRowGenerator;
     }
 
-    public void init(Map<String, TableGenerator> tableGeneratorsByName) throws JClassAlreadyExistsException {
-        List<com.robwilliamson.healthyesther.semantic.Table> dependencies = mTable.getTableDependencies();
-
-        for (com.robwilliamson.healthyesther.semantic.Table table : dependencies) {
-            TableGenerator dependency = tableGeneratorsByName.get(table.getName());
-
-            if (dependency == null) {
-                continue;
-            }
-
-            mDependencies.add(dependency);
-        }
-
+    public void init() throws JClassAlreadyExistsException {
         mRowGenerator = new RowGenerator(this);
 
         mPrimaryKeyGenerator = new PrimaryKeyGenerator(this);
