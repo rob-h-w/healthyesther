@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
+import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
@@ -13,9 +14,13 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class MedicationEventTable
-    extends Table
+    implements Table
 {
 
+
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE medication_event ( \n    medication_id  NOT NULL\n                   REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                 ON UPDATE CASCADE,\n    event_id       NOT NULL\n                   REFERENCES event ( _id ) ON DELETE CASCADE\n                                            ON UPDATE CASCADE,\n    PRIMARY KEY ( medication_id, event_id ) \n)");
+    }
 
 
     /**

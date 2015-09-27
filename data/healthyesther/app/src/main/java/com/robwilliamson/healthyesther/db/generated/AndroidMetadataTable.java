@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
+import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
@@ -12,9 +13,13 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class AndroidMetadataTable
-    extends Table
+    implements Table
 {
 
+
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE android_metadata (locale TEXT)");
+    }
 
 
     /**

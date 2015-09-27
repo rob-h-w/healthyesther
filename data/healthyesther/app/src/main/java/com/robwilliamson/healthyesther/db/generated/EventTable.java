@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
+import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
@@ -13,9 +14,13 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class EventTable
-    extends Table
+    implements Table
 {
 
+
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE event ( \n    _id      INTEGER      PRIMARY KEY AUTOINCREMENT,\n    [when]   DATETIME     NOT NULL\n                          DEFAULT ( CURRENT_TIMESTAMP ),\n    created  DATETIME     NOT NULL\n                          DEFAULT ( CURRENT_TIMESTAMP ),\n    modified DATETIME,\n    type_id               REFERENCES event_type ( _id ) ON DELETE CASCADE\n                                                        ON UPDATE CASCADE\n                          NOT NULL,\n    name     TEXT( 140 )  DEFAULT ( '' ) \n)");
+    }
 
 
     /**

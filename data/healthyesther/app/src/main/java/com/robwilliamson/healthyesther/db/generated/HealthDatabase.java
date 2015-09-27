@@ -1,6 +1,7 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 

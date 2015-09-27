@@ -2,9 +2,14 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.Table;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JVar;
 
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
 public class TableGenerator extends BaseClassGenerator {
@@ -14,11 +19,10 @@ public class TableGenerator extends BaseClassGenerator {
 
     public TableGenerator(
             JPackage jPackage,
-            com.robwilliamson.healthyesther.semantic.Table table,
-            BaseTable baseTable) throws JClassAlreadyExistsException {
+            com.robwilliamson.healthyesther.semantic.Table table) throws JClassAlreadyExistsException {
         mTable = table;
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
-        getJClass()._extends(baseTable.getJClass());
+        getJClass()._implements(Table.class);
     }
 
     @Override
@@ -49,16 +53,20 @@ public class TableGenerator extends BaseClassGenerator {
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {
-                build();
+                mRowGenerator.init();
+                makeCreate();
             }
         });
     }
 
-    public PrimaryKeyGenerator getPrimaryKeyGenerator() {
-        return mPrimaryKeyGenerator;
+    private void makeCreate() {
+        JMethod create = getJClass().method(JMod.PUBLIC, model().VOID, "create");
+        JVar transaction = create.param(Transaction.class, "transaction");
+        create.body().invoke(transaction,
+                "execSQL").arg(JExpr.lit(mTable.getDdl()));
     }
 
-    private void build() {
-        mRowGenerator.init();
+    public PrimaryKeyGenerator getPrimaryKeyGenerator() {
+        return mPrimaryKeyGenerator;
     }
 }

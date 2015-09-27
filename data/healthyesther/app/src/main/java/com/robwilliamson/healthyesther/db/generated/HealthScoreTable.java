@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Key;
+import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
@@ -13,9 +14,13 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class HealthScoreTable
-    extends Table
+    implements Table
 {
 
+
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)");
+    }
 
 
     /**

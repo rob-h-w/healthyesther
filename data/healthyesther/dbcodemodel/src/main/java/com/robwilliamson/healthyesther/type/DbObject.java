@@ -45,4 +45,8 @@ public class DbObject {
 
         return constraints;
     }
+
+    public String getDdl() {
+        return ddl;
+    }
 }

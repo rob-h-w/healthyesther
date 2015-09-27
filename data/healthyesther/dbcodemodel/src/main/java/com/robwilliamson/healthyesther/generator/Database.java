@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.sun.codemodel.JArray;
 import com.sun.codemodel.JClassAlreadyExistsException;
@@ -58,17 +59,14 @@ public class Database extends BaseClassGenerator {
 
     private void makeTables() throws JClassAlreadyExistsException {
         JPackage jPackage = getJClass().getPackage();
-        BaseTable baseTable = new BaseTable(jPackage);
-
-        JArray tablesList = JExpr.newArray(baseTable.getJClass());
+        JArray tablesList = JExpr.newArray(model()._ref(Table.class));
 
         final List<com.robwilliamson.healthyesther.semantic.Table> tables = mDb.getTables();
         final Map<String, TableGenerator> tableGenerators = new HashMap<>(tables.size());
         for (com.robwilliamson.healthyesther.semantic.Table table : tables) {
             TableGenerator tableGenerator = new TableGenerator(
                     jPackage,
-                    table,
-                    baseTable);
+                    table);
 
             table.setGenerator(tableGenerator);
 
@@ -86,6 +84,6 @@ public class Database extends BaseClassGenerator {
             generator.getValue().init();
         }
 
-        getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, baseTable.getJClass().array(), "TABLES", tablesList);
+        getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, model()._ref(Table.class).array(), "TABLES", tablesList);
     }
 }
