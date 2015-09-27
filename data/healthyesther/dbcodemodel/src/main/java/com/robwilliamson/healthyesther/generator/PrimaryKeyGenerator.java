@@ -28,8 +28,6 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
     private ColumnField mRowId;
     private Map<Column, JMethod> mGetters = new HashMap<>();
     private Map<Column, JMethod> mSetters = new HashMap<>();
-    private JMethod mCopyConstructor;
-    private JMethod mValueConstructor;
 
     public PrimaryKeyGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         super();
@@ -48,10 +46,6 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
                 implementWhere();
             }
         });
-    }
-
-    public static String getName(TableGenerator tableGenerator) {
-        return Strings.capitalize(getName(PrimaryKeyGenerator.class));
     }
 
     private void implementWhere() {
@@ -76,10 +70,6 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         body._return(where.invoke("toString"));
     }
 
-    public boolean hasRowId() {
-        return mRowId != null;
-    }
-
     public ColumnField getRowId() {
         return mRowId;
     }
@@ -89,8 +79,8 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
             return;
         }
 
-        mCopyConstructor = getJClass().constructor(JMod.PUBLIC);
-        mValueConstructor = getJClass().constructor(JMod.PUBLIC);
+        JMethod mCopyConstructor = getJClass().constructor(JMod.PUBLIC);
+        JMethod mValueConstructor = getJClass().constructor(JMod.PUBLIC);
 
         JVar other = mCopyConstructor.param(getJClass(), "other");
 
@@ -124,14 +114,6 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return mTableGenerator;
     }
 
-    public JMethod getCopyConstructor() {
-        return mCopyConstructor;
-    }
-
-    public JMethod getValueConstructor() {
-        return mValueConstructor;
-    }
-
     public JMethod getGetterFor(Column column) {
         return mGetters.get(column);
     }
@@ -150,7 +132,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
     @Override
     public String getName() {
-        return getName(getTableGenerator());
+        return Strings.capitalize(getName(PrimaryKeyGenerator.class));
     }
 
     @Override
