@@ -14,6 +14,8 @@ public interface Transaction {
 
     public int remove(Where where);
 
+    public void commit();
+
     public static interface CompletionHandler {
         public void onCompleted();
     }
