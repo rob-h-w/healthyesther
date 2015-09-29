@@ -58,5 +58,5 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
-    compile project(':dbcodemodel')
+    provided project(':dbcodemodel')
 }
