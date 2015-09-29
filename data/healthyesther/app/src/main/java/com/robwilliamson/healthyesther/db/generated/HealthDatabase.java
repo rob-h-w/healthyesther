@@ -3,15 +3,14 @@ package com.robwilliamson.healthyesther.db.generated;
 
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Table;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
  * This class is generated, and should not be edited. Edits will be overwritten
  * 
  */
-public final class HealthDatabase
-    extends Database
-{
+public final class HealthDatabase {
 
     public final static String FILE_NAME = "health.db3";
     public final static HealthScoreTable HEALTH_SCORE_TABLE = new HealthScoreTable();
@@ -29,12 +28,11 @@ public final class HealthDatabase
     public final static MealEventTable MEAL_EVENT_TABLE = new MealEventTable();
     public final static Table[] TABLES = new Table[] {HEALTH_SCORE_TABLE, ANDROID_METADATA_TABLE, EVENT_TYPE_TABLE, MEDICATION_TABLE, NOTE_TABLE, UNITS_TABLE, MEAL_TABLE, EVENT_TABLE, MEDICATION_NAME_TABLE, MEDICATION_EVENT_TABLE, HEALTH_SCORE_EVENT_TABLE, NOTE_EVENT_TABLE, MEAL_EVENT_TABLE };
 
-    public HealthDatabase() {
+    private HealthDatabase() {
     }
 
-    @Override
-    public Table[] getTables() {
-        return TABLES;
+    public static void create(Transaction transaction) {
+        Database.create(transaction, TABLES);
     }
 
 }

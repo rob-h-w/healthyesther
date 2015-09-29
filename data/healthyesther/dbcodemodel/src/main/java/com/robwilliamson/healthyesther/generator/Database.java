@@ -4,12 +4,15 @@ import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.sun.codemodel.JArray;
+import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JVar;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,19 +29,17 @@ public class Database extends BaseClassGenerator {
         mDb = database;
 
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
-        getJClass()._extends(com.robwilliamson.healthyesther.db.includes.Database.class);
-
-        makeStaticFileName();
 
         makeConstructor();
+        makeStaticFileName();
         makeTables();
-        makeGetTables();
+        makeCreate();
     }
 
-    private void makeGetTables() {
-        JMethod getTables = getJClass().method(JMod.PUBLIC, model()._ref(Table.class).array(), "getTables");
-        getTables.body()._return(mTables);
-        getTables.annotate(Override.class);
+    private void makeCreate() {
+        JMethod create = getJClass().method(JMod.PUBLIC | JMod.STATIC, model().VOID, "create");
+        JVar transaction = create.param(Transaction.class, "transaction");
+        create.body().staticInvoke(model().ref(com.robwilliamson.healthyesther.db.includes.Database.class), "create").arg(transaction).arg(mTables);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class Database extends BaseClassGenerator {
     }
 
     private JMethod makeConstructor() {
-        return getJClass().constructor(JMod.PUBLIC);
+        return getJClass().constructor(JMod.PRIVATE);
     }
 
     private void makeTables() throws JClassAlreadyExistsException {
