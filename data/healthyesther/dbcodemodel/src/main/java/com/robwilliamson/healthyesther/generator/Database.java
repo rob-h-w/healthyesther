@@ -18,6 +18,7 @@ import java.util.Map;
 @ClassGeneratorFeatures(name = "Database", parameterName = "Db")
 public class Database extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.type.Database mDb;
+    private JFieldVar mTables;
 
     public Database(
             com.robwilliamson.healthyesther.type.Database database,
@@ -25,12 +26,19 @@ public class Database extends BaseClassGenerator {
         mDb = database;
 
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
+        getJClass()._extends(com.robwilliamson.healthyesther.db.includes.Database.class);
 
         makeStaticFileName();
 
         makeConstructor();
-        makeCreateMethod();
         makeTables();
+        makeGetTables();
+    }
+
+    private void makeGetTables() {
+        JMethod getTables = getJClass().method(JMod.PUBLIC, model()._ref(Table.class).array(), "getTables");
+        getTables.body()._return(mTables);
+        getTables.annotate(Override.class);
     }
 
     @Override
@@ -49,12 +57,6 @@ public class Database extends BaseClassGenerator {
 
     private JMethod makeConstructor() {
         return getJClass().constructor(JMod.PUBLIC);
-    }
-
-    private JMethod makeCreateMethod() {
-        JMethod create = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "create");
-        create.param(model()._ref(Transaction.class), "transaction");
-        return create;
     }
 
     private void makeTables() throws JClassAlreadyExistsException {
@@ -84,6 +86,6 @@ public class Database extends BaseClassGenerator {
             generator.getValue().init();
         }
 
-        getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, model()._ref(Table.class).array(), "TABLES", tablesList);
+        mTables = getJClass().field(JMod.PUBLIC | JMod.FINAL | JMod.STATIC, model()._ref(Table.class).array(), "TABLES", tablesList);
     }
 }

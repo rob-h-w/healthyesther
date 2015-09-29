@@ -1,15 +1,17 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Table;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 
 
 /**
  * This class is generated, and should not be edited. Edits will be overwritten
  * 
  */
-public final class HealthDatabase {
+public final class HealthDatabase
+    extends Database
+{
 
     public final static String FILE_NAME = "health.db3";
     public final static HealthScoreTable HEALTH_SCORE_TABLE = new HealthScoreTable();
@@ -30,7 +32,9 @@ public final class HealthDatabase {
     public HealthDatabase() {
     }
 
-    public final void create(Transaction transaction) {
+    @Override
+    public Table[] getTables() {
+        return TABLES;
     }
 
 }
