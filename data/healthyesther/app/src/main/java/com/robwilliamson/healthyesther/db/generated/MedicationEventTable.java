@@ -23,6 +23,7 @@ public final class MedicationEventTable
         transaction.execSQL("DROP TABLE IF EXISTS medication_event");
     }
 
+    @Override
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE medication_event ( \n    medication_id  NOT NULL\n                   REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                 ON UPDATE CASCADE,\n    event_id       NOT NULL\n                   REFERENCES event ( _id ) ON DELETE CASCADE\n                                            ON UPDATE CASCADE,\n    PRIMARY KEY ( medication_id, event_id ) \n)");
     }

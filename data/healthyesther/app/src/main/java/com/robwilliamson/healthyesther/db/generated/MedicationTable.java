@@ -23,6 +23,7 @@ public final class MedicationTable
         transaction.execSQL("DROP TABLE IF EXISTS medication");
     }
 
+    @Override
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE medication ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 50 )  NOT NULL \n)");
     }

@@ -23,6 +23,7 @@ public final class EventTypeTable
         transaction.execSQL("DROP TABLE IF EXISTS event_type");
     }
 
+    @Override
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE event_type ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 30 )  NOT NULL\n                     UNIQUE,\n    icon TEXT \n)");
     }

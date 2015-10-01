@@ -23,6 +23,7 @@ public final class MealEventTable
         transaction.execSQL("DROP TABLE IF EXISTS meal_event");
     }
 
+    @Override
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE meal_event ( \n    meal_id       NOT NULL\n                  REFERENCES meal ( _id ) ON DELETE CASCADE\n                                          ON UPDATE CASCADE,\n    event_id      NOT NULL\n                  REFERENCES event ( _id ) ON DELETE CASCADE\n                                           ON UPDATE CASCADE,\n    amount   REAL,\n    units_id      REFERENCES units ( _id ) ON DELETE SET NULL\n                                           ON UPDATE CASCADE,\n    PRIMARY KEY ( meal_id, event_id ) \n)");
     }

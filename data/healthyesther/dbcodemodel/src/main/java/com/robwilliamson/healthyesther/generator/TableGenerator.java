@@ -70,6 +70,7 @@ public class TableGenerator extends BaseClassGenerator {
     private void makeCreate() {
         JMethod create = getJClass().method(JMod.PUBLIC, model().VOID, "create");
         JVar transaction = create.param(Transaction.class, "transaction");
+        create.annotate(Override.class);
         create.body().invoke(transaction,
                 "execSQL").arg(JExpr.lit(mTable.getDdl()));
     }

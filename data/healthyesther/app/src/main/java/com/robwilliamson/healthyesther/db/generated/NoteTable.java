@@ -23,6 +23,7 @@ public final class NoteTable
         transaction.execSQL("DROP TABLE IF EXISTS note");
     }
 
+    @Override
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE note ( \n    _id  INTEGER      PRIMARY KEY,\n    name TEXT( 140 )  NOT NULL,\n    note TEXT \n)");
     }
