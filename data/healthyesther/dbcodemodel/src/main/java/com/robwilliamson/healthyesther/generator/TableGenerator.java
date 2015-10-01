@@ -23,6 +23,14 @@ public class TableGenerator extends BaseClassGenerator {
         mTable = table;
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
         getJClass()._implements(Table.class);
+        makeDrop();
+    }
+
+    private void makeDrop() {
+        JMethod drop = getJClass().method(JMod.PUBLIC, model().VOID, "drop");
+        JVar transaction = drop.param(Transaction.class, "transaction");
+        drop.annotate(Override.class);
+        drop.body().invoke(transaction, "execSQL").arg("DROP TABLE IF EXISTS " + mTable.getName());
     }
 
     @Override

@@ -17,6 +17,11 @@ public final class AndroidMetadataTable
 {
 
 
+    @Override
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS android_metadata");
+    }
+
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE android_metadata (locale TEXT)");
     }

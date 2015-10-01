@@ -18,6 +18,11 @@ public final class NoteTable
 {
 
 
+    @Override
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS note");
+    }
+
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE note ( \n    _id  INTEGER      PRIMARY KEY,\n    name TEXT( 140 )  NOT NULL,\n    note TEXT \n)");
     }

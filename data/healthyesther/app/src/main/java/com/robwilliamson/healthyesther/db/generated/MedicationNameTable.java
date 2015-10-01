@@ -18,6 +18,11 @@ public final class MedicationNameTable
 {
 
 
+    @Override
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS medication_name");
+    }
+
     public void create(Transaction transaction) {
         transaction.execSQL("CREATE TABLE medication_name ( \n    medication_id             REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    name          TEXT( 50 )  NOT NULL,\n    PRIMARY KEY ( medication_id, name ) \n)");
     }
