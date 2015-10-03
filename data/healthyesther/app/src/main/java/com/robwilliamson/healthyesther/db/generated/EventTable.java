@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;

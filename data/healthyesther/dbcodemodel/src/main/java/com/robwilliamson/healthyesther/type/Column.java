@@ -1,7 +1,7 @@
 package com.robwilliamson.healthyesther.type;
 
 import com.robwilliamson.healthyesther.Strings;
-import com.robwilliamson.healthyesther.generator.DateTimeGenerator;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.sun.codemodel.JCodeModel;
@@ -97,7 +97,7 @@ public class Column {
             case "BOOLEAN":
                 return model.BOOLEAN;
             case "DATETIME":
-                return DateTimeGenerator.getInstance().getJClass();
+                return model._ref(DateTime.class);
             case "INTEGER":
                 return model.LONG;
             case "REAL":
@@ -115,7 +115,7 @@ public class Column {
             case "BOOLEAN":
                 return model.ref(Boolean.class);
             case "DATETIME":
-                return DateTimeGenerator.getInstance().getJClass();
+                return model._ref(DateTime.class);
             case "INTEGER":
                 return model.ref(Long.class);
             case "REAL":

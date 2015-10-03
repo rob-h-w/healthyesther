@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther;
 
 import com.google.gson.Gson;
-import com.robwilliamson.healthyesther.generator.DateTimeGenerator;
 import com.robwilliamson.healthyesther.type.Database;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
@@ -27,7 +26,6 @@ public class CodeGenerator {
         JCodeModel codeModel = new JCodeModel();
         JPackage rootPackage = codeModel._package(mDestination.getPackage());
         try {
-            DateTimeGenerator.create(rootPackage);
             com.robwilliamson.healthyesther.generator.Database database =
                     new com.robwilliamson.healthyesther.generator.Database(
                             dbFromJson,

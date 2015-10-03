@@ -8,6 +8,8 @@ public interface Transaction {
 
     public String execSQL(String sql);
 
+    public Cursor select(Where where);
+
     public long insert(List<String> columnNames, Object... columnValues);
 
     public int update(Where where, List<String> columnNames, Object... columnValues);
