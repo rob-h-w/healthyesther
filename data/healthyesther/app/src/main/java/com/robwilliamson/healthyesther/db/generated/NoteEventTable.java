@@ -14,18 +14,18 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class NoteEventTable
-    implements Table
+    extends Table
 {
 
 
     @Override
-    public void drop(Transaction transaction) {
-        transaction.execSQL("DROP TABLE IF EXISTS note_event");
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE note_event ( \n    note_id   NOT NULL\n              REFERENCES note ( _id ) ON DELETE CASCADE\n                                      ON UPDATE CASCADE,\n    event_id  NOT NULL\n              REFERENCES event ( _id ) ON DELETE CASCADE\n                                       ON UPDATE CASCADE,\n    PRIMARY KEY ( note_id, event_id ) \n)");
     }
 
     @Override
-    public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE note_event ( \n    note_id   NOT NULL\n              REFERENCES note ( _id ) ON DELETE CASCADE\n                                      ON UPDATE CASCADE,\n    event_id  NOT NULL\n              REFERENCES event ( _id ) ON DELETE CASCADE\n                                       ON UPDATE CASCADE,\n    PRIMARY KEY ( note_id, event_id ) \n)");
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS note_event");
     }
 
 

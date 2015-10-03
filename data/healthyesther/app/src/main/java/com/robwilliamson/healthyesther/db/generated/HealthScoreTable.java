@@ -14,18 +14,18 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class HealthScoreTable
-    implements Table
+    extends Table
 {
 
 
     @Override
-    public void drop(Transaction transaction) {
-        transaction.execSQL("DROP TABLE IF EXISTS health_score");
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)");
     }
 
     @Override
-    public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)");
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS health_score");
     }
 
 

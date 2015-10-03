@@ -14,18 +14,18 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class MealTable
-    implements Table
+    extends Table
 {
 
 
     @Override
-    public void drop(Transaction transaction) {
-        transaction.execSQL("DROP TABLE IF EXISTS meal");
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE meal ( \n    _id  INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 140 )  NOT NULL\n                      UNIQUE \n)");
     }
 
     @Override
-    public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE meal ( \n    _id  INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 140 )  NOT NULL\n                      UNIQUE \n)");
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS meal");
     }
 
 

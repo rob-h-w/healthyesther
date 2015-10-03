@@ -1,7 +1,28 @@
 package com.robwilliamson.healthyesther.db.includes;
 
-public interface Table {
-    public void create(Transaction transaction);
+import java.util.ArrayList;
+import java.util.List;
 
-    public void drop(Transaction transaction);
+import javax.annotation.Nonnull;
+
+public abstract class Table {
+    private final List<Upgrader> mUpgraders = new ArrayList<>();
+
+    public abstract void create(Transaction transaction);
+
+    public abstract void drop(Transaction transaction);
+
+    public void upgrade(Transaction transaction, int from, int to) {
+        for (Upgrader upgrader : mUpgraders) {
+            upgrader.upgrade(transaction, from, to);
+        }
+    }
+
+    public void addUpgrader(@Nonnull Upgrader upgrader) {
+        mUpgraders.add(upgrader);
+    }
+
+    public interface Upgrader {
+        public void upgrade(Transaction transaction, int from, int to);
+    }
 }

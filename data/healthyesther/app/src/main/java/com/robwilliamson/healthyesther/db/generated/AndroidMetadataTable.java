@@ -13,18 +13,18 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * 
  */
 public final class AndroidMetadataTable
-    implements Table
+    extends Table
 {
 
 
     @Override
-    public void drop(Transaction transaction) {
-        transaction.execSQL("DROP TABLE IF EXISTS android_metadata");
+    public void create(Transaction transaction) {
+        transaction.execSQL("CREATE TABLE android_metadata (locale TEXT)");
     }
 
     @Override
-    public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE android_metadata (locale TEXT)");
+    public void drop(Transaction transaction) {
+        transaction.execSQL("DROP TABLE IF EXISTS android_metadata");
     }
 
 

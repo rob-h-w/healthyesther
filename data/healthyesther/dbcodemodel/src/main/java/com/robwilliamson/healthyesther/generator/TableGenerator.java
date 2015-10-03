@@ -22,7 +22,8 @@ public class TableGenerator extends BaseClassGenerator {
             com.robwilliamson.healthyesther.semantic.Table table) throws JClassAlreadyExistsException {
         mTable = table;
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
-        getJClass()._implements(Table.class);
+        getJClass()._extends(Table.class);
+        makeCreate();
         makeDrop();
     }
 
@@ -62,7 +63,6 @@ public class TableGenerator extends BaseClassGenerator {
             @Override
             public void run() {
                 mRowGenerator.init();
-                makeCreate();
             }
         });
     }
