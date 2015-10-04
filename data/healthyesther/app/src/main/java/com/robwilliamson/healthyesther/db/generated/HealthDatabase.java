@@ -35,4 +35,12 @@ public final class HealthDatabase {
         Database.create(transaction, TABLES);
     }
 
+    public static void drop(Transaction transaction) {
+        Database.drop(transaction, TABLES);
+    }
+
+    public static void upgrade(Transaction transaction, int from, int to) {
+        Database.upgrade(transaction, from, to, TABLES);
+    }
+
 }

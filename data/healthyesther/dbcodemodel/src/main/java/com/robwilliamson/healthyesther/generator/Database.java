@@ -32,6 +32,22 @@ public class Database extends BaseClassGenerator {
         makeStaticFileName();
         makeTables();
         makeCreate();
+        makeDrop();
+        makeUpgrade();
+    }
+
+    private void makeUpgrade() {
+        JMethod upgrade = getJClass().method(JMod.PUBLIC | JMod.STATIC, model().VOID, "upgrade");
+        JVar transaction = upgrade.param(Transaction.class, "transaction");
+        JVar from = upgrade.param(model().INT, "from");
+        JVar to = upgrade.param(model().INT, "to");
+        upgrade.body().staticInvoke(model().ref(com.robwilliamson.healthyesther.db.includes.Database.class), "upgrade").arg(transaction).arg(from).arg(to).arg(mTables);
+    }
+
+    private void makeDrop() {
+        JMethod drop = getJClass().method(JMod.PUBLIC | JMod.STATIC, model().VOID, "drop");
+        JVar transaction = drop.param(Transaction.class, "transaction");
+        drop.body().staticInvoke(model().ref(com.robwilliamson.healthyesther.db.includes.Database.class), "drop").arg(transaction).arg(mTables);
     }
 
     private void makeCreate() {
