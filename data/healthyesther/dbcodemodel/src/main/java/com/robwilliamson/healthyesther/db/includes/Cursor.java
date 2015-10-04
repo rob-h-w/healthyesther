@@ -1,15 +1,19 @@
 package com.robwilliamson.healthyesther.db.includes;
 
 public interface Cursor {
-    public long getLong(String column);
+    Boolean getBoolean(String column);
 
-    public String getString(String column);
+    Double getDouble(String column);
 
-    public DateTime getTime(String column);
+    Long getLong(String column);
 
-    public void moveToFirst();
+    String getString(String column);
 
-    public boolean moveToNext();
+    DateTime getDateTime(String column);
 
-    public int count();
+    void moveToFirst();
+
+    boolean moveToNext();
+
+    int count();
 }

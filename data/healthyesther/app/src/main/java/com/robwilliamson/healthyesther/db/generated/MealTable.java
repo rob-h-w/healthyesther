@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class MealTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS meal");
+    }
+
+    @Nonnull
+    public MealTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final MealTable.Row[] rows = new MealTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new MealTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public MealTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        MealTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -103,6 +131,13 @@ public final class MealTable
             COLUMN_NAMES.add("name");
             COLUMN_NAMES_FOR_INSERTION.add("name");
             COLUMN_NAMES_FOR_UPDATE.add("name");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setName(cursor.getString("name"));
+            setPrimaryKey(new MealTable.PrimaryKey(cursor.getLong("_id")));
         }
 
         public Row(

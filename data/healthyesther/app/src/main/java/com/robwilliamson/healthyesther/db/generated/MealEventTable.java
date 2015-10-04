@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class MealEventTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS meal_event");
+    }
+
+    @Nonnull
+    public MealEventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final MealEventTable.Row[] rows = new MealEventTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new MealEventTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public MealEventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        MealEventTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -126,6 +154,14 @@ public final class MealEventTable
             COLUMN_NAMES_FOR_UPDATE.add("units_id");
             COLUMN_NAMES.add("amount");
             COLUMN_NAMES_FOR_UPDATE.add("amount");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setUnitsId(((cursor.getLong("units_id")!= null)?new com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey(cursor.getLong("units_id")):null));
+            setAmount(cursor.getDouble("amount"));
+            setPrimaryKey(new MealEventTable.PrimaryKey(((cursor.getLong("event_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey(cursor.getLong("event_id")):null), ((cursor.getLong("meal_id")!= null)?new com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey(cursor.getLong("meal_id")):null)));
         }
 
         public Row(

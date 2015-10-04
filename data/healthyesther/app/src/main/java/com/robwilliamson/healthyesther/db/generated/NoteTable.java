@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class NoteTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS note");
+    }
+
+    @Nonnull
+    public NoteTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new NoteTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public NoteTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        NoteTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -107,6 +135,14 @@ public final class NoteTable
             COLUMN_NAMES.add("note");
             COLUMN_NAMES_FOR_INSERTION.add("note");
             COLUMN_NAMES_FOR_UPDATE.add("note");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setName(cursor.getString("name"));
+            setNote(cursor.getString("note"));
+            setPrimaryKey(new NoteTable.PrimaryKey(cursor.getLong("_id")));
         }
 
         public Row(

@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class HealthScoreEventTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS health_score_event");
+    }
+
+    @Nonnull
+    public HealthScoreEventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final HealthScoreEventTable.Row[] rows = new HealthScoreEventTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new HealthScoreEventTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public HealthScoreEventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        HealthScoreEventTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -122,6 +150,13 @@ public final class HealthScoreEventTable
             COLUMN_NAMES.add("health_score_id");
             COLUMN_NAMES.add("score");
             COLUMN_NAMES_FOR_UPDATE.add("score");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setScore(cursor.getLong("score"));
+            setPrimaryKey(new HealthScoreEventTable.PrimaryKey(((cursor.getLong("event_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey(cursor.getLong("event_id")):null), ((cursor.getLong("health_score_id")!= null)?new com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey(cursor.getLong("health_score_id")):null)));
         }
 
         public Row(

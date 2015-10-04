@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class NoteEventTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS note_event");
+    }
+
+    @Nonnull
+    public NoteEventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final NoteEventTable.Row[] rows = new NoteEventTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new NoteEventTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public NoteEventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        NoteEventTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -119,6 +147,12 @@ public final class NoteEventTable
         static {
             COLUMN_NAMES.add("event_id");
             COLUMN_NAMES.add("note_id");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setPrimaryKey(new NoteEventTable.PrimaryKey(((cursor.getLong("event_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey(cursor.getLong("event_id")):null), ((cursor.getLong("note_id")!= null)?new com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey(cursor.getLong("note_id")):null)));
         }
 
         public Row(

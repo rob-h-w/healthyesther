@@ -4,6 +4,7 @@ import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.BaseField;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
@@ -20,6 +21,7 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JOp;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
@@ -36,6 +38,7 @@ import javax.annotation.Nonnull;
 public class RowGenerator extends BaseClassGenerator {
 
     private final TableGenerator mTableGenerator;
+    private final JMethod mCursorConstructor;
     private final JMethod mJoinConstructor;
     private final JMethod mValueConstructor;
     private PrimaryColumns mPrimaryKeyColumns;
@@ -44,6 +47,7 @@ public class RowGenerator extends BaseClassGenerator {
     private JFieldVar mInsertNames;
     private JFieldVar mUpdateNames;
     private JMethod mApplyToRows;
+    private Map<Column, JMethod> mSetters = new HashMap<>();
 
     public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
@@ -54,6 +58,7 @@ public class RowGenerator extends BaseClassGenerator {
 
         setJClass(clazz);
 
+        mCursorConstructor = clazz.constructor(JMod.PUBLIC);
         mValueConstructor = clazz.constructor(JMod.PUBLIC);
 
         if (getTableGenerator().getTable().hasDependencies()) {
@@ -94,8 +99,8 @@ public class RowGenerator extends BaseClassGenerator {
             @Override
             public void run() {
                 asyncInit();
-                makeConstructors();
                 makeAccessors();
+                makeConstructors();
                 makeApplyToRows();
                 makeInsert();
                 makeUpdate();
@@ -421,8 +426,63 @@ public class RowGenerator extends BaseClassGenerator {
             }
         };
 
+        makeCursorConstructor();
         makeJoinConstructor(picker);
         makeValueConstructor(picker);
+    }
+
+    private
+    @Nonnull
+    String getCursorMethodFor(Column column) {
+        return "get" + Strings.capitalize(column.getPrimitiveType(model()).name());
+    }
+
+    private void makeCursorConstructor() {
+        final JVar cursor = mCursorConstructor.param(Cursor.class, "cursor");
+        cursor.annotate(Nonnull.class);
+
+        final JBlock body = mCursorConstructor.body();
+        final JInvocation newPrimaryKey = JExpr._new(getTableGenerator().getPrimaryKeyGenerator().getJClass());
+
+        Column.Visitor<RowGenerator.BaseColumns> populateConstruction = new Column.Visitor<RowGenerator.BaseColumns>() {
+            @Override
+            public void visit(Column column, RowGenerator.BaseColumns context) {
+                String columnName = column.getName();
+                JInvocation getValue = cursor.invoke(getCursorMethodFor(column)).arg(columnName);
+                if (column.isPrimaryKey()) {
+                    if (column.isForeignKey()) {
+                        PrimaryKeyGenerator keyGenerator = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
+                        JType primaryKeyType = keyGenerator.getJClass();
+                        newPrimaryKey.arg(JOp.cond(getValue.ne(JExpr._null()), JExpr._new(primaryKeyType).arg(getValue), JExpr._null()));
+                    } else {
+                        newPrimaryKey.arg(getValue);
+                    }
+                } else {
+                    if (column.isForeignKey()) {
+                        JMethod setter = mSetters.get(column);
+                        if (setter == null) {
+                            return;
+                        }
+
+                        PrimaryKeyGenerator keyGenerator = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
+                        JType primaryKeyType = keyGenerator.getJClass();
+                        JInvocation getLong = cursor.invoke("getLong").arg(columnName);
+                        body.invoke(setter).arg(JOp.cond(getLong.ne(JExpr._null()), JExpr._new(primaryKeyType).arg(getLong), JExpr._null()));
+                    } else {
+                        JMethod setter = mSetters.get(column);
+                        if (setter == null) {
+                            return;
+                        }
+                        body.invoke(setter).arg(getValue);
+                    }
+                }
+            }
+        };
+
+        mPrimaryKeyColumns.forEach(populateConstruction);
+        mBasicColumns.forEach(populateConstruction);
+
+        callSetPrimaryKey(body, null).arg(newPrimaryKey);
     }
 
     private void makeJoinConstructor(Column.Picker picker) {
@@ -527,6 +587,8 @@ public class RowGenerator extends BaseClassGenerator {
                 body._if(makeEquals(field.fieldVar, value))._then()._return();
                 body.assign(field.fieldVar, value);
                 setIsModifiedCall(body, true);
+
+                mSetters.put(column, setter);
 
                 JMethod getter = getJClass().method(
                         JMod.PUBLIC,

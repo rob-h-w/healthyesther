@@ -4,10 +4,13 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -27,6 +30,31 @@ public final class EventTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS event");
+    }
+
+    @Nonnull
+    public EventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new EventTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public EventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        EventTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -122,6 +150,17 @@ public final class EventTable
             COLUMN_NAMES.add("name");
             COLUMN_NAMES_FOR_INSERTION.add("name");
             COLUMN_NAMES_FOR_UPDATE.add("name");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setTypeId(((cursor.getLong("type_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey(cursor.getLong("type_id")):null));
+            setCreated(cursor.getDateTime("created"));
+            setWhen(cursor.getDateTime("when"));
+            setModified(cursor.getDateTime("modified"));
+            setName(cursor.getString("name"));
+            setPrimaryKey(new EventTable.PrimaryKey(cursor.getLong("_id")));
         }
 
         public Row(

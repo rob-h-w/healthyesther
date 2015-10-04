@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class HealthScoreTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS health_score");
+    }
+
+    @Nonnull
+    public HealthScoreTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final HealthScoreTable.Row[] rows = new HealthScoreTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new HealthScoreTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public HealthScoreTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        HealthScoreTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -121,6 +149,17 @@ public final class HealthScoreTable
             COLUMN_NAMES.add("min_label");
             COLUMN_NAMES_FOR_INSERTION.add("min_label");
             COLUMN_NAMES_FOR_UPDATE.add("min_label");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setBestValue(cursor.getLong("best_value"));
+            setName(cursor.getString("name"));
+            setRandomQuery(cursor.getBoolean("random_query"));
+            setMaxLabel(cursor.getString("max_label"));
+            setMinLabel(cursor.getString("min_label"));
+            setPrimaryKey(new HealthScoreTable.PrimaryKey(cursor.getLong("_id")));
         }
 
         public Row(

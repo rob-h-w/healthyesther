@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class UnitsTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS units");
+    }
+
+    @Nonnull
+    public UnitsTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final UnitsTable.Row[] rows = new UnitsTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new UnitsTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public UnitsTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        UnitsTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -107,6 +135,14 @@ public final class UnitsTable
             COLUMN_NAMES.add("si_factor");
             COLUMN_NAMES_FOR_INSERTION.add("si_factor");
             COLUMN_NAMES_FOR_UPDATE.add("si_factor");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setName(cursor.getString("name"));
+            setSiFactor(cursor.getDouble("si_factor"));
+            setPrimaryKey(new UnitsTable.PrimaryKey(cursor.getLong("_id")));
         }
 
         public Row(

@@ -2,14 +2,22 @@ package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
+import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
+
+import javax.annotation.Nonnull;
 
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
 public class TableGenerator extends BaseClassGenerator {
@@ -63,8 +71,49 @@ public class TableGenerator extends BaseClassGenerator {
             @Override
             public void run() {
                 mRowGenerator.init();
+                makeSelect();
             }
         });
+    }
+
+    private void makeSelect() {
+        JDefinedClass rowClass = getRow().getJClass();
+        JType whereClass = model()._ref(Where.class);
+        JMethod select = makeSelect(whereClass);
+
+        JVar db = select.params().get(0);
+        JVar where = select.params().get(1);
+
+        JBlock body = select.body();
+        JVar cursor = body.decl(JMod.FINAL, model()._ref(Cursor.class), "cursor", db.invoke("select").arg(where));
+        JVar rows = body.decl(JMod.FINAL, rowClass.array(), "rows", JExpr.newArray(rowClass, cursor.invoke("count")));
+        JVar index = body.decl(model().INT, "index", JExpr.lit(0));
+        body.invoke(cursor, "moveToFirst");
+
+        JBlock loop = select.body()._do(cursor.invoke("moveToNext")).body();
+        JInvocation rowConstruction = JExpr._new(rowClass);
+        rowConstruction.arg(cursor);
+        loop.assign(rows.component(index.incr()), rowConstruction);
+
+        select.body()._return(rows);
+
+        JMethod selectOverload = makeSelect(getPrimaryKeyGenerator().getJClass());
+
+        db = selectOverload.params().get(0);
+        where = selectOverload.params().get(1);
+
+        selectOverload.body()._return(JExpr.invoke(null, select).arg(db).arg(JExpr.cast(whereClass, where)));
+    }
+
+    private JMethod makeSelect(JType whereType) {
+        JDefinedClass rowClass = getRow().getJClass();
+        JMethod select = getJClass().method(JMod.PUBLIC, rowClass.array(), "select");
+        select.annotate(Nonnull.class);
+        JVar db = select.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+        db.annotate(Nonnull.class);
+        JVar where = select.param(whereType, "where");
+        where.annotate(Nonnull.class);
+        return select;
     }
 
     private void makeCreate() {

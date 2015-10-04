@@ -4,9 +4,12 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -26,6 +29,31 @@ public final class EventTypeTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS event_type");
+    }
+
+    @Nonnull
+    public EventTypeTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final EventTypeTable.Row[] rows = new EventTypeTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new EventTypeTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public EventTypeTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        EventTypeTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -107,6 +135,14 @@ public final class EventTypeTable
             COLUMN_NAMES.add("icon");
             COLUMN_NAMES_FOR_INSERTION.add("icon");
             COLUMN_NAMES_FOR_UPDATE.add("icon");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setName(cursor.getString("name"));
+            setIcon(cursor.getString("icon"));
+            setPrimaryKey(new EventTypeTable.PrimaryKey(cursor.getLong("_id")));
         }
 
         public Row(

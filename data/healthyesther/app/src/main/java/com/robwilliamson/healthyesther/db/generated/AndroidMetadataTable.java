@@ -2,10 +2,14 @@
 package com.robwilliamson.healthyesther.db.generated;
 
 import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.Where;
 
 
 /**
@@ -25,6 +29,31 @@ public final class AndroidMetadataTable
     @Override
     public void drop(Transaction transaction) {
         transaction.execSQL("DROP TABLE IF EXISTS android_metadata");
+    }
+
+    @Nonnull
+    public AndroidMetadataTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        final Cursor cursor = database.select(where);
+        final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
+        int index = 0;
+        cursor.moveToFirst();
+        do {
+            rows[index ++] = new AndroidMetadataTable.Row(cursor);
+        } while (cursor.moveToNext());
+        return rows;
+    }
+
+    @Nonnull
+    public AndroidMetadataTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        AndroidMetadataTable.PrimaryKey where) {
+        return select(database, ((Where) where));
     }
 
 
@@ -74,6 +103,13 @@ public final class AndroidMetadataTable
         static {
             COLUMN_NAMES.add("locale");
             COLUMN_NAMES_FOR_UPDATE.add("locale");
+        }
+
+        public Row(
+            @Nonnull
+            Cursor cursor) {
+            setLocale(cursor.getString("locale"));
+            setPrimaryKey(new AndroidMetadataTable.PrimaryKey());
         }
 
         public Row(String locale) {
