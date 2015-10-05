@@ -3,6 +3,8 @@ package com.robwilliamson.healthyesther.db.includes;
 
 import java.util.HashMap;
 
+import javax.annotation.Nonnull;
+
 public class DateTime
         implements Comparable<DateTime> {
 
@@ -36,13 +38,14 @@ public class DateTime
         return mString.compareTo(other.mString);
     }
 
+    public @Nonnull <T> T getDate(@Nonnull Class<T> dateType) {
+        return (T) retrieve(dateType).convert(this);
+    }
+
     public interface Converter<T> {
+        public @Nonnull DateTime convert(@Nonnull T fromType);
 
-
-        public DateTime convert(T fromType);
-
-        public T convert(DateTime dateTime);
-
+        public @Nonnull T convert(@Nonnull DateTime dateTime);
     }
 
 }
