@@ -21,6 +21,18 @@ public final class EventTable
     extends Table
 {
 
+    public final static String _ID = "_id";
+    public final static String TYPE_ID = "type_id";
+    public final static String CREATED = "created";
+    public final static String WHEN = "when";
+    public final static String MODIFIED = "modified";
+    public final static String NAME = "name";
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "event";
+    }
 
     @Override
     public void create(Transaction transaction) {
@@ -38,7 +50,7 @@ public final class EventTable
         Database database,
         @Nonnull
         Where where) {
-        final Cursor cursor = database.select(where);
+        final Cursor cursor = database.select(where, this);
         final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
         int index = 0;
         cursor.moveToFirst();
@@ -191,7 +203,9 @@ public final class EventTable
             mName = name;
         }
 
-        public void setTypeId(com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey typeId) {
+        public void setTypeId(
+            @Nonnull
+            com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey typeId) {
             if (((mTypeId == null)&&(typeId == null))||((mTypeId!= null)&&mTypeId.equals(typeId))) {
                 return ;
             }
@@ -203,7 +217,9 @@ public final class EventTable
             return mTypeId;
         }
 
-        public void setCreated(DateTime created) {
+        public void setCreated(
+            @Nonnull
+            DateTime created) {
             if (((mCreated == null)&&(created == null))||((mCreated!= null)&&mCreated.equals(created))) {
                 return ;
             }
@@ -215,7 +231,9 @@ public final class EventTable
             return mCreated;
         }
 
-        public void setWhen(DateTime when) {
+        public void setWhen(
+            @Nonnull
+            DateTime when) {
             if (((mWhen == null)&&(when == null))||((mWhen!= null)&&mWhen.equals(when))) {
                 return ;
             }
@@ -251,7 +269,9 @@ public final class EventTable
             return mName;
         }
 
-        private void applyToRows(Transaction transaction) {
+        private void applyToRows(
+            @Nonnull
+            Transaction transaction) {
             if (mTypeIdRow!= null) {
                 mTypeIdRow.applyTo(transaction);
                 mTypeId = mTypeIdRow.getNextPrimaryKey();
@@ -259,7 +279,9 @@ public final class EventTable
         }
 
         @Override
-        protected Object insert(Transaction transaction) {
+        protected Object insert(
+            @Nonnull
+            Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
@@ -284,7 +306,9 @@ public final class EventTable
         }
 
         @Override
-        protected void update(Transaction transaction) {
+        protected void update(
+            @Nonnull
+            Transaction transaction) {
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
@@ -297,7 +321,9 @@ public final class EventTable
         }
 
         @Override
-        protected void remove(Transaction transaction) {
+        protected void remove(
+            @Nonnull
+            Transaction transaction) {
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }

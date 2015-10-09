@@ -20,6 +20,16 @@ public final class MealEventTable
     extends Table
 {
 
+    public final static String EVENT_ID = "event_id";
+    public final static String MEAL_ID = "meal_id";
+    public final static String UNITS_ID = "units_id";
+    public final static String AMOUNT = "amount";
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "meal_event";
+    }
 
     @Override
     public void create(Transaction transaction) {
@@ -37,7 +47,7 @@ public final class MealEventTable
         Database database,
         @Nonnull
         Where where) {
-        final Cursor cursor = database.select(where);
+        final Cursor cursor = database.select(where, this);
         final MealEventTable.Row[] rows = new MealEventTable.Row[cursor.count()] ;
         int index = 0;
         cursor.moveToFirst();
@@ -209,7 +219,9 @@ public final class MealEventTable
             return mAmount;
         }
 
-        private void applyToRows(Transaction transaction) {
+        private void applyToRows(
+            @Nonnull
+            Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
                 mEventId = mEventIdRow.getNextPrimaryKey();
@@ -225,7 +237,9 @@ public final class MealEventTable
         }
 
         @Override
-        protected Object insert(Transaction transaction) {
+        protected Object insert(
+            @Nonnull
+            Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             // This table does not use a row ID as a primary key.
@@ -247,7 +261,9 @@ public final class MealEventTable
         }
 
         @Override
-        protected void update(Transaction transaction) {
+        protected void update(
+            @Nonnull
+            Transaction transaction) {
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
@@ -260,7 +276,9 @@ public final class MealEventTable
         }
 
         @Override
-        protected void remove(Transaction transaction) {
+        protected void remove(
+            @Nonnull
+            Transaction transaction) {
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }

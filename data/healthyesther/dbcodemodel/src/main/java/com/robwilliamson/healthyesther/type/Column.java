@@ -190,7 +190,7 @@ public class Column {
         boolean pick(Column column);
     }
 
-    public static interface Visitor<T> {
+    public interface Visitor<T> {
         void visit(Column column, T context);
     }
 

@@ -110,7 +110,7 @@ public final class Utils {
              * @param button
              * @return true to loop through the other buttons, false to exit with this one.
              */
-            public boolean handleRadioButton(RadioButton button);
+            boolean handleRadioButton(RadioButton button);
         }
 
         public static class NonUiThreadException extends RuntimeException {
@@ -154,11 +154,11 @@ public final class Utils {
         }
 
         public interface HashPutter {
-            public void put(Bundle bundle, String bundleKey, String key);
+            void put(Bundle bundle, String bundleKey, String key);
         }
 
         public interface HashGetter<T> {
-            public T get(Bundle bundle, String bundleKey);
+            T get(Bundle bundle, String bundleKey);
         }
     }
 }

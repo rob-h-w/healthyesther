@@ -277,13 +277,12 @@ public class NavigationDrawerFragment extends Fragment {
         return getActivity().getActionBar();
     }
 
-    public static enum NavigationDrawerMode {
+    public enum NavigationDrawerMode {
         ADD(R.string.title_log_events, AddFragment.class),
         EDIT(R.string.title_review_events, EditFragment.class);
 
         public final int stringId;
 
-        ;
         public final Class<?> fragmentClass;
 
         <T extends AbstractHomeFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
@@ -322,7 +321,7 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * Callbacks interface that all activities using this fragment must implement.
      */
-    public static interface NavigationDrawerCallbacks {
+    public interface NavigationDrawerCallbacks {
         /**
          * Called when an item in the navigation drawer is selected.
          */

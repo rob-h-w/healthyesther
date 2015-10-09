@@ -140,21 +140,21 @@ public class TimingModel {
         mEnvironment.setNextNotificationTime(alarmTime);
     }
 
-    public static interface Environment {
-        public DateTime getNow();
+    public interface Environment {
+        DateTime getNow();
 
-        public DateTime getLastNotifiedTime();
+        DateTime getLastNotifiedTime();
 
-        public void setLastNotifiedTime(DateTime time);
+        void setLastNotifiedTime(DateTime time);
 
-        public DateTime getNextNotificationTime();
+        DateTime getNextNotificationTime();
 
-        public void setNextNotificationTime(DateTime time);
+        void setNextNotificationTime(DateTime time);
 
-        public boolean appInForeground();
+        boolean appInForeground();
 
-        public void setAlarm(DateTime alarmTime);
+        void setAlarm(DateTime alarmTime);
 
-        public void sendReminder();
+        void sendReminder();
     }
 }

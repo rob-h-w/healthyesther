@@ -20,6 +20,13 @@ public final class AndroidMetadataTable
     extends Table
 {
 
+    public final static String LOCALE = "locale";
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "android_metadata";
+    }
 
     @Override
     public void create(Transaction transaction) {
@@ -37,7 +44,7 @@ public final class AndroidMetadataTable
         Database database,
         @Nonnull
         Where where) {
-        final Cursor cursor = database.select(where);
+        final Cursor cursor = database.select(where, this);
         final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
         int index = 0;
         cursor.moveToFirst();
@@ -130,18 +137,24 @@ public final class AndroidMetadataTable
         }
 
         @Override
-        protected Object insert(Transaction transaction) {
+        protected Object insert(
+            @Nonnull
+            Transaction transaction) {
             transaction.insert(COLUMN_NAMES, mLocale);
             return transaction.insert(COLUMN_NAMES, mLocale);
         }
 
         @Override
-        protected void update(Transaction transaction) {
+        protected void update(
+            @Nonnull
+            Transaction transaction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        protected void remove(Transaction transaction) {
+        protected void remove(
+            @Nonnull
+            Transaction transaction) {
             throw new UnsupportedOperationException();
         }
 

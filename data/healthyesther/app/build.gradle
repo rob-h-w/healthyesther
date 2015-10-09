@@ -2,22 +2,23 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        config {
+        release {
             keyAlias 'test1'
             keyPassword System.getenv('HEALTHY_ESTHER_KEY_PASSWORD')
             storeFile rootProject.file('fakeKeyStore/fake.jks')
             storePassword System.getenv('HEALTHY_ESTHER_STORE_PASSWORD')
         }
     }
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
     defaultConfig {
         applicationId "com.robwilliamson.healthyesther"
         minSdkVersion 19
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 18
         versionName "0.8.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
     packagingOptions {
         exclude 'LICENSE.txt'
@@ -25,17 +26,21 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE'
     }
+    dexOptions {
+    }
+    productFlavors {
+    }
 }
 
 tasks.preBuild.dependsOn(":dbcodemodel:sqlite2Java")
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:22.1.1'
+    compile 'com.android.support:support-v4:23.0.1'
     compile 'net.danlew:android.joda:2.7.1'
     compile 'com.jjoe64:graphview:3.1.3'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
-    androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
     // Robolectric
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-core:1.1'
@@ -58,5 +63,6 @@ dependencies {
         exclude module: 'wagon-http-lightweight'
         exclude module: 'wagon-provider-api'
     }
-    provided project(':dbcodemodel')
+    compile project(':dbcodemodel')
+    compile project(':includes')
 }

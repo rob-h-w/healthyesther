@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/dbcodemodel/dbcodemodel.iml" filepath="$PROJECT_DIR$/dbcodemodel/dbcodemodel.iml" />
       <module fileurl="file://$PROJECT_DIR$/healthyesther.iml" filepath="$PROJECT_DIR$/healthyesther.iml" />
+      <module fileurl="file://$PROJECT_DIR$/includes/includes.iml" filepath="$PROJECT_DIR$/includes/includes.iml" />
     </modules>
   </component>
 </project>

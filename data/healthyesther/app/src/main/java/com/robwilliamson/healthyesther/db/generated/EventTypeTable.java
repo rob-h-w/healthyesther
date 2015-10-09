@@ -20,6 +20,15 @@ public final class EventTypeTable
     extends Table
 {
 
+    public final static String _ID = "_id";
+    public final static String NAME = "name";
+    public final static String ICON = "icon";
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "event_type";
+    }
 
     @Override
     public void create(Transaction transaction) {
@@ -37,7 +46,7 @@ public final class EventTypeTable
         Database database,
         @Nonnull
         Where where) {
-        final Cursor cursor = database.select(where);
+        final Cursor cursor = database.select(where, this);
         final EventTypeTable.Row[] rows = new EventTypeTable.Row[cursor.count()] ;
         int index = 0;
         cursor.moveToFirst();
@@ -152,7 +161,9 @@ public final class EventTypeTable
             mIcon = icon;
         }
 
-        public void setName(String name) {
+        public void setName(
+            @Nonnull
+            String name) {
             if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
                 return ;
             }
@@ -177,7 +188,9 @@ public final class EventTypeTable
         }
 
         @Override
-        protected Object insert(Transaction transaction) {
+        protected Object insert(
+            @Nonnull
+            Transaction transaction) {
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mIcon)));
@@ -200,7 +213,9 @@ public final class EventTypeTable
         }
 
         @Override
-        protected void update(Transaction transaction) {
+        protected void update(
+            @Nonnull
+            Transaction transaction) {
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
@@ -212,7 +227,9 @@ public final class EventTypeTable
         }
 
         @Override
-        protected void remove(Transaction transaction) {
+        protected void remove(
+            @Nonnull
+            Transaction transaction) {
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }

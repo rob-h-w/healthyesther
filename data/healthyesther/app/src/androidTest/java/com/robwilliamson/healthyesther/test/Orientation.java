@@ -22,7 +22,7 @@ public class Orientation {
         }
     }
 
-    public static interface Subject {
+    public interface Subject {
         InstrumentationTestCase getTestCase();
 
         void checkContent();

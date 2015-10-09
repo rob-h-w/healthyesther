@@ -13,7 +13,7 @@ public interface Query {
      * @param db
      * @return
      */
-    public Cursor query(final SQLiteDatabase db);
+    Cursor query(final SQLiteDatabase db);
 
     /**
      * Called after the query in the worker thread. Use this to parse the cursor output.
@@ -24,14 +24,14 @@ public interface Query {
      *
      * @param cursor
      */
-    public void postQueryProcessing(final Cursor cursor);
+    void postQueryProcessing(final Cursor cursor);
 
     /**
      * Called in the UI thread after successful processing of the query.
      *
      * @param cursor
      */
-    public void onQueryComplete(final Cursor cursor);
+    void onQueryComplete(final Cursor cursor);
 
     /**
      * Called in the UI thread after processing the query threw. It is assumed that the query was
@@ -39,5 +39,5 @@ public interface Query {
      *
      * @param error
      */
-    public void onQueryFailed(final Throwable error);
+    void onQueryFailed(final Throwable error);
 }

@@ -20,6 +20,14 @@ public final class MedicationNameTable
     extends Table
 {
 
+    public final static String NAME = "name";
+    public final static String MEDICATION_ID = "medication_id";
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "medication_name";
+    }
 
     @Override
     public void create(Transaction transaction) {
@@ -37,7 +45,7 @@ public final class MedicationNameTable
         Database database,
         @Nonnull
         Where where) {
-        final Cursor cursor = database.select(where);
+        final Cursor cursor = database.select(where, this);
         final MedicationNameTable.Row[] rows = new MedicationNameTable.Row[cursor.count()] ;
         int index = 0;
         cursor.moveToFirst();
@@ -168,7 +176,9 @@ public final class MedicationNameTable
             mMedicationIdRow = medicationId;
         }
 
-        private void applyToRows(Transaction transaction) {
+        private void applyToRows(
+            @Nonnull
+            Transaction transaction) {
             if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
                 mMedicationId = mMedicationIdRow.getNextPrimaryKey();
@@ -176,7 +186,9 @@ public final class MedicationNameTable
         }
 
         @Override
-        protected Object insert(Transaction transaction) {
+        protected Object insert(
+            @Nonnull
+            Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             // This table does not use a row ID as a primary key.
@@ -198,12 +210,16 @@ public final class MedicationNameTable
         }
 
         @Override
-        protected void update(Transaction transaction) {
+        protected void update(
+            @Nonnull
+            Transaction transaction) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        protected void remove(Transaction transaction) {
+        protected void remove(
+            @Nonnull
+            Transaction transaction) {
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }

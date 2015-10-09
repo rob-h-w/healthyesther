@@ -20,6 +20,15 @@ public final class NoteTable
     extends Table
 {
 
+    public final static String _ID = "_id";
+    public final static String NAME = "name";
+    public final static String NOTE = "note";
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "note";
+    }
 
     @Override
     public void create(Transaction transaction) {
@@ -37,7 +46,7 @@ public final class NoteTable
         Database database,
         @Nonnull
         Where where) {
-        final Cursor cursor = database.select(where);
+        final Cursor cursor = database.select(where, this);
         final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
         int index = 0;
         cursor.moveToFirst();
@@ -152,7 +161,9 @@ public final class NoteTable
             mNote = note;
         }
 
-        public void setName(String name) {
+        public void setName(
+            @Nonnull
+            String name) {
             if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
                 return ;
             }
@@ -177,7 +188,9 @@ public final class NoteTable
         }
 
         @Override
-        protected Object insert(Transaction transaction) {
+        protected Object insert(
+            @Nonnull
+            Transaction transaction) {
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mNote)));
@@ -200,7 +213,9 @@ public final class NoteTable
         }
 
         @Override
-        protected void update(Transaction transaction) {
+        protected void update(
+            @Nonnull
+            Transaction transaction) {
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
@@ -212,7 +227,9 @@ public final class NoteTable
         }
 
         @Override
-        protected void remove(Transaction transaction) {
+        protected void remove(
+            @Nonnull
+            Transaction transaction) {
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }

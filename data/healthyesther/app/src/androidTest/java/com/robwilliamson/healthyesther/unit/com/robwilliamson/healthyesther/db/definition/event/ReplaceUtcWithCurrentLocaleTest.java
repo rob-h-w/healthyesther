@@ -175,11 +175,8 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
 
         private boolean equals(String left, String right) {
             if (left == null) {
-                if (right == null) {
-                    return true;
-                }
+                return right == null;
 
-                return false;
             }
 
             return left.equals(right);

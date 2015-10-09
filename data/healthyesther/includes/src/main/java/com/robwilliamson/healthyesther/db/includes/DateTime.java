@@ -43,9 +43,9 @@ public class DateTime
     }
 
     public interface Converter<T> {
-        public @Nonnull DateTime convert(@Nonnull T fromType);
+        @Nonnull DateTime convert(@Nonnull T fromType);
 
-        public @Nonnull T convert(@Nonnull DateTime dateTime);
+        @Nonnull T convert(@Nonnull DateTime dateTime);
     }
 
 }

@@ -8,4 +8,9 @@ public class UserActions {
         HomeActivityAccessor.AddMode.start();
         onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
     }
+
+    public static void openAddMeal() {
+        HomeActivityAccessor.AddMode.start();
+        onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
+    }
 }

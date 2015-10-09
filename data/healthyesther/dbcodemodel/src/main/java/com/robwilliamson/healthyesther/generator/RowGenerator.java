@@ -117,6 +117,7 @@ public class RowGenerator extends BaseClassGenerator {
 
         mApplyToRows = getJClass().method(JMod.PRIVATE, model().VOID, "applyToRows");
         final JVar transaction = mApplyToRows.param(Transaction.class, "transaction");
+        annotateNonull(transaction, true);
         final JBlock body = mApplyToRows.body();
 
         // Ensure row dependencies are up to date.
@@ -173,6 +174,7 @@ public class RowGenerator extends BaseClassGenerator {
         JMethod update = getJClass().method(JMod.PROTECTED, model().VOID, "update");
         update.annotate(Override.class);
         JVar transaction = update.param(Transaction.class, "transaction");
+        annotateNonull(transaction, true);
         JBlock body = update.body();
 
         if (mPrimaryKeyColumns.columns.isEmpty() || mBasicColumns.columns.isEmpty()) {
@@ -215,6 +217,7 @@ public class RowGenerator extends BaseClassGenerator {
         JMethod remove = getJClass().method(JMod.PROTECTED, model().VOID, "remove");
         remove.annotate(Override.class);
         JVar transaction = remove.param(Transaction.class, "transaction");
+        annotateNonull(transaction, true);
         JBlock body = remove.body();
 
         if (mPrimaryKeyColumns.columns.isEmpty()) {
@@ -283,6 +286,7 @@ public class RowGenerator extends BaseClassGenerator {
         JMethod insert = getJClass().method(JMod.PROTECTED, Object.class, "insert");
         insert.annotate(Override.class);
         final JVar transaction = insert.param(Transaction.class, "transaction");
+        annotateNonull(transaction, true);
         final JBlock body = insert.body();
 
         // Ensure row dependencies are up to date.
@@ -583,6 +587,9 @@ public class RowGenerator extends BaseClassGenerator {
                         model().VOID,
                         "set" + Strings.capitalize(field.name));
                 JVar value = setter.param(field.fieldVar.type(), field.name);
+                if (column.isNotNull()) {
+                    annotateNonull(value, true);
+                }
                 JBlock body = setter.body();
                 body._if(makeEquals(field.fieldVar, value))._then()._return();
                 body.assign(field.fieldVar, value);

@@ -233,11 +233,8 @@ public class HealthScore extends Table {
                 return false;
             }
 
-            if (!Utils.Strings.equals(maxLabel, other.maxLabel)) {
-                return false;
-            }
+            return Utils.Strings.equals(maxLabel, other.maxLabel);
 
-            return true;
         }
 
         @Override
