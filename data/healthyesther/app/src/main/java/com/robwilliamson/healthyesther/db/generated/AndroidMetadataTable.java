@@ -143,8 +143,8 @@ public final class AndroidMetadataTable
         protected Object insert(
             @Nonnull
             Transaction transaction) {
-            transaction.insert(COLUMN_NAMES, mLocale);
-            return transaction.insert(COLUMN_NAMES, mLocale);
+            transaction.insert("android_metadata", COLUMN_NAMES, mLocale);
+            return transaction.insert("android_metadata", COLUMN_NAMES, mLocale);
         }
 
         @Override

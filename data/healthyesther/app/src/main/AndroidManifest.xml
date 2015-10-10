@@ -14,7 +14,7 @@
         <activity
             android:name=".EventActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home">
@@ -27,23 +27,23 @@
         <activity
             android:name=".edit.MealEventActivity"
             android:icon="@drawable/ic_food"
-            android:label="@string/log_a_meal"/>
+            android:label="@string/log_a_meal" />
         <activity
             android:name=".edit.MedicationEventActivity"
             android:icon="@mipmap/ic_medication"
-            android:label="@string/log_medication"/>
+            android:label="@string/log_medication" />
         <activity
             android:name=".edit.ScoreEventActivity"
             android:icon="@mipmap/ic_health"
-            android:label="@string/health_score"/>
+            android:label="@string/health_score" />
         <activity
             android:name=".edit.NoteEventActivity"
             android:icon="@mipmap/ic_note"
-            android:label="@string/note"/>
+            android:label="@string/note" />
         <activity
             android:name=".SettingsActivity"
             android:icon="@mipmap/ic_settings"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
 
         <receiver android:name=".reminder.ServiceAutoStarter">
             <intent-filter>
@@ -54,7 +54,7 @@
 
         <service
             android:name=".reminder.ReminderIntentService"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>

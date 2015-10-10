@@ -289,9 +289,9 @@ public final class EventTable
             applyToRows(transaction);
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
+                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName));
+                nextPrimaryKey.setId(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -316,7 +316,7 @@ public final class EventTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             applyToRows(transaction);
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mTypeId.getId(), mCreated, mWhen, mModified, mName);
+            int actual = transaction.update("event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mTypeId.getId(), mCreated, mWhen, mModified, mName);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -330,7 +330,7 @@ public final class EventTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("event", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

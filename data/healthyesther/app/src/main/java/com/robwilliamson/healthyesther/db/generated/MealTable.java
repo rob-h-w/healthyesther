@@ -177,9 +177,9 @@ public final class MealTable
             Transaction transaction) {
             MealTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new MealTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName)));
+                setNextPrimaryKey(new MealTable.PrimaryKey(transaction.insert("meal", COLUMN_NAMES_FOR_INSERTION, mName)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName));
+                nextPrimaryKey.setId(transaction.insert("meal", COLUMN_NAMES_FOR_INSERTION, mName));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -203,7 +203,7 @@ public final class MealTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName);
+            int actual = transaction.update("meal", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -217,7 +217,7 @@ public final class MealTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("meal", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

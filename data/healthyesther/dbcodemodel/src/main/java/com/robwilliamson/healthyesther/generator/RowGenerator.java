@@ -193,7 +193,7 @@ public class RowGenerator extends BaseClassGenerator {
 
         JInvocation where = callGetConcretePrimaryKey(null, null);
 
-        final JInvocation updateInvocation = transaction.invoke(update).arg(where).arg(mUpdateNames);
+        final JInvocation updateInvocation = transaction.invoke("update").arg(mTableGenerator.getTable().getName()).arg(where).arg(mUpdateNames);
 
         Column.Visitor<BaseColumns> addUpdateArg = new Column.Visitor<BaseColumns>() {
             @Override
@@ -232,7 +232,7 @@ public class RowGenerator extends BaseClassGenerator {
 
         JInvocation where = JExpr.invoke(null, "getConcretePrimaryKey");
 
-        JVar actual = body.decl(model().INT, "actual", transaction.invoke(remove).arg(where));
+        JVar actual = body.decl(model().INT, "actual", transaction.invoke("remove").arg(mTableGenerator.getTable().getName()).arg(where));
 
         JExpression expected = JExpr.lit(1);
         body._if(actual.ne(expected))._then()._throw(JExpr._new(model()._ref(BaseTransactable.RemoveFailed.class)).arg(expected).arg(actual));
@@ -332,6 +332,8 @@ public class RowGenerator extends BaseClassGenerator {
                 insertionCall = body.invoke(transaction, "insert");
             }
 
+            insertionCall.arg(mTableGenerator.getTable().getName());
+
             if (mInsertNames == null) {
                 insertionCall.arg(mColumnNames);
             } else {
@@ -397,7 +399,7 @@ public class RowGenerator extends BaseClassGenerator {
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
             body._return(nextPrimaryKey);
         } else {
-            body._return(populateArgumentsFor(body.invoke(transaction, "insert")));
+            body._return(populateArgumentsFor(body.invoke(transaction, "insert").arg(mTableGenerator.getTable().getName())));
         }
 
     }

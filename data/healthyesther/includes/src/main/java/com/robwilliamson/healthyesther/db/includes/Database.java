@@ -23,4 +23,6 @@ public abstract class Database {
 
     @Nonnull
     public abstract Cursor select(@Nonnull Where where, @Nonnull Table table);
+
+    public abstract Transaction getTransaction();
 }

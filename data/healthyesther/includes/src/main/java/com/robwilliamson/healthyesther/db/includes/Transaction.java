@@ -2,16 +2,18 @@ package com.robwilliamson.healthyesther.db.includes;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public interface Transaction {
-    void addCompletionHandler(CompletionHandler handler);
+    void addCompletionHandler(@Nonnull CompletionHandler handler);
 
-    String execSQL(String sql);
+    void execSQL(@Nonnull String sql);
 
-    long insert(List<String> columnNames, Object... columnValues);
+    long insert(@Nonnull String table, @Nonnull List<String> columnNames, @Nonnull Object... columnValues);
 
-    int update(Where where, List<String> columnNames, Object... columnValues);
+    int update(@Nonnull String table, @Nonnull Where where, @Nonnull List<String> columnNames, @Nonnull Object... columnValues);
 
-    int remove(Where where);
+    int remove(@Nonnull String table, @Nonnull Where where);
 
     void commit();
 

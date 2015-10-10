@@ -196,9 +196,9 @@ public final class UnitsTable
             Transaction transaction) {
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor)));
+                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor));
+                nextPrimaryKey.setId(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -222,7 +222,7 @@ public final class UnitsTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mSiFactor);
+            int actual = transaction.update("units", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mSiFactor);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -236,7 +236,7 @@ public final class UnitsTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("units", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

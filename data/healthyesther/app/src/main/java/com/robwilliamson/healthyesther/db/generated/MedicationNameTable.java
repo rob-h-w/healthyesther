@@ -197,7 +197,7 @@ public final class MedicationNameTable
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationId));
             MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId().getId());
+            transaction.insert("medication_name", COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId().getId());
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -226,7 +226,7 @@ public final class MedicationNameTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("medication_name", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

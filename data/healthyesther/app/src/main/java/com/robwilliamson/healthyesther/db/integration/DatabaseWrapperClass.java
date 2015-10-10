@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Table;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
 
 import java.util.HashMap;
@@ -13,6 +14,23 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 public class DatabaseWrapperClass extends Database {
+    private final SQLiteDatabase mDatabase;
+
+    public DatabaseWrapperClass(@Nonnull SQLiteDatabase database) {
+        mDatabase = database;
+    }
+
+    @Nonnull
+    @Override
+    public Cursor select(@Nonnull Where where, @Nonnull Table table) {
+        return new Cursor(mDatabase.query(false, table.getName(), null, where.getWhere(), new String[]{}, null, null, null, null));
+    }
+
+    @Override
+    public Transaction getTransaction() {
+        return new com.robwilliamson.healthyesther.db.integration.Transaction(mDatabase);
+    }
+
     public static class Cursor implements com.robwilliamson.healthyesther.db.includes.Cursor {
 
         private final android.database.Cursor mCursor;
@@ -71,17 +89,5 @@ public class DatabaseWrapperClass extends Database {
         public int count() {
             return mCursor.getCount();
         }
-    }
-
-    private final SQLiteDatabase mDatabase;
-
-    public DatabaseWrapperClass(@Nonnull SQLiteDatabase database) {
-        mDatabase = database;
-    }
-
-    @Nonnull
-    @Override
-    public Cursor select(@Nonnull Where where, @Nonnull Table table) {
-        return new Cursor(mDatabase.query(false, table.getName(), null, where.getWhere(), new String[] {}, null, null, null, null));
     }
 }

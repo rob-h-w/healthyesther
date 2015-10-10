@@ -196,9 +196,9 @@ public final class EventTypeTable
             Transaction transaction) {
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mIcon)));
+                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, mIcon)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mIcon));
+                nextPrimaryKey.setId(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, mIcon));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -222,7 +222,7 @@ public final class EventTypeTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mIcon);
+            int actual = transaction.update("event_type", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mIcon);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -236,7 +236,7 @@ public final class EventTypeTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("event_type", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

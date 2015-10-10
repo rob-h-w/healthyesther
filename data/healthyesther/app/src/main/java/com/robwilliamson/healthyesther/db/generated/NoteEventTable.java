@@ -205,7 +205,7 @@ public final class NoteEventTable
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventId, mNoteId));
             NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getNoteId().getId());
+            transaction.insert("note_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getNoteId().getId());
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -234,7 +234,7 @@ public final class NoteEventTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("note_event", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

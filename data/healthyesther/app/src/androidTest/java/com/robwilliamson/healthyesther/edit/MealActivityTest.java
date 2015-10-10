@@ -94,7 +94,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     public void testAddMultipleMeals() {
-        String [] mealNames = new String[] {
+        String[] mealNames = new String[]{
                 "trout",
                 "cod",
                 "trout",

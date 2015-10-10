@@ -224,7 +224,7 @@ public final class HealthScoreEventTable
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventId, mHealthScoreId));
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
-            transaction.insert(COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), mScore);
+            transaction.insert("health_score_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), mScore);
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -247,7 +247,7 @@ public final class HealthScoreEventTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             applyToRows(transaction);
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mScore);
+            int actual = transaction.update("health_score_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mScore);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -261,7 +261,7 @@ public final class HealthScoreEventTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("health_score_event", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

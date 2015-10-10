@@ -196,9 +196,9 @@ public final class NoteTable
             Transaction transaction) {
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mNote)));
+                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, mNote)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mName, mNote));
+                nextPrimaryKey.setId(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, mNote));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -222,7 +222,7 @@ public final class NoteTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mNote);
+            int actual = transaction.update("note", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mNote);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -236,7 +236,7 @@ public final class NoteTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("note", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }

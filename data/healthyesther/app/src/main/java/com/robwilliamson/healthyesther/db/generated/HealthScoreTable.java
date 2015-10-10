@@ -263,9 +263,9 @@ public final class HealthScoreTable
             Transaction transaction) {
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
             } else {
-                nextPrimaryKey.setId(transaction.insert(COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
+                nextPrimaryKey.setId(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -289,7 +289,7 @@ public final class HealthScoreTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update(getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
+            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -303,7 +303,7 @@ public final class HealthScoreTable
             if ((!isInDatabase())||isDeleted()) {
                 return ;
             }
-            int actual = transaction.remove(getConcretePrimaryKey());
+            int actual = transaction.remove("health_score", getConcretePrimaryKey());
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.RemoveFailed(1, actual);
             }
