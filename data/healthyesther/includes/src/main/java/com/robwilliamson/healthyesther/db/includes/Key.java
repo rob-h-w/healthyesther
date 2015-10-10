@@ -1,4 +1,6 @@
 package com.robwilliamson.healthyesther.db.includes;
 
-public interface Key extends Where {
+import java.io.Serializable;
+
+public interface Key extends Where, Serializable {
 }

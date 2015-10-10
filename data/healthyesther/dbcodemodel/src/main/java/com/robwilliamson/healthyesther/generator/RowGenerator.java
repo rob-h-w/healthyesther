@@ -25,6 +25,7 @@ import com.sun.codemodel.JOp;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +58,8 @@ public class RowGenerator extends BaseClassGenerator {
                 getName());
 
         setJClass(clazz);
+
+        clazz._implements(Serializable.class);
 
         mCursorConstructor = clazz.constructor(JMod.PUBLIC);
         mValueConstructor = clazz.constructor(JMod.PUBLIC);

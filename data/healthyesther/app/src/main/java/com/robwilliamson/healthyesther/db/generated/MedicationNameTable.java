@@ -1,6 +1,7 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
@@ -18,6 +19,7 @@ import com.robwilliamson.healthyesther.db.includes.Where;
  */
 public final class MedicationNameTable
     extends Table
+    implements Serializable
 {
 
     public final static String NAME = "name";
@@ -70,7 +72,7 @@ public final class MedicationNameTable
      * 
      */
     public final static class PrimaryKey
-        implements Key
+        implements Serializable, Key
     {
 
         private String mName;
@@ -143,6 +145,7 @@ public final class MedicationNameTable
      */
     public final static class Row
         extends BaseRow<MedicationNameTable.PrimaryKey>
+        implements Serializable
     {
 
         @Nonnull

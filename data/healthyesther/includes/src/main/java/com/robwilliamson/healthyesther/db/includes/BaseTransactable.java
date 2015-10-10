@@ -1,9 +1,11 @@
 package com.robwilliamson.healthyesther.db.includes;
 
+import java.io.Serializable;
+
 /**
  * A class that can perform modifications as part of a transaction.
  */
-public abstract class BaseTransactable {
+public abstract class BaseTransactable implements Serializable {
     private boolean mIsInDatabase = false;
     private boolean mIsModified = false;
     private boolean mDeleted = false;
@@ -15,13 +17,12 @@ public abstract class BaseTransactable {
 
         boolean insert = !inDb && !isDeleted;
         boolean modify = inDb && isModified && !isDeleted;
-        boolean remove = isDeleted;
 
         if (insert) {
             insert(transaction);
         } else if (modify) {
             update(transaction);
-        } else if (remove) {
+        } else if (isDeleted) {
             remove(transaction);
         }
     }

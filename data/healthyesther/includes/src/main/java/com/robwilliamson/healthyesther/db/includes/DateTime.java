@@ -38,14 +38,18 @@ public class DateTime
         return mString.compareTo(other.mString);
     }
 
-    public @Nonnull <T> T getDate(@Nonnull Class<T> dateType) {
+    public
+    @Nonnull
+    <T> T getDate(@Nonnull Class<T> dateType) {
         return (T) retrieve(dateType).convert(this);
     }
 
     public interface Converter<T> {
-        @Nonnull DateTime convert(@Nonnull T fromType);
+        @Nonnull
+        DateTime convert(@Nonnull T fromType);
 
-        @Nonnull T convert(@Nonnull DateTime dateTime);
+        @Nonnull
+        T convert(@Nonnull DateTime dateTime);
     }
 
 }

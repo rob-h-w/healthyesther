@@ -1,6 +1,7 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
@@ -18,6 +19,7 @@ import com.robwilliamson.healthyesther.db.includes.Where;
  */
 public final class AndroidMetadataTable
     extends Table
+    implements Serializable
 {
 
     public final static String LOCALE = "locale";
@@ -69,7 +71,7 @@ public final class AndroidMetadataTable
      * 
      */
     public final static class PrimaryKey
-        implements Key
+        implements Serializable, Key
     {
 
 
@@ -101,6 +103,7 @@ public final class AndroidMetadataTable
      */
     public final static class Row
         extends BaseRow<AndroidMetadataTable.PrimaryKey>
+        implements Serializable
     {
 
         private String mLocale;

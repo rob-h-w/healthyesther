@@ -8,7 +8,9 @@ import javax.annotation.Nonnull;
 public abstract class Table {
     private final List<Upgrader> mUpgraders = new ArrayList<>();
 
-    public abstract @Nonnull String getName();
+    public abstract
+    @Nonnull
+    String getName();
 
     public abstract void create(Transaction transaction);
 

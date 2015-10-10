@@ -1,6 +1,8 @@
 package com.robwilliamson.healthyesther.db.includes;
 
-public abstract class BaseRow<T extends Key> extends BaseTransactable implements PrimaryKeyOwner {
+import java.io.Serializable;
+
+public abstract class BaseRow<T extends Key> extends BaseTransactable implements PrimaryKeyOwner, Serializable {
     private T mKey;
     private T mNextKey;
 

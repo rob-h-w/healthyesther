@@ -16,6 +16,7 @@ import com.sun.codemodel.JMod;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
         setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
         getJClass()._implements(Key.class);
+        getJClass()._implements(Serializable.class);
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
             public void run() {

@@ -18,6 +18,7 @@ import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ public class TableGenerator extends BaseClassGenerator {
         mTable = table;
         setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
         getJClass()._extends(Table.class);
+        getJClass()._implements(Serializable.class);
         makeColumnNameFields();
         makeGetName();
         makeCreate();

@@ -1,6 +1,7 @@
 
 package com.robwilliamson.healthyesther.db.generated;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
@@ -18,6 +19,7 @@ import com.robwilliamson.healthyesther.db.includes.Where;
  */
 public final class HealthScoreEventTable
     extends Table
+    implements Serializable
 {
 
     public final static String EVENT_ID = "event_id";
@@ -71,7 +73,7 @@ public final class HealthScoreEventTable
      * 
      */
     public final static class PrimaryKey
-        implements Key
+        implements Serializable, Key
     {
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
@@ -144,6 +146,7 @@ public final class HealthScoreEventTable
      */
     public final static class Row
         extends BaseRow<HealthScoreEventTable.PrimaryKey>
+        implements Serializable
     {
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
