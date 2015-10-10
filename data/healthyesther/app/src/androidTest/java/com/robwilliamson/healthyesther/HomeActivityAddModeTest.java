@@ -20,6 +20,8 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MealEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
+import javax.annotation.Nonnull;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -30,6 +32,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.robwilliamson.healthyesther.test.Strings.from;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
@@ -66,69 +69,5 @@ public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<Ho
                 HomeActivityAccessor.AddMode.checkUnmodifiedContent();
             }
         });
-    }
-
-    public void testAddNewMeal() {
-        onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
-        Orientation.check(new Orientation.Subject() {
-            @Override
-            public InstrumentationTestCase getTestCase() {
-                return HomeActivityAddModeTest.this;
-            }
-
-            @Override
-            public void checkContent() {
-                onView(MealEventActivityAccessor.dishTitle()).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
-                onView(MealEventActivityAccessor.dishName()).check(matches(withHint(from(R.string.descriptive_name_for_the_dish))));
-            }
-        });
-
-        final String text = "A big old trout";
-        onView(MealEventActivityAccessor.dishName()).perform(typeText(text));
-
-        Orientation.check(new Orientation.Subject() {
-            @Override
-            public InstrumentationTestCase getTestCase() {
-                return HomeActivityAddModeTest.this;
-            }
-
-            @Override
-            public void checkContent() {
-                onView(MealEventActivityAccessor.dishName()).check(matches(withText(text)));
-            }
-        });
-
-        onView(EditEventAccessor.ok()).perform(click());
-
-        DatabaseWrapperClass db = new DatabaseWrapperClass(HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase());
-        MealTable.Row[] meals = HealthDatabase.MEAL_TABLE.select(db, new Where() {
-            @Override
-            public String getWhere() {
-                return MealTable.NAME + " = \"" + text + "\"";
-            }
-        });
-
-        assertThat(meals.length, is(1));
-
-        final MealTable.Row meal = meals[0];
-        final MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(db, new Where() {
-            @Override
-            public String getWhere() {
-                return MealEventTable.MEAL_ID + " = " + meal.getConcretePrimaryKey().getId();
-            }
-        });
-
-        assertThat(mealEvents.length, is(1));
-
-        EventTable.Row[] events = HealthDatabase.EVENT_TABLE.select(db, new Where() {
-            @Override
-            public String getWhere() {
-                return EventTable._ID + " = " + mealEvents[0].getConcretePrimaryKey().getEventId().getId();
-            }
-        });
-
-        assertThat(events.length, is(1));
-        assertThat(events[0].getTypeId().getId(), is(EventTypeTable.MEAL.getId()));
     }
 }
