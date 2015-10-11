@@ -8,7 +8,7 @@ public abstract class TransactionExecutor {
     @Nonnull
     private final Observer mObserver;
 
-    TransactionExecutor(@Nonnull Database database, @Nonnull Observer observer) {
+    public TransactionExecutor(@Nonnull Database database, @Nonnull Observer observer) {
         mDb = database;
         mObserver = observer;
     }
@@ -17,7 +17,7 @@ public abstract class TransactionExecutor {
 
     public abstract void cancel();
 
-    void perform(final @Nonnull Operation operation) {
+    public void perform(final @Nonnull Operation operation) {
         runAsynchronously(new Runnable() {
             @Override
             public void run() {

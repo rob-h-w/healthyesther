@@ -8,6 +8,9 @@ import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
+import com.robwilliamson.healthyesther.db.integration.Executor;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
@@ -25,12 +28,19 @@ import java.util.List;
  * Activities that use databases.
  */
 public abstract class DbActivity extends BusyActivity
-        implements QueuedQueryExecutor, QueryUserProvider, ConfirmationDialogFragment.Observer {
+        implements QueuedQueryExecutor, QueryUserProvider, ConfirmationDialogFragment.Observer,
+        TransactionExecutor.Observer {
     private static final String LOG_TAG = DbActivity.class.getName();
     private static final String CONFIRMATION_DIALOG = "CONFIRMATION_DIALOG";
-
+    private Executor mExecutor;
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
+
+    public static class DatabaseException extends RuntimeException {
+        public DatabaseException(Throwable throwable) {
+            super(throwable);
+        }
+    }
 
     private static void setEnabled(Menu menu, int itemId, boolean enabled) {
         MenuItem item = menu.findItem(itemId);
@@ -38,6 +48,28 @@ public abstract class DbActivity extends BusyActivity
         if (item != null) {
             item.setEnabled(enabled);
         }
+    }
+
+    @Override
+    public void onTransactionFail(final Throwable e) {
+        setBusy(false);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                throw new DatabaseException(e);
+            }
+        });
+    }
+
+    @Override
+    public void onTransactionStart() {
+        setBusy(true);
+    }
+
+    @Override
+    public void onTransactionComplete() {
+        setBusy(false);
     }
 
     @Override
@@ -63,6 +95,9 @@ public abstract class DbActivity extends BusyActivity
 
     @Override
     protected void onDestroy() {
+        if (mExecutor != null) {
+            mExecutor.cancel();
+        }
         cancel(mTask);
         mTask = null;
         mQueries = null;
@@ -117,6 +152,8 @@ public abstract class DbActivity extends BusyActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        mExecutor = new Executor(new DatabaseWrapperClass(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase()), this);
 
         QueryUser[] queryUsers = getQueryUsers();
 
