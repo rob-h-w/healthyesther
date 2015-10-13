@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Set;
  * @param <T> Watcher for this fragment.
  */
 public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
-    private HashMap<String, Long> mSuggestionIds;
+    private Map<String, Long> mSuggestionIds;
 
     protected SuggestionEditFragment(Class<T> type) {
         super(type);
@@ -59,7 +60,7 @@ public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
         updateWatcher();
     }
 
-    protected void setSuggestionIds(HashMap<String, Long> suggestionIds) {
+    protected void setSuggestionIds(Map<String, Long> suggestionIds) {
         mSuggestionIds = suggestionIds;
 
         if (null == mSuggestionIds) {

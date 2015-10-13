@@ -16,9 +16,16 @@ import com.robwilliamson.healthyesther.db.data.MealEventData;
 import com.robwilliamson.healthyesther.db.definition.Meal;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.MealTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.use.GetAllMealsQuery;
 import com.robwilliamson.healthyesther.db.use.GetOneWithColumnIdQuery;
 import com.robwilliamson.healthyesther.db.use.GetOneWithEventIdQuery;
+import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
@@ -26,12 +33,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> {
+import javax.annotation.Nonnull;
+
+public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> implements InitializationQuerier<MealTable.Row> {
 
     private EventData mEventData;
     private MealEventData mMealEventData;
     private MealData mMealData;
+    private MealTable.Row[] mMealTableRows;
 
     public EditMealFragment() {
         super(EditMealFragment.Watcher.class);
@@ -226,6 +237,35 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     @Override
     protected AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.meal_name, AutoCompleteTextView.class);
+    }
+
+    @Nonnull
+    @Override
+    public TransactionExecutor.QueryOperation<MealTable.Row> getInitializationQuery() {
+        return new TransactionExecutor.QueryOperation<MealTable.Row>() {
+
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                setResults(HealthDatabase.MEAL_TABLE.select(database, new Where() {
+                    @Override
+                    public String getWhere() {
+                        return "*";
+                    }
+                }));
+            }
+        };
+    }
+
+    @Override
+    public void onInitializationQueryResponse(@Nonnull MealTable.Row[] rows) {
+        Map<String, Long> suggestionIds = new HashMap<>();
+        for (MealTable.Row row : rows) {
+            suggestionIds.put(row.getName(), row.getConcretePrimaryKey().getId());
+        }
+
+        setSuggestionIds(suggestionIds);
+
+        mMealTableRows = rows;
     }
 
     public interface Watcher extends QueuedQueryExecutor {

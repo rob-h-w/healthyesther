@@ -24,7 +24,7 @@ public abstract class TransactionExecutor {
                 try {
                     Transaction transaction = mDb.getTransaction();
                     mObserver.onTransactionStart();
-                    operation.doTransactionally(transaction);
+                    operation.doTransactionally(mDb, transaction);
                     transaction.commit();
                     mObserver.onTransactionComplete();
                 } catch (Throwable e) {
@@ -43,6 +43,31 @@ public abstract class TransactionExecutor {
     }
 
     public interface Operation {
-        void doTransactionally(@Nonnull Transaction transaction);
+        void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction);
+    }
+
+    public static abstract class QueryOperation<R extends BaseRow> implements Operation {
+        private R[] mResults;
+
+        /**
+         * Implementors should call this when their operation succeeds.
+         * @param results The results of the query.
+         */
+        protected void setResults(@Nonnull R[] results) {
+            mResults = results;
+        }
+
+        public @Nonnull R[] getResults() {
+            if (mResults == null) {
+                throw new NullQueryResultException();
+            }
+            return mResults;
+        }
+
+        public static class NullQueryResultException extends RuntimeException {
+            public NullQueryResultException() {
+                super("The result array was null. Did you forget to call setResults()?");
+            }
+        }
     }
 }

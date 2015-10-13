@@ -36,12 +36,6 @@ public abstract class DbActivity extends BusyActivity
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
 
-    public static class DatabaseException extends RuntimeException {
-        public DatabaseException(Throwable throwable) {
-            super(throwable);
-        }
-    }
-
     private static void setEnabled(Menu menu, int itemId, boolean enabled) {
         MenuItem item = menu.findItem(itemId);
 
@@ -169,6 +163,10 @@ public abstract class DbActivity extends BusyActivity
         doQueries(queries);
     }
 
+    protected TransactionExecutor getExecutor() {
+        return mExecutor;
+    }
+
     protected final void doQueries(final List<Query> queries) {
         if (mQueries == null) {
             mQueries = new ArrayDeque<>(queries);
@@ -264,6 +262,12 @@ public abstract class DbActivity extends BusyActivity
     private void cancel(AsyncTask<Void, Void, Void> task) {
         if (task != null && task.getStatus() != AsyncTask.Status.FINISHED) {
             task.cancel(true);
+        }
+    }
+
+    public static class DatabaseException extends RuntimeException {
+        public DatabaseException(Throwable throwable) {
+            super(throwable);
         }
     }
 }
