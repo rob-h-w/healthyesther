@@ -49,10 +49,12 @@ public final class AndroidMetadataTable
         final Cursor cursor = database.select(where, this);
         final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new AndroidMetadataTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new AndroidMetadataTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

@@ -51,10 +51,12 @@ public final class NoteTable
         final Cursor cursor = database.select(where, this);
         final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new NoteTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new NoteTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

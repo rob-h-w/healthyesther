@@ -55,10 +55,12 @@ public final class EventTable
         final Cursor cursor = database.select(where, this);
         final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new EventTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new EventTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

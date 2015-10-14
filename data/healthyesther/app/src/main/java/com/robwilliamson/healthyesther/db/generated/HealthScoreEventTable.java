@@ -51,10 +51,12 @@ public final class HealthScoreEventTable
         final Cursor cursor = database.select(where, this);
         final HealthScoreEventTable.Row[] rows = new HealthScoreEventTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new HealthScoreEventTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new HealthScoreEventTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

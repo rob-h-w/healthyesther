@@ -51,10 +51,12 @@ public final class UnitsTable
         final Cursor cursor = database.select(where, this);
         final UnitsTable.Row[] rows = new UnitsTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new UnitsTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new UnitsTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

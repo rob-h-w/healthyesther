@@ -50,10 +50,12 @@ public final class MealTable
         final Cursor cursor = database.select(where, this);
         final MealTable.Row[] rows = new MealTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new MealTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new MealTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

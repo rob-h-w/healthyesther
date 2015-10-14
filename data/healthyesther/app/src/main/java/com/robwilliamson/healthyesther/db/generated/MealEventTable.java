@@ -52,10 +52,12 @@ public final class MealEventTable
         final Cursor cursor = database.select(where, this);
         final MealEventTable.Row[] rows = new MealEventTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new MealEventTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new MealEventTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

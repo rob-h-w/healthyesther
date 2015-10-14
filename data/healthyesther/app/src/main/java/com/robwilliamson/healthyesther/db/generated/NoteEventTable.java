@@ -50,10 +50,12 @@ public final class NoteEventTable
         final Cursor cursor = database.select(where, this);
         final NoteEventTable.Row[] rows = new NoteEventTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new NoteEventTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new NoteEventTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

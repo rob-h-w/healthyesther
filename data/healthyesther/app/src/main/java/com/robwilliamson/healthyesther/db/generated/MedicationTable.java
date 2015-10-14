@@ -50,10 +50,12 @@ public final class MedicationTable
         final Cursor cursor = database.select(where, this);
         final MedicationTable.Row[] rows = new MedicationTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new MedicationTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new MedicationTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 

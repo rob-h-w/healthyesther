@@ -113,9 +113,10 @@ public class TableGenerator extends BaseClassGenerator {
         JVar cursor = body.decl(JMod.FINAL, model()._ref(Cursor.class), "cursor", db.invoke("select").arg(where).arg(JExpr._this()));
         JVar rows = body.decl(JMod.FINAL, rowClass.array(), "rows", JExpr.newArray(rowClass, cursor.invoke("count")));
         JVar index = body.decl(model().INT, "index", JExpr.lit(0));
-        body.invoke(cursor, "moveToFirst");
+        JBlock moreThan1 = body._if(cursor.invoke("count").gt(JExpr.lit(0)))._then();
+        moreThan1.invoke(cursor, "moveToFirst");
 
-        JBlock loop = select.body()._do(cursor.invoke("moveToNext")).body();
+        JBlock loop = moreThan1._do(cursor.invoke("moveToNext")).body();
         JInvocation rowConstruction = JExpr._new(rowClass);
         rowConstruction.arg(cursor);
         loop.assign(rows.component(index.incr()), rowConstruction);

@@ -54,10 +54,12 @@ public final class HealthScoreTable
         final Cursor cursor = database.select(where, this);
         final HealthScoreTable.Row[] rows = new HealthScoreTable.Row[cursor.count()] ;
         int index = 0;
-        cursor.moveToFirst();
-        do {
-            rows[index ++] = new HealthScoreTable.Row(cursor);
-        } while (cursor.moveToNext());
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new HealthScoreTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
         return rows;
     }
 
