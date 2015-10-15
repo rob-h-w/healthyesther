@@ -17,6 +17,8 @@ public interface Transaction {
 
     void commit();
 
+    void rollBack();
+
     interface CompletionHandler {
         void onCompleted();
     }

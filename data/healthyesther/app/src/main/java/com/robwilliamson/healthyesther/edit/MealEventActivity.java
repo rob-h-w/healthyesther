@@ -6,14 +6,22 @@ import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.MealEvent;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.MealEventTable;
+import com.robwilliamson.healthyesther.db.generated.MealTable;
+import com.robwilliamson.healthyesther.db.includes.AndWhere;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nonnull;
 
 public class MealEventActivity extends AbstractEditEventActivity
         implements EditMealFragment.Watcher {
@@ -41,10 +49,20 @@ public class MealEventActivity extends AbstractEditEventActivity
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        com.robwilliamson.healthyesther.db.definition.Meal.Modification meal = (com.robwilliamson.healthyesther.db.definition.Meal.Modification) getMealFragment().getModification();
-        Event.Modification event = (Event.Modification) getEventFragment().getModification();
-        MealEvent.Modification mealEvent = new MealEvent.Modification(meal, event, null, null);
-        mealEvent.modify(db);
+        getExecutor().perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                final MealTable.Row meal = getMealFragment().getRow();
+                meal.applyTo(database.getTransaction());
+                final EventTable.Row event = getEventFragment().getRow();
+                event.applyTo(database.getTransaction());
+                MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(database, new AndWhere(meal.getConcretePrimaryKey(), event.getConcretePrimaryKey()));
+                if (mealEvents.length == 0) {
+                    MealEventTable.Row mealEvent = new MealEventTable.Row(event.getConcretePrimaryKey(), meal.getConcretePrimaryKey(), null, 0);
+                    mealEvent.applyTo(database.getTransaction());
+                }
+            }
+        });
     }
 
     @Override

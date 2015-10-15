@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.data.MealData;
 import com.robwilliamson.healthyesther.db.data.MealEventData;
@@ -22,7 +21,6 @@ import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.Where;
-import com.robwilliamson.healthyesther.db.use.GetAllMealsQuery;
 import com.robwilliamson.healthyesther.db.use.GetOneWithColumnIdQuery;
 import com.robwilliamson.healthyesther.db.use.GetOneWithEventIdQuery;
 import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
@@ -42,7 +40,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     private EventData mEventData;
     private MealEventData mMealEventData;
     private MealData mMealData;
-    private MealTable.Row[] mMealTableRows;
+    private Map<String, MealTable.Row> mNameToRowMap = new HashMap<>();
 
     public EditMealFragment() {
         super(EditMealFragment.Watcher.class);
@@ -155,28 +153,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
 
     @Override
     public Query[] getQueries() {
-        return new Query[]{
-                new GetAllMealsQuery() {
-                    HashMap<String, Long> mSuggestionIds;
-
-                    @Override
-                    public void postQueryProcessing(Cursor cursor) {
-                        mSuggestionIds = Utils.Db.cursorToSuggestionList(cursor,
-                                com.robwilliamson.healthyesther.db.definition.Meal.NAME,
-                                com.robwilliamson.healthyesther.db.definition.Meal._ID);
-                    }
-
-                    @Override
-                    public void onQueryComplete(final Cursor cursor) {
-                        EditMealFragment.this.setSuggestionIds(mSuggestionIds);
-                    }
-
-                    @Override
-                    public void onQueryFailed(Throwable error) {
-                        reportQueryFailed(error);
-                    }
-                }
-        };
+        return null;
     }
 
     @Override
@@ -256,16 +233,29 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         };
     }
 
+    public MealTable.Row getRow() {
+        String name = getName();
+        if (name == null) {
+            return null;
+        }
+
+        if (mNameToRowMap.containsKey(name)) {
+            return mNameToRowMap.get(name);
+        }
+
+        return new MealTable.Row(name);
+    }
+
     @Override
     public void onInitializationQueryResponse(@Nonnull MealTable.Row[] rows) {
         Map<String, Long> suggestionIds = new HashMap<>();
         for (MealTable.Row row : rows) {
-            suggestionIds.put(row.getName(), row.getConcretePrimaryKey().getId());
+            final String name = row.getName();
+            suggestionIds.put(name, row.getConcretePrimaryKey().getId());
+            mNameToRowMap.put(name, row);
         }
 
         setSuggestionIds(suggestionIds);
-
-        mMealTableRows = rows;
     }
 
     public interface Watcher extends QueuedQueryExecutor {

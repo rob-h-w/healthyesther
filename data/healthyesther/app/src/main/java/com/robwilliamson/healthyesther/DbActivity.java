@@ -10,6 +10,7 @@ import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.Executor;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
@@ -32,6 +33,12 @@ public abstract class DbActivity extends BusyActivity
         TransactionExecutor.Observer {
     private static final String LOG_TAG = DbActivity.class.getName();
     private static final String CONFIRMATION_DIALOG = "CONFIRMATION_DIALOG";
+
+    static {
+        // Ensure the time converter is loaded.
+        new DateTimeConverter();
+    }
+
     private Executor mExecutor;
     private volatile AsyncTask<Void, Void, Void> mTask = null;
     private Deque<Query> mQueries = null;
@@ -46,6 +53,7 @@ public abstract class DbActivity extends BusyActivity
 
     @Override
     public void onTransactionFail(final Throwable e) {
+        Log.e(LOG_TAG, "transaction failed", e);
         setBusy(false);
 
         runOnUiThread(new Runnable() {

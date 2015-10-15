@@ -23,10 +23,16 @@ public class Executor extends TransactionExecutor {
         mTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                runnable.run();
+                try {
+                    runnable.run();
+                } finally {
+                    mTask = null;
+                }
                 return null;
             }
         };
+
+        mTask.execute();
     }
 
     @Override

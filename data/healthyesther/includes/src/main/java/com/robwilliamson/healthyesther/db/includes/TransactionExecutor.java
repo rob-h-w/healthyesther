@@ -18,16 +18,17 @@ public abstract class TransactionExecutor {
     public abstract void cancel();
 
     public void perform(final @Nonnull Operation operation) {
+        mObserver.onTransactionStart();
         runAsynchronously(new Runnable() {
             @Override
             public void run() {
+                Transaction transaction = mDb.getTransaction();
                 try {
-                    Transaction transaction = mDb.getTransaction();
-                    mObserver.onTransactionStart();
                     operation.doTransactionally(mDb, transaction);
                     transaction.commit();
                     mObserver.onTransactionComplete();
                 } catch (Throwable e) {
+                    transaction.rollBack();
                     mObserver.onTransactionFail(e);
                 }
             }
@@ -49,19 +50,22 @@ public abstract class TransactionExecutor {
     public static abstract class QueryOperation<R extends BaseRow> implements Operation {
         private R[] mResults;
 
-        /**
-         * Implementors should call this when their operation succeeds.
-         * @param results The results of the query.
-         */
-        protected void setResults(@Nonnull R[] results) {
-            mResults = results;
-        }
-
-        public @Nonnull R[] getResults() {
+        public
+        @Nonnull
+        R[] getResults() {
             if (mResults == null) {
                 throw new NullQueryResultException();
             }
             return mResults;
+        }
+
+        /**
+         * Implementors should call this when their operation succeeds.
+         *
+         * @param results The results of the query.
+         */
+        protected void setResults(@Nonnull R[] results) {
+            mResults = results;
         }
 
         public static class NullQueryResultException extends RuntimeException {

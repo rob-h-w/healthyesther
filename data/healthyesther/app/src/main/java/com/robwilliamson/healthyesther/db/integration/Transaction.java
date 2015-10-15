@@ -19,7 +19,9 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
 
     Transaction(@Nonnull SQLiteDatabase database) {
         mDb = database;
-        mDb.beginTransaction();
+        if (!mDb.inTransaction()) {
+            mDb.beginTransaction();
+        }
     }
 
     private ContentValues valuesFrom(@Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
@@ -85,9 +87,19 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
 
     @Override
     public void commit() {
-        mDb.endTransaction();
-        for (CompletionHandler handler : mCompletionHandlers) {
-            handler.onCompleted();
+        if (mDb.inTransaction()) {
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+            for (CompletionHandler handler : mCompletionHandlers) {
+                handler.onCompleted();
+            }
+        }
+    }
+
+    @Override
+    public void rollBack() {
+        if (mDb.inTransaction()) {
+            mDb.endTransaction();
         }
     }
 

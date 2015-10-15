@@ -15,6 +15,18 @@ public class DateTime
         mString = string;
     }
 
+    public <T> DateTime(T otherType) {
+        mString = retrieve(otherType.getClass()).convert(otherType).getString();
+    }
+
+    public static <T> DateTime from(T otherType) {
+        if (otherType == null) {
+            return null;
+        }
+
+        return retrieve(otherType.getClass()).convert(otherType);
+    }
+
     public static <T> void register(Class<T> type, DateTime.Converter converter) {
         sConverterRegistry.put(type, converter);
     }

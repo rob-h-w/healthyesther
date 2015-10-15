@@ -41,7 +41,7 @@ public abstract class BaseTransactable implements Serializable {
         mIsInDatabase = inDatabase;
     }
 
-    protected boolean isInDatabase() {
+    public boolean isInDatabase() {
         return mIsInDatabase;
     }
 
@@ -49,7 +49,7 @@ public abstract class BaseTransactable implements Serializable {
         mIsModified = modified;
     }
 
-    protected boolean isModified() {
+    public boolean isModified() {
         return mIsModified;
     }
 
@@ -57,7 +57,7 @@ public abstract class BaseTransactable implements Serializable {
         mDeleted = deleted;
     }
 
-    protected boolean isDeleted() {
+    public boolean isDeleted() {
         return mDeleted;
     }
 
