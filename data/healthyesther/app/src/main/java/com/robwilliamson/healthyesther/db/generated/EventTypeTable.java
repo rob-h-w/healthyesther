@@ -199,6 +199,7 @@ public final class EventTypeTable
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, mIcon)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, mIcon));
             }

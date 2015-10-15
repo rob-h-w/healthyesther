@@ -292,6 +292,7 @@ public final class EventTable
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName));
             }

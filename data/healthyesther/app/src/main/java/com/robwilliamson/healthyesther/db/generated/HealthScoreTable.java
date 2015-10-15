@@ -266,6 +266,7 @@ public final class HealthScoreTable
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
             }

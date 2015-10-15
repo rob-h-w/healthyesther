@@ -199,6 +199,7 @@ public final class UnitsTable
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor));
             }

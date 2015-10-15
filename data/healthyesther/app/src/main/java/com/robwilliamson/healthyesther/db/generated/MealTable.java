@@ -180,6 +180,7 @@ public final class MealTable
             MealTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new MealTable.PrimaryKey(transaction.insert("meal", COLUMN_NAMES_FOR_INSERTION, mName)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("meal", COLUMN_NAMES_FOR_INSERTION, mName));
             }

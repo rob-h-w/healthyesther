@@ -180,6 +180,7 @@ public final class MedicationTable
             MedicationTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new MedicationTable.PrimaryKey(transaction.insert("medication", COLUMN_NAMES_FOR_INSERTION, mName)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("medication", COLUMN_NAMES_FOR_INSERTION, mName));
             }

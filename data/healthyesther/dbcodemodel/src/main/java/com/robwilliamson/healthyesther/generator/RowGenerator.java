@@ -387,6 +387,7 @@ public class RowGenerator extends BaseClassGenerator {
                     }
                 }
                 doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
+                doConstruction.assign(nextPrimaryKey, callGetNextPrimaryKey(null, null));
                 if (updateRowId != null) {
                     updateRowId.invoke(nextPrimaryKey, "setId").arg(insertionCall);
                 }

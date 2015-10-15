@@ -199,6 +199,7 @@ public final class NoteTable
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
                 setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, mNote)));
+                nextPrimaryKey = getNextPrimaryKey();
             } else {
                 nextPrimaryKey.setId(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, mNote));
             }
