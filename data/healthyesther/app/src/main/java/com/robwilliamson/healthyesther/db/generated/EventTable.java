@@ -159,8 +159,8 @@ public final class EventTable
             COLUMN_NAMES_FOR_INSERTION.add("created");
             COLUMN_NAMES_FOR_UPDATE.add("created");
             COLUMN_NAMES.add("when");
-            COLUMN_NAMES_FOR_INSERTION.add("when");
-            COLUMN_NAMES_FOR_UPDATE.add("when");
+            COLUMN_NAMES_FOR_INSERTION.add("[when]");
+            COLUMN_NAMES_FOR_UPDATE.add("[when]");
             COLUMN_NAMES.add("modified");
             COLUMN_NAMES_FOR_INSERTION.add("modified");
             COLUMN_NAMES_FOR_UPDATE.add("modified");
@@ -283,18 +283,21 @@ public final class EventTable
             }
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
+            final Object modified = ((mModified == null)?DateTime.class:mModified);
+            final Object name = ((mName == null)?String.class:mName);
             EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName)));
+                setNextPrimaryKey(new EventTable.PrimaryKey(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, modified, name)));
                 nextPrimaryKey = getNextPrimaryKey();
             } else {
-                nextPrimaryKey.setId(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, mModified, mName));
+                nextPrimaryKey.setId(transaction.insert("event", COLUMN_NAMES_FOR_INSERTION, mTypeId.getId(), mCreated, mWhen, modified, name));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -319,7 +322,9 @@ public final class EventTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             applyToRows(transaction);
-            int actual = transaction.update("event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mTypeId.getId(), mCreated, mWhen, mModified, mName);
+            final Object modified = ((mModified == null)?DateTime.class:mModified);
+            final Object name = ((mName == null)?String.class:mName);
+            int actual = transaction.update("event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mTypeId.getId(), mCreated, mWhen, modified, name);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

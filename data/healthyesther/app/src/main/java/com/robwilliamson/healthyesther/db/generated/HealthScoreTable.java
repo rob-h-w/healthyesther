@@ -259,16 +259,19 @@ public final class HealthScoreTable
             return mMinLabel;
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
+            final Object maxLabel = ((mMaxLabel == null)?String.class:mMaxLabel);
+            final Object minLabel = ((mMinLabel == null)?String.class:mMinLabel);
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel)));
+                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, maxLabel, minLabel)));
                 nextPrimaryKey = getNextPrimaryKey();
             } else {
-                nextPrimaryKey.setId(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel));
+                nextPrimaryKey.setId(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, maxLabel, minLabel));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -292,7 +295,9 @@ public final class HealthScoreTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mBestValue, mName, mRandomQuery, mMaxLabel, mMinLabel);
+            final Object maxLabel = ((mMaxLabel == null)?String.class:mMaxLabel);
+            final Object minLabel = ((mMinLabel == null)?String.class:mMinLabel);
+            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mBestValue, mName, mRandomQuery, maxLabel, minLabel);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

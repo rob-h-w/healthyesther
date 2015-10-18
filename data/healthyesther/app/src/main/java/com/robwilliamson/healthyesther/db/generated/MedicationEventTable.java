@@ -198,6 +198,7 @@ public final class MedicationEventTable
             }
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull

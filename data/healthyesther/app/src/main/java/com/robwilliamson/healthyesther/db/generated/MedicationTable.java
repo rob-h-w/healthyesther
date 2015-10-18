@@ -173,6 +173,7 @@ public final class MedicationTable
             return mName;
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull

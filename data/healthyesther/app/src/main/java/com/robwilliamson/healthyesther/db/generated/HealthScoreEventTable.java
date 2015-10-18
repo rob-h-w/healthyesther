@@ -155,7 +155,7 @@ public final class HealthScoreEventTable
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey mHealthScoreId;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
-        private long mScore;
+        private Long mScore;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
 
@@ -192,15 +192,15 @@ public final class HealthScoreEventTable
             mScore = score;
         }
 
-        public void setScore(long score) {
-            if (mScore == score) {
+        public void setScore(Long score) {
+            if (((mScore == null)&&(score == null))||((mScore!= null)&&mScore.equals(score))) {
                 return ;
             }
             mScore = score;
             setIsModified(true);
         }
 
-        public long getScore() {
+        public Long getScore() {
             return mScore;
         }
 
@@ -217,16 +217,18 @@ public final class HealthScoreEventTable
             }
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
+            final Object score = ((mScore == null)?Long.class:mScore);
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventId, mHealthScoreId));
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
-            transaction.insert("health_score_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), mScore);
+            transaction.insert("health_score_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), score);
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -249,7 +251,8 @@ public final class HealthScoreEventTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             applyToRows(transaction);
-            int actual = transaction.update("health_score_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mScore);
+            final Object score = ((mScore == null)?Long.class:mScore);
+            int actual = transaction.update("health_score_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, score);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -290,7 +293,7 @@ public final class HealthScoreEventTable
                 return false;
             }
             HealthScoreEventTable.Row theRow = ((HealthScoreEventTable.Row) other);
-            if (!(mScore == theRow.mScore)) {
+            if (!(((mScore == null)&&(theRow.mScore == null))||((mScore!= null)&&mScore.equals(theRow.mScore)))) {
                 return false;
             }
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();

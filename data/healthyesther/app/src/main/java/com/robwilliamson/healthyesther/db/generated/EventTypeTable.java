@@ -192,16 +192,18 @@ public final class EventTypeTable
             return mIcon;
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
+            final Object icon = ((mIcon == null)?String.class:mIcon);
             EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, mIcon)));
+                setNextPrimaryKey(new EventTypeTable.PrimaryKey(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, icon)));
                 nextPrimaryKey = getNextPrimaryKey();
             } else {
-                nextPrimaryKey.setId(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, mIcon));
+                nextPrimaryKey.setId(transaction.insert("event_type", COLUMN_NAMES_FOR_INSERTION, mName, icon));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -225,7 +227,8 @@ public final class EventTypeTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update("event_type", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mIcon);
+            final Object icon = ((mIcon == null)?String.class:mIcon);
+            int actual = transaction.update("event_type", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, icon);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

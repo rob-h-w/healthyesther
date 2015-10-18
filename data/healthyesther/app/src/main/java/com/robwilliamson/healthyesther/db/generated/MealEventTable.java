@@ -158,7 +158,7 @@ public final class MealEventTable
         private com.robwilliamson.healthyesther.db.generated.MealTable.Row mMealIdRow;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.Row mUnitsIdRow;
-        private double mAmount;
+        private Double mAmount;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(4);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
 
@@ -212,15 +212,15 @@ public final class MealEventTable
             return mUnitsId;
         }
 
-        public void setAmount(double amount) {
-            if (mAmount == amount) {
+        public void setAmount(Double amount) {
+            if (((mAmount == null)&&(amount == null))||((mAmount!= null)&&mAmount.equals(amount))) {
                 return ;
             }
             mAmount = amount;
             setIsModified(true);
         }
 
-        public double getAmount() {
+        public Double getAmount() {
             return mAmount;
         }
 
@@ -241,16 +241,19 @@ public final class MealEventTable
             }
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
+            final Object unitsId = ((mUnitsId == null)?com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey.class:mUnitsId.getId());
+            final Object amount = ((mAmount == null)?Double.class:mAmount);
             // This table does not use a row ID as a primary key.
             setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventId, mMealId));
             MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
-            transaction.insert("meal_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMealId().getId(), mUnitsId.getId(), mAmount);
+            transaction.insert("meal_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMealId().getId(), unitsId, amount);
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {
 
@@ -273,7 +276,9 @@ public final class MealEventTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             applyToRows(transaction);
-            int actual = transaction.update("meal_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mUnitsId.getId(), mAmount);
+            final Object unitsId = ((mUnitsId == null)?com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey.class:mUnitsId.getId());
+            final Object amount = ((mAmount == null)?Double.class:mAmount);
+            int actual = transaction.update("meal_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, unitsId, amount);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -317,7 +322,7 @@ public final class MealEventTable
             if (!(((mUnitsId == null)&&(theRow.mUnitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(theRow.mUnitsId)))) {
                 return false;
             }
-            if (!(mAmount == theRow.mAmount)) {
+            if (!(((mAmount == null)&&(theRow.mAmount == null))||((mAmount!= null)&&mAmount.equals(theRow.mAmount)))) {
                 return false;
             }
             MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();

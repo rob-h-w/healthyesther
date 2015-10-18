@@ -10,6 +10,8 @@ import com.sun.codemodel.JType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 public class Column {
     private String name;
     private String type;
@@ -88,7 +90,8 @@ public class Column {
      * @param model The model to use to generate basic types.
      * @return The primitive type that represents the SQLite type of this column.
      */
-    public JType getPrimitiveType(JCodeModel model) {
+    @Nonnull
+    public JType getPrimitiveType(@Nonnull JCodeModel model) {
         if (isForeignKey() || mPrimaryKey) {
             return model.LONG;
         }
@@ -109,7 +112,8 @@ public class Column {
         }
     }
 
-    public JType getNullableType(JCodeModel model) {
+    @Nonnull
+    public JType getNullableType(@Nonnull JCodeModel model) {
         String typeName = getType();
         switch (typeName) {
             case "BOOLEAN":
@@ -127,7 +131,8 @@ public class Column {
         }
     }
 
-    private JType handleUnknownColumnType(JType indexer) {
+    @Nonnull
+    private JType handleUnknownColumnType(@Nonnull JType indexer) {
         String typeName = getType();
 
         if (Strings.isEmpty(typeName)) {
@@ -145,8 +150,16 @@ public class Column {
      * @param model The model to use to generate basic types.
      * @return The type that should be written in places that use this column.
      */
-    public JType getDependentJtype(JCodeModel model) {
-        JType type = getPrimitiveType(model);
+    @Nonnull
+    public JType getDependentJtype(@Nonnull JCodeModel model) {
+        @Nonnull
+        JType type;
+        if (isNotNull()) {
+            type = getPrimitiveType(model);
+        } else {
+            type = getNullableType(model);
+        }
+
         if (isForeignKey()) {
             type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
         } else if (mPrimaryKey) {
@@ -162,7 +175,8 @@ public class Column {
      * @param model The model to use to generate basic types.
      * @return The type that should be written in places that use this column.
      */
-    public JType getDependentNullableJtype(JCodeModel model) {
+    @Nonnull
+    public JType getDependentNullableJtype(@Nonnull JCodeModel model) {
         JType type = getNullableType(model);
         if (isForeignKey()) {
             type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();

@@ -190,6 +190,7 @@ public final class MedicationNameTable
             }
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @ClassGeneratorFeatures(name = "Row", parameterName = "row")
 public class RowGenerator extends BaseClassGenerator {
@@ -157,18 +158,24 @@ public class RowGenerator extends BaseClassGenerator {
         // Get a class constructor body.
         JBlock classConstructor = clazz.init();
         for (Column column : allColumns) {
+            String name = column.getName();
+
             // Populate the field names.
             classConstructor
                     .invoke(mColumnNames, "add")
-                    .arg(JExpr.lit(column.getName()));
+                    .arg(JExpr.lit(name));
+
+            if (name.toLowerCase().equals("when")) {
+                name = "[when]";
+            }
 
             if (mInsertNames != null && !column.isRowId()) {
                 classConstructor.invoke(mInsertNames, "add")
-                        .arg(JExpr.lit(column.getName()));
+                        .arg(JExpr.lit(name));
             }
 
             if (!column.isPrimaryKey()) {
-                classConstructor.invoke(mUpdateNames, "add").arg(JExpr.lit(column.getName()));
+                classConstructor.invoke(mUpdateNames, "add").arg(JExpr.lit(name));
             }
         }
     }
@@ -191,6 +198,8 @@ public class RowGenerator extends BaseClassGenerator {
             body.invoke(mApplyToRows).arg(transaction);
         }
 
+        final Map<Column, JVar> nullables = objectOrClassFromNullables(body);
+
         JInvocation where = callGetConcretePrimaryKey(null, null);
 
         final JInvocation updateInvocation = transaction.invoke("update").arg(mTableGenerator.getTable().getName()).arg(where).arg(mUpdateNames);
@@ -198,11 +207,15 @@ public class RowGenerator extends BaseClassGenerator {
         Column.Visitor<BaseColumns> addUpdateArg = new Column.Visitor<BaseColumns>() {
             @Override
             public void visit(Column column, BaseColumns context) {
-                if (column.isForeignKey()) {
-                    PrimaryKeyGenerator foreignKeyGenerator = context.rowFieldFor(column).rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
-                    updateInvocation.arg(context.columnFieldFor(column).fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
+                if (nullables.containsKey(column)) {
+                    updateInvocation.arg(nullables.get(column));
                 } else {
-                    updateInvocation.arg(context.columnFieldFor(column).fieldVar);
+                    if (column.isForeignKey()) {
+                        PrimaryKeyGenerator foreignKeyGenerator = context.rowFieldFor(column).rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
+                        updateInvocation.arg(context.columnFieldFor(column).fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
+                    } else {
+                        updateInvocation.arg(context.columnFieldFor(column).fieldVar);
+                    }
                 }
             }
         };
@@ -282,11 +295,39 @@ public class RowGenerator extends BaseClassGenerator {
         body._return(JExpr.lit(true));
     }
 
+    private Map<Column, JVar> objectOrClassFromNullables(final JBlock body) {
+        final Map<Column, JVar> nullablesToObjectVariables = new HashMap<>();
+
+        Column.Visitor<BaseColumns> getNullable  = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                if (!column.isNotNull()) {
+                    ColumnField columnField = context.columnFieldFor(column);
+                    JFieldVar fieldVar = columnField.fieldVar;
+                    JExpression value = column.isForeignKey() ? fieldVar.invoke("getId") : fieldVar;
+                    JVar object = body.decl(
+                            JMod.FINAL,
+                            model().ref(Object.class),
+                            columnField.name, JOp.cond(
+                                    fieldVar.eq(JExpr._null()),
+                                    JExpr.dotclass(columnField.fieldVar.type().boxify()),
+                                    value));
+                    nullablesToObjectVariables.put(column, object);
+                }
+            }
+        };
+
+        mBasicColumns.forEach(getNullable); // Primary keys should always be nonnull.
+
+        return nullablesToObjectVariables;
+    }
+
     private void makeInsert() {
         TableGenerator generator = getTableGenerator();
         final PrimaryKeyGenerator keyGenerator = generator.getPrimaryKeyGenerator();
         JDefinedClass primaryKeyType = keyGenerator.getJClass();
         JMethod insert = getJClass().method(JMod.PROTECTED, Object.class, "insert");
+        insert.annotate(Nonnull.class);
         insert.annotate(Override.class);
         final JVar transaction = insert.param(Transaction.class, "transaction");
         annotateNonull(transaction, true);
@@ -297,6 +338,8 @@ public class RowGenerator extends BaseClassGenerator {
             body.directStatement("// Ensure all keys are updated from any rows passed.");
             body.invoke(mApplyToRows).arg(transaction);
         }
+
+        final Map<Column, JVar> nullables = objectOrClassFromNullables(body);
 
         if (keyGenerator.hasPrimaryKeys()) {
             // If we need to create a primary key upfront:
@@ -356,10 +399,14 @@ public class RowGenerator extends BaseClassGenerator {
                             insertionCall.arg(nextPrimaryKey.invoke(keyGenerator.getGetterFor(column)));
                         }
                     } else {
-                        if (column.isForeignKey()) {
-                            insertionCall.arg(field.fieldVar.invoke("getId"));
+                        if (nullables.containsKey(column)) {
+                            insertionCall.arg(nullables.get(column));
                         } else {
-                            insertionCall.arg(field.fieldVar);
+                            if (column.isForeignKey()) {
+                                insertionCall.arg(field.fieldVar.invoke("getId"));
+                            } else {
+                                insertionCall.arg(field.fieldVar);
+                            }
                         }
                     }
                 }
@@ -400,7 +447,7 @@ public class RowGenerator extends BaseClassGenerator {
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
             body._return(nextPrimaryKey);
         } else {
-            body._return(populateArgumentsFor(body.invoke(transaction, "insert").arg(mTableGenerator.getTable().getName())));
+            body._return(populateArgumentsFor(body.invoke(transaction, "insert").arg(mTableGenerator.getTable().getName()), nullables));
         }
 
     }
@@ -413,12 +460,19 @@ public class RowGenerator extends BaseClassGenerator {
         block.invoke("setIsInDatabase").arg(JExpr.lit(isInDatabase));
     }
 
-    private JInvocation populateArgumentsFor(JInvocation invocation) {
+    private JInvocation populateArgumentsFor(@Nonnull JInvocation invocation, @Nullable Map<Column, JVar> nullables) {
         invocation = invocation.arg(mColumnNames);
 
         for (Column column : mBasicColumns.columns) {
             if (column.isPrimaryKey()) {
                 continue;
+            }
+
+            if (nullables != null) {
+                if (nullables.containsKey(column)) {
+                    invocation = invocation.arg(nullables.get(column));
+                    continue;
+                }
             }
 
             invocation = invocation.arg(mBasicColumns.columnFieldFor(column).fieldVar);

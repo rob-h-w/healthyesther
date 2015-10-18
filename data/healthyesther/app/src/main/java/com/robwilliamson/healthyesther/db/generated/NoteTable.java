@@ -192,16 +192,18 @@ public final class NoteTable
             return mNote;
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
+            final Object note = ((mNote == null)?String.class:mNote);
             NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, mNote)));
+                setNextPrimaryKey(new NoteTable.PrimaryKey(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, note)));
                 nextPrimaryKey = getNextPrimaryKey();
             } else {
-                nextPrimaryKey.setId(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, mNote));
+                nextPrimaryKey.setId(transaction.insert("note", COLUMN_NAMES_FOR_INSERTION, mName, note));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -225,7 +227,8 @@ public final class NoteTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update("note", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mNote);
+            final Object note = ((mNote == null)?String.class:mNote);
+            int actual = transaction.update("note", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, note);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

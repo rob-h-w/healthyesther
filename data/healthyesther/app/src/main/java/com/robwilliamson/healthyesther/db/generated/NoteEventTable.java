@@ -198,6 +198,7 @@ public final class NoteEventTable
             }
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull

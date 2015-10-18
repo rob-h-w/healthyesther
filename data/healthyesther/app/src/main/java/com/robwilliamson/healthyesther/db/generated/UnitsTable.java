@@ -136,7 +136,7 @@ public final class UnitsTable
 
         @Nonnull
         private String mName;
-        private double mSiFactor;
+        private Double mSiFactor;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
@@ -180,28 +180,30 @@ public final class UnitsTable
             return mName;
         }
 
-        public void setSiFactor(double siFactor) {
-            if (mSiFactor == siFactor) {
+        public void setSiFactor(Double siFactor) {
+            if (((mSiFactor == null)&&(siFactor == null))||((mSiFactor!= null)&&mSiFactor.equals(siFactor))) {
                 return ;
             }
             mSiFactor = siFactor;
             setIsModified(true);
         }
 
-        public double getSiFactor() {
+        public Double getSiFactor() {
             return mSiFactor;
         }
 
+        @Nonnull
         @Override
         protected Object insert(
             @Nonnull
             Transaction transaction) {
+            final Object siFactor = ((mSiFactor == null)?Double.class:mSiFactor);
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor)));
+                setNextPrimaryKey(new UnitsTable.PrimaryKey(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, siFactor)));
                 nextPrimaryKey = getNextPrimaryKey();
             } else {
-                nextPrimaryKey.setId(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, mSiFactor));
+                nextPrimaryKey.setId(transaction.insert("units", COLUMN_NAMES_FOR_INSERTION, mName, siFactor));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -225,7 +227,8 @@ public final class UnitsTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update("units", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, mSiFactor);
+            final Object siFactor = ((mSiFactor == null)?Double.class:mSiFactor);
+            int actual = transaction.update("units", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, siFactor);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -269,7 +272,7 @@ public final class UnitsTable
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }
-            if (!(mSiFactor == theRow.mSiFactor)) {
+            if (!(((mSiFactor == null)&&(theRow.mSiFactor == null))||((mSiFactor!= null)&&mSiFactor.equals(theRow.mSiFactor)))) {
                 return false;
             }
             UnitsTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();

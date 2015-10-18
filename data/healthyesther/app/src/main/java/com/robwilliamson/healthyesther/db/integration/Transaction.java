@@ -39,6 +39,7 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
                 if (clazz == DateTime.class) {
                     clazz = String.class;
                 }
+                o = null;
             } else {
                 clazz = o.getClass();
             }
