@@ -150,9 +150,6 @@ public final class MedicationNameTable
         implements Serializable
     {
 
-        @Nonnull
-        private String mName;
-        private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(0);
@@ -166,6 +163,7 @@ public final class MedicationNameTable
             @Nonnull
             Cursor cursor) {
             setPrimaryKey(new MedicationNameTable.PrimaryKey(cursor.getString("name"), ((cursor.getLong("medication_id")!= null)?new com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey(cursor.getLong("medication_id")):null)));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -177,7 +175,7 @@ public final class MedicationNameTable
         public Row(
             @Nonnull
             String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
-            mName = name;
+            getPrimaryKey();
             mMedicationIdRow = medicationId;
         }
 
@@ -186,7 +184,6 @@ public final class MedicationNameTable
             Transaction transaction) {
             if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
-                mMedicationId = mMedicationIdRow.getNextPrimaryKey();
             }
         }
 
@@ -198,7 +195,7 @@ public final class MedicationNameTable
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new MedicationNameTable.PrimaryKey(mName, mMedicationId));
+            setNextPrimaryKey(new MedicationNameTable.PrimaryKey(getConcretePrimaryKey().getName(), getConcretePrimaryKey().getMedicationId()));
             MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert("medication_name", COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId().getId());
             setIsModified(false);
@@ -206,12 +203,12 @@ public final class MedicationNameTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

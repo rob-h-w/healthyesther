@@ -14,6 +14,8 @@ import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.WhereForeignKey;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -48,21 +50,30 @@ public class MealEventActivity extends AbstractEditEventActivity
     }
 
     @Override
-    protected void onModifySelected(SQLiteDatabase db) {
-        getExecutor().perform(new TransactionExecutor.Operation() {
+    protected TransactionExecutor.Operation onModifySelected() {
+        return new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 final MealTable.Row meal = getMealFragment().getRow();
                 meal.applyTo(database.getTransaction());
                 final EventTable.Row event = getEventFragment().getRow();
+                event.setTypeId(EventTypeTable.MEAL.getId());
                 event.applyTo(database.getTransaction());
-                MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(database, new AndWhere(meal.getConcretePrimaryKey(), event.getConcretePrimaryKey()));
+                MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(database, new AndWhere(
+                        WhereForeignKey.named(MealEventTable.EVENT_ID).is(event.getNextPrimaryKey().getId()).build(),
+                        WhereForeignKey.named(MealEventTable.MEAL_ID).is(meal.getNextPrimaryKey().getId()).build()));
                 if (mealEvents.length == 0) {
-                    MealEventTable.Row mealEvent = new MealEventTable.Row(event.getConcretePrimaryKey(), meal.getConcretePrimaryKey(), null, 0);
+                    MealEventTable.Row mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, 0);
                     mealEvent.applyTo(database.getTransaction());
                 }
+
+                finish();
             }
-        });
+        };
+    }
+
+    @Override
+    protected void onModifySelected(SQLiteDatabase db) {
     }
 
     @Override

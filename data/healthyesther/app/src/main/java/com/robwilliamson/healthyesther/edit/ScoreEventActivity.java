@@ -12,6 +12,7 @@ import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
@@ -56,6 +57,11 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
         list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
+    }
+
+    @Override
+    protected TransactionExecutor.Operation onModifySelected() {
+        return null; // TODO
     }
 
     @Override

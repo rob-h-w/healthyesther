@@ -178,6 +178,7 @@ public final class EventTable
             setModified(cursor.getDateTime("modified"));
             setName(cursor.getString("name"));
             setPrimaryKey(new EventTable.PrimaryKey(cursor.getLong("_id")));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -305,12 +306,12 @@ public final class EventTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

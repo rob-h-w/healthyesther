@@ -3,24 +3,25 @@ package com.robwilliamson.healthyesther.db.integration;
 import javax.annotation.Nonnull;
 
 public enum EventTypeTable {
-    MEAL(1, "Meal", null),
-    MEDICATION(2, "Take medication", null),
-    HEALTH(3, "Health & mood", null),
-    NOTE(4, "Note", null);
+    MEAL(new com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey(1), "Meal", null),
+    MEDICATION(new com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey(2), "Take medication", null),
+    HEALTH(new com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey(3), "Health & mood", null),
+    NOTE(new com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey(4), "Note", null);
 
-    private long mId;
-    private
     @Nonnull
-    String mName;
+    private com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey mId;
+    @Nonnull
+    private String mName;
     private String mIcon;
 
-    EventTypeTable(long id, @Nonnull String name, String icon) {
+    EventTypeTable(@Nonnull com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey id, @Nonnull String name, String icon) {
         mId = id;
         mName = name;
         mIcon = icon;
     }
 
-    public long getId() {
+    @Nonnull
+    public com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey getId() {
         return mId;
     }
 

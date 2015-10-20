@@ -151,9 +151,7 @@ public final class HealthScoreEventTable
         implements Serializable
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
-        private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey mHealthScoreId;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
         private Long mScore;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
@@ -171,6 +169,7 @@ public final class HealthScoreEventTable
             Cursor cursor) {
             setScore(cursor.getLong("score"));
             setPrimaryKey(new HealthScoreEventTable.PrimaryKey(((cursor.getLong("event_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey(cursor.getLong("event_id")):null), ((cursor.getLong("health_score_id")!= null)?new com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey(cursor.getLong("health_score_id")):null)));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -209,11 +208,9 @@ public final class HealthScoreEventTable
             Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
-                mEventId = mEventIdRow.getNextPrimaryKey();
             }
             if (mHealthScoreIdRow!= null) {
                 mHealthScoreIdRow.applyTo(transaction);
-                mHealthScoreId = mHealthScoreIdRow.getNextPrimaryKey();
             }
         }
 
@@ -226,7 +223,7 @@ public final class HealthScoreEventTable
             applyToRows(transaction);
             final Object score = ((mScore == null)?Long.class:mScore);
             // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventId, mHealthScoreId));
+            setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getHealthScoreId()));
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert("health_score_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), score);
             setIsModified(false);
@@ -234,12 +231,12 @@ public final class HealthScoreEventTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

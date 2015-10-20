@@ -8,10 +8,13 @@ import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.Executor;
+import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
@@ -24,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * Activities that use databases.
@@ -165,6 +170,25 @@ public abstract class DbActivity extends BusyActivity
             Query[] userQueries = user.getQueries();
             if (userQueries != null) {
                 queries.addAll(Arrays.asList(userQueries));
+            }
+
+            if (user instanceof InitializationQuerier) {
+                final InitializationQuerier querier = (InitializationQuerier) user;
+                final TransactionExecutor.QueryOperation operation = querier.getInitializationQuery();
+
+                getExecutor().perform(new TransactionExecutor.Operation() {
+                    @Override
+                    public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                        operation.doTransactionally(database, transaction);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                querier.onInitializationQueryResponse(operation.getResults());
+                            }
+                        });
+                    }
+                });
             }
         }
 

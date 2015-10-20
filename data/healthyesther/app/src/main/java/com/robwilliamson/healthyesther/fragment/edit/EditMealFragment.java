@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 
 
 import android.database.Cursor;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -27,6 +28,7 @@ import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> implements InitializationQuerier<MealTable.Row> {
+
+    private static final String NAME_TO_ROW_MAP = "name to row map";
 
     private EventData mEventData;
     private MealEventData mMealEventData;
@@ -156,6 +160,54 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         return null;
     }
 
+    /**
+     * Called when the fragment's activity has been created and this
+     * fragment's view hierarchy instantiated.  It can be used to do final
+     * initialization once these pieces are in place, such as retrieving
+     * views or restoring state.  It is also useful for fragments that use
+     * {@link #setRetainInstance(boolean)} to retain their instance,
+     * as this callback tells the fragment when it is fully associated with
+     * the new activity instance.  This is called after {@link #onCreateView}
+     * and before {@link #onViewStateRestored(Bundle)}.
+     *
+     * @param savedInstanceState If the fragment is being re-created from
+     *                           a previous saved state, this is the state.
+     */
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mNameToRowMap = (Map<String, MealTable.Row>) savedInstanceState.getSerializable(NAME_TO_ROW_MAP);
+        }
+    }
+
+    /**
+     * Called to ask the fragment to save its current dynamic state, so it
+     * can later be reconstructed in a new instance of its process is
+     * restarted.  If a new instance of the fragment later needs to be
+     * created, the data you place in the Bundle here will be available
+     * in the Bundle given to {@link #onCreate(Bundle)},
+     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}, and
+     * {@link #onActivityCreated(Bundle)}.
+     * <p/>
+     * <p>This corresponds to {@link Activity#onSaveInstanceState(Bundle)
+     * Activity.onSaveInstanceState(Bundle)} and most of the discussion there
+     * applies here as well.  Note however: <em>this method may be called
+     * at any time before {@link #onDestroy()}</em>.  There are many situations
+     * where a fragment may be mostly torn down (such as when placed on the
+     * back stack with no UI showing), but its state will not be saved until
+     * its owning activity actually needs to save its state.
+     *
+     * @param outState Bundle in which to place your saved state.
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(NAME_TO_ROW_MAP, (Serializable) mNameToRowMap);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -226,7 +278,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
                 setResults(HealthDatabase.MEAL_TABLE.select(database, new Where() {
                     @Override
                     public String getWhere() {
-                        return "*";
+                        return null;
                     }
                 }));
             }

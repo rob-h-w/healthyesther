@@ -157,6 +157,7 @@ public final class NoteTable
             setName(cursor.getString("name"));
             setNote(cursor.getString("note"));
             setPrimaryKey(new NoteTable.PrimaryKey(cursor.getLong("_id")));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -211,12 +212,12 @@ public final class NoteTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

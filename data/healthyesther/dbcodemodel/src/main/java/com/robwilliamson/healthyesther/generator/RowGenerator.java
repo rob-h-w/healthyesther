@@ -38,10 +38,14 @@ import javax.annotation.Nullable;
 
 @ClassGeneratorFeatures(name = "Row", parameterName = "row")
 public class RowGenerator extends BaseClassGenerator {
-
+    @Nonnull
     private final TableGenerator mTableGenerator;
+
+    @Nonnull
     private final JMethod mCursorConstructor;
     private final JMethod mJoinConstructor;
+
+    @Nonnull
     private final JMethod mValueConstructor;
     private PrimaryColumns mPrimaryKeyColumns;
     private BasicColumns mBasicColumns;
@@ -51,7 +55,7 @@ public class RowGenerator extends BaseClassGenerator {
     private JMethod mApplyToRows;
     private Map<Column, JMethod> mSetters = new HashMap<>();
 
-    public RowGenerator(TableGenerator tableGenerator) throws JClassAlreadyExistsException {
+    public RowGenerator(@Nonnull TableGenerator tableGenerator) throws JClassAlreadyExistsException {
         mTableGenerator = tableGenerator;
 
         JDefinedClass clazz = mTableGenerator.getJClass()._class(
@@ -210,11 +214,20 @@ public class RowGenerator extends BaseClassGenerator {
                 if (nullables.containsKey(column)) {
                     updateInvocation.arg(nullables.get(column));
                 } else {
+                    ColumnField columnField = context.columnFieldFor(column);
+                    if (columnField == null) {
+                        throw new NullPointerException("The column, " + column.getName() + ", should have a row field.");
+                    }
                     if (column.isForeignKey()) {
-                        PrimaryKeyGenerator foreignKeyGenerator = context.rowFieldFor(column).rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
-                        updateInvocation.arg(context.columnFieldFor(column).fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
+                        RowField rowField = context.rowFieldFor(column);
+                        if (rowField == null) {
+                            throw new NullPointerException("Foreign key columns, like " + column.getName() + ", should have row fields.");
+                        }
+
+                        PrimaryKeyGenerator foreignKeyGenerator = rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
+                        updateInvocation.arg(columnField.fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
                     } else {
-                        updateInvocation.arg(context.columnFieldFor(column).fieldVar);
+                        updateInvocation.arg(columnField.fieldVar);
                     }
                 }
             }
@@ -298,7 +311,7 @@ public class RowGenerator extends BaseClassGenerator {
     private Map<Column, JVar> objectOrClassFromNullables(final JBlock body) {
         final Map<Column, JVar> nullablesToObjectVariables = new HashMap<>();
 
-        Column.Visitor<BaseColumns> getNullable  = new Column.Visitor<BaseColumns>() {
+        Column.Visitor<BaseColumns> getNullable = new Column.Visitor<BaseColumns>() {
             @Override
             public void visit(Column column, BaseColumns context) {
                 if (!column.isNotNull()) {
@@ -365,7 +378,18 @@ public class RowGenerator extends BaseClassGenerator {
                 Column.Visitor<BaseColumns> addConstructorArgument = new Column.Visitor<BaseColumns>() {
                     @Override
                     public void visit(Column column, BaseColumns context) {
-                        newPrimaryKey.arg(context.columnFieldFor(column).fieldVar);
+                        ColumnField columnField = context.columnFieldFor(column);
+
+                        if (columnField == null) {
+                            JMethod getter = context.getterForPrimaryKeyColumn(column);
+                            if (getter == null) {
+                                throw new NullPointerException("Expected column " + column.getName() + " to have a getter on the primary key object.");
+                            }
+
+                            newPrimaryKey.arg(callGetConcretePrimaryKey(null, null).invoke(getter));
+                        } else {
+                            newPrimaryKey.arg(columnField.fieldVar);
+                        }
                     }
                 };
 
@@ -441,10 +465,10 @@ public class RowGenerator extends BaseClassGenerator {
             }
 
             setIsModifiedCall(body, false);
-            setIsInDatabaseCall(callback, true);
             callMethod("updatePrimaryKeyFromNext", callback, null);
 
             body.invoke(transaction, "addCompletionHandler").arg(JExpr._new(anonymousType));
+            setIsInDatabaseCall(body, true);
             body._return(nextPrimaryKey);
         } else {
             body._return(populateArgumentsFor(body.invoke(transaction, "insert").arg(mTableGenerator.getTable().getName()), nullables));
@@ -547,12 +571,15 @@ public class RowGenerator extends BaseClassGenerator {
         mBasicColumns.forEach(populateConstruction);
 
         callSetPrimaryKey(body, null).arg(newPrimaryKey);
+        setIsInDatabaseCall(body, true);
     }
 
     private void makeJoinConstructor(Column.Picker picker) {
         if (mJoinConstructor == null) {
             return;
         }
+
+        JBlock body = mJoinConstructor.body();
 
         Map<Column, JVar> primaryParams = mPrimaryKeyColumns.makeRowParamsFor(mJoinConstructor, picker);
         Map<Column, JVar> basicParams = mBasicColumns.makeRowParamsFor(mJoinConstructor, picker);
@@ -565,9 +592,10 @@ public class RowGenerator extends BaseClassGenerator {
             }
 
             if (rowField != null) {
-                mJoinConstructor.body().assign(rowField.fieldVar, param);
+                body.assign(rowField.fieldVar, param);
             } else {
-                mJoinConstructor.body().assign(mPrimaryKeyColumns.columnFieldFor(column).fieldVar, param);
+                JInvocation getPrimaryKey = body.invoke(null, "getPrimaryKey");
+                getPrimaryKey.invoke(mTableGenerator.getPrimaryKeyGenerator().getSetterFor(column)).arg(param);
             }
         }
 
@@ -668,6 +696,7 @@ public class RowGenerator extends BaseClassGenerator {
         mBasicColumns.forEach(makeAccessor);
     }
 
+    @Nonnull
     public TableGenerator getTableGenerator() {
         return mTableGenerator;
     }
@@ -677,16 +706,22 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private abstract class BaseColumns {
+        @Nonnull
         public final List<Column> columns = new ArrayList<>();
+
+        @Nonnull
         private Map<Column, RowField> mColumnToRowFieldMap = new HashMap<>();
+
+        @Nonnull
         private Map<Column, ColumnField> mColumnToColumnFieldMap = new HashMap<>();
 
         public BaseColumns() {
             Column.Picker picker = getColumnPicker();
+            Column.Picker forField = getColumnForFieldPicker();
             for (Column column : mTableGenerator.getTable().getColumns()) {
                 if (picker.pick(column)) {
                     this.columns.add(column);
-                    if (!column.isRowId()) {
+                    if (forField.pick(column)) {
                         mColumnToColumnFieldMap.put(column, makeColumnFieldFor(column));
                     }
                     if (column.isForeignKey()) {
@@ -697,18 +732,30 @@ public class RowGenerator extends BaseClassGenerator {
             Collections.sort(this.columns, new Column.Comparator());
         }
 
-        public void forEach(Column.Visitor<BaseColumns> visitor) {
+        public void forEach(@Nonnull Column.Visitor<BaseColumns> visitor) {
             for (Column column : columns) {
                 visitor.visit(column, this);
             }
         }
 
-        public RowField rowFieldFor(Column column) {
+        @Nullable
+        public RowField rowFieldFor(@Nonnull Column column) {
             return mColumnToRowFieldMap.get(column);
         }
 
-        public ColumnField columnFieldFor(Column column) {
+        @Nullable
+        public ColumnField columnFieldFor(@Nonnull Column column) {
             return mColumnToColumnFieldMap.get(column);
+        }
+
+        @Nullable
+        JMethod setterForPrimaryKeyColumn(@Nonnull Column column) {
+            return mTableGenerator.getPrimaryKeyGenerator().getSetterFor(column);
+        }
+
+        @Nullable
+        JMethod getterForPrimaryKeyColumn(@Nonnull Column column) {
+            return mTableGenerator.getPrimaryKeyGenerator().getGetterFor(column);
         }
 
         public Map<Column, JVar> makeValueParamsFor(JMethod method, Column.Picker picker) {
@@ -742,6 +789,8 @@ public class RowGenerator extends BaseClassGenerator {
         }
 
         protected abstract Column.Picker getColumnPicker();
+
+        protected abstract Column.Picker getColumnForFieldPicker();
 
         private JType getValueParamType(Column column) {
             if (column.isForeignKey()) {
@@ -780,6 +829,16 @@ public class RowGenerator extends BaseClassGenerator {
         protected Column.Picker getColumnPicker() {
             return new Column.BasicPicker();
         }
+
+        @Override
+        protected Column.Picker getColumnForFieldPicker() {
+            return new Column.Picker() {
+                @Override
+                public boolean pick(Column column) {
+                    return true;
+                }
+            };
+        }
     }
 
     private class PrimaryColumns extends BaseColumns {
@@ -787,6 +846,16 @@ public class RowGenerator extends BaseClassGenerator {
         @Override
         protected Column.Picker getColumnPicker() {
             return new Column.PrimaryPicker();
+        }
+
+        @Override
+        protected Column.Picker getColumnForFieldPicker() {
+            return new Column.Picker() {
+                @Override
+                public boolean pick(Column column) {
+                    return false;
+                }
+            };
         }
     }
 }

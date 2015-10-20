@@ -177,6 +177,7 @@ public final class HealthScoreTable
             setMaxLabel(cursor.getString("max_label"));
             setMinLabel(cursor.getString("min_label"));
             setPrimaryKey(new HealthScoreTable.PrimaryKey(cursor.getLong("_id")));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -279,12 +280,12 @@ public final class HealthScoreTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

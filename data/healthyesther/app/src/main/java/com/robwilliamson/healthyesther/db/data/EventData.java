@@ -9,9 +9,13 @@ import com.robwilliamson.healthyesther.db.definition.Table;
 
 import org.joda.time.DateTime;
 
+import javax.annotation.Nonnull;
+
 public class EventData extends DataAbstraction {
     private IdData mId;
+    @Nonnull
     private DateTime mWhen;
+    @Nonnull
     private DateTime mCreated;
     private DateTime mModified;
     private long mTypeId;
@@ -19,10 +23,14 @@ public class EventData extends DataAbstraction {
 
     public EventData() {
         mId = new IdData(this, com.robwilliamson.healthyesther.db.definition.Event._ID);
+        mWhen = Utils.Time.localNow();
+        mCreated = Utils.Time.localNow();
     }
 
     public EventData(
+            @Nonnull
             DateTime when,
+            @Nonnull
             DateTime created,
             DateTime modified,
             long typeId,
@@ -38,7 +46,9 @@ public class EventData extends DataAbstraction {
 
     public EventData(
             Long _id,
+            @Nonnull
             DateTime when,
+            @Nonnull
             DateTime created,
             DateTime modified,
             long typeId,
@@ -58,9 +68,7 @@ public class EventData extends DataAbstraction {
 
         bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(mWhen));
 
-        if (mCreated != null) {
-            bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(mCreated));
-        }
+        bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(mCreated));
 
         if (mModified != null) {
             bundle.putString(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(mModified));
@@ -76,15 +84,11 @@ public class EventData extends DataAbstraction {
         values.putAll(mId.asContentValues());
         values.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, Utils.Time.toDatabaseString(mWhen));
 
-        if (mCreated == null) {
-            values.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(Utils.Time.localNow()));
-        } else {
-            values.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(mCreated));
-        }
+        values.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, Utils.Time.toDatabaseString(mCreated));
 
         if (mModified != null) {
             values.put(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(mModified));
-        } else if (mCreated != null) {
+        } else {
             values.put(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED, Utils.Time.toDatabaseString(Utils.Time.localNow()));
         }
 
@@ -117,11 +121,7 @@ public class EventData extends DataAbstraction {
 
         mWhen = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.WHEN));
 
-        if (bundle.containsKey(com.robwilliamson.healthyesther.db.definition.Event.CREATED)) {
-            mCreated = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.CREATED));
-        } else {
-            mCreated = null;
-        }
+        mCreated = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.CREATED));
 
         if (bundle.containsKey(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED)) {
             mModified = Utils.Time.fromDatabaseString(bundle.getString(com.robwilliamson.healthyesther.db.definition.Event.MODIFIED));
@@ -141,6 +141,7 @@ public class EventData extends DataAbstraction {
         mId.set_id(_id);
     }
 
+    @Nonnull
     public DateTime getCreated() {
         return mCreated;
     }

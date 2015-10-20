@@ -150,9 +150,7 @@ public final class MedicationEventTable
         implements Serializable
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
-        private com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey mMedicationId;
         private com.robwilliamson.healthyesther.db.generated.MedicationTable.Row mMedicationIdRow;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(0);
@@ -166,6 +164,7 @@ public final class MedicationEventTable
             @Nonnull
             Cursor cursor) {
             setPrimaryKey(new MedicationEventTable.PrimaryKey(((cursor.getLong("event_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey(cursor.getLong("event_id")):null), ((cursor.getLong("medication_id")!= null)?new com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey(cursor.getLong("medication_id")):null)));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -190,11 +189,9 @@ public final class MedicationEventTable
             Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
-                mEventId = mEventIdRow.getNextPrimaryKey();
             }
             if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
-                mMedicationId = mMedicationIdRow.getNextPrimaryKey();
             }
         }
 
@@ -206,7 +203,7 @@ public final class MedicationEventTable
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventId, mMedicationId));
+            setNextPrimaryKey(new MedicationEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getMedicationId()));
             MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert("medication_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMedicationId().getId());
             setIsModified(false);
@@ -214,12 +211,12 @@ public final class MedicationEventTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

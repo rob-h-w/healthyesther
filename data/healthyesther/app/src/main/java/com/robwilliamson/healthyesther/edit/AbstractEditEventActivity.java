@@ -14,6 +14,7 @@ import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.data.EventData;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment.Watcher;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -26,6 +27,8 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
     private EventData mIntentEventData = null;
 
     protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
+
+    protected abstract TransactionExecutor.Operation onModifySelected();
 
     protected abstract void onModifySelected(SQLiteDatabase db);
 
@@ -63,6 +66,8 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
         if (item.getItemId() == R.id.action_modify) {
             // Write to the DB and go back.
             query(new Query() {
+                private boolean mFinish;
+
                 @Override
                 public Cursor query(SQLiteDatabase db) {
                     db.beginTransaction();
@@ -78,11 +83,19 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
 
                 @Override
                 public void postQueryProcessing(Cursor cursor) {
+                    TransactionExecutor.Operation operation = onModifySelected();
+                    if (operation == null) {
+                        mFinish = true;
+                    } else {
+                        getExecutor().perform(operation);
+                    }
                 }
 
                 @Override
                 public void onQueryComplete(Cursor cursor) {
-                    finish();
+                    if (mFinish) {
+                        finish();
+                    }
                 }
 
                 @Override

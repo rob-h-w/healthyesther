@@ -157,6 +157,7 @@ public final class UnitsTable
             setName(cursor.getString("name"));
             setSiFactor(cursor.getDouble("si_factor"));
             setPrimaryKey(new UnitsTable.PrimaryKey(cursor.getLong("_id")));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -211,12 +212,12 @@ public final class UnitsTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

@@ -122,6 +122,7 @@ public final class AndroidMetadataTable
             Cursor cursor) {
             setLocale(cursor.getString("locale"));
             setPrimaryKey(new AndroidMetadataTable.PrimaryKey());
+            setIsInDatabase(true);
         }
 
         public Row(String locale) {

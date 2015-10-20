@@ -151,6 +151,7 @@ public final class MedicationTable
             Cursor cursor) {
             setName(cursor.getString("name"));
             setPrimaryKey(new MedicationTable.PrimaryKey(cursor.getLong("_id")));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -191,12 +192,12 @@ public final class MedicationTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

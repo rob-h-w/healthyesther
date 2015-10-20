@@ -157,6 +157,7 @@ public final class EventTypeTable
             setName(cursor.getString("name"));
             setIcon(cursor.getString("icon"));
             setPrimaryKey(new EventTypeTable.PrimaryKey(cursor.getLong("_id")));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -211,12 +212,12 @@ public final class EventTypeTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

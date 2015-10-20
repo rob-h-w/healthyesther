@@ -150,9 +150,7 @@ public final class NoteEventTable
         implements Serializable
     {
 
-        private com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey mEventId;
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
-        private com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey mNoteId;
         private com.robwilliamson.healthyesther.db.generated.NoteTable.Row mNoteIdRow;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(0);
@@ -166,6 +164,7 @@ public final class NoteEventTable
             @Nonnull
             Cursor cursor) {
             setPrimaryKey(new NoteEventTable.PrimaryKey(((cursor.getLong("event_id")!= null)?new com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey(cursor.getLong("event_id")):null), ((cursor.getLong("note_id")!= null)?new com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey(cursor.getLong("note_id")):null)));
+            setIsInDatabase(true);
         }
 
         public Row(
@@ -190,11 +189,9 @@ public final class NoteEventTable
             Transaction transaction) {
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
-                mEventId = mEventIdRow.getNextPrimaryKey();
             }
             if (mNoteIdRow!= null) {
                 mNoteIdRow.applyTo(transaction);
-                mNoteId = mNoteIdRow.getNextPrimaryKey();
             }
         }
 
@@ -206,7 +203,7 @@ public final class NoteEventTable
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventId, mNoteId));
+            setNextPrimaryKey(new NoteEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getNoteId()));
             NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             transaction.insert("note_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getNoteId().getId());
             setIsModified(false);
@@ -214,12 +211,12 @@ public final class NoteEventTable
 
 
                 public void onCompleted() {
-                    setIsInDatabase(true);
                     updatePrimaryKeyFromNext();
                 }
 
             }
             );
+            setIsInDatabase(true);
             return nextPrimaryKey;
         }
 

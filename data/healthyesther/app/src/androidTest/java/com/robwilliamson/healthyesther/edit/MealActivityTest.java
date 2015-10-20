@@ -28,6 +28,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -108,6 +109,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
             onView(MealEventActivityAccessor.dishName()).perform(typeText(meal));
             onView(EditEventAccessor.ok()).perform(click());
+            onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
             checkDatabaseCorrectnessForName(meal, 1);
         }
 
@@ -153,7 +155,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         });
 
         assertThat(events.length, is(greaterThanOrEqualTo(1)));
-        assertThat(events[0].getTypeId().getId(), is(EventTypeTable.MEAL.getId()));
+        assertThat(events[0].getTypeId().getId(), is(EventTypeTable.MEAL.getId().getId()));
 
     }
 }

@@ -9,6 +9,7 @@ import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Note;
 import com.robwilliamson.healthyesther.db.definition.NoteEvent;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -40,6 +41,11 @@ public class NoteEventActivity extends AbstractEditEventActivity
         list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
+    }
+
+    @Override
+    protected TransactionExecutor.Operation onModifySelected() {
+        return null; // TODO
     }
 
     @Override
