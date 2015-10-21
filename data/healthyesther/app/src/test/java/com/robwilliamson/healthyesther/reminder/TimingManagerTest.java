@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
+@Config(constants = BuildConfig.class)
 public class TimingManagerTest {
     @Test
     public void testInstantiation() throws Exception {
