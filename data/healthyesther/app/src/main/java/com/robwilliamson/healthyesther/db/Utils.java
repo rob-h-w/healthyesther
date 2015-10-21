@@ -322,11 +322,11 @@ public final class Utils {
                                         pseudoRandom %= pseudoRandomMax;
 
                                         if (!hadDailyMedication && haveDailyMedication(hour)) {
-                                            DateTime t = DateTime.now().withDate(year, month, day)
+                                            DateTime time = DateTime.now().withDate(year, month, day)
                                                     .withTime(hour, minute(), second(), 0);
                                             EventData eventData = new EventData(
-                                                    time(year, month, day, hour),
-                                                    null,
+                                                    time,
+                                                    time,
                                                     null,
                                                     2,
                                                     "Daily medication");
@@ -388,16 +388,18 @@ public final class Utils {
             private static void insertMeal(SQLiteDatabase db, int year, int month,
                                            int day, int hour, String name, long mealId) {
                 Contract c = Contract.getInstance();
+                DateTime time = time(year, month, day, hour);
                 EventData eventData = new EventData(
-                        time(year, month, day, hour), null, null, 1, name);
+                        time, time, null, 1, name);
                 long eventId = c.EVENT.insert(db, eventData);
                 c.MEAL_EVENT.insert(db, new MealEventData(mealId, eventId, null, null));
             }
 
             private static void insertMedication(SQLiteDatabase db, int year, int month, int day, int hour, String medication, long medicationId) {
                 Contract c = Contract.getInstance();
+                DateTime time = time(year, month, day, hour);
                 EventData eventData = new EventData(
-                        time(year, month, day, hour), null, null, 2, "Medication");
+                        time, time, null, 2, "Medication");
                 long eventId = c.EVENT.insert(db, eventData);
                 c.MEDICATION_EVENT.insert(db, medicationId, eventId);
             }
