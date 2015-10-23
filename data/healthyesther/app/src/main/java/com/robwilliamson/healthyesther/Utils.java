@@ -58,7 +58,7 @@ public final class Utils {
 
     public static final class View {
 
-        public static void forEachRadioButton(RadioGroup radioGroup, RadioButtonHandler handler) {
+        public static void forEachRadioButton(@NonNull RadioGroup radioGroup, @NonNull RadioButtonHandler handler) {
             final int count = radioGroup.getChildCount();
             for (int i = 0; i < count; i++) {
                 android.view.View view = radioGroup.getChildAt(i);
@@ -72,39 +72,42 @@ public final class Utils {
             }
         }
 
-        public static <T extends android.view.View> T getTypeSafeView(android.view.View parent, int id, Class<T> type) {
-            if (parent == null) {
-                return null;
-            }
-
+        @Nullable
+        public static <T extends android.view.View> T getTypeSafeView(
+                @NonNull android.view.View parent,
+                int id,
+                @NonNull Class<T> type) {
             return checkedCast(parent.findViewById(id), type);
         }
 
-        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, String tag, Class<T> type) {
-            if (manager == null) {
-                return null;
-            }
-
+        @Nullable
+        public static <T extends Fragment> T getTypeSafeFragment(
+                @NonNull FragmentManager manager,
+                @NonNull String tag,
+                @NonNull Class<T> type) {
             return checkedCast(manager.findFragmentByTag(tag), type);
         }
 
-        public static <T extends Fragment> T getTypeSafeFragment(FragmentManager manager, int id, Class<T> type) {
-            if (manager == null) {
-                return null;
-            }
-
+        @Nullable
+        public static <T extends Fragment> T getTypeSafeFragment(
+                @NonNull FragmentManager manager,
+                int id,
+                @NonNull Class<T> type) {
             return checkedCast(manager.findFragmentById(id), type);
         }
 
         public static void assertIsOnUiThread() {
-            long appUiThread = App.getUiThreadId();
-            Thread currentThread = Thread.currentThread();
+            assertIsOnUiThread(Thread.currentThread());
+        }
 
-            if (appUiThread == 0 && currentThread.getName().equals("main")) {
-                App.setsUiThreadId(currentThread.getId());
+        public static void assertIsOnUiThread(Thread thread) {
+            long appUiThread = App.getUiThreadId();
+
+            if (appUiThread == 0 && thread.getName().equals("main")) {
+                App.setsUiThreadId(thread.getId());
             }
 
-            if (App.getUiThreadId() != currentThread.getId()) {
+            if (App.getUiThreadId() != thread.getId()) {
                 throw new NonUiThreadException();
             }
         }

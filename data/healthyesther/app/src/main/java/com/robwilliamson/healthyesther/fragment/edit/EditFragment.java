@@ -1,11 +1,14 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
+
+import javax.annotation.Nullable;
 
 public abstract class EditFragment<T> extends AbstractQueryFragment {
     Class<T> mType;
@@ -60,7 +63,11 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
         }
     }
 
-    protected <T extends View> T getTypeSafeView(int id, Class<T> type) {
+    @Nullable
+    protected <T extends View> T getTypeSafeView(int id, @NonNull Class<T> type) {
+        if (getView() == null) {
+            return null;
+        }
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id, type);
     }
 
