@@ -11,12 +11,14 @@ import java.util.HashMap;
 import java.util.Set;
 
 public final class Utils {
-    public static String format(Throwable e) {
+    public static String format(@NonNull Throwable e) {
         StringBuilder str = new StringBuilder();
         final String nl = "/n";
         str.append(e.getMessage()).append(nl);
         str.append(e.getClass()).append(nl);
-        str.append(e.getStackTrace()).append(nl);
+        for (StackTraceElement element : e.getStackTrace()) {
+            str.append(element).append(nl);
+        }
 
         if (e.getCause() != null) {
             str.append("Caused by:").append(nl);
