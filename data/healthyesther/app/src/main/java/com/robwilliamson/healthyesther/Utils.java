@@ -52,7 +52,7 @@ public final class Utils {
         return (T) obj;
     }
 
-    public static <T> T checkedCast(Object obj, Class<T> type) {
+    public static <T> T checkedCast(@Nullable Object obj, @NonNull Class<T> type) {
         return checkAssignable(obj, type);
     }
 

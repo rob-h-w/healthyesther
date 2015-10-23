@@ -98,4 +98,9 @@ public class UtilsTest {
 
         assertThat(result, is(hello));
     }
+
+    @Test
+    public void checkedCastWithNull_returnsNull() {
+        assertThat(Utils.checkedCast(null, String.class), is((String) null));
+    }
 }
