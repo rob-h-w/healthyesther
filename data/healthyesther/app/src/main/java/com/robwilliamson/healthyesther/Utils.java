@@ -10,6 +10,8 @@ import android.widget.RadioGroup;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 public final class Utils {
     public static String format(@NonNull Throwable e) {
         StringBuilder str = new StringBuilder();
@@ -29,7 +31,7 @@ public final class Utils {
     }
 
     @NonNull
-    public static <T> T checkNotNull(T obj) {
+    public static <T> T checkNotNull(@Nullable T obj) {
         if (obj == null) {
             throw new NullPointerException();
         }

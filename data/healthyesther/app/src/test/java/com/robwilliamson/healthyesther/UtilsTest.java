@@ -68,4 +68,15 @@ public class UtilsTest {
         assertThat(lines[5], is(String.valueOf(cause.getClass())));
         assertThat(lines[6], is(String.valueOf(stackTrace[0])));
     }
+
+    @Test(expected = NullPointerException.class)
+    public void checkNotNullWithNull_throwsNpe() {
+        Utils.checkNotNull(null);
+    }
+
+    @Test
+    public void checkNotNullWithNonNull_returnsValue() {
+        String test = "test";
+        assertThat(Utils.checkNotNull(test), is(test));
+    }
 }
