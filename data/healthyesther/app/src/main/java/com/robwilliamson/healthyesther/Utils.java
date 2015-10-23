@@ -40,7 +40,7 @@ public final class Utils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T checkAssignable(Object obj, Class<T> type) {
+    public static <T> T checkAssignable(@Nullable Object obj, @NonNull Class<T> type) {
         if (obj == null) {
             return null;
         }

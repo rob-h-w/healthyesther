@@ -79,4 +79,23 @@ public class UtilsTest {
         String test = "test";
         assertThat(Utils.checkNotNull(test), is(test));
     }
+
+    @Test
+    public void checkAssignableWithNull_returnsNull() {
+        assertThat(Utils.checkAssignable(null, String.class), is((String) null));
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void checkAssignableWithNonAssignable_throws() {
+        Utils.checkAssignable("hello", Integer.class);
+    }
+
+    @Test
+    public void checkAssignableWithAssignable_returnsAssignedType() {
+        String hello = "hello";
+        CharSequence sequence = hello;
+        String result = Utils.checkAssignable(sequence, String.class);
+
+        assertThat(result, is(hello));
+    }
 }
