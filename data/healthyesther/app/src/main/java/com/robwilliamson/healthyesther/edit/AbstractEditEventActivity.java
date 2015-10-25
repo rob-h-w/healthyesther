@@ -23,10 +23,12 @@ import com.robwilliamson.healthyesther.reminder.TimingManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public abstract class AbstractEditEventActivity extends DbActivity implements Watcher {
     private EventData mIntentEventData = null;
 
-    protected abstract ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create);
+    protected abstract List<Pair<EditFragment, String>> getEditFragments(boolean create);
 
     protected abstract TransactionExecutor.Operation onModifySelected();
 
@@ -119,7 +121,7 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
             return false;
         }
 
-        ArrayList<Pair<EditFragment, String>> fragments = getEditFragments(false);
+        List<Pair<EditFragment, String>> fragments = getEditFragments(false);
         for (Pair<EditFragment, String> fragmentStringPair : fragments) {
             if (!fragmentStringPair.first.validate()) {
                 return false;
@@ -129,7 +131,7 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
         return true;
     }
 
-    protected final void resetFragments(ArrayList<Pair<EditFragment, String>> editFragments) {
+    protected final void resetFragments(@Nonnull List<Pair<EditFragment, String>> editFragments) {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

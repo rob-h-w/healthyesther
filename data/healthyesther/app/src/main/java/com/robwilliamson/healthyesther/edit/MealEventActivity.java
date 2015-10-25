@@ -22,6 +22,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -31,7 +32,7 @@ public class MealEventActivity extends AbstractEditEventActivity
     private final static String EVENT_TAG = "event";
 
     @Override
-    protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
+    protected List<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);
         EditFragment meal;
         EditFragment event;
