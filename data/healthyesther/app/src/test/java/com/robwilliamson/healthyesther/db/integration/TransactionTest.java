@@ -32,17 +32,12 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class TransactionTest {
-    static {
-        new DateTimeConverter();
-    }
-
     private static final String TABLE = "table";
     private static final String[] COLUMN_NAMES = {
             "nullString",
@@ -53,6 +48,7 @@ public class TransactionTest {
             "DATE_TIME",
             "nullDateTime"
     };
+    private static final DateTimeConverter UNUSED = new DateTimeConverter();
     private static final DateTime DATE_TIME = new DateTime(new org.joda.time.DateTime().withDate(2015, 10, 24).withTime(22, 36, 21, 0).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT"))));
     private static final String DATE_TIME_STRING = "2015-10-24T22:36:21 +00:00";
     private static final Object[] VALUES = {
