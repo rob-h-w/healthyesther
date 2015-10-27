@@ -74,7 +74,7 @@ public class NoteTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class PrimaryKey
+    public static class PrimaryKey
         implements Serializable, Key
     {
 

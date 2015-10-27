@@ -35,7 +35,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
         mTableGenerator = tableGenerator;
 
-        setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC | JMod.FINAL, getName()));
+        setJClass(tableGenerator.getJClass()._class(JMod.PUBLIC | JMod.STATIC, getName()));
         getJClass()._implements(Key.class);
         getJClass()._implements(Serializable.class);
         CodeGenerator.ASYNC.schedule(new Runnable() {
