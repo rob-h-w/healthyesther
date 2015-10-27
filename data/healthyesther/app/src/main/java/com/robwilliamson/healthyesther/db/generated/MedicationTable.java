@@ -17,7 +17,7 @@ import com.robwilliamson.healthyesther.db.includes.Where;
  * This class is generated, and should not be edited. Edits will be overwritten
  * 
  */
-public final class MedicationTable
+public class MedicationTable
     extends Table
     implements Serializable
 {

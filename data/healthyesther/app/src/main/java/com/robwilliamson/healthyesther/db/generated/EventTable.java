@@ -18,7 +18,7 @@ import com.robwilliamson.healthyesther.db.includes.Where;
  * This class is generated, and should not be edited. Edits will be overwritten
  * 
  */
-public final class EventTable
+public class EventTable
     extends Table
     implements Serializable
 {

@@ -35,7 +35,7 @@ public class TableGenerator extends BaseClassGenerator {
             JPackage jPackage,
             com.robwilliamson.healthyesther.semantic.Table table) throws JClassAlreadyExistsException {
         mTable = table;
-        setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
+        setJClass(jPackage._class(JMod.PUBLIC, getName()));
         getJClass()._extends(Table.class);
         getJClass()._implements(Serializable.class);
         makeColumnNameFields();
