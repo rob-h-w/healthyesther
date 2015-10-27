@@ -129,7 +129,7 @@ public final class EventTypeTable
      * This class is generated, and should not be edited. Edits will be overwritten
      * 
      */
-    public final static class Row
+    public static class Row
         extends BaseRow<EventTypeTable.PrimaryKey>
         implements Serializable
     {

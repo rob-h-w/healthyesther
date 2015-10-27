@@ -59,7 +59,7 @@ public class RowGenerator extends BaseClassGenerator {
         mTableGenerator = tableGenerator;
 
         JDefinedClass clazz = mTableGenerator.getJClass()._class(
-                JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
+                JMod.PUBLIC | JMod.STATIC,
                 getName());
 
         setJClass(clazz);
