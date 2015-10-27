@@ -82,11 +82,11 @@ public class MealEventActivity extends AbstractEditEventActivity
         return R.string.could_not_insert_meal_event;
     }
 
-    private EditMealFragment getMealFragment() {
+    protected EditMealFragment getMealFragment() {
         return getFragment(MEAL_TAG, EditMealFragment.class);
     }
 
-    private EditEventFragment getEventFragment() {
+    protected EditEventFragment getEventFragment() {
         return getFragment(EVENT_TAG, EditEventFragment.class);
     }
 
