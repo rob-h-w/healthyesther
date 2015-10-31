@@ -45,6 +45,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
@@ -91,6 +92,9 @@ public class MealEventActivityTest {
     private MealEventTable mMealEventTable;
 
     @Mock
+    private MealEventTable.Row mMealEventTableRow;
+
+    @Mock
     private TransactionExecutor mTransactionExecutor;
 
     @Before
@@ -120,6 +124,8 @@ public class MealEventActivityTest {
         HealthDatabaseAccessor.INSTANCE.setMealEventTable(mMealEventTable);
 
         doReturn(EventTypeTable.MEAL.getId()).when(mEventTableRow).getTypeId();
+        doReturn(mEventPrimaryKey).when(mEventTableRow).getConcretePrimaryKey();
+        doReturn(3L).when(mEventPrimaryKey).getId();
     }
 
     @Test
@@ -190,14 +196,23 @@ public class MealEventActivityTest {
     }
 
     @Test
-    public void onEventFromIntent_performsAnOperation() {
+    public void onEventFromIntentNotInDb_doesNotPerformAnOperation() {
+        doReturn(null).when(mEventTableRow).getConcretePrimaryKey();
+
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        verify(mTransactionExecutor, never()).perform(any(TransactionExecutor.Operation.class));
+    }
+
+    @Test
+    public void onEventFromIntentInDb_performsAnOperation() {
         mActivity.onEventFromIntent(mEventTableRow);
 
         verify(mTransactionExecutor).perform(any(TransactionExecutor.Operation.class));
     }
 
     @Test
-    public void onEventFromIntentOpertation_requestsMealEvent() {
+    public void onEventFromIntentOpertation_requestsMealEventWithCorrectEventId() {
         mActivity.onEventFromIntent(mEventTableRow);
 
         TransactionExecutor.Operation operation = interceptRequestedOperation();
@@ -206,6 +221,8 @@ public class MealEventActivityTest {
 
         ArgumentCaptor<Where> whereArgumentCaptor = ArgumentCaptor.forClass(Where.class);
         verify(mMealEventTable).select(eq(mDatabase), whereArgumentCaptor.capture());
+
+        assertThat(whereArgumentCaptor.getValue().getWhere(), is("event_id = 3"));
     }
 
     @NonNull

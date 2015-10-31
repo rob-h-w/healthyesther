@@ -121,18 +121,21 @@ public class MealEventActivity extends AbstractEditEventActivity
 
         getEventFragment().setRow(event);
 
-        getExecutor().perform(new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                MealEventTable.Row [] rows = HealthDatabase.MEAL_EVENT_TABLE.select(
-                        database,
-                        new Where() {
-                    @Override
-                    public String getWhere() {
-                        return MealEventTable.EVENT_ID + " = " + event.getConcretePrimaryKey().getId();
-                    }
-                });
-            }
-        });
+        if (event.getConcretePrimaryKey() != null) {
+
+            getExecutor().perform(new TransactionExecutor.Operation() {
+                @Override
+                public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                    MealEventTable.Row[] rows = HealthDatabase.MEAL_EVENT_TABLE.select(
+                            database,
+                            new Where() {
+                                @Override
+                                public String getWhere() {
+                                    return MealEventTable.EVENT_ID + " = " + event.getConcretePrimaryKey().getId();
+                                }
+                            });
+                }
+            });
+        }
     }
 }
