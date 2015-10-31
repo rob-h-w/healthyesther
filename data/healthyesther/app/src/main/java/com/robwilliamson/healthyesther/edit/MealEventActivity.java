@@ -14,6 +14,7 @@ import com.robwilliamson.healthyesther.db.includes.AndWhere;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereForeignKey;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
@@ -111,5 +112,27 @@ public class MealEventActivity extends AbstractEditEventActivity
     @Override
     public void onUseIntentEventData(EventData eventData) {
         getMealFragment().setEventData(eventData);
+    }
+
+    public void onEventFromIntent(@Nonnull final EventTable.Row event) {
+        if (event.getTypeId() != EventTypeTable.MEAL.getId()) {
+            throw new EventTypeTable.BadEventTypeException(EventTypeTable.MEAL, event.getTypeId().getId());
+        }
+
+        getEventFragment().setRow(event);
+
+        getExecutor().perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                MealEventTable.Row [] rows = HealthDatabase.MEAL_EVENT_TABLE.select(
+                        database,
+                        new Where() {
+                    @Override
+                    public String getWhere() {
+                        return MealEventTable.EVENT_ID + " = " + event.getConcretePrimaryKey().getId();
+                    }
+                });
+            }
+        });
     }
 }

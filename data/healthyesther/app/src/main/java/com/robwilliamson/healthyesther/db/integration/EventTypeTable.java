@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.db.integration;
 
+import com.robwilliamson.healthyesther.db.generated.MealEventTable;
+
 import javax.annotation.Nonnull;
 
 public enum EventTypeTable {
@@ -33,5 +35,11 @@ public enum EventTypeTable {
 
     public String getIcon() {
         return mIcon;
+    }
+
+    public static class BadEventTypeException extends RuntimeException {
+        public BadEventTypeException(EventTypeTable expected, long actual) {
+            super("Expected an event of type " + expected.getName() + " (id " + expected.getId().getId() + "), got id " + actual);
+        }
     }
 }

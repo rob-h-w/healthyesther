@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.EventTypeTable;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
@@ -45,6 +47,12 @@ public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> i
         }
 
         return mRow;
+    }
+
+    public void setRow(@NonNull EventTable.Row row) {
+        mRow = row;
+        setName(row.getName());
+        setWhen(row.getWhen().as(DateTime.class));
     }
 
     @Override

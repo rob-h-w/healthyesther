@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
@@ -14,6 +15,7 @@ import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -22,6 +24,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
@@ -41,6 +44,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -84,6 +90,9 @@ public class MealEventActivityTest {
     @Mock
     private MealEventTable mMealEventTable;
 
+    @Mock
+    private TransactionExecutor mTransactionExecutor;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -95,6 +104,7 @@ public class MealEventActivityTest {
 
         mActivity.mEditEventFragment = mEditEventFragment;
         mActivity.mMealFragment = mMealFragment;
+        mActivity.mTransactionExecutor = mTransactionExecutor;
 
         doReturn(mMealInitQuery).when(mMealFragment).getInitializationQuery();
 
@@ -108,6 +118,8 @@ public class MealEventActivityTest {
         doReturn(2L).when(mEventPrimaryKey).getId();
 
         HealthDatabaseAccessor.INSTANCE.setMealEventTable(mMealEventTable);
+
+        doReturn(EventTypeTable.MEAL.getId()).when(mEventTableRow).getTypeId();
     }
 
     @Test
@@ -154,10 +166,60 @@ public class MealEventActivityTest {
         doReturn(mCursor).when(mDatabase).select(any(Where.class), any(Table.class));
     }
 
+    @Test
+    public void onModifySelected_doesNothing() {
+        SQLiteDatabase sqLiteDatabase = mock(SQLiteDatabase.class);
+        mActivity.onModifySelected(sqLiteDatabase);
+        mActivity.onModifySelected(null);
+
+        verifyZeroInteractions(mDatabase);
+    }
+
+    @Test(expected = EventTypeTable.BadEventTypeException.class)
+    public void onEventFromIntentWithWrongType_throws() {
+        doReturn(EventTypeTable.HEALTH.getId()).when(mEventTableRow).getTypeId();
+
+        mActivity.onEventFromIntent(mEventTableRow);
+    }
+
+    @Test
+    public void onEventFromIntent_setsEvent() {
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        verify(mEditEventFragment).setRow(mEventTableRow);
+    }
+
+    @Test
+    public void onEventFromIntent_performsAnOperation() {
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        verify(mTransactionExecutor).perform(any(TransactionExecutor.Operation.class));
+    }
+
+    @Test
+    public void onEventFromIntentOpertation_requestsMealEvent() {
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        TransactionExecutor.Operation operation = interceptRequestedOperation();
+
+        operation.doTransactionally(mDatabase, mTransaction);
+
+        ArgumentCaptor<Where> whereArgumentCaptor = ArgumentCaptor.forClass(Where.class);
+        verify(mMealEventTable).select(eq(mDatabase), whereArgumentCaptor.capture());
+    }
+
+    @NonNull
+    private TransactionExecutor.Operation interceptRequestedOperation() {
+        ArgumentCaptor<TransactionExecutor.Operation> operationArgumentCaptor = ArgumentCaptor.forClass(TransactionExecutor.Operation.class);
+        verify(mTransactionExecutor).perform(operationArgumentCaptor.capture());
+        return operationArgumentCaptor.getValue();
+    }
+
     private static class TestableMealEventActivity extends MealEventActivity {
         public boolean finishCalled = false;
         public EditMealFragment mMealFragment;
         public EditEventFragment mEditEventFragment;
+        public TransactionExecutor mTransactionExecutor;
 
         @Override
         public List<Pair<EditFragment, String>> getEditFragments(boolean create) {
@@ -199,6 +261,11 @@ public class MealEventActivityTest {
         protected void setBusy(boolean busy) {
             // TODO: Find a way to avoid the countdown latch lock.
             //super.setBusy(busy);
+        }
+
+        @Override
+        protected TransactionExecutor getExecutor() {
+            return mTransactionExecutor;
         }
     }
 }
