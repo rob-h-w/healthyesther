@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -108,6 +109,7 @@ public class AndroidMetadataTable
         implements Serializable
     {
 
+        @Nullable
         private String mLocale;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(1);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
@@ -125,12 +127,16 @@ public class AndroidMetadataTable
             setIsInDatabase(true);
         }
 
-        public Row(String locale) {
+        public Row(
+            @Nullable
+            String locale) {
             setPrimaryKey(new AndroidMetadataTable.PrimaryKey());
             mLocale = locale;
         }
 
-        public void setLocale(String locale) {
+        public void setLocale(
+            @Nullable
+            String locale) {
             if (((mLocale == null)&&(locale == null))||((mLocale!= null)&&mLocale.equals(locale))) {
                 return ;
             }
@@ -138,6 +144,7 @@ public class AndroidMetadataTable
             setIsModified(true);
         }
 
+        @Nullable
         public String getLocale() {
             return mLocale;
         }

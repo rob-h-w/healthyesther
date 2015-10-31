@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -136,6 +137,7 @@ public class EventTypeTable
 
         @Nonnull
         private String mName;
+        @Nullable
         private String mIcon;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
@@ -162,7 +164,9 @@ public class EventTypeTable
 
         public Row(
             @Nonnull
-            String name, String icon) {
+            String name,
+            @Nullable
+            String icon) {
             mName = name;
             mIcon = icon;
         }
@@ -177,11 +181,14 @@ public class EventTypeTable
             setIsModified(true);
         }
 
+        @Nonnull
         public String getName() {
             return mName;
         }
 
-        public void setIcon(String icon) {
+        public void setIcon(
+            @Nullable
+            String icon) {
             if (((mIcon == null)&&(icon == null))||((mIcon!= null)&&mIcon.equals(icon))) {
                 return ;
             }
@@ -189,6 +196,7 @@ public class EventTypeTable
             setIsModified(true);
         }
 
+        @Nullable
         public String getIcon() {
             return mIcon;
         }

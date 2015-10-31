@@ -660,8 +660,26 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private void annotateNonull(JVar param, boolean nonnull) {
+        if (param.type().isPrimitive()) {
+            return;
+        }
+
         if (nonnull) {
             param.annotate(Nonnull.class);
+        } else {
+            param.annotate(Nullable.class);
+        }
+    }
+
+    private void annotateNonull(JMethod method, boolean nonnull) {
+        if (method.type().isPrimitive()) {
+            return;
+        }
+
+        if (nonnull) {
+            method.annotate(Nonnull.class);
+        } else {
+            method.annotate(Nullable.class);
         }
     }
 
@@ -675,9 +693,7 @@ public class RowGenerator extends BaseClassGenerator {
                         model().VOID,
                         "set" + Strings.capitalize(field.name));
                 JVar value = setter.param(field.fieldVar.type(), field.name);
-                if (column.isNotNull()) {
-                    annotateNonull(value, true);
-                }
+                annotateNonull(value, column.isNotNull());
                 JBlock body = setter.body();
                 body._if(makeEquals(field.fieldVar, value))._then()._return();
                 body.assign(field.fieldVar, value);
@@ -690,6 +706,7 @@ public class RowGenerator extends BaseClassGenerator {
                         field.fieldVar.type(),
                         "get" + Strings.capitalize(field.name));
                 getter.body()._return(field.fieldVar);
+                annotateNonull(getter, column.isNotNull());
             }
         };
 

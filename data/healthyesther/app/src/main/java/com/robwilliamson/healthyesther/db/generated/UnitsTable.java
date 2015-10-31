@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -136,6 +137,7 @@ public class UnitsTable
 
         @Nonnull
         private String mName;
+        @Nullable
         private Double mSiFactor;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
@@ -177,11 +179,14 @@ public class UnitsTable
             setIsModified(true);
         }
 
+        @Nonnull
         public String getName() {
             return mName;
         }
 
-        public void setSiFactor(Double siFactor) {
+        public void setSiFactor(
+            @Nullable
+            Double siFactor) {
             if (((mSiFactor == null)&&(siFactor == null))||((mSiFactor!= null)&&mSiFactor.equals(siFactor))) {
                 return ;
             }
@@ -189,6 +194,7 @@ public class UnitsTable
             setIsModified(true);
         }
 
+        @Nullable
         public Double getSiFactor() {
             return mSiFactor;
         }

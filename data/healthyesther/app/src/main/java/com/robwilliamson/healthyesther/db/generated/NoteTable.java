@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -136,6 +137,7 @@ public class NoteTable
 
         @Nonnull
         private String mName;
+        @Nullable
         private String mNote;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
@@ -162,7 +164,9 @@ public class NoteTable
 
         public Row(
             @Nonnull
-            String name, String note) {
+            String name,
+            @Nullable
+            String note) {
             mName = name;
             mNote = note;
         }
@@ -177,11 +181,14 @@ public class NoteTable
             setIsModified(true);
         }
 
+        @Nonnull
         public String getName() {
             return mName;
         }
 
-        public void setNote(String note) {
+        public void setNote(
+            @Nullable
+            String note) {
             if (((mNote == null)&&(note == null))||((mNote!= null)&&mNote.equals(note))) {
                 return ;
             }
@@ -189,6 +196,7 @@ public class NoteTable
             setIsModified(true);
         }
 
+        @Nullable
         public String getNote() {
             return mNote;
         }

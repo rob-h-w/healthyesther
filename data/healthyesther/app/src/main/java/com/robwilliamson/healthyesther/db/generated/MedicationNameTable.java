@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -168,13 +169,17 @@ public class MedicationNameTable
 
         public Row(
             @Nonnull
-            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
+            String name,
+            @Nullable
+            com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId) {
             setPrimaryKey(new MedicationNameTable.PrimaryKey(name, medicationId));
         }
 
         public Row(
             @Nonnull
-            String name, com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
+            String name,
+            @Nullable
+            com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
             getPrimaryKey();
             mMedicationIdRow = medicationId;
         }

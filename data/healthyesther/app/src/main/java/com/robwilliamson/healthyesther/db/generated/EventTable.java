@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -138,13 +139,16 @@ public class EventTable
         implements Serializable
     {
 
+        @Nullable
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey mTypeId;
         private com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row mTypeIdRow;
         @Nonnull
         private DateTime mCreated;
         @Nonnull
         private DateTime mWhen;
+        @Nullable
         private DateTime mModified;
+        @Nullable
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
@@ -187,7 +191,11 @@ public class EventTable
             @Nonnull
             DateTime created,
             @Nonnull
-            DateTime when, DateTime modified, String name) {
+            DateTime when,
+            @Nullable
+            DateTime modified,
+            @Nullable
+            String name) {
             mTypeId = typeId;
             mCreated = created;
             mWhen = when;
@@ -201,7 +209,11 @@ public class EventTable
             @Nonnull
             DateTime created,
             @Nonnull
-            DateTime when, DateTime modified, String name) {
+            DateTime when,
+            @Nullable
+            DateTime modified,
+            @Nullable
+            String name) {
             mTypeIdRow = typeId;
             mCreated = created;
             mWhen = when;
@@ -219,6 +231,7 @@ public class EventTable
             setIsModified(true);
         }
 
+        @Nonnull
         public com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey getTypeId() {
             return mTypeId;
         }
@@ -233,6 +246,7 @@ public class EventTable
             setIsModified(true);
         }
 
+        @Nonnull
         public DateTime getCreated() {
             return mCreated;
         }
@@ -247,11 +261,14 @@ public class EventTable
             setIsModified(true);
         }
 
+        @Nonnull
         public DateTime getWhen() {
             return mWhen;
         }
 
-        public void setModified(DateTime modified) {
+        public void setModified(
+            @Nullable
+            DateTime modified) {
             if (((mModified == null)&&(modified == null))||((mModified!= null)&&mModified.equals(modified))) {
                 return ;
             }
@@ -259,11 +276,14 @@ public class EventTable
             setIsModified(true);
         }
 
+        @Nullable
         public DateTime getModified() {
             return mModified;
         }
 
-        public void setName(String name) {
+        public void setName(
+            @Nullable
+            String name) {
             if (((mName == null)&&(name == null))||((mName!= null)&&mName.equals(name))) {
                 return ;
             }
@@ -271,6 +291,7 @@ public class EventTable
             setIsModified(true);
         }
 
+        @Nullable
         public String getName() {
             return mName;
         }

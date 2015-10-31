@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -153,6 +154,7 @@ public class HealthScoreEventTable
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
         private com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row mHealthScoreIdRow;
+        @Nullable
         private Long mScore;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
@@ -191,7 +193,9 @@ public class HealthScoreEventTable
             mScore = score;
         }
 
-        public void setScore(Long score) {
+        public void setScore(
+            @Nullable
+            Long score) {
             if (((mScore == null)&&(score == null))||((mScore!= null)&&mScore.equals(score))) {
                 return ;
             }
@@ -199,6 +203,7 @@ public class HealthScoreEventTable
             setIsModified(true);
         }
 
+        @Nullable
         public Long getScore() {
             return mScore;
         }

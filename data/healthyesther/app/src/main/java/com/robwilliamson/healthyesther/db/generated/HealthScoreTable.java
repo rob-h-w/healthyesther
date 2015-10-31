@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -137,13 +138,13 @@ public class HealthScoreTable
         implements Serializable
     {
 
-        @Nonnull
         private long mBestValue;
         @Nonnull
         private String mName;
-        @Nonnull
         private boolean mRandomQuery;
+        @Nullable
         private String mMaxLabel;
+        @Nullable
         private String mMinLabel;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
@@ -180,13 +181,13 @@ public class HealthScoreTable
             setIsInDatabase(true);
         }
 
-        public Row(
+        public Row(long bestValue,
             @Nonnull
-            long bestValue,
-            @Nonnull
-            String name,
-            @Nonnull
-            boolean randomQuery, String maxLabel, String minLabel) {
+            String name, boolean randomQuery,
+            @Nullable
+            String maxLabel,
+            @Nullable
+            String minLabel) {
             mBestValue = bestValue;
             mName = name;
             mRandomQuery = randomQuery;
@@ -194,9 +195,7 @@ public class HealthScoreTable
             mMinLabel = minLabel;
         }
 
-        public void setBestValue(
-            @Nonnull
-            long bestValue) {
+        public void setBestValue(long bestValue) {
             if (mBestValue == bestValue) {
                 return ;
             }
@@ -218,13 +217,12 @@ public class HealthScoreTable
             setIsModified(true);
         }
 
+        @Nonnull
         public String getName() {
             return mName;
         }
 
-        public void setRandomQuery(
-            @Nonnull
-            boolean randomQuery) {
+        public void setRandomQuery(boolean randomQuery) {
             if (mRandomQuery == randomQuery) {
                 return ;
             }
@@ -236,7 +234,9 @@ public class HealthScoreTable
             return mRandomQuery;
         }
 
-        public void setMaxLabel(String maxLabel) {
+        public void setMaxLabel(
+            @Nullable
+            String maxLabel) {
             if (((mMaxLabel == null)&&(maxLabel == null))||((mMaxLabel!= null)&&mMaxLabel.equals(maxLabel))) {
                 return ;
             }
@@ -244,11 +244,14 @@ public class HealthScoreTable
             setIsModified(true);
         }
 
+        @Nullable
         public String getMaxLabel() {
             return mMaxLabel;
         }
 
-        public void setMinLabel(String minLabel) {
+        public void setMinLabel(
+            @Nullable
+            String minLabel) {
             if (((mMinLabel == null)&&(minLabel == null))||((mMinLabel!= null)&&mMinLabel.equals(minLabel))) {
                 return ;
             }
@@ -256,6 +259,7 @@ public class HealthScoreTable
             setIsModified(true);
         }
 
+        @Nullable
         public String getMinLabel() {
             return mMinLabel;
         }

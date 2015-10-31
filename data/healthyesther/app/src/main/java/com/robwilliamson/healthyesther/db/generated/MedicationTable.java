@@ -170,6 +170,7 @@ public class MedicationTable
             setIsModified(true);
         }
 
+        @Nonnull
         public String getName() {
             return mName;
         }

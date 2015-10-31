@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -154,8 +155,10 @@ public class MealEventTable
 
         private com.robwilliamson.healthyesther.db.generated.EventTable.Row mEventIdRow;
         private com.robwilliamson.healthyesther.db.generated.MealTable.Row mMealIdRow;
+        @Nullable
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey mUnitsId;
         private com.robwilliamson.healthyesther.db.generated.UnitsTable.Row mUnitsIdRow;
+        @Nullable
         private Double mAmount;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(4);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
@@ -182,7 +185,9 @@ public class MealEventTable
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId, com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId, double amount) {
+            com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId,
+            @Nullable
+            com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId, double amount) {
             setPrimaryKey(new MealEventTable.PrimaryKey(eventId, mealId));
             mUnitsId = unitsId;
             mAmount = amount;
@@ -192,14 +197,18 @@ public class MealEventTable
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.MealTable.Row mealId, com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId, double amount) {
+            com.robwilliamson.healthyesther.db.generated.MealTable.Row mealId,
+            @Nullable
+            com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId, double amount) {
             mEventIdRow = eventId;
             mMealIdRow = mealId;
             mUnitsIdRow = unitsId;
             mAmount = amount;
         }
 
-        public void setUnitsId(com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId) {
+        public void setUnitsId(
+            @Nullable
+            com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId) {
             if (((mUnitsId == null)&&(unitsId == null))||((mUnitsId!= null)&&mUnitsId.equals(unitsId))) {
                 return ;
             }
@@ -207,11 +216,14 @@ public class MealEventTable
             setIsModified(true);
         }
 
+        @Nullable
         public com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey getUnitsId() {
             return mUnitsId;
         }
 
-        public void setAmount(Double amount) {
+        public void setAmount(
+            @Nullable
+            Double amount) {
             if (((mAmount == null)&&(amount == null))||((mAmount!= null)&&mAmount.equals(amount))) {
                 return ;
             }
@@ -219,6 +231,7 @@ public class MealEventTable
             setIsModified(true);
         }
 
+        @Nullable
         public Double getAmount() {
             return mAmount;
         }

@@ -170,6 +170,7 @@ public class MealTable
             setIsModified(true);
         }
 
+        @Nonnull
         public String getName() {
             return mName;
         }
