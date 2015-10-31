@@ -10,17 +10,15 @@ public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateT
         DateTime.register(org.joda.time.DateTime.class, new DateTimeConverter());
     }
 
-    @Override
-    public
     @Nonnull
-    DateTime convert(@Nonnull org.joda.time.DateTime fromType) {
+    @Override
+    public DateTime from(@Nonnull org.joda.time.DateTime fromType) {
         return new DateTime(Utils.Time.toDatabaseString(fromType));
     }
 
-    @Override
-    public
     @Nonnull
-    org.joda.time.DateTime convert(@Nonnull DateTime dateTime) {
+    @Override
+    public org.joda.time.DateTime to(@Nonnull Class<org.joda.time.DateTime> type, @Nonnull DateTime dateTime) {
         return Utils.Time.fromDatabaseDefaultString(dateTime.getString());
     }
 }

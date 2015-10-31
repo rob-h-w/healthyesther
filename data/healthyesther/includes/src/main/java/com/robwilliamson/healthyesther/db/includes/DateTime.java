@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.includes;
 import java.util.HashMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class DateTime
         implements Comparable<DateTime> {
@@ -16,18 +17,19 @@ public class DateTime
     }
 
     public <T> DateTime(T otherType) {
-        mString = retrieve(otherType.getClass()).convert(otherType).getString();
+        mString = retrieve(otherType.getClass()).from(otherType).getString();
     }
 
-    public static <T> DateTime from(T otherType) {
+    @Nullable
+    public static <T> DateTime from(@Nullable T otherType) {
         if (otherType == null) {
             return null;
         }
 
-        return retrieve(otherType.getClass()).convert(otherType);
+        return retrieve(otherType.getClass()).from(otherType);
     }
 
-    public static <T> void register(Class<T> type, DateTime.Converter converter) {
+    public static <T> void register(Class<T> type, DateTime.Converter<T> converter) {
         sConverterRegistry.put(type, converter);
     }
 
@@ -40,7 +42,7 @@ public class DateTime
     }
 
     @Override
-    public int compareTo(DateTime other) {
+    public int compareTo(@Nonnull DateTime other) {
         if (mString == null) {
             if (other.mString == null) {
                 return 0;
@@ -50,18 +52,18 @@ public class DateTime
         return mString.compareTo(other.mString);
     }
 
-    public
     @Nonnull
-    <T> T getDate(@Nonnull Class<T> dateType) {
-        return (T) retrieve(dateType).convert(this);
+    public <T> T as(@Nonnull Class<T> dateType) {
+        Converter converter = retrieve(dateType);
+        return dateType.cast(converter.to(dateType, this));
     }
 
     public interface Converter<T> {
         @Nonnull
-        DateTime convert(@Nonnull T fromType);
+        DateTime from(@Nonnull T fromType);
 
         @Nonnull
-        T convert(@Nonnull DateTime dateTime);
+        T to(@Nonnull Class<T> type, @Nonnull DateTime dateTime);
     }
 
 }
