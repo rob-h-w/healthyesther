@@ -126,6 +126,10 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     private void checkDatabaseCorrectnessForName(@Nonnull final String name, int expectedCount) {
+        // Ensure all busy activity has settled down:
+        onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
+
+        // Check the database contents.
         DatabaseWrapperClass db = new DatabaseWrapperClass(HealthDbHelper.getInstance(
                 getInstrumentation().getTargetContext()).getWritableDatabase());
         MealTable.Row[] meals = HealthDatabase.MEAL_TABLE.select(db, new Where() {
