@@ -71,6 +71,22 @@ public class MealEventTable
         return select(database, ((Where) where));
     }
 
+    @Nullable
+    public MealEventTable.Row select0Or1(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        MealEventTable.Row[] rows = select(database, where);
+        if (rows.length == 0) {
+            return null;
+        }
+        if (rows.length > 1) {
+            throw new Table.TooManyRowsException(rows.length, where);
+        }
+        return rows[ 1 ];
+    }
+
 
     /**
      * This class is generated, and should not be edited. Edits will be overwritten

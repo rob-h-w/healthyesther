@@ -29,4 +29,10 @@ public abstract class Table {
     public interface Upgrader {
         void upgrade(Transaction transaction, int from, int to);
     }
+
+    public static class TooManyRowsException extends RuntimeException {
+        public TooManyRowsException(int count, @Nonnull Where where) {
+            super("Expected to get 0 or 1 rows from selection statement \"" + where.getWhere() + "\", instead got " + count + ".");
+        }
+    }
 }

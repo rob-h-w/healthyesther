@@ -8,9 +8,11 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JBlock;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JFieldRef;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
@@ -24,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
 public class TableGenerator extends BaseClassGenerator {
@@ -129,6 +132,8 @@ public class TableGenerator extends BaseClassGenerator {
         where = selectOverload.params().get(1);
 
         selectOverload.body()._return(JExpr.invoke(null, select).arg(db).arg(JExpr.cast(whereClass, where)));
+
+        makeSelect0Or1(select);
     }
 
     private JMethod makeSelect(JType whereType) {
@@ -140,6 +145,28 @@ public class TableGenerator extends BaseClassGenerator {
         JVar where = select.param(whereType, "where");
         where.annotate(Nonnull.class);
         return select;
+    }
+
+    private void makeSelect0Or1(@Nonnull JMethod select) {
+        JDefinedClass rowClass = getRow().getJClass();
+        JMethod select0Or1 = getJClass().method(JMod.PUBLIC, rowClass, "select0Or1");
+        select0Or1.annotate(Nullable.class);
+
+        JVar db = select0Or1.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+        db.annotate(Nonnull.class);
+        JVar where = select0Or1.param(Where.class, "where");
+        where.annotate(Nonnull.class);
+
+        JBlock body = select0Or1.body();
+        JVar rows = body.decl(rowClass.array(), "rows", JExpr.invoke(select).arg(db).arg(where));
+        JFieldRef length = JExpr.ref(rows, "length");
+
+        body._if(length.eq(JExpr.lit(0)))._then()._return(JExpr._null());
+
+        JClass exception = model().ref(Table.TooManyRowsException.class);
+        body._if(length.gt(JExpr.lit(1)))._then()._throw(JExpr._new(exception).arg(length).arg(where));
+
+        body._return(rows.component(JExpr.lit(1)));
     }
 
     private void makeCreate() {

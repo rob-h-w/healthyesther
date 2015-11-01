@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.db.generated;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -66,6 +67,22 @@ public class MedicationEventTable
         @Nonnull
         MedicationEventTable.PrimaryKey where) {
         return select(database, ((Where) where));
+    }
+
+    @Nullable
+    public MedicationEventTable.Row select0Or1(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        MedicationEventTable.Row[] rows = select(database, where);
+        if (rows.length == 0) {
+            return null;
+        }
+        if (rows.length > 1) {
+            throw new Table.TooManyRowsException(rows.length, where);
+        }
+        return rows[ 1 ];
     }
 
 
