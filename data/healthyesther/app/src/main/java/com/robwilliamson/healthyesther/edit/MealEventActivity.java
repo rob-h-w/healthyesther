@@ -135,6 +135,28 @@ public class MealEventActivity extends AbstractEditEventActivity
                                 }
                             }
                     );
+
+                    if (mealEvent == null) {
+                        // There's nothing more to do here.
+                        return;
+                    }
+
+                    getExecutor().perform(new TransactionExecutor.Operation() {
+                        @Override
+                        public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                            MealTable.Row meal = HealthDatabase.MEAL_TABLE.select0Or1(
+                                    database,
+                                    new Where() {
+                                        @Override
+                                        public String getWhere() {
+                                            return MealTable._ID + " = " + mealEvent.getConcretePrimaryKey().getMealId().getId();
+                                        }
+                                    }
+                            );
+
+                            getMealFragment().setRow(meal);
+                        }
+                    });
                 }
             });
         }

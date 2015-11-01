@@ -45,6 +45,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     private MealEventData mMealEventData;
     private MealData mMealData;
     private Map<String, MealTable.Row> mNameToRowMap = new HashMap<>();
+    private MealTable.Row mRow;
 
     public EditMealFragment() {
         super(EditMealFragment.Watcher.class);
@@ -296,6 +297,16 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         }
 
         return new MealTable.Row(name);
+    }
+
+    public void setRow(final MealTable.Row row) {
+        this.mRow = row;
+        this.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getNameView().setText(row.getName());
+            }
+        });
     }
 
     @Override

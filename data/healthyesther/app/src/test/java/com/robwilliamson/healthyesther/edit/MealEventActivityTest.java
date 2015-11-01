@@ -6,7 +6,6 @@ import android.util.Pair;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
@@ -26,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -47,6 +47,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -95,7 +96,13 @@ public class MealEventActivityTest {
     private MealEventTable.Row mMealEventTableRow;
 
     @Mock
+    private MealEventTable.PrimaryKey mMealEventTablePrimaryKey;
+
+    @Mock
     private TransactionExecutor mTransactionExecutor;
+
+    @Mock
+    private MealTable mMealTable;
 
     @Before
     public void setup() {
@@ -122,10 +129,18 @@ public class MealEventActivityTest {
         doReturn(2L).when(mEventPrimaryKey).getId();
 
         HealthDatabaseAccessor.INSTANCE.setMealEventTable(mMealEventTable);
+        HealthDatabaseAccessor.INSTANCE.setMealTable(mMealTable);
 
         doReturn(EventTypeTable.MEAL.getId()).when(mEventTableRow).getTypeId();
         doReturn(mEventPrimaryKey).when(mEventTableRow).getConcretePrimaryKey();
         doReturn(3L).when(mEventPrimaryKey).getId();
+
+        doReturn(new MealEventTable.Row[] {mMealEventTableRow}).when(mMealEventTable).select(eq(mDatabase), any(Where.class));
+        doReturn(mMealEventTableRow).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
+
+        doReturn(mMealEventTablePrimaryKey).when(mMealEventTableRow).getConcretePrimaryKey();
+        doReturn(mMealPrimaryKey).when(mMealEventTablePrimaryKey).getMealId();
+        doReturn(mMealTableRow).when(mMealTable).select0Or1(eq(mDatabase), any(Where.class));
     }
 
     @Test
@@ -225,10 +240,63 @@ public class MealEventActivityTest {
         assertThat(whereArgumentCaptor.getValue().getWhere(), is("event_id = 3"));
     }
 
+    @Test
+    public void onEventFromIntentOperationNullMealEvent_doesNothingMore() {
+        doReturn(null).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
+
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        TransactionExecutor.Operation operation = interceptRequestedOperation();
+
+        operation.doTransactionally(mDatabase, mTransaction);
+
+        verifyNoMoreInteractions(mTransactionExecutor);
+    }
+
+    @Test
+    public void onEventFromIntentOperationWithMealEvent_requestsMeal() {
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        TransactionExecutor.Operation operation = interceptMealRequestOperation();
+
+        Mockito.reset(mMealEventTable); // So we can expect 1 call to select0or1 again.
+
+        operation.doTransactionally(mDatabase, mTransaction);
+
+        ArgumentCaptor<Where> whereArgumentCaptor = ArgumentCaptor.forClass(Where.class);
+        verify(mMealTable).select0Or1(eq(mDatabase), whereArgumentCaptor.capture());
+
+        assertThat(whereArgumentCaptor.getValue().getWhere(), is("_id = 1"));
+    }
+
+    @Test
+    public void onEventFromIntentOperationWithMealEvent_setsMealOnMealEditFragment() {
+        mActivity.onEventFromIntent(mEventTableRow);
+
+        TransactionExecutor.Operation operation = interceptMealRequestOperation();
+
+        operation.doTransactionally(mDatabase, mTransaction);
+
+        verify(mMealFragment).setRow(mMealTableRow);
+    }
+
+    @NonNull
+    private TransactionExecutor.Operation interceptMealRequestOperation() {
+
+        TransactionExecutor.Operation operation = interceptRequestedOperation();
+
+        operation.doTransactionally(mDatabase, mTransaction);
+
+        return interceptRequestedOperation();
+    }
+
     @NonNull
     private TransactionExecutor.Operation interceptRequestedOperation() {
         ArgumentCaptor<TransactionExecutor.Operation> operationArgumentCaptor = ArgumentCaptor.forClass(TransactionExecutor.Operation.class);
         verify(mTransactionExecutor).perform(operationArgumentCaptor.capture());
+
+        Mockito.reset(mTransactionExecutor); // Allow the next interception.
+
         return operationArgumentCaptor.getValue();
     }
 
