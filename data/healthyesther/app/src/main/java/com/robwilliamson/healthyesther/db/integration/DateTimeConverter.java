@@ -21,4 +21,9 @@ public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateT
     public org.joda.time.DateTime to(@Nonnull Class<org.joda.time.DateTime> type, @Nonnull DateTime dateTime) {
         return Utils.Time.fromDatabaseDefaultString(dateTime.getString());
     }
+
+    @Nonnull
+    public static DateTime now() {
+        return DateTime.from(Utils.Time.localNow());
+    }
 }
