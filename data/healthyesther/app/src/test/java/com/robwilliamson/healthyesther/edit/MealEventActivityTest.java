@@ -220,7 +220,7 @@ public class MealEventActivityTest {
         operation.doTransactionally(mDatabase, mTransaction);
 
         ArgumentCaptor<Where> whereArgumentCaptor = ArgumentCaptor.forClass(Where.class);
-        verify(mMealEventTable).select(eq(mDatabase), whereArgumentCaptor.capture());
+        verify(mMealEventTable).select0Or1(eq(mDatabase), whereArgumentCaptor.capture());
 
         assertThat(whereArgumentCaptor.getValue().getWhere(), is("event_id = 3"));
     }
