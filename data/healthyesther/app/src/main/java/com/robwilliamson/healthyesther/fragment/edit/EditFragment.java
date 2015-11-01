@@ -22,10 +22,12 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
         mType = type;
     }
 
+    @Deprecated
     public boolean getModified() {
         return mModified;
     }
 
+    @Deprecated
     public void setModified(boolean modified) {
         mModified = modified;
     }
