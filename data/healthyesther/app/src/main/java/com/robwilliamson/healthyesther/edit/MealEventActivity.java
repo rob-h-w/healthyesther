@@ -16,12 +16,14 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereForeignKey;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,9 +58,21 @@ public class MealEventActivity extends AbstractEditEventActivity
         return new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                final MealTable.Row meal = getMealFragment().getRow();
+                MealTable.Row meal = getMealFragment().getRow();
+                if (meal == null) {
+                    throw new InvalidParameterException("The meal name should be set");
+                }
                 meal.applyTo(database.getTransaction());
-                final EventTable.Row event = getEventFragment().getRow();
+
+                EventTable.Row event = getEventFragment().getRow();
+                if (event == null) {
+                    event = new EventTable.Row(
+                            EventTypeTable.MEAL.getId(),
+                            DateTimeConverter.now(),
+                            DateTimeConverter.now(),
+                            null,
+                            null);
+                }
                 event.setTypeId(EventTypeTable.MEAL.getId());
                 event.applyTo(database.getTransaction());
                 MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(database, new AndWhere(

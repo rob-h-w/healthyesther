@@ -14,7 +14,6 @@ import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.generated.EventTypeTable;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
@@ -29,24 +28,20 @@ import javax.annotation.Nullable;
  * Allows the user to edit an event's name and when properties.
  */
 public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> implements DateTimePickerListener {
+    @Deprecated
     private EventData mEvent = new EventData();
+
     private boolean mUserEditedEventName;
+
+    @Nullable
     private EventTable.Row mRow;
 
     public EditEventFragment() {
         super(EditEventFragment.Watcher.class);
     }
 
+    @Nullable
     public EventTable.Row getRow() {
-        if (mRow == null) {
-            mRow = new EventTable.Row(
-                    new EventTypeTable.PrimaryKey(mEvent.getTypeId()),
-                    com.robwilliamson.healthyesther.db.includes.DateTime.from(mEvent.getCreated()),
-                    com.robwilliamson.healthyesther.db.includes.DateTime.from(mEvent.getWhen()),
-                    com.robwilliamson.healthyesther.db.includes.DateTime.from(mEvent.getModified()),
-                    mEvent.getName());
-        }
-
         return mRow;
     }
 
