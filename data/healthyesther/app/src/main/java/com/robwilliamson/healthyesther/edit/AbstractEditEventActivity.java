@@ -20,7 +20,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment.Watcher;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.reminder.TimingManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;

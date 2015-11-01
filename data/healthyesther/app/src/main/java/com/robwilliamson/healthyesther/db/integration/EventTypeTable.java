@@ -1,7 +1,5 @@
 package com.robwilliamson.healthyesther.db.integration;
 
-import com.robwilliamson.healthyesther.db.generated.MealEventTable;
-
 import javax.annotation.Nonnull;
 
 public enum EventTypeTable {
