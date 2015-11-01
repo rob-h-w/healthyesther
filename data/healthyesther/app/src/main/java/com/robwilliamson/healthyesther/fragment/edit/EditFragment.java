@@ -1,6 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -28,10 +28,9 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        mWatcher = Utils.checkAssignable(activity, mType);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mWatcher = Utils.checkAssignable(context, mType);
     }
 
     /**
