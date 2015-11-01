@@ -16,6 +16,8 @@ import com.robwilliamson.healthyesther.db.use.Query;
 
 import java.util.HashMap;
 
+import javax.annotation.Nullable;
+
 public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Watcher> {
     private HashMap<Long, String> mNoteContents;
     private Long mUserSelectedId = null;
@@ -81,6 +83,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
         return getNoteView().getText().toString();
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         String name = getName();

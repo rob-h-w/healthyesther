@@ -20,6 +20,8 @@ import com.robwilliamson.healthyesther.db.use.Query;
 
 import java.util.HashMap;
 
+import javax.annotation.Nullable;
+
 public class EditMedicationFragment extends SuggestionEditFragment<EditMedicationFragment.Watcher> {
 
     public EditMedicationFragment() {
@@ -89,6 +91,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
         };
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         String name = getName();

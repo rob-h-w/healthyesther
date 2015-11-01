@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGroupFragment.Watcher> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
@@ -74,6 +76,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
         });
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         return new EventModification() {

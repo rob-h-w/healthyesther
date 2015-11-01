@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> implements InitializationQuerier<MealTable.Row> {
 
@@ -239,6 +240,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         });
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         String name = getName();

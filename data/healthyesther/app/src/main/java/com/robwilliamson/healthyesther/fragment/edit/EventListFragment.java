@@ -19,6 +19,8 @@ import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
 import java.util.Arrays;
 
+import javax.annotation.Nullable;
+
 /**
  * A fragment representing a list of Events.
  * <p/>
@@ -67,6 +69,7 @@ public abstract class EventListFragment extends EditFragment<EventListFragment.W
         return R.layout.fragment_event;
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         return null;

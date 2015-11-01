@@ -14,6 +14,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     @NonNull
     Class<T> mType;
 
+    @Nullable
     private T mWatcher = null;
     private boolean mModified;
 
@@ -46,6 +47,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
         mWatcher = null;
     }
 
+    @Nullable
     public abstract Modification getModification();
 
     public abstract boolean validate();

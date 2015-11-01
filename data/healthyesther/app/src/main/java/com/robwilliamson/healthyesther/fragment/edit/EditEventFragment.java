@@ -23,6 +23,8 @@ import com.robwilliamson.healthyesther.fragment.dialog.TimePickerFragment;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import javax.annotation.Nullable;
+
 /**
  * Allows the user to edit an event's name and when properties.
  */
@@ -156,6 +158,7 @@ public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> i
         return R.layout.fragment_edit_event;
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         if (mEvent.getCreated() == null) {

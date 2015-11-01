@@ -17,6 +17,8 @@ import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
+import javax.annotation.Nullable;
+
 public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
     private static final String VALUE = "value";
     private static final String SCORE = "score";
@@ -140,6 +142,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
         mScore.bundle(args, SCORE);
     }
 
+    @Nullable
     @Override
     public Modification getModification() {
         return new HealthScore.Modification(mScore, getModified());
