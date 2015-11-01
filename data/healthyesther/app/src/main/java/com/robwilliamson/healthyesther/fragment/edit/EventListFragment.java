@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,14 +78,14 @@ public abstract class EventListFragment extends EditFragment<EventListFragment.W
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         callWatcher(new WatcherCaller<Watcher>() {
             @Override
-            public void call(Watcher watcher) {
+            public void call(@NonNull Watcher watcher) {
                 watcher.onEventSelected(mAdapter.getItem(position));
             }
         });
@@ -102,7 +103,7 @@ public abstract class EventListFragment extends EditFragment<EventListFragment.W
 
         callWatcher(new WatcherCaller<Watcher>() {
             @Override
-            public void call(Watcher watcher) {
+            public void call(@NonNull Watcher watcher) {
                 watcher.enqueueQueries(Arrays.asList(getQueries()));
             }
         });

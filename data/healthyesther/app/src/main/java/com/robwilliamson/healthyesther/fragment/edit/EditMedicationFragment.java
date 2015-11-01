@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -53,7 +54,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                     public void onQueryFailed(final Throwable error) {
                         callWatcher(new WatcherCaller<Watcher>() {
                             @Override
-                            public void call(Watcher watcher) {
+                            public void call(@NonNull Watcher watcher) {
                                 watcher.onQueryFailed(EditMedicationFragment.this, error);
                             }
                         });
@@ -79,7 +80,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
                     public void onQueryFailed(final Throwable error) {
                         callWatcher(new WatcherCaller<Watcher>() {
                             @Override
-                            public void call(Watcher watcher) {
+                            public void call(@NonNull Watcher watcher) {
                                 watcher.onQueryFailed(EditMedicationFragment.this, error);
                             }
                         });
@@ -138,7 +139,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<EditMedicatio
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
         watcher.onFragmentUpdate(this);
     }
 

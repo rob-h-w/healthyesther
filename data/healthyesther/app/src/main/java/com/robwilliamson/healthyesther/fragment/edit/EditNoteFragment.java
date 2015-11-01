@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
@@ -103,7 +104,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
         watcher.onFragmentUpdate(this);
     }
 
@@ -139,7 +140,7 @@ public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Wa
                     public void onQueryFailed(final Throwable error) {
                         callWatcher(new WatcherCaller<Watcher>() {
                             @Override
-                            public void call(Watcher watcher) {
+                            public void call(@NonNull Watcher watcher) {
                                 watcher.onQueryFailed(EditNoteFragment.this, error);
                             }
                         });

@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -81,7 +82,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
             case R.id.action_hide:
                 callWatcher(new WatcherCaller<Watcher>() {
                     @Override
-                    public void call(Watcher watcher) {
+                    public void call(@NonNull Watcher watcher) {
                         watcher.onFragmentRemoveRequest(EditScoreEventFragment.this);
                     }
                 });
@@ -155,7 +156,7 @@ public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
         watcher.onFragmentUpdate(this);
     }
 

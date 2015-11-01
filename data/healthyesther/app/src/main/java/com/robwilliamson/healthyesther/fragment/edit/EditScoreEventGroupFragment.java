@@ -4,6 +4,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -128,7 +129,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
         watcher.onFragmentUpdate(this);
     }
 
@@ -171,7 +172,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
 
                             EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
                                 @Override
-                                public void call(EditScoreEventGroupFragment.Watcher watcher) {
+                                public void call(@NonNull EditScoreEventGroupFragment.Watcher watcher) {
                                     watcher.enqueueQueries(mQueries);
                                 }
                             });
@@ -181,7 +182,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGrou
                         public void onQueryFailed(final Throwable error) {
                             EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
                                 @Override
-                                public void call(EditScoreEventGroupFragment.Watcher watcher) {
+                                public void call(@NonNull EditScoreEventGroupFragment.Watcher watcher) {
                                     watcher.onQueryFailed(EditScoreEventGroupFragment.this, error);
                                 }
                             });

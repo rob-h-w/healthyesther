@@ -11,11 +11,13 @@ import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
 import javax.annotation.Nullable;
 
 public abstract class EditFragment<T> extends AbstractQueryFragment {
+    @NonNull
     Class<T> mType;
+
     private T mWatcher = null;
     private boolean mModified;
 
-    public EditFragment(Class<T> type) {
+    public EditFragment(@NonNull Class<T> type) {
         mType = type;
     }
 
@@ -48,9 +50,9 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
 
     public abstract boolean validate();
 
-    protected abstract void updateWatcher(T watcher);
+    protected abstract void updateWatcher(@NonNull T watcher);
 
-    protected void callWatcher(WatcherCaller<T> call) {
+    protected void callWatcher(@NonNull WatcherCaller<T> call) {
         if (mWatcher != null) {
             call.call(mWatcher);
         }
@@ -63,7 +65,7 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     }
 
     @Nullable
-    protected <T extends View> T getTypeSafeView(int id, @NonNull Class<T> type) {
+    protected <U extends View> U getTypeSafeView(int id, @NonNull Class<U> type) {
         if (getView() == null) {
             return null;
         }
@@ -71,6 +73,6 @@ public abstract class EditFragment<T> extends AbstractQueryFragment {
     }
 
     protected interface WatcherCaller<T> {
-        void call(T watcher);
+        void call(@NonNull T watcher);
     }
 }

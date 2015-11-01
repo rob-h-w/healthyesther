@@ -67,7 +67,7 @@ public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> i
             final EventData[] event = new EventData[1];
             callWatcher(new WatcherCaller<Watcher>() {
                 @Override
-                public void call(Watcher watcher) {
+                public void call(@NonNull Watcher watcher) {
                     event[0] = watcher.getIntentEventData();
                 }
             });
@@ -78,7 +78,7 @@ public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> i
                 mEvent = event[0];
                 callWatcher(new WatcherCaller<Watcher>() {
                     @Override
-                    public void call(Watcher watcher) {
+                    public void call(@NonNull Watcher watcher) {
                         watcher.onUseIntentEventData(mEvent);
                     }
                 });
@@ -172,7 +172,7 @@ public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> i
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
 
     }
 

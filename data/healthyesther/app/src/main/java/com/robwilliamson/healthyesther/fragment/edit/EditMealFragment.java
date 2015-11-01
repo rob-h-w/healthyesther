@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -57,7 +58,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         if (mEventData.get_id() != null && mEventData.get_id() != 0L) {
             callWatcher(new WatcherCaller<Watcher>() {
                 @Override
-                public void call(Watcher watcher) {
+                public void call(@NonNull Watcher watcher) {
                     ArrayList<Query> queries = new ArrayList<>();
                     queries.addAll(Arrays.asList(getQueries()));
                     queries.add(new GetOneWithEventIdQuery(mEventData.get_id()) {
@@ -98,7 +99,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     private void requestMeal() {
         callWatcher(new WatcherCaller<Watcher>() {
             @Override
-            public void call(Watcher watcher) {
+            public void call(@NonNull Watcher watcher) {
                 watcher.enqueueQueries(Arrays.asList(new Query[]{
                         new GetOneWithColumnIdQuery(mMealEventData.getMealId()) {
                             private MealData mMealData;
@@ -145,7 +146,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     private void reportQueryFailed(final Throwable error) {
         callWatcher(new WatcherCaller<Watcher>() {
             @Override
-            public void call(Watcher watcher) {
+            public void call(@NonNull Watcher watcher) {
                 watcher.onQueryFailed(EditMealFragment.this, error);
             }
         });
@@ -256,7 +257,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     }
 
     @Override
-    protected void updateWatcher(Watcher watcher) {
+    protected void updateWatcher(@NonNull Watcher watcher) {
         watcher.onFragmentUpdate(this);
     }
 
