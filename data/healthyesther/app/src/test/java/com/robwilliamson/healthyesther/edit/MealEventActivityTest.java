@@ -135,7 +135,7 @@ public class MealEventActivityTest {
         doReturn(mEventPrimaryKey).when(mEventTableRow).getConcretePrimaryKey();
         doReturn(3L).when(mEventPrimaryKey).getId();
 
-        doReturn(new MealEventTable.Row[] {mMealEventTableRow}).when(mMealEventTable).select(eq(mDatabase), any(Where.class));
+        doReturn(new MealEventTable.Row[]{mMealEventTableRow}).when(mMealEventTable).select(eq(mDatabase), any(Where.class));
         doReturn(mMealEventTableRow).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
 
         doReturn(mMealEventTablePrimaryKey).when(mMealEventTableRow).getConcretePrimaryKey();

@@ -11,6 +11,11 @@ public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateT
     }
 
     @Nonnull
+    public static DateTime now() {
+        return DateTime.from(Utils.Time.localNow());
+    }
+
+    @Nonnull
     @Override
     public DateTime from(@Nonnull org.joda.time.DateTime fromType) {
         return new DateTime(Utils.Time.toDatabaseString(fromType));
@@ -20,10 +25,5 @@ public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateT
     @Override
     public org.joda.time.DateTime to(@Nonnull Class<org.joda.time.DateTime> type, @Nonnull DateTime dateTime) {
         return Utils.Time.fromDatabaseDefaultString(dateTime.getString());
-    }
-
-    @Nonnull
-    public static DateTime now() {
-        return DateTime.from(Utils.Time.localNow());
     }
 }
