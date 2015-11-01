@@ -289,6 +289,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         };
     }
 
+    @Nullable
     public MealTable.Row getRow() {
         String name = getName();
         if (name == null) {
