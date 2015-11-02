@@ -145,6 +145,7 @@ public class MealEventTable
             return true;
         }
 
+        @Nullable
         @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();

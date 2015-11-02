@@ -280,6 +280,7 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 setResults(HealthDatabase.MEAL_TABLE.select(database, new Where() {
+                    @Nullable
                     @Override
                     public String getWhere() {
                         return null;

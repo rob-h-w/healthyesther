@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MealEventActivity extends AbstractEditEventActivity
         implements EditMealFragment.Watcher {
@@ -143,6 +144,7 @@ public class MealEventActivity extends AbstractEditEventActivity
                     final MealEventTable.Row mealEvent = HealthDatabase.MEAL_EVENT_TABLE.select0Or1(
                             database,
                             new Where() {
+                                @Nullable
                                 @Override
                                 public String getWhere() {
                                     return MealEventTable.EVENT_ID + " = " + event.getConcretePrimaryKey().getId();
@@ -161,6 +163,7 @@ public class MealEventActivity extends AbstractEditEventActivity
                             MealTable.Row meal = HealthDatabase.MEAL_TABLE.select0Or1(
                                     database,
                                     new Where() {
+                                        @Nullable
                                         @Override
                                         public String getWhere() {
                                             return MealTable._ID + " = " + mealEvent.getConcretePrimaryKey().getMealId().getId();

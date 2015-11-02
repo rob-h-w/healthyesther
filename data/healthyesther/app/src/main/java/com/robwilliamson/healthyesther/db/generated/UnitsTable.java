@@ -130,6 +130,7 @@ public class UnitsTable
             return true;
         }
 
+        @Nullable
         @Override
         public String getWhere() {
             StringBuilder where = new StringBuilder();

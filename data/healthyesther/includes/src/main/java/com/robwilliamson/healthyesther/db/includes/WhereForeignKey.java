@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.db.includes;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class WhereForeignKey {
     @Nonnull
@@ -24,6 +25,7 @@ public class WhereForeignKey {
     @Nonnull
     public Where build() {
         return new Where() {
+            @Nullable
             @Override
             public String getWhere() {
                 return mExpression;

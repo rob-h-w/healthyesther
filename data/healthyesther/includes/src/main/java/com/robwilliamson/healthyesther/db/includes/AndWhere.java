@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.db.includes;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class AndWhere implements Where {
     private StringBuilder mWhere = new StringBuilder();
@@ -13,6 +14,7 @@ public class AndWhere implements Where {
         }
     }
 
+    @Nullable
     @Override
     public String getWhere() {
         return mWhere.toString();
