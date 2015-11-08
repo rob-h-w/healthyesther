@@ -39,7 +39,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Watcher> implements InitializationQuerier<MealTable.Row> {
+public class EditMealFragment extends SuggestionEditFragment<MealTable.Row, EditMealFragment.Watcher>
+        implements InitializationQuerier<MealTable.Row> {
 
     private static final String NAME_TO_ROW_MAP = "name to row map";
 
@@ -47,7 +48,6 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
     private MealEventData mMealEventData;
     private MealData mMealData;
     private Map<String, MealTable.Row> mNameToRowMap = new HashMap<>();
-    private MealTable.Row mRow;
 
     public EditMealFragment() {
         super(EditMealFragment.Watcher.class);
@@ -304,8 +304,8 @@ public class EditMealFragment extends SuggestionEditFragment<EditMealFragment.Wa
         return new MealTable.Row(name);
     }
 
-    public void setRow(final MealTable.Row row) {
-        this.mRow = row;
+    public void setRow(@NonNull final MealTable.Row row) {
+        super.setRow(row);
         this.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

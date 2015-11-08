@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +18,7 @@ import java.util.Set;
  *
  * @param <T> Watcher for this fragment.
  */
-public abstract class SuggestionEditFragment<T> extends EditFragment<T> {
+public abstract class SuggestionEditFragment<R extends BaseRow, T> extends EditFragment<R, T> {
     private Map<String, Long> mSuggestionIds;
 
     protected SuggestionEditFragment(Class<T> type) {

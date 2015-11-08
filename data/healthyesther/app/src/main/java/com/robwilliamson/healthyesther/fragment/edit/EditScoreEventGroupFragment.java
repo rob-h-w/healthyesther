@@ -19,6 +19,7 @@ import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
@@ -31,7 +32,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-public class EditScoreEventGroupFragment extends EditFragment<EditScoreEventGroupFragment.Watcher> {
+public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTable.Row,
+        EditScoreEventGroupFragment.Watcher> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 

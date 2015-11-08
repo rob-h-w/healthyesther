@@ -11,6 +11,8 @@ import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.data.NoteData;
 import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.definition.Note;
+import com.robwilliamson.healthyesther.db.generated.NoteTable;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.use.GetAllNotesQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
 
@@ -18,7 +20,7 @@ import java.util.HashMap;
 
 import javax.annotation.Nullable;
 
-public class EditNoteFragment extends SuggestionEditFragment<EditNoteFragment.Watcher> {
+public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row, EditNoteFragment.Watcher> {
     private HashMap<Long, String> mNoteContents;
     private Long mUserSelectedId = null;
     private Long mOldUserSelectedId = null;

@@ -14,6 +14,7 @@ import com.robwilliamson.healthyesther.db.data.MedicationData;
 import com.robwilliamson.healthyesther.db.definition.Medication;
 import com.robwilliamson.healthyesther.db.definition.MedicationName;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.use.GetAllMedicationNamesQuery;
 import com.robwilliamson.healthyesther.db.use.GetAllMedicationsQuery;
 import com.robwilliamson.healthyesther.db.use.Query;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 
 import javax.annotation.Nullable;
 
-public class EditMedicationFragment extends SuggestionEditFragment<EditMedicationFragment.Watcher> {
+public class EditMedicationFragment extends SuggestionEditFragment<MedicationTable.Row, EditMedicationFragment.Watcher> {
 
     public EditMedicationFragment() {
         super(EditMedicationFragment.Watcher.class);

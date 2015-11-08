@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
+import com.robwilliamson.healthyesther.db.includes.Key;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.use.Query;
 
 import org.junit.Before;
@@ -16,6 +19,9 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.io.Serializable;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static org.hamcrest.core.Is.is;
@@ -33,6 +39,9 @@ public class EditFragmentTest {
 
     @Mock
     private EditFragment.WatcherCaller<Object> mWatcherCaller;
+
+    @Mock
+    private TestableRow mRow;
 
     @Before
     public void setup() {
@@ -75,7 +84,7 @@ public class EditFragmentTest {
     }
 
     @SuppressLint("ValidFragment")
-    private static class TestableEditFragment extends EditFragment<Object> {
+    private static class TestableEditFragment extends EditFragment<TestableRow, Object> {
         private Object mWatcher;
 
         public TestableEditFragment(Class<Object> type) {
@@ -117,6 +126,34 @@ public class EditFragmentTest {
         @Override
         public void callWatcher(@NonNull WatcherCaller<Object> call) {
             super.callWatcher(call);
+        }
+    }
+
+    private static class TestableRow extends BaseRow<TestablePrimaryKey> {
+
+        @Nonnull
+        @Override
+        protected Object insert(@Nonnull Transaction transaction) {
+            return 1;
+        }
+
+        @Override
+        protected void update(@Nonnull Transaction transaction) {
+
+        }
+
+        @Override
+        protected void remove(@Nonnull Transaction transaction) {
+
+        }
+    }
+
+    private static class TestablePrimaryKey implements Serializable, Key {
+
+        @Nullable
+        @Override
+        public String getWhere() {
+            return null;
         }
     }
 }

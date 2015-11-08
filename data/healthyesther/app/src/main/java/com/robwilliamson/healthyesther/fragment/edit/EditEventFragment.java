@@ -27,26 +27,20 @@ import javax.annotation.Nullable;
 /**
  * Allows the user to edit an event's name and when properties.
  */
-public class EditEventFragment extends EditFragment<EditEventFragment.Watcher> implements DateTimePickerListener {
+public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFragment.Watcher>
+        implements DateTimePickerListener {
     @Deprecated
     private EventData mEvent = new EventData();
 
     private boolean mUserEditedEventName;
 
-    @Nullable
-    private EventTable.Row mRow;
-
     public EditEventFragment() {
         super(EditEventFragment.Watcher.class);
     }
 
-    @Nullable
-    public EventTable.Row getRow() {
-        return mRow;
-    }
-
+    @Override
     public void setRow(@NonNull EventTable.Row row) {
-        mRow = row;
+        super.setRow(row);
         setName(row.getName());
         setWhen(row.getWhen().as(DateTime.class));
     }

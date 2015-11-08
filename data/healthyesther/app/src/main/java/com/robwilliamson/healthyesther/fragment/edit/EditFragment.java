@@ -6,20 +6,36 @@ import android.view.View;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class EditFragment<T> extends AbstractQueryFragment {
+public abstract class EditFragment<R extends BaseRow, T> extends AbstractQueryFragment {
     @NonNull
     Class<T> mType;
 
     @Nullable
     private T mWatcher = null;
+
+    @Nullable
+    private R mRow;
+
+    @Deprecated
     private boolean mModified;
 
     public EditFragment(@NonNull Class<T> type) {
         mType = type;
+    }
+
+    @Nullable
+    public R getRow() {
+        return mRow;
+    }
+
+    public void setRow(@Nonnull R row) {
+        mRow = row;
     }
 
     @Deprecated

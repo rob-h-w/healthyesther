@@ -14,12 +14,13 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 import javax.annotation.Nullable;
 
-public class EditScoreEventFragment extends EditFragment<EditScoreEventFragment.Watcher> {
+public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, EditScoreEventFragment.Watcher> {
     private static final String VALUE = "value";
     private static final String SCORE = "score";
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";

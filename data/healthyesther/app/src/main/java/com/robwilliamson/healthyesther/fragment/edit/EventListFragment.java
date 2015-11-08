@@ -15,6 +15,7 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
 import java.util.Arrays;
@@ -30,7 +31,7 @@ import javax.annotation.Nullable;
  * Activities containing this fragment MUST implement the {@link EventListFragment.Watcher}
  * interface.
  */
-public abstract class EventListFragment extends EditFragment<EventListFragment.Watcher> implements AbsListView.OnItemClickListener {
+public abstract class EventListFragment extends EditFragment<EventTable.Row, EventListFragment.Watcher> implements AbsListView.OnItemClickListener {
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
