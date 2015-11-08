@@ -52,6 +52,7 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
 
     private void implementWhere() {
         JMethod getWhere = getJClass().method(JMod.PUBLIC, String.class, "getWhere");
+        Utils.annotateNonull(getWhere, false);
         getWhere.annotate(Override.class);
         JBlock body = getWhere.body();
         JVar where = body.decl(model()._ref(StringBuilder.class), "where", JExpr._new(model()._ref(StringBuilder.class)));
