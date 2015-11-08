@@ -184,7 +184,9 @@ public abstract class DbActivity extends BusyActivity
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                querier.onInitializationQueryResponse(operation.getResults());
+                                if (isActive()) {
+                                    querier.onInitializationQueryResponse(operation.getResults());
+                                }
                             }
                         });
                     }
