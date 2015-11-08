@@ -53,11 +53,8 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class MealEventActivityTest {
-    @NonNull
-    private ActivityController<TestableMealEventActivity> mActivityController = Robolectric.buildActivity(TestableMealEventActivity.class);
-
-    @NonNull
-    private TestableMealEventActivity mActivity = mActivityController.get();
+    private ActivityController<TestableMealEventActivity> mActivityController;
+    private TestableMealEventActivity mActivity;
 
     @Mock
     private Database mDatabase;
@@ -112,6 +109,9 @@ public class MealEventActivityTest {
         doReturn(mTransaction).when(mDatabase).getTransaction();
         doReturn(mMealTableRow).when(mMealFragment).getRow();
         doReturn(mEventTableRow).when(mEditEventFragment).getRow();
+
+        mActivityController = Robolectric.buildActivity(TestableMealEventActivity.class);
+        mActivity = mActivityController.get();
 
         mActivity.mEditEventFragment = mEditEventFragment;
         mActivity.mMealFragment = mMealFragment;
