@@ -204,7 +204,9 @@ public class MealEventTable
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId,
             @Nullable
-            com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId, double amount) {
+            com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey unitsId,
+            @Nullable
+            Double amount) {
             setPrimaryKey(new MealEventTable.PrimaryKey(eventId, mealId));
             mUnitsId = unitsId;
             mAmount = amount;
@@ -216,7 +218,9 @@ public class MealEventTable
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.MealTable.Row mealId,
             @Nullable
-            com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId, double amount) {
+            com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId,
+            @Nullable
+            Double amount) {
             mEventIdRow = eventId;
             mMealIdRow = mealId;
             mUnitsIdRow = unitsId;

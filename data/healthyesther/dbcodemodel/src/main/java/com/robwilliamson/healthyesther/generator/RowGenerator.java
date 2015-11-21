@@ -785,15 +785,16 @@ public class RowGenerator extends BaseClassGenerator {
 
         protected abstract Column.Picker getColumnForFieldPicker();
 
-        private JType getValueParamType(Column column) {
+        private JType getValueParamType(@Nonnull Column column) {
             if (column.isForeignKey()) {
                 return column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
             } else {
-                return column.getPrimitiveType(model());
+                return getRowParamTypeWrtNullability(column);
             }
         }
 
-        public Map<Column, JVar> makeRowParamsFor(JMethod method, Column.Picker picker) {
+        @Nonnull
+        public Map<Column, JVar> makeRowParamsFor(@Nonnull JMethod method, @Nonnull Column.Picker picker) {
             Map<Column, JVar> map = new HashMap<>(columns.size());
             for (Column column : columns) {
                 if (!picker.pick(column)) {
@@ -808,12 +809,20 @@ public class RowGenerator extends BaseClassGenerator {
             return map;
         }
 
-        private JType getRowParamType(Column column) {
+        private JType getRowParamType(@Nonnull Column column) {
             if (column.isForeignKey()) {
                 return column.getColumnDependency().getDependency().getTable().getGenerator().getRow().getJClass();
             } else {
+                return getRowParamTypeWrtNullability(column);
+            }
+        }
+
+        private JType getRowParamTypeWrtNullability(@Nonnull Column column) {
+            if (column.isNotNull()) {
                 return column.getPrimitiveType(model());
             }
+
+            return column.getNullableType(model());
         }
     }
 

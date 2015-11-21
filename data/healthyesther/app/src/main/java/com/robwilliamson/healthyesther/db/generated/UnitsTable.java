@@ -181,7 +181,9 @@ public class UnitsTable
 
         public Row(
             @Nonnull
-            String name, double siFactor) {
+            String name,
+            @Nullable
+            Double siFactor) {
             mName = name;
             mSiFactor = siFactor;
         }

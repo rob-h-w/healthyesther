@@ -195,7 +195,9 @@ public class HealthScoreEventTable
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey healthScoreId, long score) {
+            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey healthScoreId,
+            @Nullable
+            Long score) {
             setPrimaryKey(new HealthScoreEventTable.PrimaryKey(eventId, healthScoreId));
             mScore = score;
         }
@@ -204,7 +206,9 @@ public class HealthScoreEventTable
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
-            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreId, long score) {
+            com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreId,
+            @Nullable
+            Long score) {
             mEventIdRow = eventId;
             mHealthScoreIdRow = healthScoreId;
             mScore = score;
