@@ -35,7 +35,7 @@ public class HealthScoreEventTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE health_score_event ( \n    health_score_id         NOT NULL\n                            REFERENCES health_score ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    event_id                NOT NULL\n                            REFERENCES event ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    score           INTEGER,\n    PRIMARY KEY ( health_score_id, event_id ) \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS health_score_event ( \n    health_score_id         NOT NULL\n                            REFERENCES health_score ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    event_id                NOT NULL\n                            REFERENCES event ( _id ) ON DELETE CASCADE\n                                                     ON UPDATE CASCADE,\n    score           INTEGER,\n    PRIMARY KEY ( health_score_id, event_id ) \n)");
     }
 
     @Override

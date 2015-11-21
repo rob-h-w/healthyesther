@@ -34,7 +34,7 @@ public class MedicationNameTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE medication_name ( \n    medication_id             REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    name          TEXT( 50 )  NOT NULL,\n    PRIMARY KEY ( medication_id, name ) \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS medication_name ( \n    medication_id             REFERENCES medication ( _id ) ON DELETE CASCADE\n                                                            ON UPDATE CASCADE,\n    name          TEXT( 50 )  NOT NULL,\n    PRIMARY KEY ( medication_id, name ) \n)");
     }
 
     @Override

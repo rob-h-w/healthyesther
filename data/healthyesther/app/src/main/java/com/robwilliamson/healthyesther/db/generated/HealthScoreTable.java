@@ -38,7 +38,7 @@ public class HealthScoreTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)");
     }
 
     @Override

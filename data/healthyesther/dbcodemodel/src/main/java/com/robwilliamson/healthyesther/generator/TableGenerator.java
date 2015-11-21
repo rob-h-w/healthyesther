@@ -21,9 +21,11 @@ import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
 import java.io.Serializable;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -174,7 +176,26 @@ public class TableGenerator extends BaseClassGenerator {
         JVar transaction = create.param(Transaction.class, "transaction");
         create.annotate(Override.class);
         create.body().invoke(transaction,
-                "execSQL").arg(JExpr.lit(mTable.getDdl()));
+                "execSQL").arg(JExpr.lit(insertIfNotExists(mTable.getDdl())));
+    }
+
+    @Nonnull
+    private String insertIfNotExists(@Nonnull String ddl) {
+        final String upperDdl = ddl.toUpperCase(Locale.ROOT);
+        final String createTable = "CREATE TABLE";
+
+        if (!upperDdl.startsWith(createTable)) {
+            throw new InvalidParameterException("The database definition should begin with 'CREATE TABLE'.");
+        }
+
+        final String ifNotExists = createTable + " IF NOT EXISTS";
+
+        if (upperDdl.startsWith(ifNotExists)) {
+            return ddl;
+        }
+
+        String remainder = ddl.substring(upperDdl.indexOf(createTable) + createTable.length());
+        return ifNotExists + remainder;
     }
 
     public PrimaryKeyGenerator getPrimaryKeyGenerator() {

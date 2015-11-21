@@ -35,7 +35,7 @@ public class NoteTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE note ( \n    _id  INTEGER      PRIMARY KEY,\n    name TEXT( 140 )  NOT NULL,\n    note TEXT \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS note ( \n    _id  INTEGER      PRIMARY KEY,\n    name TEXT( 140 )  NOT NULL,\n    note TEXT \n)");
     }
 
     @Override

@@ -34,7 +34,7 @@ public class MealTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE meal ( \n    _id  INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 140 )  NOT NULL\n                      UNIQUE \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS meal ( \n    _id  INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 140 )  NOT NULL\n                      UNIQUE \n)");
     }
 
     @Override

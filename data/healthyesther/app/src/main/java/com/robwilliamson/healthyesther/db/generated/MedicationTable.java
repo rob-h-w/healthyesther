@@ -34,7 +34,7 @@ public class MedicationTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE medication ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 50 )  NOT NULL \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS medication ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 50 )  NOT NULL \n)");
     }
 
     @Override

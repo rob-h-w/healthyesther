@@ -34,7 +34,7 @@ public class NoteEventTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE note_event ( \n    note_id   NOT NULL\n              REFERENCES note ( _id ) ON DELETE CASCADE\n                                      ON UPDATE CASCADE,\n    event_id  NOT NULL\n              REFERENCES event ( _id ) ON DELETE CASCADE\n                                       ON UPDATE CASCADE,\n    PRIMARY KEY ( note_id, event_id ) \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS note_event ( \n    note_id   NOT NULL\n              REFERENCES note ( _id ) ON DELETE CASCADE\n                                      ON UPDATE CASCADE,\n    event_id  NOT NULL\n              REFERENCES event ( _id ) ON DELETE CASCADE\n                                       ON UPDATE CASCADE,\n    PRIMARY KEY ( note_id, event_id ) \n)");
     }
 
     @Override

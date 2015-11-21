@@ -33,7 +33,7 @@ public class AndroidMetadataTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE android_metadata (locale TEXT)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS android_metadata (locale TEXT)");
     }
 
     @Override

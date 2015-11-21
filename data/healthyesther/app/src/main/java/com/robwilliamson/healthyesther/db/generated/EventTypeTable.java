@@ -35,7 +35,7 @@ public class EventTypeTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE event_type ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 30 )  NOT NULL\n                     UNIQUE,\n    icon TEXT \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS event_type ( \n    _id  INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name TEXT( 30 )  NOT NULL\n                     UNIQUE,\n    icon TEXT \n)");
     }
 
     @Override

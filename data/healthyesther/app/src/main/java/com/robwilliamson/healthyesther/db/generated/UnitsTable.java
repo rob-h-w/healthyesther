@@ -35,7 +35,7 @@ public class UnitsTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE units ( \n    _id       INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name      TEXT( 40 )  NOT NULL\n                          UNIQUE,\n    si_factor REAL \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS units ( \n    _id       INTEGER     PRIMARY KEY AUTOINCREMENT,\n    name      TEXT( 40 )  NOT NULL\n                          UNIQUE,\n    si_factor REAL \n)");
     }
 
     @Override
