@@ -4,6 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
+
 import java.io.IOException;
 
 /**
@@ -44,7 +49,10 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         synchronized (sSync) {
-            Contract.getInstance().create(sqLiteDatabase);
+            Database database = new DatabaseWrapperClass(sqLiteDatabase);
+            Transaction transaction = database.getTransaction();
+            HealthDatabase.create(transaction);
+            transaction.commit();
         }
     }
 
