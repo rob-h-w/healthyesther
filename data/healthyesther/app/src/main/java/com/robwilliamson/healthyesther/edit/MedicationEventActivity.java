@@ -68,15 +68,6 @@ public class MedicationEventActivity extends AbstractEditEventActivity
         };
     }
 
-    @Override
-    protected void onModifySelected(SQLiteDatabase db) {
-    }
-
-    @Override
-    protected int getModifyFailedStringId() {
-        return R.string.could_not_insert_medication_event;
-    }
-
     private EditMedicationFragment getMedicationFragment() {
         return getFragment(MEDICATION_TAG, EditMedicationFragment.class);
     }

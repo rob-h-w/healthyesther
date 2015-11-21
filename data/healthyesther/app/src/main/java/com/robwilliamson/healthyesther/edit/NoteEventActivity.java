@@ -52,15 +52,6 @@ public class NoteEventActivity extends AbstractEditEventActivity
         return null; // TODO
     }
 
-    @Override
-    protected void onModifySelected(SQLiteDatabase db) {
-    }
-
-    @Override
-    protected int getModifyFailedStringId() {
-        return R.string.could_not_insert_note_event;
-    }
-
     private EditNoteFragment getNoteFragment() {
         return getFragment(NOTE_TAG, EditNoteFragment.class);
     }

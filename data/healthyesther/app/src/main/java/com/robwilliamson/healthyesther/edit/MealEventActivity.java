@@ -96,15 +96,6 @@ public class MealEventActivity extends AbstractEditEventActivity
         };
     }
 
-    @Override
-    protected void onModifySelected(SQLiteDatabase db) {
-    }
-
-    @Override
-    protected int getModifyFailedStringId() {
-        return R.string.could_not_insert_meal_event;
-    }
-
     protected EditMealFragment getMealFragment() {
         return getFragment(MEAL_TAG, EditMealFragment.class);
     }

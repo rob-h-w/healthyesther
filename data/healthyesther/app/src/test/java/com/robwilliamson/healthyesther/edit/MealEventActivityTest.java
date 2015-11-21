@@ -183,15 +183,6 @@ public class MealEventActivityTest {
         doReturn(mCursor).when(mDatabase).select(any(Where.class), any(Table.class));
     }
 
-    @Test
-    public void onModifySelected_doesNothing() {
-        SQLiteDatabase sqLiteDatabase = mock(SQLiteDatabase.class);
-        mActivity.onModifySelected(sqLiteDatabase);
-        mActivity.onModifySelected(null);
-
-        verifyZeroInteractions(mDatabase);
-    }
-
     @Test(expected = EventTypeTable.BadEventTypeException.class)
     public void onEventFromIntentWithWrongType_throws() {
         doReturn(EventTypeTable.HEALTH.getId()).when(mEventTableRow).getTypeId();
@@ -315,11 +306,6 @@ public class MealEventActivityTest {
         @Override
         public TransactionExecutor.Operation onModifySelected() {
             return super.onModifySelected();
-        }
-
-        @Override
-        public void onModifySelected(SQLiteDatabase db) {
-            super.onModifySelected(db);
         }
 
         @Override

@@ -89,15 +89,6 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
         };
     }
 
-    @Override
-    protected void onModifySelected(SQLiteDatabase db) {
-    }
-
-    @Override
-    protected int getModifyFailedStringId() {
-        return R.string.could_not_insert_health_score_event;
-    }
-
     private EditScoreEventGroupFragment getScoreGroupFragment() {
         return getFragment(SCORE_GROUP_TAG, EditScoreEventGroupFragment.class);
     }

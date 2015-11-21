@@ -23,10 +23,6 @@ public abstract class AbstractEditEventActivity extends DbActivity {
 
     protected abstract TransactionExecutor.Operation onModifySelected();
 
-    protected abstract void onModifySelected(SQLiteDatabase db);
-
-    protected abstract int getModifyFailedStringId();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
