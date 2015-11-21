@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Event;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 
 import junit.framework.Assert;
 
@@ -65,6 +69,9 @@ public final class Database {
     public static int countEntries(Context targetContext) {
 
         SQLiteDatabase db = HealthDbHelper.getInstance(targetContext).getWritableDatabase();
+        com.robwilliamson.healthyesther.db.includes.Database database = new DatabaseWrapperClass(db);
+
+        EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
 
         Cursor c = db.query(Event.TABLE_NAME, null, null, null, null, null, null);
 

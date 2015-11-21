@@ -1,55 +1,27 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Pair;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.data.DataAbstraction;
-import com.robwilliamson.healthyesther.db.data.HealthScoreEventData;
-import com.robwilliamson.healthyesther.db.definition.EventModification;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
-import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
-import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
-import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
-import com.robwilliamson.healthyesther.db.use.Query;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-import javax.annotation.Nullable;
-
-public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTable.Row,
-        EditScoreEventGroupFragment.Watcher> {
+public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTable.Row> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
-
-    public EditScoreEventGroupFragment() {
-        super(EditScoreEventGroupFragment.Watcher.class);
-    }
-
-    public static EditScoreEventGroupFragment newInstance() {
-        EditScoreEventGroupFragment fragment = new EditScoreEventGroupFragment();
-        Bundle args = new Bundle();
-        return fragment;
-    }
-
-    public void removeScore(EditScoreEventFragment fragment) {
-        getFragmentManager().beginTransaction().remove(fragment).commit();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,50 +50,6 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
         });
     }
 
-    @Nullable
-    @Override
-    public Modification getModification() {
-        return new EventModification() {
-            @Override
-            public void modify(SQLiteDatabase db) {
-                for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
-                    if (!fragment.validate()) {
-                        continue;
-                    }
-
-                    HealthScore.Modification editScoreModification = (HealthScore.Modification) fragment.getModification();
-
-                    editScoreModification.modify(db);
-                    HealthScoreEventData data = new HealthScoreEventData();
-                    data.setValue(fragment.getValue());
-
-                    HealthScoreEvent.Modification eventModification = new HealthScoreEvent.Modification(
-                            editScoreModification,
-                            getEventModification(),
-                            data);
-                    eventModification.modify(db);
-
-                    setRowId(eventModification.getRowId());
-                }
-            }
-
-            @Override
-            protected DataAbstraction getData() {
-                return null;
-            }
-
-            @Override
-            protected void update(SQLiteDatabase db) {
-
-            }
-
-            @Override
-            protected long insert(SQLiteDatabase db) {
-                return 0;
-            }
-        };
-    }
-
     @Override
     public boolean validate() {
         for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
@@ -134,79 +62,8 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
     }
 
     @Override
-    protected void updateWatcher(@NonNull Watcher watcher) {
-        watcher.onFragmentUpdate(this);
-    }
-
-    @Override
-    public Query[] getQueries() {
-        if (getEditScoreEventFragments().isEmpty()) {
-            return new Query[]{
-                    new GetHealthScoresQuery() {
-
-                        private ArrayList<EditFragment> mFragments;
-                        private ArrayList<Query> mQueries;
-
-                        @Override
-                        public void postQueryProcessing(Cursor cursor) {
-                            mFragments = new ArrayList<EditFragment>(cursor.getCount());
-                            mQueries = new ArrayList<Query>(cursor.getCount());
-                            List<HealthScore.Value> scores = DataAbstraction.listFrom(cursor, HealthScore.Value.class);
-                            Set<String> excludedEditScoreTitles = Settings.INSTANCE.getDefaultExcludedEditScores();
-
-                            for (HealthScore.Value score : scores) {
-                                if (excludedEditScoreTitles.contains(score.name)) {
-                                    continue;
-                                }
-
-                                EditFragment fragment = EditScoreEventFragment.newInstance(score);
-
-                                mFragments.add(fragment);
-
-                                Query[] fragmentQueries = fragment.getQueries();
-
-                                if (fragmentQueries != null) {
-                                    mQueries.addAll(Arrays.asList(fragmentQueries));
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onQueryComplete(Cursor cursor) {
-                            addFragments(mFragments);
-
-                            EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
-                                @Override
-                                public void call(@NonNull EditScoreEventGroupFragment.Watcher watcher) {
-                                    watcher.enqueueQueries(mQueries);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onQueryFailed(final Throwable error) {
-                            EditScoreEventGroupFragment.this.callWatcher(new WatcherCaller<EditScoreEventGroupFragment.Watcher>() {
-                                @Override
-                                public void call(@NonNull EditScoreEventGroupFragment.Watcher watcher) {
-                                    watcher.onQueryFailed(EditScoreEventGroupFragment.this, error);
-                                }
-                            });
-                        }
-                    }
-            };
-        } else {
-            return new Query[0];
-        }
-    }
-
-    private void addFragments(List<EditFragment> fragments) {
-        final FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        for (EditFragment fragment : fragments) {
-            addFragment(fragment, transaction);
-        }
-
-        transaction.commit();
+    protected HealthScoreEventTable.Row createRow() {
+        throw new UnsupportedOperationException("This is a relation row - please create and set the row from the containing activity.");
     }
 
     public void addFragment(final EditFragment fragment, final FragmentTransaction transaction) {
@@ -223,7 +80,7 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
     }
 
     private List<EditScoreEventFragment> getEditScoreEventFragments() {
-        final ArrayList<EditScoreEventFragment> list = new ArrayList<EditScoreEventFragment>();
+        final ArrayList<EditScoreEventFragment> list = new ArrayList<>();
         final FragmentManager manager = getFragmentManager();
 
         for (Fragment fragment : manager.getFragments()) {
@@ -246,8 +103,8 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
         for (EditScoreEventFragment fragment : fragments) {
             HealthScore.Value fragmentScore = fragment.getScore();
             if (fragmentScore != null && fragmentScore._id != null) {
-                boolean matchId = fragmentScore._id != 0 && fragmentScore._id == score._id;
-                boolean matchName = fragmentScore.name == score.name;
+                boolean matchId = fragmentScore._id != 0 && fragmentScore._id.equals(score._id);
+                boolean matchName = fragmentScore.name.equals(score.name);
                 if (matchId || matchName) {
                     return fragment;
                 }
@@ -261,9 +118,17 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
         return Utils.View.getTypeSafeFragment(getFragmentManager(), ADD_VALUE_FRAGMENT, AddValueFragment.class);
     }
 
-    public interface Watcher extends EditScoreDialogFragment.Watcher {
-        void onFragmentUpdate(EditScoreEventGroupFragment fragment);
+    public List<Pair<HealthScoreTable.Row, Integer>> getScores() {
+        List<Pair<HealthScoreTable.Row, Integer>> scores = new ArrayList<>();
+        for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
+            HealthScoreTable.Row row = fragment.getRow();
+            Pair<HealthScoreTable.Row, Integer> pair = new Pair<>(
+                    row,
+                    fragment.getValue()
+            );
+            scores.add(pair);
+        }
 
-        void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error);
+        return scores;
     }
 }

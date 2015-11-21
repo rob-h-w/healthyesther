@@ -18,12 +18,12 @@ public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateT
     @Nonnull
     @Override
     public DateTime from(@Nonnull org.joda.time.DateTime fromType) {
-        return new DateTime(Utils.Time.toDatabaseString(fromType));
+        return new DateTime(Utils.Time.toLocalString(fromType));
     }
 
     @Nonnull
     @Override
     public org.joda.time.DateTime to(@Nonnull Class<org.joda.time.DateTime> type, @Nonnull DateTime dateTime) {
-        return Utils.Time.fromDatabaseDefaultString(dateTime.getString());
+        return Utils.Time.fromLocalString(dateTime.getString());
     }
 }

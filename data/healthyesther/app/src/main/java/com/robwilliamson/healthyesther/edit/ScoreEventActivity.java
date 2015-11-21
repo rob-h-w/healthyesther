@@ -1,32 +1,32 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Settings;
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.EventModification;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
-import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
-import com.robwilliamson.healthyesther.db.definition.Modification;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
+import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
-import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreEventGroupFragment.Watcher,
-        EditScoreEventFragment.Watcher,
-        EditEventFragment.Watcher {
+import javax.annotation.Nonnull;
+
+public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreDialogFragment.Watcher, BaseFragment.Watcher {
     private final static String SCORE_GROUP_TAG = "score group";
     private final static String EVENT_TAG = "event";
 
@@ -47,7 +47,14 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
         EditFragment event;
         if (create) {
             scoreGroup = new EditScoreEventGroupFragment();
-            event = new EditEventFragment();
+            DateTime now = DateTime.from(com.robwilliamson.healthyesther.db.Utils.Time.localNow());
+            event = EditEventFragment.getInstance(
+                    new EventTable.Row(
+                            EventTypeTable.HEALTH.getId(),
+                            now,
+                            now,
+                            null,
+                            null));
         } else {
             scoreGroup = getScoreGroupFragment();
             event = getEventFragment();
@@ -61,30 +68,34 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return null; // TODO
+        return new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
+                event.setTypeId(EventTypeTable.HEALTH.getId());
+                event.applyTo(transaction);
+
+                EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
+
+                List<Pair<HealthScoreTable.Row, Integer>> scoresAndEvents = groupFragment.getScores();
+
+                for (Pair<HealthScoreTable.Row, Integer> pair : scoresAndEvents) {
+                    pair.first.applyTo(transaction);
+                    Long score = pair.second == null ? null : pair.second.longValue();
+                    HealthScoreEventTable.Row row = new HealthScoreEventTable.Row(event.getConcretePrimaryKey(), pair.first.getConcretePrimaryKey(), score);
+                    row.applyTo(transaction);
+                }
+            }
+        };
     }
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        Event.Modification event = (Event.Modification) getEventFragment().getModification();
-        event.setTypeId(HealthScoreEvent.EVENT_TYPE_ID);
-        event.modify(db);
-
-        EventModification scoreEvent = (EventModification) getScoreGroupFragment().getModification();
-        scoreEvent.setEventModification(event);
-        scoreEvent.modify(db);
     }
 
     @Override
     protected int getModifyFailedStringId() {
         return R.string.could_not_insert_health_score_event;
-    }
-
-    @Override
-    public QueryUser[] getQueryUsers() {
-        return new QueryUser[]{
-                getScoreGroupFragment()
-        };
     }
 
     private EditScoreEventGroupFragment getScoreGroupFragment() {
@@ -96,80 +107,16 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     }
 
     @Override
-    public void onFragmentUpdate(EditScoreEventFragment fragment) {
+    public void onFragmentUpdated(BaseFragment fragment) {
         invalidateOptionsMenu();
-    }
-
-    @Override
-    public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
-        Settings settings = Settings.INSTANCE;
-        settings.hideScore(fragment.getScore());
-        getScoreGroupFragment().removeScore(fragment);
-        invalidateOptionsMenu();
-    }
-
-    @Override
-    public void onFragmentUpdate(EditScoreEventGroupFragment fragment) {
-
-    }
-
-    @Override
-    public void onQueryFailed(EditScoreEventFragment fragment, Throwable error) {
-    }
-
-    @Override
-    public void onQueryFailed(EditScoreEventGroupFragment fragment, Throwable error) {
-        // TODO Report the error.
-    }
-
-    @Override
-    public void onQueryFailed(EditScoreDialogFragment fragment, Throwable error) {
-        // TODO Report the error.
-    }
-
-    @Override
-    public void onUseIntentEventData(EventData eventData) {
-
     }
 
     @Override
     public void onScoreModified(HealthScore.Value score) {
-        Settings.INSTANCE.showScore(score);
+        invalidateOptionsMenu();
+    }
 
-        EditScoreEventFragment fragment = getScoreGroupFragment().getEditScoreEventFragment(score);
-
-        if (fragment == null) {
-            fragment = EditScoreEventFragment.newInstance(score);
-            final Modification modification = fragment.getModification();
-            getScoreGroupFragment().addFragment(fragment, null);
-            List<Query> list = new ArrayList<>(1);
-            list.add(new Query() {
-                @Override
-                public Cursor query(SQLiteDatabase db) {
-                    modification.modify(db);
-                    return null;
-                }
-
-                @Override
-                public void postQueryProcessing(Cursor cursor) {
-
-                }
-
-                @Override
-                public void onQueryComplete(Cursor cursor) {
-
-                }
-
-                @Override
-                public void onQueryFailed(Throwable error) {
-
-                }
-            });
-            doQueries(list);
-        } else {
-            fragment.setScore(score);
-            fragment.setModified(true);
-        }
-
+    @Override
+    public void enqueueQueries(List<Query> queries) {
     }
 }

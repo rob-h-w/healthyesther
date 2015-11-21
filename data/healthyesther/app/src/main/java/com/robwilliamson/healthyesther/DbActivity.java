@@ -1,32 +1,21 @@
 package com.robwilliamson.healthyesther;
 
-import android.database.Cursor;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.Executor;
-import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
-import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
-import com.robwilliamson.healthyesther.db.use.QueryUserProvider;
-import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
+import com.robwilliamson.healthyesther.fragment.DbFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.ConfirmationDialogFragment;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -34,8 +23,8 @@ import javax.annotation.Nonnull;
  * Activities that use databases.
  */
 public abstract class DbActivity extends BusyActivity
-        implements QueuedQueryExecutor, QueryUserProvider, ConfirmationDialogFragment.Observer,
-        TransactionExecutor.Observer {
+        implements ConfirmationDialogFragment.Observer,
+        TransactionExecutor.Observer, DbFragment.ExecutorProvider {
     private static final String LOG_TAG = DbActivity.class.getName();
     private static final String CONFIRMATION_DIALOG = "CONFIRMATION_DIALOG";
 
@@ -46,7 +35,6 @@ public abstract class DbActivity extends BusyActivity
 
     private Executor mExecutor;
     private volatile AsyncTask<Void, Void, Void> mTask = null;
-    private Deque<Query> mQueries = null;
 
     private static void setEnabled(Menu menu, int itemId, boolean enabled) {
         MenuItem item = menu.findItem(itemId);
@@ -80,11 +68,6 @@ public abstract class DbActivity extends BusyActivity
     }
 
     @Override
-    public void enqueueQueries(List<Query> queries) {
-        doQueries(queries);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean returnValue = super.onCreateOptionsMenu(menu);
 
@@ -107,7 +90,6 @@ public abstract class DbActivity extends BusyActivity
         }
         cancel(mTask);
         mTask = null;
-        mQueries = null;
 
         super.onDestroy();
     }
@@ -161,64 +143,12 @@ public abstract class DbActivity extends BusyActivity
         super.onResume();
 
         mExecutor = new Executor(new DatabaseWrapperClass(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase()), this);
-
-        QueryUser[] queryUsers = getQueryUsers();
-
-        ArrayList<Query> queries = new ArrayList<>();
-
-        for (QueryUser user : queryUsers) {
-            Query[] userQueries = user.getQueries();
-            if (userQueries != null) {
-                queries.addAll(Arrays.asList(userQueries));
-            }
-
-            if (user instanceof InitializationQuerier) {
-                final InitializationQuerier querier = (InitializationQuerier) user;
-                final TransactionExecutor.QueryOperation operation = querier.getInitializationQuery();
-
-                getExecutor().perform(new TransactionExecutor.Operation() {
-                    @Override
-                    public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                        operation.doTransactionally(database, transaction);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (isActive()) {
-                                    querier.onInitializationQueryResponse(operation.getResults());
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-        }
-
-        doQueries(queries);
     }
 
-    protected TransactionExecutor getExecutor() {
-        return mExecutor;
-    }
-
-    protected final void doQueries(final List<Query> queries) {
-        if (mQueries == null) {
-            mQueries = new ArrayDeque<>(queries);
-        } else {
-            mQueries.addAll(queries);
-        }
-
-        nextQuery();
-    }
-
-    protected final void query(final Query query) {
-        runAsTask(new Runnable() {
-            @Override
-            public void run() {
-                doQuery(query);
-                nextQuery();
-            }
-        });
+    @NonNull
+    @Nonnull
+    public TransactionExecutor getExecutor() {
+        return com.robwilliamson.healthyesther.Utils.checkNotNull(mExecutor);
     }
 
     protected final void runAsTask(final Runnable runnable) {
@@ -238,59 +168,6 @@ public abstract class DbActivity extends BusyActivity
         };
 
         mTask.execute();
-    }
-
-    private void nextQuery() {
-        if (mQueries == null || mQueries.isEmpty()) {
-            mQueries = null;
-            return;
-        }
-
-        Query next = mQueries.pop();
-        query(next);
-    }
-
-    private void doQuery(final Query query) {
-        if (query == null) {
-            return;
-        }
-
-        final Throwable[] error = new Throwable[]{null};
-        final Cursor[] cursor = new Cursor[]{null};
-
-        try {
-            cursor[0] = query.query(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase());
-        } catch (Throwable e) {
-            error[0] = e;
-            Log.e(LOG_TAG, "Query threw", e);
-        }
-
-        if (mTask == null || mTask.isCancelled()) {
-            return;
-        }
-
-        if (error[0] == null) {
-            query.postQueryProcessing(cursor[0]);
-        }
-
-        if (mTask == null || mTask.isCancelled()) {
-            return;
-        }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!isActive()) {
-                    return;
-                }
-
-                if (error[0] == null) {
-                    query.onQueryComplete(cursor[0]);
-                } else {
-                    query.onQueryFailed(error[0]);
-                }
-            }
-        });
     }
 
     private void cancel(AsyncTask<Void, Void, Void> task) {

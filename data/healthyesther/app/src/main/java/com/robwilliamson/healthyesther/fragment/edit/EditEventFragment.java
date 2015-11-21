@@ -10,11 +10,7 @@ import android.widget.Button;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
 import com.robwilliamson.healthyesther.fragment.dialog.TimePickerFragment;
@@ -22,20 +18,19 @@ import com.robwilliamson.healthyesther.fragment.dialog.TimePickerFragment;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * Allows the user to edit an event's name and when properties.
  */
-public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFragment.Watcher>
+public class EditEventFragment extends EditFragment<EventTable.Row>
         implements DateTimePickerListener {
-    @Deprecated
-    private EventData mEvent = new EventData();
-
     private boolean mUserEditedEventName;
 
-    public EditEventFragment() {
-        super(EditEventFragment.Watcher.class);
+    public static EditEventFragment getInstance(@Nonnull EventTable.Row row) {
+        EditEventFragment fragment = new EditEventFragment();
+        fragment.setRow(row);
+        return fragment;
     }
 
     @Override
@@ -46,36 +41,14 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
     }
 
     @Override
-    public Query[] getQueries() {
-        return new Query[0];
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey(Event.TABLE_NAME)) {
-            final EventData[] event = new EventData[1];
-            callWatcher(new WatcherCaller<Watcher>() {
-                @Override
-                public void call(@NonNull Watcher watcher) {
-                    event[0] = watcher.getIntentEventData();
-                }
-            });
-
-            if (event[0] == null) {
-                mEvent.setWhen(Utils.Time.localNow());
-            } else {
-                mEvent = event[0];
-                callWatcher(new WatcherCaller<Watcher>() {
-                    @Override
-                    public void call(@NonNull Watcher watcher) {
-                        watcher.onUseIntentEventData(mEvent);
-                    }
-                });
+        if (savedInstanceState != null && savedInstanceState.containsKey(EventTable.NAME)) {
+            EventTable.Row row = (EventTable.Row) savedInstanceState.getSerializable(EventTable.NAME);
+            if (row != null) {
+                setRow(row);
             }
-        } else {
-            mEvent = EventData.from(savedInstanceState.getBundle(Event.TABLE_NAME), EventData.class);
         }
 
         updateUi();
@@ -90,7 +63,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
             public void onClick(View v) {
                 TimePickerFragment dialog = new TimePickerFragment();
                 dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), mEvent.getWhen());
+                dialog.show(getFragmentManager(), getWhen());
             }
         });
 
@@ -99,7 +72,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
             public void onClick(View v) {
                 DatePickerFragment dialog = new DatePickerFragment();
                 dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), mEvent.getWhen());
+                dialog.show(getFragmentManager(), getWhen());
             }
         });
 
@@ -118,7 +91,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateWatcher();
+                // TODO
             }
 
             @Override
@@ -133,12 +106,14 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBundle(Event.TABLE_NAME, mEvent.asBundle());
+        outState.putSerializable(EventTable.NAME, getRow());
     }
 
     @Override
     public void onDateTimeChange(DateTime dateTime) {
-        mEvent.setWhen(dateTime);
+        if (getRow() != null) {
+            getRow().setWhen(com.robwilliamson.healthyesther.db.includes.DateTime.from(dateTime));
+        }
         updateUi();
     }
 
@@ -147,25 +122,15 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
         return R.layout.fragment_edit_event;
     }
 
-    @Nullable
-    @Override
-    public Modification getModification() {
-        if (mEvent.getCreated() == null) {
-            mEvent.setCreated(Utils.Time.localNow());
-        }
-
-        mEvent.setModified(Utils.Time.localNow());
-        return new Event.Modification(mEvent);
-    }
-
     @Override
     public boolean validate() {
-        return getName() == null || Event.validateName(getName());
+        // TODO
+        return true;
     }
 
     @Override
-    protected void updateWatcher(@NonNull Watcher watcher) {
-
+    protected EventTable.Row createRow() {
+        throw new UnsupportedOperationException("The event has to be set by the owning activity.");
     }
 
     public void suggestEventName(String name) {
@@ -184,18 +149,33 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
     }
 
     public void setName(String name) {
-        getNameView().getText().clear();
-        getNameView().getText().append(name);
-        mEvent.setName(name);
+        AutoCompleteTextView nameView = getNameView();
+
+        if (nameView != null) {
+            getNameView().getText().clear();
+            getNameView().getText().append(name);
+        }
+
+        if (getRow() != null) {
+            getRow().setName(name);
+        }
         updateUi();
     }
 
     public DateTime getWhen() {
-        return mEvent.getWhen();
+        if (hasRow()) {
+            //noinspection ConstantConditions
+            return getRow().getWhen().as(DateTime.class);
+        }
+
+        return null;
     }
 
-    public void setWhen(DateTime when) {
-        mEvent.setWhen(when);
+    public void setWhen(@Nonnull DateTime when) {
+        if (hasRow()) {
+            //noinspection ConstantConditions
+            getRow().setWhen(com.robwilliamson.healthyesther.db.includes.DateTime.from(when));
+        }
         updateUi();
     }
 
@@ -204,26 +184,23 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
     }
 
     private void updateUi() {
-        if (mEvent != null) {
+        if (hasRow()) {
+            @SuppressWarnings("ConstantConditions") @Nonnull EventTable.Row row = getRow();
             if (getNameView() != null) {
                 getNameView().getText().clear();
-                if (mEvent.getName() != null) {
-                    getNameView().getText().append(mEvent.getName());
+                if (row.getName() != null) {
+                    getNameView().getText().append(row.getName());
                 }
             }
 
-            if (mEvent.getWhen() != null) {
-                if (getTimeButton() != null) {
-                    getTimeButton().setText(Utils.Time.toString(mEvent.getWhen(), DateTimeFormat.shortTime()));
-                }
+            if (getTimeButton() != null) {
+                getTimeButton().setText(Utils.Time.toString(row.getWhen().as(DateTime.class), DateTimeFormat.shortTime()));
+            }
 
-                if (getDateButton() != null) {
-                    getDateButton().setText(Utils.Time.toString(mEvent.getWhen(), DateTimeFormat.mediumDate()));
-                }
+            if (getDateButton() != null) {
+                getDateButton().setText(Utils.Time.toString(row.getWhen().as(DateTime.class), DateTimeFormat.mediumDate()));
             }
         }
-
-        updateWatcher();
     }
 
     private Button getTimeButton() {
@@ -240,11 +217,5 @@ public class EditEventFragment extends EditFragment<EventTable.Row, EditEventFra
 
     private AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.edit_event_name, AutoCompleteTextView.class);
-    }
-
-    public interface Watcher {
-        EventData getIntentEventData();
-
-        void onUseIntentEventData(EventData eventData);
     }
 }

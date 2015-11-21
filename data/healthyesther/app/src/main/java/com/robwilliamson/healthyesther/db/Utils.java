@@ -9,10 +9,17 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
-import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.data.MealData;
-import com.robwilliamson.healthyesther.db.data.MealEventData;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.MealEventTable;
+import com.robwilliamson.healthyesther.db.generated.MealTable;
+import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
+import com.robwilliamson.healthyesther.db.generated.MedicationTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -31,6 +38,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
+
+import javax.annotation.Nonnull;
 
 public final class Utils {
     private Utils() {
@@ -232,14 +241,16 @@ public final class Utils {
             private static Pair<Integer, Integer> breakfast = new Pair<Integer, Integer>(6, 11);
             private static Pair<Integer, Integer> lunch = new Pair<Integer, Integer>(12, 15);
             private static Pair<Integer, Integer> dinner = new Pair<Integer, Integer>(16, 22);
+            private static Transaction transaction;
 
-            public static void transactionWithDb(final SQLiteDatabase db, Runnable runnable) {
+            public static void transactionWithDb(@Nonnull final SQLiteDatabase db, @Nonnull Runnable runnable) {
+                Database database = new DatabaseWrapperClass(db);
+                transaction = database.getTransaction();
                 try {
-                    db.beginTransaction();
                     runnable.run();
-                    db.setTransactionSuccessful();
+                    transaction.commit();
                 } finally {
-                    db.endTransaction();
+                    transaction = null;
                 }
             }
 
@@ -322,16 +333,19 @@ public final class Utils {
                                         pseudoRandom %= pseudoRandomMax;
 
                                         if (!hadDailyMedication && haveDailyMedication(hour)) {
-                                            DateTime time = DateTime.now().withDate(year, month, day)
-                                                    .withTime(hour, minute(), second(), 0);
-                                            EventData eventData = new EventData(
+                                            com.robwilliamson.healthyesther.db.includes.DateTime time = com.robwilliamson.healthyesther.db.includes.DateTime.from(DateTime.now().withDate(year, month, day)
+                                                    .withTime(hour, minute(), second(), 0));
+                                            EventTable.Row eventRow = new EventTable.Row(
+                                                    EventTypeTable.MEDICATION.getId(),
                                                     time,
                                                     time,
                                                     null,
-                                                    2,
-                                                    "Daily medication");
-                                            long eventId = c.EVENT.insert(db, eventData);
-                                            c.MEDICATION_EVENT.insert(db, dailyMedicationId, eventId);
+                                                    "Daily medication"
+                                            );
+                                            eventRow.applyTo(transaction);
+                                            MedicationEventTable.Row medicationEvent = new MedicationEventTable.Row(eventRow.getNextPrimaryKey(),
+                                                    new MedicationTable.PrimaryKey(dailyMedicationId));
+                                            medicationEvent.applyTo(transaction);
                                             hadDailyMedication = true;
                                         }
 
@@ -387,27 +401,38 @@ public final class Utils {
 
             private static void insertMeal(SQLiteDatabase db, int year, int month,
                                            int day, int hour, String name, long mealId) {
-                Contract c = Contract.getInstance();
-                DateTime time = time(year, month, day, hour);
-                EventData eventData = new EventData(
-                        time, time, null, 1, name);
-                long eventId = c.EVENT.insert(db, eventData);
-                c.MEAL_EVENT.insert(db, new MealEventData(mealId, eventId, null, null));
+                com.robwilliamson.healthyesther.db.includes.DateTime time = time(year, month, day, hour);
+                EventTable.Row eventRow = new EventTable.Row(EventTypeTable.MEAL.getId(),
+                        time,
+                        time,
+                        null,
+                        name);
+                eventRow.applyTo(transaction);
+                MealEventTable.Row mealEventRow = new MealEventTable.Row(eventRow.getNextPrimaryKey(),
+                        new MealTable.PrimaryKey(mealId),
+                        null,
+                        null);
+                mealEventRow.applyTo(transaction);
             }
 
             private static void insertMedication(SQLiteDatabase db, int year, int month, int day, int hour, String medication, long medicationId) {
                 Contract c = Contract.getInstance();
-                DateTime time = time(year, month, day, hour);
-                EventData eventData = new EventData(
-                        time, time, null, 2, "Medication");
-                long eventId = c.EVENT.insert(db, eventData);
-                c.MEDICATION_EVENT.insert(db, medicationId, eventId);
+                com.robwilliamson.healthyesther.db.includes.DateTime time = time(year, month, day, hour);
+                EventTable.Row eventRow = new EventTable.Row(EventTypeTable.MEDICATION.getId(),
+                        time,
+                        time,
+                        null,
+                        medication);
+                eventRow.applyTo(transaction);
+                MedicationEventTable.Row medicationEventRow = new MedicationEventTable.Row(eventRow.getNextPrimaryKey(),
+                        new MedicationTable.PrimaryKey(medicationId));
+                medicationEventRow.applyTo(transaction);
             }
 
-            private static DateTime time(int year, int month,
+            private static com.robwilliamson.healthyesther.db.includes.DateTime time(int year, int month,
                                          int day, int hour) {
-                return DateTime.now().withDate(year, month, day)
-                        .withTime(hour, minute(), second(), 0);
+                return com.robwilliamson.healthyesther.db.includes.DateTime.from(DateTime.now().withDate(year, month, day)
+                        .withTime(hour, minute(), second(), 0));
             }
 
             private static boolean haveDailyMedication(int hour) {
@@ -469,13 +494,13 @@ public final class Utils {
                         final long gruelId = c.MEAL.insert(db, new MealData("gruel"));
 
                         for (int i = 0; i < 10; i++) {
-                            insertMeal(time(2015, 01, rand() % 28, rand() % 24), gruelId);
+                            insertMeal(time(2015, 1, rand() % 28, rand() % 24), gruelId);
                         }
                     }
 
-                    private void insertMeal(DateTime time, long mealId) {
+                    private void insertMeal(com.robwilliamson.healthyesther.db.includes.DateTime time, long mealId) {
                         ContentValues eventValues = new ContentValues();
-                        String utcTime = Utils.Time.toUtcString(time);
+                        String utcTime = Utils.Time.toUtcString(time.as(DateTime.class));
                         eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, utcTime);
                         eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, utcTime);
                         eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, MealEvent.EVENT_TYPE_ID);

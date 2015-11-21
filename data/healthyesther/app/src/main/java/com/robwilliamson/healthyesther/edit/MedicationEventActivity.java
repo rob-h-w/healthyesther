@@ -2,22 +2,28 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.MedicationEvent;
+import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
+import com.robwilliamson.healthyesther.db.generated.MedicationTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
+import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nonnull;
+
 public class MedicationEventActivity extends AbstractEditEventActivity
-        implements EditMedicationFragment.Watcher, EditEventFragment.Watcher {
+        implements BaseFragment.Watcher {
     private final static String MEDICATION_TAG = "medication";
     private final static String EVENT_TAG = "event";
 
@@ -28,7 +34,14 @@ public class MedicationEventActivity extends AbstractEditEventActivity
         EditFragment event;
         if (create) {
             meal = new EditMedicationFragment();
-            event = new EditEventFragment();
+            DateTime now = DateTime.from(com.robwilliamson.healthyesther.db.Utils.Time.localNow());
+            event = EditEventFragment.getInstance(
+                    new EventTable.Row(
+                            EventTypeTable.MEDICATION.getId(),
+                            now,
+                            now,
+                            null,
+                            null));
         } else {
             meal = getMedicationFragment();
             event = getEventFragment();
@@ -42,43 +55,26 @@ public class MedicationEventActivity extends AbstractEditEventActivity
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return null; // TODO
+        return new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
+                MedicationTable.Row medication = Utils.checkNotNull(getMedicationFragment().getRow());
+                event.applyTo(transaction);
+                medication.applyTo(transaction);
+                MedicationEventTable.Row medicationEvent = new MedicationEventTable.Row(event.getNextPrimaryKey(), medication.getNextPrimaryKey());
+                medicationEvent.applyTo(transaction);
+            }
+        };
     }
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        com.robwilliamson.healthyesther.db.definition.Medication.Modification medication = (com.robwilliamson.healthyesther.db.definition.Medication.Modification) getMedicationFragment().getModification();
-        Event.Modification event = (Event.Modification) getEventFragment().getModification();
-        MedicationEvent.Modification medicationEvent = new MedicationEvent.Modification(medication, event);
-        medicationEvent.modify(db);
     }
 
     @Override
     protected int getModifyFailedStringId() {
         return R.string.could_not_insert_medication_event;
-    }
-
-    @Override
-    public void onFragmentUpdate(EditMedicationFragment fragment) {
-        getEventFragment().suggestEventName(fragment.getName());
-        invalidateOptionsMenu();
-    }
-
-    @Override
-    public QueryUser[] getQueryUsers() {
-        return new QueryUser[]{
-                getMedicationFragment()
-        };
-    }
-
-    @Override
-    public void onQueryFailed(EditMedicationFragment fragment, Throwable error) {
-        Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_medication), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onUseIntentEventData(EventData eventData) {
-
     }
 
     private EditMedicationFragment getMedicationFragment() {
@@ -87,5 +83,15 @@ public class MedicationEventActivity extends AbstractEditEventActivity
 
     private EditEventFragment getEventFragment() {
         return getFragment(EVENT_TAG, EditEventFragment.class);
+    }
+
+    @Override
+    public void onFragmentUpdated(BaseFragment fragment) {
+        if (fragment instanceof EditMedicationFragment) {
+            EditMedicationFragment editMedicationFragment = (EditMedicationFragment) fragment;
+            getEventFragment().suggestEventName(editMedicationFragment.getName());
+        }
+
+        invalidateOptionsMenu();
     }
 }

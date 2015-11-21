@@ -1,8 +1,8 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +13,16 @@ import android.widget.TextView;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.fragment.BaseFragment;
+import com.robwilliamson.healthyesther.fragment.DbFragment;
 
-import java.util.Arrays;
-
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * A fragment representing a list of Events.
@@ -31,16 +33,20 @@ import javax.annotation.Nullable;
  * Activities containing this fragment MUST implement the {@link EventListFragment.Watcher}
  * interface.
  */
-public abstract class EventListFragment extends EditFragment<EventTable.Row, EventListFragment.Watcher> implements AbsListView.OnItemClickListener {
+public class EventListFragment extends DbFragment implements AbsListView.OnItemClickListener {
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
     private EventListAdapter mAdapter;
+    private Watcher mWatcher;
 
-    protected EventListFragment() {
-        super(EventListFragment.Watcher.class);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mWatcher = (Watcher) context;
     }
 
     @Override
@@ -70,29 +76,9 @@ public abstract class EventListFragment extends EditFragment<EventTable.Row, Eve
         return R.layout.fragment_event;
     }
 
-    @Nullable
-    @Override
-    public Modification getModification() {
-        return null;
-    }
-
-    @Override
-    public boolean validate() {
-        return false;
-    }
-
-    @Override
-    protected void updateWatcher(@NonNull Watcher watcher) {
-    }
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-        callWatcher(new WatcherCaller<Watcher>() {
-            @Override
-            public void call(@NonNull Watcher watcher) {
-                watcher.onEventSelected(mAdapter.getItem(position));
-            }
-        });
+        mWatcher.onEventSelected(mAdapter.getItem(position));
     }
 
     /**
@@ -105,10 +91,12 @@ public abstract class EventListFragment extends EditFragment<EventTable.Row, Eve
     public void onResume() {
         super.onResume();
 
-        callWatcher(new WatcherCaller<Watcher>() {
+        mWatcher.getExecutor().perform(new TransactionExecutor.Operation() {
             @Override
-            public void call(@NonNull Watcher watcher) {
-                watcher.enqueueQueries(Arrays.asList(getQueries()));
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
+                mAdapter.clear();
+                mAdapter.addAll(rows);
             }
         });
     }
@@ -131,7 +119,7 @@ public abstract class EventListFragment extends EditFragment<EventTable.Row, Eve
     }
 
     protected AbsListView getListView(View parent) {
-        return Utils.View.getTypeSafeView(parent == null ? getView() : parent, android.R.id.list, AbsListView.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(parent == null ? getView() : parent), android.R.id.list, AbsListView.class);
     }
 
     protected EventListAdapter getAdapter() {
@@ -148,9 +136,7 @@ public abstract class EventListFragment extends EditFragment<EventTable.Row, Eve
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface Watcher extends QueuedQueryExecutor {
-        void onEventSelected(EventData eventData);
-
-        void onQueryFailure(Throwable failure);
+    public interface Watcher extends ExecutorProvider, BaseFragment.Watcher {
+        void onEventSelected(EventTable.Row row);
     }
 }

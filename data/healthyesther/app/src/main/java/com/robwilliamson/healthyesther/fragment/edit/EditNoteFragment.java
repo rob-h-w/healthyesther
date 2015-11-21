@@ -1,34 +1,24 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
-import android.database.Cursor;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.data.NoteData;
-import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.definition.Note;
 import com.robwilliamson.healthyesther.db.generated.NoteTable;
-import com.robwilliamson.healthyesther.db.includes.BaseRow;
-import com.robwilliamson.healthyesther.db.use.GetAllNotesQuery;
-import com.robwilliamson.healthyesther.db.use.Query;
 
 import java.util.HashMap;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
-public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row, EditNoteFragment.Watcher> {
+public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> {
     private HashMap<Long, String> mNoteContents;
     private Long mUserSelectedId = null;
     private Long mOldUserSelectedId = null;
     private boolean mAlwaysCreate = false;
-
-    public EditNoteFragment() {
-        super(EditNoteFragment.Watcher.class);
-    }
 
     @Override
     protected int getFragmentLayout() {
@@ -67,7 +57,11 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row, Edit
         if (Utils.noString(note)) {
             if (mOldUserSelectedId != null
                     && getNote().equals(mNoteContents.get(mOldUserSelectedId))) {
-                getNoteView().setText(note);
+                EditText noteView = getNoteView();
+
+                if (noteView != null) {
+                    noteView.setText(note);
+                }
             }
 
             return;
@@ -76,30 +70,24 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row, Edit
         if (mUserSelectedId != null) {
             if (Utils.noString(getNote())
                     || getNote().equals(mNoteContents.get(mOldUserSelectedId))) {
-                getNoteView().setText(note);
+                EditText noteView = getNoteView();
+
+                if (noteView != null) {
+                    noteView.setText(note);
+                }
             }
         }
     }
 
+    @Nonnull
     public String getNote() {
-        return getNoteView().getText().toString();
-    }
+        EditText noteView = getNoteView();
 
-    @Nullable
-    @Override
-    public Modification getModification() {
-        String name = getName();
-        Long id = getSuggestionId(name);
-
-        if (id == null || mAlwaysCreate) {
-            return new Note.Modification(name, getNote());
+        if (noteView == null) {
+            return "";
         }
 
-        NoteData data = new NoteData();
-        data.set_id(id);
-        data.setNote(getNote());
-
-        return new Note.Modification(data);
+        return getNoteView().getText().toString();
     }
 
     @Override
@@ -109,49 +97,8 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row, Edit
     }
 
     @Override
-    protected void updateWatcher(@NonNull Watcher watcher) {
-        watcher.onFragmentUpdate(this);
-    }
-
-    @Override
-    public Query[] getQueries() {
-        return new Query[]{
-                new GetAllNotesQuery() {
-                    private HashMap<String, Long> mSuggestionIds;
-
-                    @Override
-                    public void postQueryProcessing(Cursor cursor) {
-                        mSuggestionIds = Utils.Db.cursorToSuggestionList(cursor,
-                                Note.NAME,
-                                Note._ID);
-
-                        mNoteContents = new HashMap<Long, String>(cursor.getCount());
-                        final int rowIdIndex = cursor.getColumnIndex(Note._ID);
-                        final int noteIndex = cursor.getColumnIndex(Note.NOTE);
-
-                        if (cursor.moveToFirst()) {
-                            do {
-                                mNoteContents.put(cursor.getLong(rowIdIndex), cursor.getString(noteIndex));
-                            } while (cursor.moveToNext());
-                        }
-                    }
-
-                    @Override
-                    public void onQueryComplete(Cursor cursor) {
-                        EditNoteFragment.this.setSuggestionIds(mSuggestionIds);
-                    }
-
-                    @Override
-                    public void onQueryFailed(final Throwable error) {
-                        callWatcher(new WatcherCaller<Watcher>() {
-                            @Override
-                            public void call(@NonNull Watcher watcher) {
-                                watcher.onQueryFailed(EditNoteFragment.this, error);
-                            }
-                        });
-                    }
-                }
-        };
+    protected NoteTable.Row createRow() {
+        return new NoteTable.Row(getName(), getNote());
     }
 
     @Override
@@ -159,13 +106,8 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row, Edit
         return getTypeSafeView(R.id.note_name, AutoCompleteTextView.class);
     }
 
+    @Nullable
     private EditText getNoteView() {
         return getTypeSafeView(R.id.note_content, EditText.class);
-    }
-
-    public interface Watcher {
-        void onFragmentUpdate(EditNoteFragment fragment);
-
-        void onQueryFailed(EditNoteFragment fragment, Throwable error);
     }
 }

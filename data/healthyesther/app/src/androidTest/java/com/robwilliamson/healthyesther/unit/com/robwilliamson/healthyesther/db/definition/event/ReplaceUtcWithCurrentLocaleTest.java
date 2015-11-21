@@ -33,7 +33,7 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
     }
 
     public void testNormalUpgradePath() throws Exception {
-        Event event = Contract.getInstance().EVENT;
+        Event event = new Event();
         Method replaceUtcWithCurrentLocale = Event.class.getDeclaredMethod("replaceUtcWithCurrentLocale", SQLiteDatabase.class);
         replaceUtcWithCurrentLocale.setAccessible(true);
 

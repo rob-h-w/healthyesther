@@ -8,14 +8,16 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.data.EventData;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.List;
 
-public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, EventData> {
+public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, EventTable.Row> {
     private DateTimeFormatter mDateTimeFormatter;
 
     public EventListAdapter(Activity context, int layoutId) {
@@ -23,7 +25,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         init(context);
     }
 
-    public EventListAdapter(Activity context, int layoutId, List<EventData> data) {
+    public EventListAdapter(Activity context, int layoutId, List<EventTable.Row> data) {
         super(context, layoutId, data, EventListAdapter.Tag.class, View.class);
         init(context);
     }
@@ -52,22 +54,22 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
 
     /**
      * Use a tag to populate the features of a view. The tag will have been returned by
-     * {@link #getTagFor(View view)}.
+     * {@link OptimizedListAdapter<>#getTagFor(V view)}.
      *
      * @param tag  The tag to use with the view.
      * @param data The data to populate the tag's views with.
      */
     @Override
-    protected void populateTag(Tag tag, EventData data) {
+    protected void populateTag(Tag tag, EventTable.Row data) {
         int iconId;
-        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(data.getTypeId())) {
+        switch (EventTypeTable.valueOf(data.getTypeId().getId())) {
             case MEAL:
                 iconId = R.drawable.ic_food;
                 break;
             case MEDICATION:
                 iconId = R.mipmap.ic_medication;
                 break;
-            case HEALTH_SCORE:
+            case HEALTH:
                 iconId = R.mipmap.ic_health;
                 break;
             case NOTE:
@@ -84,7 +86,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         tag.title.setText(data.getName());
         tag.time.setText(
                 com.robwilliamson.healthyesther.db.Utils.Time.toString(
-                        data.getWhen(),
+                        data.getWhen().as(DateTime.class),
                         mDateTimeFormatter));
     }
 

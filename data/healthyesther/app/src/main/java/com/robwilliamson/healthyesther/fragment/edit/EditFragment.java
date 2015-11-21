@@ -1,87 +1,76 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
-import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
-import com.robwilliamson.healthyesther.fragment.AbstractQueryFragment;
+import com.robwilliamson.healthyesther.fragment.DbFragment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class EditFragment<R extends BaseRow, T> extends AbstractQueryFragment {
-    @NonNull
-    Class<T> mType;
-
-    @Nullable
-    private T mWatcher = null;
-
+public abstract class EditFragment<R extends BaseRow> extends DbFragment {
+    private static final String ROW = "row";
     @Nullable
     private R mRow;
-
-    @Deprecated
-    private boolean mModified;
-
-    public EditFragment(@NonNull Class<T> type) {
-        mType = type;
-    }
 
     @Nullable
     public R getRow() {
         return mRow;
     }
 
+    //noinspection
+    public boolean hasRow() {
+        return mRow != null;
+    }
+
     public void setRow(@Nonnull R row) {
         mRow = row;
     }
 
-    @Deprecated
-    public boolean getModified() {
-        return mModified;
-    }
-
-    @Deprecated
-    public void setModified(boolean modified) {
-        mModified = modified;
-    }
+    public abstract boolean validate();
+    protected abstract R createRow();
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mWatcher = Utils.checkAssignable(context, mType);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mRow = (R) savedInstanceState.getSerializable(ROW);
+            if (mRow == null) {
+                mRow = createRow();
+            }
+        }
+
+        return view;
     }
 
     /**
-     * Called when the fragment is no longer attached to its activity.  This
-     * is called after {@link #onDestroy()}.
+     * Called to ask the fragment to save its current dynamic state, so it
+     * can later be reconstructed in a new instance of its process is
+     * restarted.  If a new instance of the fragment later needs to be
+     * created, the data you place in the Bundle here will be available
+     * in the Bundle given to {@link #onCreate(Bundle)},
+     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}, and
+     * {@link #onActivityCreated(Bundle)}.
+     * <p/>
+     * <p>This corresponds to {@link android.app.Activity#onSaveInstanceState(Bundle)
+     * Activity.onSaveInstanceState(Bundle)} and most of the discussion there
+     * applies here as well.  Note however: <em>this method may be called
+     * at any time before {@link #onDestroy()}</em>.  There are many situations
+     * where a fragment may be mostly torn down (such as when placed on the
+     * back stack with no UI showing), but its state will not be saved until
+     * its owning activity actually needs to save its state.
+     *
+     * @param outState Bundle in which to place your saved state.
      */
     @Override
-    public void onDetach() {
-        super.onDetach();
-
-        mWatcher = null;
-    }
-
-    @Nullable
-    public abstract Modification getModification();
-
-    public abstract boolean validate();
-
-    protected abstract void updateWatcher(@NonNull T watcher);
-
-    protected void callWatcher(@NonNull WatcherCaller<T> call) {
-        if (mWatcher != null) {
-            call.call(mWatcher);
-        }
-    }
-
-    protected void updateWatcher() {
-        if (mWatcher != null) {
-            updateWatcher(mWatcher);
-        }
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(ROW, mRow);
     }
 
     @Nullable
@@ -90,9 +79,5 @@ public abstract class EditFragment<R extends BaseRow, T> extends AbstractQueryFr
             return null;
         }
         return com.robwilliamson.healthyesther.Utils.View.getTypeSafeView(getView(), id, type);
-    }
-
-    protected interface WatcherCaller<T> {
-        void call(@NonNull T watcher);
     }
 }

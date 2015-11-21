@@ -131,7 +131,6 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
             @Override
             public void onQueryFailed(final Throwable error) {
-                EditScoreDialogFragment.this.queryFailed(error);
             }
         };
     }
@@ -150,11 +149,6 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
     @Override
     protected void queryComplete(Cursor result) {
-    }
-
-    @Override
-    protected void queryFailed(Throwable error) {
-        getWatcher().onQueryFailed(this, error);
     }
 
     @Override
@@ -286,7 +280,5 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
     public interface Watcher extends QueuedQueryExecutor {
         void onScoreModified(HealthScore.Value score);
-
-        void onQueryFailed(EditScoreDialogFragment fragment, Throwable error);
     }
 }

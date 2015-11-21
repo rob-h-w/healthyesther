@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.definition.EventType;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.definition.HealthScoreEvent;
@@ -23,7 +22,6 @@ public final class Contract {
     public static final String NAME = "health.db3";
     public static final int VERSION = 4;
     private static volatile Contract sContract = null;
-    public final Event EVENT;
     public final EventType EVENT_TYPE;
     public final HealthScore HEALTH_SCORE;
     public final HealthScoreEvent HEALTH_SCORE_EVENT;
@@ -38,7 +36,6 @@ public final class Contract {
     public final Table[] TABLES;
 
     private Contract() {
-        EVENT = new Event();
         EVENT_TYPE = new EventType();
         HEALTH_SCORE = new HealthScore();
         HEALTH_SCORE_EVENT = new HealthScoreEvent();
@@ -52,7 +49,6 @@ public final class Contract {
         UNITS = new Units();
 
         TABLES = new Table[]{
-                EVENT,
                 EVENT_TYPE,
                 HEALTH_SCORE_EVENT,
                 HEALTH_SCORE,

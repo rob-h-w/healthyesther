@@ -149,8 +149,6 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
 
     protected abstract void queryComplete(final Cursor result);
 
-    protected abstract void queryFailed(final Throwable error);
-
     protected abstract void suggestionSelected(final String name, final long id);
 
     protected abstract void newNameEntered(final String name);

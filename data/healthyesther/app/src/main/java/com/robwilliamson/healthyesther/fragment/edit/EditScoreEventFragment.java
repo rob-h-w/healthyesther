@@ -1,7 +1,8 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,14 +14,10 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
-import com.robwilliamson.healthyesther.db.definition.Modification;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
-import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
-import javax.annotation.Nullable;
-
-public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, EditScoreEventFragment.Watcher> {
+public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
     private static final String VALUE = "value";
     private static final String SCORE = "score";
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
@@ -28,9 +25,8 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
     private HealthScore.Value mScore = new HealthScore.Value();
     private ContextMenu mContextMenu;
 
-    public EditScoreEventFragment() {
-        super(EditScoreEventFragment.Watcher.class);
-    }
+    @Nullable
+    private Watcher mWatcher;
 
     public static EditScoreEventFragment newInstance(HealthScore.Value score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
@@ -64,8 +60,10 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
     }
 
     @Override
-    public Query[] getQueries() {
-        return new Query[0];
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        mWatcher = (Watcher) context;
     }
 
     @Override
@@ -83,13 +81,9 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
                 dialog.show(getFragmentManager(), EDIT_SCORE_FRAGMENT);
                 return true;
             case R.id.action_hide:
-                callWatcher(new WatcherCaller<Watcher>() {
-                    @Override
-                    public void call(@NonNull Watcher watcher) {
-                        watcher.onFragmentRemoveRequest(EditScoreEventFragment.this);
-                    }
-                });
-
+                if (mWatcher != null) {
+                    mWatcher.onFragmentRemoveRequest(EditScoreEventFragment.this);
+                }
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -131,7 +125,9 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
         getRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                updateWatcher();
+                if (mWatcher != null) {
+                    mWatcher.onFragmentUpdate(EditScoreEventFragment.this);
+                }
             }
         });
     }
@@ -141,12 +137,6 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
         super.onSaveInstanceState(args);
         args.putInt(VALUE, getValue());
         mScore.bundle(args, SCORE);
-    }
-
-    @Nullable
-    @Override
-    public Modification getModification() {
-        return new HealthScore.Modification(mScore, getModified());
     }
 
     @Override
@@ -160,8 +150,8 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
     }
 
     @Override
-    protected void updateWatcher(@NonNull Watcher watcher) {
-        watcher.onFragmentUpdate(this);
+    protected HealthScoreTable.Row createRow() {
+        return new HealthScoreTable.Row(0L, "", false, null, null);
     }
 
     public int getValue() {
@@ -169,26 +159,23 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row, E
     }
 
     private TextView getTitle() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_name_title, TextView.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.score_name_title, TextView.class);
     }
 
     private TextView getMinLabel() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_minimum_label, TextView.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.score_minimum_label, TextView.class);
     }
 
     private TextView getMaxLabel() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_maximum_label, TextView.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.score_maximum_label, TextView.class);
     }
 
     private RatingBar getRatingBar() {
-        return Utils.View.getTypeSafeView(getView(), R.id.score_bar, RatingBar.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.score_bar, RatingBar.class);
     }
 
     public interface Watcher {
         void onFragmentUpdate(EditScoreEventFragment fragment);
-
-        void onQueryFailed(EditScoreEventFragment fragment, Throwable error);
-
         void onFragmentRemoveRequest(EditScoreEventFragment fragment);
     }
 }

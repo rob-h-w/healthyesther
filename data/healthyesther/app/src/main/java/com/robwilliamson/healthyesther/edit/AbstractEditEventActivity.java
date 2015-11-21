@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,24 +7,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.data.EventData;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment.Watcher;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
-import com.robwilliamson.healthyesther.reminder.TimingManager;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractEditEventActivity extends DbActivity implements Watcher {
-    private EventData mIntentEventData = null;
+public abstract class AbstractEditEventActivity extends DbActivity {
 
     protected abstract List<Pair<EditFragment, String>> getEditFragments(boolean create);
 
@@ -36,21 +28,11 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
     protected abstract int getModifyFailedStringId();
 
     @Override
-    public EventData getIntentEventData() {
-        return mIntentEventData;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
             return;
-        }
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            mIntentEventData = EventData.from(extras, EventData.class);
         }
 
         resetFragments(getEditFragments(true));
@@ -65,50 +47,12 @@ public abstract class AbstractEditEventActivity extends DbActivity implements Wa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_modify) {
-            // Write to the DB and go back.
-            query(new Query() {
-                private boolean mFinish;
-
-                @Override
-                public Cursor query(SQLiteDatabase db) {
-                    db.beginTransaction();
-                    try {
-                        onModifySelected(db);
-                        db.setTransactionSuccessful();
-                    } finally {
-                        db.endTransaction();
-                    }
-                    TimingManager.INSTANCE.onUserEntry(getApplicationContext());
-                    return null;
-                }
-
-                @Override
-                public void postQueryProcessing(Cursor cursor) {
-                    TransactionExecutor.Operation operation = onModifySelected();
-                    if (operation == null) {
-                        mFinish = true;
-                    } else {
-                        getExecutor().perform(operation);
-                    }
-                }
-
-                @Override
-                public void onQueryComplete(Cursor cursor) {
-                    if (mFinish) {
-                        finish();
-                    }
-                }
-
-                @Override
-                public void onQueryFailed(Throwable error) {
-                    Toast.makeText(
-                            AbstractEditEventActivity.this,
-                            getText(getModifyFailedStringId())
-                                    + "/n" + Utils.format(error),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-            return true;
+            TransactionExecutor.Operation operation = onModifySelected();
+            if (operation == null) {
+                finish();
+            } else {
+                getExecutor().perform(operation);
+            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -2,15 +2,13 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
-import android.widget.Toast;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.Note;
-import com.robwilliamson.healthyesther.db.definition.NoteEvent;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
+import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
@@ -18,7 +16,7 @@ import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
 import java.util.ArrayList;
 
 public class NoteEventActivity extends AbstractEditEventActivity
-        implements EditEventFragment.Watcher, EditNoteFragment.Watcher {
+        implements BaseFragment.Watcher {
     private final static String EVENT_TAG = "event";
     private final static String NOTE_TAG = "note";
 
@@ -29,7 +27,13 @@ public class NoteEventActivity extends AbstractEditEventActivity
         EditFragment event;
         if (create) {
             note = new EditNoteFragment();
-            event = new EditEventFragment();
+            DateTime now = DateTime.from(com.robwilliamson.healthyesther.db.Utils.Time.localNow());
+            event = EditEventFragment.getInstance(new EventTable.Row(
+                    EventTypeTable.NOTE.getId(),
+                    now,
+                    now,
+                    null,
+                    null));
         } else {
             note = getNoteFragment();
             event = getEventFragment();
@@ -37,7 +41,7 @@ public class NoteEventActivity extends AbstractEditEventActivity
 
         note.setAlwaysCreate(true);
 
-        list.add(new Pair<EditFragment, String>(note, NOTE_TAG));
+        list.add(new Pair<>((EditFragment) note, NOTE_TAG));
         list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
@@ -50,27 +54,11 @@ public class NoteEventActivity extends AbstractEditEventActivity
 
     @Override
     protected void onModifySelected(SQLiteDatabase db) {
-        Note.Modification note = (Note.Modification) getNoteFragment().getModification();
-        Event.Modification event = (Event.Modification) getEventFragment().getModification();
-        NoteEvent.Modification noteEvent = new NoteEvent.Modification(note, event);
-        noteEvent.modify(db);
     }
 
     @Override
     protected int getModifyFailedStringId() {
         return R.string.could_not_insert_note_event;
-    }
-
-    /**
-     * An array of query users that need to run queries every time this activity is resumed.
-     *
-     * @return The query users that use queries on resume, or an empty array if no query is required.
-     */
-    @Override
-    public QueryUser[] getQueryUsers() {
-        return new QueryUser[]{
-                getNoteFragment()
-        };
     }
 
     private EditNoteFragment getNoteFragment() {
@@ -82,18 +70,7 @@ public class NoteEventActivity extends AbstractEditEventActivity
     }
 
     @Override
-    public void onFragmentUpdate(EditNoteFragment fragment) {
-        getEventFragment().suggestEventName(fragment.getName());
+    public void onFragmentUpdated(BaseFragment fragment) {
         invalidateOptionsMenu();
-    }
-
-    @Override
-    public void onQueryFailed(EditNoteFragment fragment, Throwable error) {
-        Toast.makeText(this, getText(R.string.could_not_get_autocomplete_text_for_notes), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onUseIntentEventData(EventData eventData) {
-
     }
 }

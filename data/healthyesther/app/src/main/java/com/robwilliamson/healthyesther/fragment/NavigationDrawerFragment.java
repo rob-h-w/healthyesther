@@ -23,7 +23,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.fragment.home.AbstractHomeFragment;
 import com.robwilliamson.healthyesther.fragment.home.AddFragment;
 import com.robwilliamson.healthyesther.fragment.home.EditFragment;
 
@@ -86,7 +85,7 @@ public class NavigationDrawerFragment extends Fragment {
             mFromSavedInstanceState = true;
         }
 
-        // Select either the default item (0) or the last selected item.
+        // WhereContains either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
     }
 
@@ -285,7 +284,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         public final Class<?> fragmentClass;
 
-        <T extends AbstractHomeFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
+        <T extends DbFragment> NavigationDrawerMode(int stringId, Class<T> fragmentClass) {
             this.stringId = stringId;
             this.fragmentClass = fragmentClass;
         }
@@ -294,17 +293,17 @@ public class NavigationDrawerFragment extends Fragment {
             return values()[index];
         }
 
-        public AbstractHomeFragment getFragment(FragmentManager manager) {
+        public DbFragment getFragment(FragmentManager manager) {
             Fragment fragment = manager.findFragmentByTag(name());
             if (fragment == null) {
                 try {
-                    return (AbstractHomeFragment) fragmentClass.newInstance();
+                    return (DbFragment) fragmentClass.newInstance();
                 } catch (java.lang.InstantiationException | IllegalAccessException e) {
                     throw new DrawerModeException(e);
                 }
             }
 
-            return (AbstractHomeFragment) fragment;
+            return (DbFragment) fragment;
         }
 
         public void replace(int containerId, FragmentManager manager) {

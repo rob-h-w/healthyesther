@@ -5,17 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
-import android.view.MenuItem;
 
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.edit.MealEventActivity;
 import com.robwilliamson.healthyesther.edit.MedicationEventActivity;
 import com.robwilliamson.healthyesther.edit.NoteEventActivity;
 import com.robwilliamson.healthyesther.edit.ScoreEventActivity;
+import com.robwilliamson.healthyesther.fragment.BaseFragment;
+import com.robwilliamson.healthyesther.fragment.DbFragment;
 import com.robwilliamson.healthyesther.fragment.NavigationDrawerFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EventListFragment;
-import com.robwilliamson.healthyesther.fragment.home.AbstractHomeFragment;
 
 
 public class HomeActivity extends DbActivity
@@ -61,7 +60,7 @@ public class HomeActivity extends DbActivity
 
         NavigationDrawerFragment.NavigationDrawerMode mode = mNavigationDrawerFragment.getMode();
 
-        AbstractHomeFragment fragment = mode.getFragment(getSupportFragmentManager());
+        DbFragment fragment = mode.getFragment(getSupportFragmentManager());
 
         if (fragment.getArguments() == null && getIntent().getExtras() != null) {
             fragment.setArguments(getIntent().getExtras());
@@ -86,7 +85,8 @@ public class HomeActivity extends DbActivity
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = Utils.checkNotNull(getActionBar());
+        //noinspection deprecation
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
@@ -105,24 +105,10 @@ public class HomeActivity extends DbActivity
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public QueryUser[] getQueryUsers() {
-        return mNavigationDrawerFragment.getMode().getFragment(getSupportFragmentManager()).getQueryUsers();
-    }
-
-    @Override
-    public void onEventSelected(EventData eventData) {
+    public void onEventSelected(EventTable.Row row) {
         Intent intent = null;
 
-        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(eventData.getTypeId())) {
+        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(row.getTypeId().getId())) {
             case MEAL:
                 intent = new Intent(this, MealEventActivity.class);
                 break;
@@ -137,14 +123,15 @@ public class HomeActivity extends DbActivity
                 break;
         }
 
-        Bundle bundle = eventData.asBundle();
-        intent.putExtras(bundle);
+        Bundle extras = new Bundle();
+        extras.putSerializable(EventTable.NAME, row);
+        intent.putExtras(extras);
 
         this.startActivity(intent);
     }
 
     @Override
-    public void onQueryFailure(Throwable failure) {
-        // TODO: Display a toast.
+    public void onFragmentUpdated(BaseFragment fragment) {
+        invalidateOptionsMenu();
     }
 }

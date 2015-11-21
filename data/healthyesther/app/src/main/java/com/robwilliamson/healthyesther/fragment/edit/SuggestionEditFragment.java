@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -15,15 +16,9 @@ import java.util.Set;
 
 /**
  * Use with fragments that have an auto complete box with suggestions.
- *
- * @param <T> Watcher for this fragment.
  */
-public abstract class SuggestionEditFragment<R extends BaseRow, T> extends EditFragment<R, T> {
+public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFragment<R> {
     private Map<String, Long> mSuggestionIds;
-
-    protected SuggestionEditFragment(Class<T> type) {
-        super(type);
-    }
 
     @Override
     public void onResume() {
@@ -55,11 +50,11 @@ public abstract class SuggestionEditFragment<R extends BaseRow, T> extends EditF
     }
 
     protected void onNameChanged() {
-        updateWatcher();
+        updateAttachedActivity();
     }
 
     protected void onNameClicked() {
-        updateWatcher();
+        updateAttachedActivity();
     }
 
     protected void setSuggestionIds(Map<String, Long> suggestionIds) {

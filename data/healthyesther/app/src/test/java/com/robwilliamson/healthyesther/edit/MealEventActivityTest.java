@@ -15,7 +15,6 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
-import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
@@ -118,9 +117,6 @@ public class MealEventActivityTest {
         mActivity.mTransactionExecutor = mTransactionExecutor;
 
         doReturn(mMealInitQuery).when(mMealFragment).getInitializationQuery();
-
-        doReturn(new Query[]{}).when(mEditEventFragment).getQueries();
-        doReturn(new Query[]{}).when(mMealFragment).getQueries();
 
         doReturn(mMealPrimaryKey).when(mMealTableRow).getNextPrimaryKey();
         doReturn(mEventPrimaryKey).when(mEventTableRow).getNextPrimaryKey();
@@ -348,8 +344,9 @@ public class MealEventActivityTest {
             //super.setBusy(busy);
         }
 
+        @NonNull
         @Override
-        protected TransactionExecutor getExecutor() {
+        public TransactionExecutor getExecutor() {
             return mTransactionExecutor;
         }
     }
