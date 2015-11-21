@@ -2,8 +2,6 @@ package com.robwilliamson.healthyesther.fragment.home;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
 import com.robwilliamson.healthyesther.fragment.AddEventFragment;
 import com.robwilliamson.healthyesther.fragment.DbFragment;
 

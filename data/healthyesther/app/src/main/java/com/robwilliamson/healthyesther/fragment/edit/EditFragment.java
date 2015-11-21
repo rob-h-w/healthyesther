@@ -22,16 +22,17 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
         return mRow;
     }
 
+    public void setRow(@Nonnull R row) {
+        mRow = row;
+    }
+
     //noinspection
     public boolean hasRow() {
         return mRow != null;
     }
 
-    public void setRow(@Nonnull R row) {
-        mRow = row;
-    }
-
     public abstract boolean validate();
+
     protected abstract R createRow();
 
     @Override

@@ -176,6 +176,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
 
     public interface Watcher {
         void onFragmentUpdate(EditScoreEventFragment fragment);
+
         void onFragmentRemoveRequest(EditScoreEventFragment fragment);
     }
 }

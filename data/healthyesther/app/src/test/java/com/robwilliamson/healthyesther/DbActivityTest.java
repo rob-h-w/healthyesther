@@ -13,7 +13,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)

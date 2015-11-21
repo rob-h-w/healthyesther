@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.InstrumentationTestCase;
 
-import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.definition.Event;

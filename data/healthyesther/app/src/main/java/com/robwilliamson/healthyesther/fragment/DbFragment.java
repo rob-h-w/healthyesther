@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.use.QueryUser;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +31,7 @@ public abstract class DbFragment extends BaseFragment {
 
     /**
      * Get the database transaction executor from the surrounding activity.
+     *
      * @return The executor or null if it's not available either because this fragment is not attached or because the provider returned null.
      */
     @Nullable

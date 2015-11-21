@@ -16,9 +16,9 @@ import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.DbFragment;
 

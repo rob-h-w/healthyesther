@@ -430,7 +430,7 @@ public final class Utils {
             }
 
             private static com.robwilliamson.healthyesther.db.includes.DateTime time(int year, int month,
-                                         int day, int hour) {
+                                                                                     int day, int hour) {
                 return com.robwilliamson.healthyesther.db.includes.DateTime.from(DateTime.now().withDate(year, month, day)
                         .withTime(hour, minute(), second(), 0));
             }

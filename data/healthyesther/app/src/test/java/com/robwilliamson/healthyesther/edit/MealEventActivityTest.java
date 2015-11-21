@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
@@ -43,11 +42,9 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)

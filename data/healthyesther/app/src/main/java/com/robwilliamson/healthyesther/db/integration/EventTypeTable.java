@@ -20,6 +20,10 @@ public enum EventTypeTable {
         mIcon = icon;
     }
 
+    public static EventTypeTable valueOf(long id) {
+        return EventTypeTable.values()[(int) id + 1];
+    }
+
     @Nonnull
     public com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey getId() {
         return mId;
@@ -33,10 +37,6 @@ public enum EventTypeTable {
 
     public String getIcon() {
         return mIcon;
-    }
-
-    public static EventTypeTable valueOf(long id) {
-        return EventTypeTable.values()[(int) id + 1];
     }
 
     public static class BadEventTypeException extends RuntimeException {

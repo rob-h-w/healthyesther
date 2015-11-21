@@ -1,18 +1,11 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
-import android.database.Cursor;
 import android.os.Bundle;
 
-import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.data.EventData;
-import com.robwilliamson.healthyesther.db.use.GetEventsAfterDateTimeQuery;
-import com.robwilliamson.healthyesther.db.use.Query;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-
-import java.util.List;
 
 public class EventHistoryListFragment extends EventListFragment {
     private static final String FROM = "from";

@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;

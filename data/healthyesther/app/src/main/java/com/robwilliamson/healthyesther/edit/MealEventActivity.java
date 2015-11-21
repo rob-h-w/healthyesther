@@ -1,10 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
-import android.widget.Toast;
 
-import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
