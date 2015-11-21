@@ -35,6 +35,10 @@ public enum EventTypeTable {
         return mIcon;
     }
 
+    public static EventTypeTable valueOf(long id) {
+        return EventTypeTable.values()[(int) id + 1];
+    }
+
     public static class BadEventTypeException extends RuntimeException {
         public BadEventTypeException(EventTypeTable expected, long actual) {
             super("Expected an event of type " + expected.getName() + " (id " + expected.getId().getId() + "), got id " + actual);
