@@ -63,7 +63,7 @@ public class DatabaseWrapperClassTest {
     }
 
     @Test
-    public void getTransaction_returnsATraansaction() {
+    public void getTransaction_returnsATransaction() {
         com.robwilliamson.healthyesther.db.includes.Transaction transaction = mDatabaseWrapperClass.getTransaction();
 
         assertThat(transaction, is(not((Transaction) null)));

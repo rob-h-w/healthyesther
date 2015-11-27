@@ -11,6 +11,8 @@ import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+
 /**
  * Accessor for the health database.
  */
@@ -18,6 +20,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     private static final Object sSync = new Object();
     public static boolean sDebug = false;
     private static volatile HealthDbHelper sInstance = null;
+    private static volatile DatabaseWrapperClass sDatabase = null;
     private final Context mContext;
 
     private HealthDbHelper(Context context) {
@@ -25,13 +28,37 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         mContext = context;
     }
 
-    public static HealthDbHelper getInstance(Context context) {
+    @Nonnull
+    public static HealthDbHelper getInstance(@Nonnull Context context) {
         synchronized (sSync) {
             if (sInstance == null) {
                 sInstance = new HealthDbHelper(context.getApplicationContext());
             }
 
             return sInstance;
+        }
+    }
+
+    @Nonnull
+    public static HealthDbHelper getInstance() {
+        if (sInstance == null) {
+            throw new IllegalStateException("HealthDbHelper.getInstance(Context) must be called at least once prior to this!");
+        }
+
+        return sInstance;
+    }
+
+    public static Database getDatabase() {
+        return getDatabaseWrapper();
+    }
+
+    public static DatabaseWrapperClass getDatabaseWrapper() {
+        synchronized (sSync) {
+            if (sDatabase == null) {
+                sDatabase = new DatabaseWrapperClass(getInstance().getWritableDatabase());
+            }
+
+            return sDatabase;
         }
     }
 
@@ -50,9 +77,10 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         synchronized (sSync) {
             Database database = new DatabaseWrapperClass(sqLiteDatabase);
-            Transaction transaction = database.getTransaction();
-            HealthDatabase.create(transaction);
-            transaction.commit();
+            try (Transaction transaction = database.getTransaction()) {
+                HealthDatabase.create(transaction);
+                transaction.commit();
+            }
         }
     }
 
@@ -65,9 +93,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
     public void backupToDropbox() throws IOException {
         synchronized (sSync) {
-            // Ensure the db isn't in use
-            close();
-
             Utils.File.copy(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath(),
                     Utils.File.Dropbox.dbFile());
         }
@@ -75,9 +100,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
     public void restoreFromDropbox() throws IOException {
         synchronized (sSync) {
-            // Ensure the db isn't in use
-            close();
-
             Utils.File.copy(Utils.File.Dropbox.dbFile(),
                     mContext.getDatabasePath(getDatabaseName()).getAbsolutePath());
 

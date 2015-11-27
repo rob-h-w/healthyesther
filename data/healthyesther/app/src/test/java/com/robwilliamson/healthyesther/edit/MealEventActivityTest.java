@@ -65,9 +65,6 @@ public class MealEventActivityTest {
     private EditMealFragment mMealFragment;
 
     @Mock
-    private TransactionExecutor.QueryOperation mMealInitQuery;
-
-    @Mock
     private EditEventFragment mEditEventFragment;
 
     @Mock
@@ -112,8 +109,6 @@ public class MealEventActivityTest {
         mActivity.mEditEventFragment = mEditEventFragment;
         mActivity.mMealFragment = mMealFragment;
         mActivity.mTransactionExecutor = mTransactionExecutor;
-
-        doReturn(mMealInitQuery).when(mMealFragment).getInitializationQuery();
 
         doReturn(mMealPrimaryKey).when(mMealTableRow).getNextPrimaryKey();
         doReturn(mEventPrimaryKey).when(mEventTableRow).getNextPrimaryKey();
@@ -293,11 +288,6 @@ public class MealEventActivityTest {
         @Override
         public List<Pair<EditFragment, String>> getEditFragments(boolean create) {
             return super.getEditFragments(create);
-        }
-
-        @Override
-        public int getModifyFailedStringId() {
-            return super.getModifyFailedStringId();
         }
 
         @Override

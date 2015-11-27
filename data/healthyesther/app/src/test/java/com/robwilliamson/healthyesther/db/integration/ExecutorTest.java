@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.db.integration;
 
+import android.content.Context;
+
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
@@ -7,7 +9,6 @@ import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
@@ -16,6 +17,7 @@ import org.robolectric.annotation.Config;
 
 import javax.annotation.Nonnull;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -24,21 +26,25 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @Config(constants = BuildConfig.class)
 public class ExecutorTest {
     @Mock
+    private Context mContext;
+
+    @Mock
     private Database mDatabase;
 
     @Mock
     private TransactionExecutor.Observer mObserver;
 
-    @InjectMocks
-    private TestableExecutor mExecutor;
-
     @Mock
     private Runnable mRunnable;
+
+    private TestableExecutor mExecutor;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
         Robolectric.getBackgroundThreadScheduler().reset();
+        doReturn(mContext).when(mContext).getApplicationContext();
+        mExecutor = new TestableExecutor(mObserver);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -76,8 +82,8 @@ public class ExecutorTest {
     }
 
     private static class TestableExecutor extends Executor {
-        public TestableExecutor(@Nonnull Database database, @Nonnull Observer observer) {
-            super(database, observer);
+        public TestableExecutor(@Nonnull Observer observer) {
+            super(observer);
         }
 
         @Override

@@ -2,16 +2,20 @@ package com.robwilliamson.healthyesther.db.integration;
 
 import android.os.AsyncTask;
 
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Executor extends TransactionExecutor {
+
+    @Nullable
     private volatile AsyncTask<Void, Void, Void> mTask;
 
-    public Executor(@Nonnull Database database, @Nonnull Observer observer) {
-        super(database, observer);
+    public Executor(@Nonnull Observer observer) {
+        super(observer);
     }
 
     @Override
@@ -26,13 +30,21 @@ public class Executor extends TransactionExecutor {
                 try {
                     runnable.run();
                 } finally {
-                    mTask = null;
+                    synchronized (Executor.this) {
+                        mTask = null;
+                    }
                 }
                 return null;
             }
         };
 
         mTask.execute();
+    }
+
+    @Override
+    @Nonnull
+    protected Database getDatabase() {
+        return HealthDbHelper.getDatabase();
     }
 
     @Override

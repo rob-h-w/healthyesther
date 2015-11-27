@@ -4,7 +4,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.Settings;
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -25,7 +24,7 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Sc
     protected void setUp() throws Exception {
         super.setUp();
 
-        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+        Utils.Db.TestData.cleanOldData();
         Settings.INSTANCE.resetExclusionList();
 
         getActivity();

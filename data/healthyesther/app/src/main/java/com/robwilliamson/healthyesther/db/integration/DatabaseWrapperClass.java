@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 public class DatabaseWrapperClass extends Database {
+    @Nonnull
     private final SQLiteDatabase mDatabase;
 
     public DatabaseWrapperClass(@Nonnull SQLiteDatabase database) {
@@ -29,6 +30,11 @@ public class DatabaseWrapperClass extends Database {
     @Override
     public Transaction getTransaction() {
         return new com.robwilliamson.healthyesther.db.integration.Transaction(mDatabase);
+    }
+
+    @Nonnull
+    public SQLiteDatabase getSqliteDatabase() {
+        return mDatabase;
     }
 
     public static class Cursor implements com.robwilliamson.healthyesther.db.includes.Cursor {

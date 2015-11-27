@@ -20,6 +20,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
@@ -31,7 +32,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
@@ -99,15 +99,6 @@ public class TransactionTest {
     }
 
     @Test
-    public void constructorDbInTransaction_doesNotBeginTransaction() {
-        Mockito.reset(mDatabase);
-        doReturn(true).when(mDatabase).inTransaction();
-        mTransaction = new Transaction(mDatabase);
-
-        verify(mDatabase, never()).beginTransaction();
-    }
-
-    @Test
     public void execSQL_callsThrough() {
         mTransaction.execSQL("test");
 
@@ -126,7 +117,7 @@ public class TransactionTest {
 
     @Test(expected = Transaction.NullColumnValueException.class)
     public void insertWithANullColumnValue_throwsNullColumnValueException() {
-        mTransaction.insert(TABLE, Arrays.asList(new String[]{"null"}), new Object[]{null});
+        mTransaction.insert(TABLE, Collections.singletonList("null"), new Object[]{null});
     }
 
     @Test
@@ -141,7 +132,7 @@ public class TransactionTest {
 
     @Test(expected = Transaction.NullColumnValueException.class)
     public void updateWithANullColumnValue_throwsNullColumnValueException() {
-        mTransaction.update(TABLE, mWhere, Arrays.asList(new String[]{"null"}), new Object[]{null});
+        mTransaction.update(TABLE, mWhere, Collections.singletonList("null"), new Object[]{null});
     }
 
     @Test
@@ -150,16 +141,6 @@ public class TransactionTest {
 
         verify(mDatabase).delete(TABLE, WHERE, null);
         verify(mWhere).getWhere();
-    }
-
-    @Test
-    public void commitWhenNoObserverNotInTrans_doesNothing() {
-        Mockito.reset(mDatabase); // Ignore interactions from the transaction's c'tor.
-
-        mTransaction.commit();
-
-        verify(mDatabase, only()).inTransaction();
-        verifyZeroInteractions(mCompletionHandler0);
     }
 
     @Test
@@ -193,7 +174,6 @@ public class TransactionTest {
 
         mTransaction.rollBack();
 
-        verify(mDatabase, only()).inTransaction();
         verifyZeroInteractions(mCompletionHandler0);
         verifyZeroInteractions(mCompletionHandler1);
     }

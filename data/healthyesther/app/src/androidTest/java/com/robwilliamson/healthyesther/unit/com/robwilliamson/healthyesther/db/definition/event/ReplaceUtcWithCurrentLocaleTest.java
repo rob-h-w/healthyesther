@@ -25,10 +25,21 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        mDb = HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase();
-        Utils.Db.TestData.cleanOldData(mDb);
-        Utils.Db.TestData.insertV3FakeData(mDb);
+        mDb = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
+        Utils.Db.TestData.cleanOldData();
+        Utils.Db.TestData.insertV3FakeData();
+    }
+
+    /**
+     * Make sure all resources are cleaned up and garbage collected before moving on to the next
+     * test. Subclasses that override this method should make sure they call super.tearDown()
+     * at the end of the overriding method.
+     *
+     * @throws Exception
+     */
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
     }
 
     public void testNormalUpgradePath() throws Exception {
@@ -116,12 +127,11 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
 
         @Override
         public String toString() {
-            String result = "{" +
+            return "{" +
                     stringRepresentationOf("when", when) + ", " +
                     stringRepresentationOf("created", created) + ", " +
                     stringRepresentationOf("modified", modified) +
                     "}";
-            return result;
         }
 
         private String stringRepresentationOf(String name, String value) {

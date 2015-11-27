@@ -51,6 +51,9 @@ public class App extends Application {
         sInstance = this;
 
         TimingManager.INSTANCE.applicationCreated(getApplicationContext());
+
+        // Set up the Database instance.
+        HealthDbHelper.getInstance(this);
     }
 
 

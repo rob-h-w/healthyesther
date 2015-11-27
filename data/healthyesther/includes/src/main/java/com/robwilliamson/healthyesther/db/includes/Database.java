@@ -1,5 +1,9 @@
 package com.robwilliamson.healthyesther.db.includes;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 public abstract class Database {
@@ -10,7 +14,10 @@ public abstract class Database {
     }
 
     public static void drop(@Nonnull Transaction transaction, @Nonnull Table[] tables) {
-        for (Table table : tables) {
+        List<Table> reverse = Arrays.asList(tables);
+        Collections.reverse(reverse);
+
+        for (Table table : reverse) {
             table.drop(transaction);
         }
     }

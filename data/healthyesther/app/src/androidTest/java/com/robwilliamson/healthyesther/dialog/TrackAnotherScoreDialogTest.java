@@ -4,7 +4,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.HomeActivity;
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
@@ -29,7 +28,7 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
     protected void setUp() throws Exception {
         super.setUp();
 
-        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+        Utils.Db.TestData.cleanOldData();
 
         getActivity();
     }
@@ -50,7 +49,7 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
                 onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
                 checkScoreIsPresent("Score 1");
                 pressBack();
-                Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+                Utils.Db.TestData.cleanOldData();
             }
         });
     }
@@ -75,7 +74,7 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
                 checkScoreIsPresent("Another score");
                 checkScoreIsPresent("Yet another score");
                 pressBack();
-                Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+                Utils.Db.TestData.cleanOldData();
             }
         });
     }

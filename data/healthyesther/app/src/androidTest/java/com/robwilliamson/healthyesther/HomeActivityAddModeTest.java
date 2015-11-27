@@ -4,7 +4,6 @@ import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -24,8 +23,7 @@ public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<Ho
 
         HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
 
-        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase());
+        Utils.Db.TestData.cleanOldData();
 
         getActivity();
 

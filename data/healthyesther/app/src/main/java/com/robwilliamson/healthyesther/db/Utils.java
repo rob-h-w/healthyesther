@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -12,13 +13,13 @@ import android.util.Pair;
 import com.robwilliamson.healthyesther.db.data.MealData;
 import com.robwilliamson.healthyesther.db.definition.MealEvent;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.joda.time.DateTime;
@@ -234,6 +235,7 @@ public final class Utils {
         }
 
         public static class TestData {
+            private static final String LOG_TAG = TestData.class.getName();
             private static final int pseudoRandomMax = 1000;
             private static int pseudoRandom;
             private static Pair<Integer, Integer> skipDailyEventRange = new Pair<Integer, Integer>(0, 20);
@@ -243,10 +245,11 @@ public final class Utils {
             private static Pair<Integer, Integer> dinner = new Pair<Integer, Integer>(16, 22);
             private static Transaction transaction;
 
-            public static void transactionWithDb(@Nonnull final SQLiteDatabase db, @Nonnull Runnable runnable) {
-                Database database = new DatabaseWrapperClass(db);
-                transaction = database.getTransaction();
-                try {
+            public static void transactionWithDb(@Nonnull Runnable runnable) {
+                Database database = HealthDbHelper.getDatabase();
+
+                try (Transaction t = database.getTransaction()) {
+                    transaction = t;
                     runnable.run();
                     transaction.commit();
                 } finally {
@@ -254,51 +257,52 @@ public final class Utils {
                 }
             }
 
-            public static void cleanOldData(final SQLiteDatabase db) {
-                transactionWithDb(db, new Runnable() {
-                    @Override
-                    public void run() {
-                        Contract contract = Contract.getInstance();
-                        contract.delete(db);
-                        contract.create(db);
+            public static void cleanOldData() {
+                Database db = HealthDbHelper.getDatabase();
+                try (Transaction transaction = db.getTransaction()) {
+                    try {
+                        HealthDatabase.drop(transaction);
+                    } catch (SQLiteException e) {
+                        Log.e(LOG_TAG, "Error while dropping old tables.", e);
                     }
-                });
+                    HealthDatabase.create(transaction);
+                }
             }
 
-            public static void insertFakeData(final SQLiteDatabase db) {
-                transactionWithDb(db, new Runnable() {
+            public static void insertFakeData() {
+                transactionWithDb(new Runnable() {
                     @Override
                     public void run() {
                         Contract c = Contract.getInstance();
 
                         long[] breakfast = new long[]{
-                                insertMeal(c, db, "Toppas"),
-                                insertMeal(c, db, "Toast"),
-                                insertMeal(c, db, "Yoghurt"),
-                                insertMeal(c, db, "Melon")
+                                insertMeal("Toppas"),
+                                insertMeal("Toast"),
+                                insertMeal("Yoghurt"),
+                                insertMeal("Melon")
                         };
 
                         long[] lunch = new long[]{
-                                insertMeal(c, db, "Sandwiches"),
-                                insertMeal(c, db, "Soup")
+                                insertMeal("Sandwiches"),
+                                insertMeal("Soup")
                         };
 
                         long[] dinner = new long[]{
-                                insertMeal(c, db, "Coq au vin"),
-                                insertMeal(c, db, "Spaghetti bolognese"),
-                                insertMeal(c, db, "Beef and prune casserole"),
-                                insertMeal(c, db, "Frauen pizza"),
-                                insertMeal(c, db, "Chester Burger"),
-                                insertMeal(c, db, "Männer pizza")
+                                insertMeal("Coq au vin"),
+                                insertMeal("Spaghetti bolognese"),
+                                insertMeal("Beef and prune casserole"),
+                                insertMeal("Frauen pizza"),
+                                insertMeal("Chester Burger"),
+                                insertMeal("Männer pizza")
                         };
 
                         long[] medication = new long[]{
-                                c.MEDICATION.insert(db, "Paracetamol"),
-                                c.MEDICATION.insert(db, "Ibuprofen"),
-                                c.MEDICATION.insert(db, "ACC Akut"),
-                                c.MEDICATION.insert(db, "Fluoxetine"),
-                                c.MEDICATION.insert(db, "Citalopram"),
-                                c.MEDICATION.insert(db, "Escitalopram")
+                                insertMedication("Paracetamol"),
+                                insertMedication("Ibuprofen"),
+                                insertMedication("ACC Akut"),
+                                insertMedication("Fluoxetine"),
+                                insertMedication("Citalopram"),
+                                insertMedication("Escitalopram")
                         };
 
                         long dailyMedicationId = medication[5];
@@ -350,7 +354,7 @@ public final class Utils {
                                         }
 
                                         if (!hadBreakfast && haveBreakfast(hour)) {
-                                            insertMeal(db,
+                                            insertMeal(
                                                     year,
                                                     month,
                                                     day,
@@ -361,7 +365,7 @@ public final class Utils {
                                         }
 
                                         if (!hadLunch && haveLunch(hour)) {
-                                            insertMeal(db,
+                                            insertMeal(
                                                     year, month, day, hour,
                                                     "Lunch",
                                                     randomId(lunch));
@@ -369,7 +373,7 @@ public final class Utils {
                                         }
 
                                         if (!hadDinner && haveDinner(hour)) {
-                                            insertMeal(db,
+                                            insertMeal(
                                                     year, month, day, hour,
                                                     "Dinner",
                                                     randomId(dinner));
@@ -377,7 +381,7 @@ public final class Utils {
                                         }
 
                                         while (inRange(rand(), randomMedicationRange)) {
-                                            insertMedication(db,
+                                            insertMedication(
                                                     year, month, day, hour,
                                                     "Medication",
                                                     randomId(medication));
@@ -390,8 +394,16 @@ public final class Utils {
                 });
             }
 
-            private static long insertMeal(Contract c, SQLiteDatabase db, String name) {
-                return c.MEAL.insert(db, new MealData(name));
+            private static long insertMeal(@Nonnull String name) {
+                MealTable.Row row = new MealTable.Row(name);
+                row.applyTo(transaction);
+                return row.getNextPrimaryKey().getId();
+            }
+
+            private static long insertMedication(@Nonnull String name) {
+                MedicationTable.Row row = new MedicationTable.Row(name);
+                row.applyTo(transaction);
+                return row.getNextPrimaryKey().getId();
             }
 
             private static long randomId(long[] ids) {
@@ -399,7 +411,7 @@ public final class Utils {
                 return ids[idIndex];
             }
 
-            private static void insertMeal(SQLiteDatabase db, int year, int month,
+            private static void insertMeal(int year, int month,
                                            int day, int hour, String name, long mealId) {
                 com.robwilliamson.healthyesther.db.includes.DateTime time = time(year, month, day, hour);
                 EventTable.Row eventRow = new EventTable.Row(EventTypeTable.MEAL.getId(),
@@ -415,7 +427,7 @@ public final class Utils {
                 mealEventRow.applyTo(transaction);
             }
 
-            private static void insertMedication(SQLiteDatabase db, int year, int month, int day, int hour, String medication, long medicationId) {
+            private static void insertMedication(int year, int month, int day, int hour, String medication, long medicationId) {
                 Contract c = Contract.getInstance();
                 com.robwilliamson.healthyesther.db.includes.DateTime time = time(year, month, day, hour);
                 EventTable.Row eventRow = new EventTable.Row(EventTypeTable.MEDICATION.getId(),
@@ -485,8 +497,9 @@ public final class Utils {
                 return pseudoRandom;
             }
 
-            public static void insertV3FakeData(final SQLiteDatabase db) {
-                transactionWithDb(db, new Runnable() {
+            public static void insertV3FakeData() {
+                final SQLiteDatabase db = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
+                transactionWithDb(new Runnable() {
                     @Override
                     public void run() {
                         Contract c = Contract.getInstance();

@@ -4,8 +4,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-public interface Transaction {
+public interface Transaction extends AutoCloseable {
     void addCompletionHandler(@Nonnull CompletionHandler handler);
+
+    @Override
+    void close();
 
     void execSQL(@Nonnull String sql);
 

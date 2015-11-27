@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther;
 
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
@@ -9,7 +10,6 @@ import android.view.MenuItem;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.Executor;
 import com.robwilliamson.healthyesther.fragment.DbFragment;
@@ -68,6 +68,12 @@ public abstract class DbActivity extends BusyActivity
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        mExecutor = new Executor(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean returnValue = super.onCreateOptionsMenu(menu);
 
@@ -88,6 +94,7 @@ public abstract class DbActivity extends BusyActivity
         if (mExecutor != null) {
             mExecutor.cancel();
         }
+        mExecutor = null;
         cancel(mTask);
         mTask = null;
 
@@ -141,8 +148,6 @@ public abstract class DbActivity extends BusyActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        mExecutor = new Executor(new DatabaseWrapperClass(HealthDbHelper.getInstance(getApplicationContext()).getWritableDatabase()), this);
     }
 
     @NonNull

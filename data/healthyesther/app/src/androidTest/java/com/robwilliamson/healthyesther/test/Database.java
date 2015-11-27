@@ -2,16 +2,12 @@ package com.robwilliamson.healthyesther.test;
 
 import android.app.Instrumentation;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.definition.Event;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
-import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 
 import junit.framework.Assert;
 
@@ -32,12 +28,8 @@ public final class Database {
 
         int v3DbId = testContext.getResources().getIdentifier("v3", "raw", testContext.getPackageName());
 
-        InputStream v3InputStream = testContext.getResources().openRawResource(v3DbId);
-
-        try {
+        try (InputStream v3InputStream = testContext.getResources().openRawResource(v3DbId)) {
             Utils.File.copy(v3InputStream, dbPath);
-        } finally {
-            v3InputStream.close();
         }
     }
 
@@ -66,28 +58,10 @@ public final class Database {
                 HealthDbHelper.getInstance(targetContext).getDatabaseName()).getAbsolutePath();
     }
 
-    public static int countEntries(Context targetContext) {
-
-        SQLiteDatabase db = HealthDbHelper.getInstance(targetContext).getWritableDatabase();
-        com.robwilliamson.healthyesther.db.includes.Database database = new DatabaseWrapperClass(db);
+    public static int countEntries() {
+        com.robwilliamson.healthyesther.db.includes.Database database = HealthDbHelper.getDatabase();
 
         EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
-
-        Cursor c = db.query(Event.TABLE_NAME, null, null, null, null, null, null);
-
-        try {
-            if (c.moveToFirst()) {
-                int count = 0;
-                do {
-                    count++;
-                } while (c.moveToNext());
-
-                return count;
-            } else {
-                return 0;
-            }
-        } finally {
-            c.close();
-        }
+        return rows.length;
     }
 }

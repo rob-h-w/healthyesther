@@ -46,6 +46,8 @@ public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFrag
                 onNameClicked();
             }
         });
+
+        setSuggestionIdsOnUi();
     }
 
     protected void onNameChanged() {
@@ -59,24 +61,35 @@ public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFrag
     protected void setSuggestionIds(Map<String, Long> suggestionIds) {
         mSuggestionIds = suggestionIds;
 
-        if (null == mSuggestionIds) {
-            getNameView().setAdapter(null);
-            return;
+        if (getActivity() != null) {
+            setSuggestionIdsOnUi();
         }
+    }
 
-        Set<String> set = mSuggestionIds.keySet();
-        String[] suggestions = new String[set.size()];
-        set.toArray(suggestions);
+    private void setSuggestionIdsOnUi() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (null == mSuggestionIds) {
+                    getNameView().setAdapter(null);
+                    return;
+                }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line,
-                suggestions);
+                Set<String> set = mSuggestionIds.keySet();
+                String[] suggestions = new String[set.size()];
+                set.toArray(suggestions);
 
-        AutoCompleteTextView nameView = getNameView();
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_dropdown_item_1line,
+                        suggestions);
 
-        if (nameView != null) {
-            getNameView().setAdapter(adapter);
-        }
+                AutoCompleteTextView nameView = getNameView();
+
+                if (nameView != null) {
+                    getNameView().setAdapter(adapter);
+                }
+            }
+        });
     }
 
     protected void appendSuggestionIds(HashMap<String, Long> suggestionIds) {

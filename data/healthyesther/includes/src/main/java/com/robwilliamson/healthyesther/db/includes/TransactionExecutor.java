@@ -4,16 +4,16 @@ import javax.annotation.Nonnull;
 
 public abstract class TransactionExecutor {
     @Nonnull
-    private final Database mDb;
-    @Nonnull
     private final Observer mObserver;
 
-    public TransactionExecutor(@Nonnull Database database, @Nonnull Observer observer) {
-        mDb = database;
+    public TransactionExecutor(@Nonnull Observer observer) {
         mObserver = observer;
     }
 
     protected abstract void runAsynchronously(@Nonnull Runnable runnable);
+
+    @Nonnull
+    protected abstract Database getDatabase();
 
     public abstract void cancel();
 
@@ -22,13 +22,12 @@ public abstract class TransactionExecutor {
         runAsynchronously(new Runnable() {
             @Override
             public void run() {
-                Transaction transaction = mDb.getTransaction();
-                try {
-                    operation.doTransactionally(mDb, transaction);
+                Database db = getDatabase();
+                try (Transaction transaction = db.getTransaction()) {
+                    operation.doTransactionally(db, transaction);
                     transaction.commit();
                     mObserver.onTransactionComplete();
                 } catch (Throwable e) {
-                    transaction.rollBack();
                     mObserver.onTransactionFail(e);
                 }
             }
@@ -45,33 +44,5 @@ public abstract class TransactionExecutor {
 
     public interface Operation {
         void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction);
-    }
-
-    public static abstract class QueryOperation<R extends BaseRow> implements Operation {
-        private R[] mResults;
-
-        public
-        @Nonnull
-        R[] getResults() {
-            if (mResults == null) {
-                throw new NullQueryResultException();
-            }
-            return mResults;
-        }
-
-        /**
-         * Implementors should call this when their operation succeeds.
-         *
-         * @param results The results of the query.
-         */
-        protected void setResults(@Nonnull R[] results) {
-            mResults = results;
-        }
-
-        public static class NullQueryResultException extends RuntimeException {
-            public NullQueryResultException() {
-                super("The result array was null. Did you forget to call setResults()?");
-            }
-        }
     }
 }

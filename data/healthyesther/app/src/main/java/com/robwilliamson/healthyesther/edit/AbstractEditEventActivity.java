@@ -9,9 +9,13 @@ import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -74,15 +78,34 @@ public abstract class AbstractEditEventActivity extends DbActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
+        //noinspection StatementWithEmptyBody
+        while (getSupportFragmentManager().popBackStackImmediate()) ;
+
         if (fragments != null) {
             for (Fragment fragment : fragments) {
                 transaction.remove(fragment);
             }
         }
 
+        final List<TransactionExecutor.Operation> operations = new ArrayList<>();
+
         for (Pair<EditFragment, String> pair : editFragments) {
             transaction.add(getActivityContentLayoutResourceId(), pair.first, pair.second);
+            if (pair.first instanceof InitializationQuerier) {
+                InitializationQuerier querier = (InitializationQuerier) pair.first;
+                TransactionExecutor.Operation operation = querier.getInitializationQuery();
+                operations.add(operation);
+            }
         }
+
+        getExecutor().perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                for (TransactionExecutor.Operation operation : operations) {
+                    operation.doTransactionally(database, transaction);
+                }
+            }
+        });
 
         transaction.commit();
     }

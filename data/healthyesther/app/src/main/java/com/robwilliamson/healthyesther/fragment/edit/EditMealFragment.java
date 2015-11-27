@@ -16,7 +16,6 @@ import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 
 import java.io.Serializable;
@@ -26,8 +25,10 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.robwilliamson.healthyesther.db.includes.WhereContains.all;
+
 public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
-        implements InitializationQuerier<MealTable.Row> {
+        implements InitializationQuerier {
 
     private static final String NAME_TO_ROW_MAP = "name to row map";
 
@@ -102,9 +103,13 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         return MealData.validateName(getName());
     }
 
+    @Nonnull
     @Override
     protected MealTable.Row createRow() {
-        return new MealTable.Row(getName());
+        String name = getName();
+        MealTable.Row row = new MealTable.Row(name);
+        mNameToRowMap.put(name, row);
+        return row;
     }
 
     @Nonnull
@@ -124,34 +129,34 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
     @Nonnull
     @Override
-    public TransactionExecutor.QueryOperation<MealTable.Row> getInitializationQuery() {
-        return new TransactionExecutor.QueryOperation<MealTable.Row>() {
+    public TransactionExecutor.Operation getInitializationQuery() {
+        return new TransactionExecutor.Operation() {
 
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                setResults(HealthDatabase.MEAL_TABLE.select(database, new Where() {
-                    @Nullable
-                    @Override
-                    public String getWhere() {
-                        return null;
-                    }
-                }));
+                MealTable.Row[] rows = HealthDatabase.MEAL_TABLE.select(database, all());
+
+                final Map<String, Long> suggestionIds = new HashMap<>();
+                for (MealTable.Row row : rows) {
+                    final String name = row.getName();
+                    suggestionIds.put(name, row.getConcretePrimaryKey().getId());
+                    mNameToRowMap.put(name, row);
+                }
+
+                setSuggestionIds(suggestionIds);
             }
         };
     }
 
-    @Nullable
+    @Nonnull
     public MealTable.Row getRow() {
         String name = getName();
-        if (name == null) {
-            return null;
-        }
 
         if (mNameToRowMap.containsKey(name)) {
             return mNameToRowMap.get(name);
         }
 
-        return new MealTable.Row(name);
+        return createRow();
     }
 
     public void setRow(@NonNull final MealTable.Row row) {
@@ -162,17 +167,5 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
                 getNameView().setText(row.getName());
             }
         });
-    }
-
-    @Override
-    public void onInitializationQueryResponse(@Nonnull MealTable.Row[] rows) {
-        Map<String, Long> suggestionIds = new HashMap<>();
-        for (MealTable.Row row : rows) {
-            final String name = row.getName();
-            suggestionIds.put(name, row.getConcretePrimaryKey().getId());
-            mNameToRowMap.put(name, row);
-        }
-
-        setSuggestionIds(suggestionIds);
     }
 }

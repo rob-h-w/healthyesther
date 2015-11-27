@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.os.Environment;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
@@ -13,8 +12,8 @@ import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Where;
-import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.test.EditEventAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
@@ -37,10 +36,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
-    private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
-            "/Android/data/com.dropbox.android";
-    private static final String DB_PATH = DROPBOX_PATH + "/files/scratch";
-
     public MealActivityTest() {
         super(com.robwilliamson.healthyesther.HomeActivity.class);
     }
@@ -51,8 +46,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
 
-        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase());
+        Utils.Db.TestData.cleanOldData();
 
         getActivity();
 
@@ -113,8 +107,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             checkDatabaseCorrectnessForName(meal, 1);
         }
 
-        DatabaseWrapperClass db = new DatabaseWrapperClass(HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase());
+        Database db = HealthDbHelper.getDatabase();
         MealTable.Row[] meals = HealthDatabase.MEAL_TABLE.select(db, new Where() {
             @Override
             public String getWhere() {
@@ -130,8 +123,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
 
         // Check the database contents.
-        DatabaseWrapperClass db = new DatabaseWrapperClass(HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase());
+        Database db = HealthDbHelper.getDatabase();
         MealTable.Row[] meals = HealthDatabase.MEAL_TABLE.select(db, new Where() {
             @Override
             public String getWhere() {
@@ -160,6 +152,5 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         assertThat(events.length, is(greaterThanOrEqualTo(1)));
         assertThat(events[0].getTypeId().getId(), is(EventTypeTable.MEAL.getId().getId()));
-
     }
 }

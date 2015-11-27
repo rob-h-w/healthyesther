@@ -4,7 +4,6 @@ import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.ConfirmationDialogAccessor;
 import com.robwilliamson.healthyesther.test.Database;
@@ -38,8 +37,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
 
-        Utils.Db.TestData.cleanOldData(HealthDbHelper.getInstance(
-                getInstrumentation().getTargetContext()).getWritableDatabase());
+        Utils.Db.TestData.cleanOldData();
 
         if (Utils.File.exists(DROPBOX_PATH)) {
             File file;
@@ -99,7 +97,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         Database.deleteDatabase(getInstrumentation().getTargetContext());
 
         // Check there are no entries.
-        final int emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        final int emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
 
         // Restore from Dropbox.
@@ -110,7 +108,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(ConfirmationDialogAccessor.okButton()).perform(click());
 
         // Check we have the same number of entries as before.
-        final int finalCount = Database.countEntries(getInstrumentation().getTargetContext());
+        final int finalCount = Database.countEntries();
         assertEquals(expectedCount, finalCount);
     }
 
@@ -142,7 +140,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         Database.deleteDatabase(getInstrumentation().getTargetContext());
 
         // Check there are no entries.
-        int emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        int emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
 
         // Restore from Dropbox.
@@ -153,7 +151,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(ConfirmationDialogAccessor.cancelButton()).perform(click());
 
         // Check there are still no entries.
-        emptyCount = Database.countEntries(getInstrumentation().getTargetContext());
+        emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
     }
 
@@ -161,11 +159,10 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         Utils.File.mkdirs(DB_PATH);
 
         // Create some fake data
-        Utils.Db.TestData.insertFakeData(
-                HealthDbHelper.getInstance(getInstrumentation().getTargetContext()).getWritableDatabase());
+        Utils.Db.TestData.insertFakeData();
 
         // Check that we have some entries.
-        final int expectedCount = Database.countEntries(getInstrumentation().getTargetContext());
+        final int expectedCount = Database.countEntries();
         assertTrue("expected " + expectedCount + " to be greater than 0.", expectedCount > 0);
 
         // Put it in the dropbox folder.

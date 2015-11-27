@@ -13,15 +13,16 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 public class Transaction implements com.robwilliamson.healthyesther.db.includes.Transaction {
+    private static final String LOG_TAG = Transaction.class.getName();
     @Nonnull
     private final SQLiteDatabase mDb;
     private final Set<CompletionHandler> mCompletionHandlers = new HashSet<>();
+    private volatile boolean mIsInTransaction;
 
     Transaction(@Nonnull SQLiteDatabase database) {
         mDb = database;
-        if (!mDb.inTransaction()) {
-            mDb.beginTransaction();
-        }
+        mDb.beginTransaction();
+        mIsInTransaction = true;
     }
 
     private ContentValues valuesFrom(@Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
@@ -52,7 +53,7 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
                 values.put(columnName, (Boolean) o);
             } else if (clazz == Long.class) {
                 values.put(columnName, (Long) o);
-            } else if (clazz == DateTime.class) {
+            } else if (clazz == DateTime.class && o != null) {
                 values.put(columnName, ((DateTime) o).getString());
             }
             index++;
@@ -63,44 +64,69 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
 
     @Override
     public void addCompletionHandler(@Nonnull CompletionHandler handler) {
+        assertInTransaction();
         mCompletionHandlers.add(handler);
     }
 
     @Override
     public void execSQL(@Nonnull String sql) {
+        assertInTransaction();
         mDb.execSQL(sql);
     }
 
     @Override
     public long insert(@Nonnull String table, @Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
+        assertInTransaction();
         return mDb.insertOrThrow(table, null, valuesFrom(columnNames, columnValues));
     }
 
     @Override
     public int update(@Nonnull String table, @Nonnull Where where, @Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
+        assertInTransaction();
         return mDb.update(table, valuesFrom(columnNames, columnValues), where.getWhere(), null);
     }
 
     @Override
     public int remove(@Nonnull String table, @Nonnull Where where) {
+        assertInTransaction();
         return mDb.delete(table, where.getWhere(), null);
     }
 
     @Override
     public void commit() {
-        if (mDb.inTransaction()) {
-            mDb.setTransactionSuccessful();
-            mDb.endTransaction();
-            for (CompletionHandler handler : mCompletionHandlers) {
-                handler.onCompleted();
-            }
+        if (!mIsInTransaction) {
+            return;
+        }
+
+        mDb.setTransactionSuccessful();
+        mDb.endTransaction();
+
+        mIsInTransaction = false;
+
+        for (CompletionHandler handler : mCompletionHandlers) {
+            handler.onCompleted();
         }
     }
 
     @Override
     public void rollBack() {
-        if (mDb.inTransaction()) {
-            mDb.endTransaction();
+        if (!mIsInTransaction) {
+            return;
+        }
+
+        mDb.endTransaction();
+
+        mIsInTransaction = false;
+    }
+
+    @Override
+    public void close() {
+        rollBack();
+    }
+
+    private void assertInTransaction() {
+        if (!mIsInTransaction) {
+            throw new IllegalStateException("Cannot use a transaction after it's closed!");
         }
     }
 

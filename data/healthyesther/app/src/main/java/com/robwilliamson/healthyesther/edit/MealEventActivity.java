@@ -67,7 +67,8 @@ public class MealEventActivity extends AbstractEditEventActivity
                 if (meal == null) {
                     throw new InvalidParameterException("The meal name should be set");
                 }
-                meal.applyTo(database.getTransaction());
+
+                meal.applyTo(transaction);
 
                 EventTable.Row event = getEventFragment().getRow();
                 if (event == null) {
@@ -79,13 +80,13 @@ public class MealEventActivity extends AbstractEditEventActivity
                             null);
                 }
                 event.setTypeId(EventTypeTable.MEAL.getId());
-                event.applyTo(database.getTransaction());
+                event.applyTo(transaction);
                 MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(database, and(
                         foreignKey(MealEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
                         foreignKey(MealEventTable.MEAL_ID, meal.getNextPrimaryKey().getId())));
                 if (mealEvents.length == 0) {
                     MealEventTable.Row mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, 0D);
-                    mealEvent.applyTo(database.getTransaction());
+                    mealEvent.applyTo(transaction);
                 }
 
                 finish();
