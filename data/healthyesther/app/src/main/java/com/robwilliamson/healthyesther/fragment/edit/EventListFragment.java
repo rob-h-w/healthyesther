@@ -94,9 +94,14 @@ public class EventListFragment extends DbFragment implements AbsListView.OnItemC
         mWatcher.getExecutor().perform(new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
-                mAdapter.clear();
-                mAdapter.addAll(rows);
+                final EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.clear();
+                        mAdapter.addAll(rows);
+                    }
+                });
             }
         });
     }

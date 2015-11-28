@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -48,7 +47,6 @@ public class TransactionTest {
             "DATE_TIME",
             "nullDateTime"
     };
-    private static final DateTimeConverter UNUSED = new DateTimeConverter();
     private static final DateTime DATE_TIME = new DateTime(new org.joda.time.DateTime().withDate(2015, 10, 24).withTime(22, 36, 21, 0).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT"))));
     private static final String DATE_TIME_STRING = "2015-10-24T22:36:21 +00:00";
     private static final Object[] VALUES = {
@@ -74,9 +72,6 @@ public class TransactionTest {
     @Mock
     private SQLiteDatabase mDatabase;
 
-    @InjectMocks
-    private Transaction mTransaction;
-
     @Mock
     private Where mWhere;
 
@@ -86,9 +81,14 @@ public class TransactionTest {
     @Mock
     private com.robwilliamson.healthyesther.db.includes.Transaction.CompletionHandler mCompletionHandler1;
 
+    private TestableTransaction mTransaction;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+
+        TestableTransaction.sqLiteDatabase = mDatabase;
+        mTransaction = new TestableTransaction(mDatabase);
 
         doReturn(WHERE).when(mWhere).getWhere();
     }
@@ -196,6 +196,20 @@ public class TransactionTest {
         for (String columnName : COLUMN_NAMES) {
             assertThat(contentValues.get(columnName), is(EXPECTED[index]));
             index++;
+        }
+    }
+
+    private static class TestableTransaction extends Transaction {
+        public static SQLiteDatabase sqLiteDatabase;
+
+        public TestableTransaction(@Nonnull SQLiteDatabase database) {
+            super(database);
+        }
+
+        @Nonnull
+        @Override
+        protected SQLiteDatabase db() {
+            return sqLiteDatabase;
         }
     }
 }

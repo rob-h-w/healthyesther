@@ -34,7 +34,7 @@ public final class Database {
     }
 
     public static void deleteDatabase(Context targetContext) throws NoSuchFieldException, IllegalAccessException {
-        HealthDbHelper helper = HealthDbHelper.getInstance(targetContext);
+        HealthDbHelper helper = HealthDbHelper.getInstance();
         helper.close();
 
         File file = new File(getDatabaseAbsolutePath(targetContext));
@@ -55,7 +55,7 @@ public final class Database {
      */
     public static String getDatabaseAbsolutePath(Context targetContext) {
         return targetContext.getDatabasePath(
-                HealthDbHelper.getInstance(targetContext).getDatabaseName()).getAbsolutePath();
+                HealthDbHelper.getInstance().getDatabaseName()).getAbsolutePath();
     }
 
     public static int countEntries() {

@@ -258,6 +258,7 @@ public final class Utils {
             }
 
             public static void cleanOldData() {
+                HealthDbHelper.closeDb();
                 Database db = HealthDbHelper.getDatabase();
                 try (Transaction transaction = db.getTransaction()) {
                     try {
@@ -273,8 +274,6 @@ public final class Utils {
                 transactionWithDb(new Runnable() {
                     @Override
                     public void run() {
-                        Contract c = Contract.getInstance();
-
                         long[] breakfast = new long[]{
                                 insertMeal("Toppas"),
                                 insertMeal("Toast"),

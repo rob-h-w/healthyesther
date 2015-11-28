@@ -108,7 +108,7 @@ public abstract class DbActivity extends BusyActivity
                 @Override
                 public void run() {
                     try {
-                        HealthDbHelper.getInstance(DbActivity.this).backupToDropbox();
+                        HealthDbHelper.getInstance().backupToDropbox();
                     } catch (IOException e) {
                         // TODO: Do some error handling UI.
                         e.printStackTrace();
@@ -136,7 +136,7 @@ public abstract class DbActivity extends BusyActivity
             @Override
             public void run() {
                 try {
-                    HealthDbHelper.getInstance(DbActivity.this).restoreFromDropbox();
+                    HealthDbHelper.getInstance().restoreFromDropbox(App.getInstance());
                 } catch (IOException e) {
                     // TODO: Do some error handling UI.
                     e.printStackTrace();

@@ -62,7 +62,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
     @Override
     protected void populateTag(Tag tag, EventTable.Row data) {
         int iconId;
-        switch (EventTypeTable.valueOf(data.getTypeId().getId())) {
+        switch (EventTypeTable.valueOf(data.getTypeId())) {
             case MEAL:
                 iconId = R.drawable.ic_food;
                 break;

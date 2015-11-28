@@ -20,8 +20,24 @@ public enum EventTypeTable {
         mIcon = icon;
     }
 
+    @Nonnull
     public static EventTypeTable valueOf(long id) {
         return EventTypeTable.values()[(int) id + 1];
+    }
+
+    @Nonnull
+    public static EventTypeTable valueOf(@Nonnull com.robwilliamson.healthyesther.db.generated.EventTypeTable.PrimaryKey key) {
+        return valueOf(key.getId() - 1);
+    }
+
+    public static void populateTable(@Nonnull com.robwilliamson.healthyesther.db.includes.Transaction transaction) {
+        for (EventTypeTable eventType : EventTypeTable.values()) {
+            com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row row =
+                    new com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row(
+                            eventType.getName(),
+                            eventType.getIcon());
+            row.applyTo(transaction);
+        }
     }
 
     @Nonnull

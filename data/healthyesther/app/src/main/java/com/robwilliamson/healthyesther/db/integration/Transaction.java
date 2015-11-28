@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.db.integration;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Where;
 
@@ -14,15 +15,24 @@ import javax.annotation.Nonnull;
 
 public class Transaction implements com.robwilliamson.healthyesther.db.includes.Transaction {
     private static final String LOG_TAG = Transaction.class.getName();
-    @Nonnull
-    private final SQLiteDatabase mDb;
     private final Set<CompletionHandler> mCompletionHandlers = new HashSet<>();
+    @Nonnull
+    private SQLiteDatabase mDatabase;
     private volatile boolean mIsInTransaction;
 
     Transaction(@Nonnull SQLiteDatabase database) {
-        mDb = database;
-        mDb.beginTransaction();
+        mDatabase = database;
+        db().beginTransaction();
         mIsInTransaction = true;
+    }
+
+    @Nonnull
+    protected SQLiteDatabase db() {
+        if (!mDatabase.isOpen()) {
+            mDatabase = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
+        }
+
+        return mDatabase;
     }
 
     private ContentValues valuesFrom(@Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
@@ -71,25 +81,25 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
     @Override
     public void execSQL(@Nonnull String sql) {
         assertInTransaction();
-        mDb.execSQL(sql);
+        db().execSQL(sql);
     }
 
     @Override
     public long insert(@Nonnull String table, @Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
         assertInTransaction();
-        return mDb.insertOrThrow(table, null, valuesFrom(columnNames, columnValues));
+        return db().insertOrThrow(table, null, valuesFrom(columnNames, columnValues));
     }
 
     @Override
     public int update(@Nonnull String table, @Nonnull Where where, @Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
         assertInTransaction();
-        return mDb.update(table, valuesFrom(columnNames, columnValues), where.getWhere(), null);
+        return db().update(table, valuesFrom(columnNames, columnValues), where.getWhere(), null);
     }
 
     @Override
     public int remove(@Nonnull String table, @Nonnull Where where) {
         assertInTransaction();
-        return mDb.delete(table, where.getWhere(), null);
+        return db().delete(table, where.getWhere(), null);
     }
 
     @Override
@@ -98,8 +108,8 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
             return;
         }
 
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
+        db().setTransactionSuccessful();
+        db().endTransaction();
 
         mIsInTransaction = false;
 
@@ -114,7 +124,7 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
             return;
         }
 
-        mDb.endTransaction();
+        db().endTransaction();
 
         mIsInTransaction = false;
     }

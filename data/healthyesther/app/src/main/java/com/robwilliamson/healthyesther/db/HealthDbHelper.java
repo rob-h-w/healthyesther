@@ -4,10 +4,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.robwilliamson.healthyesther.App;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import java.io.IOException;
 
@@ -29,7 +31,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     }
 
     @Nonnull
-    public static HealthDbHelper getInstance(@Nonnull Context context) {
+    private static HealthDbHelper getInstance(@Nonnull Context context) {
         synchronized (sSync) {
             if (sInstance == null) {
                 sInstance = new HealthDbHelper(context.getApplicationContext());
@@ -42,7 +44,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Nonnull
     public static HealthDbHelper getInstance() {
         if (sInstance == null) {
-            throw new IllegalStateException("HealthDbHelper.getInstance(Context) must be called at least once prior to this!");
+            sInstance = getInstance(App.getInstance());
         }
 
         return sInstance;
@@ -54,11 +56,20 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
     public static DatabaseWrapperClass getDatabaseWrapper() {
         synchronized (sSync) {
-            if (sDatabase == null) {
+            if (sDatabase == null || !sDatabase.getSqliteDatabase().isOpen()) {
                 sDatabase = new DatabaseWrapperClass(getInstance().getWritableDatabase());
             }
 
             return sDatabase;
+        }
+    }
+
+    public static void closeDb() {
+        synchronized (sSync) {
+            if (sDatabase != null) {
+                sDatabase.getSqliteDatabase().close();
+                sDatabase = null;
+            }
         }
     }
 
@@ -79,6 +90,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             Database database = new DatabaseWrapperClass(sqLiteDatabase);
             try (Transaction transaction = database.getTransaction()) {
                 HealthDatabase.create(transaction);
+                EventTypeTable.populateTable(transaction);
                 transaction.commit();
             }
         }
@@ -93,19 +105,23 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
     public void backupToDropbox() throws IOException {
         synchronized (sSync) {
+            closeDb();
             Utils.File.copy(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath(),
                     Utils.File.Dropbox.dbFile());
         }
     }
 
-    public void restoreFromDropbox() throws IOException {
+    public void restoreFromDropbox(@Nonnull Context context) throws IOException {
         synchronized (sSync) {
+            // Close the DB.
+            closeDb();
+
             Utils.File.copy(Utils.File.Dropbox.dbFile(),
                     mContext.getDatabasePath(getDatabaseName()).getAbsolutePath());
 
             // We'll need to be re-created after this event in case the dropbox version is different
             // from this one.
-            sInstance = null;
+            sInstance = getInstance(context);
         }
     }
 }
