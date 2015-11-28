@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.data.MealData;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
@@ -73,7 +74,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
     public void onResume() {
         super.onResume();
 
-        getNameView().addTextChangedListener(new TextWatcher() {
+        Utils.checkNotNull(getNameView()).addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -164,7 +165,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         this.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                getNameView().setText(row.getName());
+                Utils.checkNotNull(getNameView()).setText(row.getName());
             }
         });
     }

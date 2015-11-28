@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther.fragment.dialog;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,13 +14,8 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.data.DataAbstraction;
 import com.robwilliamson.healthyesther.db.definition.HealthScore;
-import com.robwilliamson.healthyesther.db.use.GetHealthScoresQuery;
-import com.robwilliamson.healthyesther.db.use.Query;
-import com.robwilliamson.healthyesther.db.use.QueuedQueryExecutor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     private static final String SCORES = "scores";
@@ -107,48 +101,8 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     @Override
-    protected Query getQuery() {
-        return new GetHealthScoresQuery() {
-            HashMap<String, Long> mSuggestions;
-
-            @Override
-            public void postQueryProcessing(final Cursor cursor) {
-                List<HealthScore.Value> scoresList = DataAbstraction.listFrom(cursor, HealthScore.Value.class);
-                mSuggestions = new HashMap<>(scoresList.size());
-                mScores = new HashMap<>(scoresList.size());
-
-                for (HealthScore.Value score : scoresList) {
-                    mSuggestions.put(score.name, score._id);
-                    mScores.put(score.name, score);
-                }
-            }
-
-            @Override
-            public void onQueryComplete(final Cursor cursor) {
-                setSuggestions(mSuggestions);
-                EditScoreDialogFragment.this.queryComplete(cursor);
-            }
-
-            @Override
-            public void onQueryFailed(final Throwable error) {
-            }
-        };
-    }
-
-    @Override
-    protected void doQuery(Query query) {
-        ArrayList<Query> queries = new ArrayList<>(1);
-        queries.add(query);
-        getWatcher().enqueueQueries(queries);
-    }
-
-    @Override
     protected void newNameEntered(String name) {
         updateValid();
-    }
-
-    @Override
-    protected void queryComplete(Cursor result) {
     }
 
     @Override
@@ -231,11 +185,11 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private TextView getBestValueCurrentValue() {
-        return Utils.View.getTypeSafeView(getView(), R.id.best_value_current_value, TextView.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.best_value_current_value, TextView.class);
     }
 
     private SeekBar getBestValueWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.best_value, SeekBar.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.best_value, SeekBar.class);
     }
 
     private boolean getRandomQuery() {
@@ -247,7 +201,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private Switch getRandomQueryWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.random_query, Switch.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.random_query, Switch.class);
     }
 
     private String getMinLabel() {
@@ -259,7 +213,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private EditText getMinLabelWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.min_label, EditText.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.min_label, EditText.class);
     }
 
     private String getMaxLabel() {
@@ -271,14 +225,14 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     private EditText getMaxLabelWidget() {
-        return Utils.View.getTypeSafeView(getView(), R.id.max_label, EditText.class);
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.max_label, EditText.class);
     }
 
     private Watcher getWatcher() {
         return (Watcher) getActivity();
     }
 
-    public interface Watcher extends QueuedQueryExecutor {
+    public interface Watcher {
         void onScoreModified(HealthScore.Value score);
     }
 }

@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther.fragment.dialog;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.use.Query;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -42,15 +40,6 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
                     return value == 0L ? null : value;
                 }
             });
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState == null) {
-            doQuery(getQuery());
         }
     }
 
@@ -142,12 +131,6 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
         mSuggestions = suggestions;
         updateSuggestionAdapter();
     }
-
-    protected abstract Query getQuery();
-
-    protected abstract void doQuery(final Query query);
-
-    protected abstract void queryComplete(final Cursor result);
 
     protected abstract void suggestionSelected(final String name, final long id);
 

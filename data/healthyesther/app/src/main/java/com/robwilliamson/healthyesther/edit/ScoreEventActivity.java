@@ -13,7 +13,6 @@ import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
-import com.robwilliamson.healthyesther.db.use.Query;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
@@ -104,9 +103,5 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     @Override
     public void onScoreModified(HealthScore.Value score) {
         invalidateOptionsMenu();
-    }
-
-    @Override
-    public void enqueueQueries(List<Query> queries) {
     }
 }
