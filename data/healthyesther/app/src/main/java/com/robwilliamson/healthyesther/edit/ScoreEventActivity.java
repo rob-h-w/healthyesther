@@ -4,7 +4,6 @@ import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
@@ -101,7 +100,7 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     }
 
     @Override
-    public void onScoreModified(HealthScore.Value score) {
+    public void onScoreModified(@Nonnull HealthScoreTable.Row score) {
         invalidateOptionsMenu();
     }
 }

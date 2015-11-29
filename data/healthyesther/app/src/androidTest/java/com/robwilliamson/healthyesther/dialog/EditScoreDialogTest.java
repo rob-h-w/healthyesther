@@ -5,8 +5,9 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.edit.ScoreEventActivity;
+import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.test.EditScoreDialogAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -28,7 +29,7 @@ public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreE
 
     public void testOpenExisting() {
         HealthScoreActivityAccessor.editScore("Happiness");
-        final HealthScore.Value score = new HealthScore.Value("Happiness", 5, true, "Sad", "Happy");
+        final HealthScoreTable.Row score = new HealthScoreTable.Row(EditScoreDialogFragment.MAX, "Happiness", true, "Happy", "Sad");
         Orientation.check(new Orientation.Subject() {
             @Override
             public InstrumentationTestCase getTestCase() {

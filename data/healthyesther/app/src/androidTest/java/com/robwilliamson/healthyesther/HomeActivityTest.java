@@ -44,10 +44,12 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
             if (Utils.File.exists(Utils.File.Dropbox.dbFile())) {
                 file = new File(Utils.File.Dropbox.dbFile());
+                //noinspection ResultOfMethodCallIgnored
                 file.delete();
             }
 
             file = new File(DROPBOX_PATH);
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
 
@@ -157,6 +159,9 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
     private int enableRestoreDropbox() {
         Utils.File.mkdirs(DB_PATH);
+
+        // Remove original data.
+        Utils.Db.TestData.cleanOldData();
 
         // Create some fake data
         Utils.Db.TestData.insertFakeData();

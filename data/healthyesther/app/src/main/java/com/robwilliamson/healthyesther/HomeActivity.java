@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.edit.MealEventActivity;
 import com.robwilliamson.healthyesther.edit.MedicationEventActivity;
 import com.robwilliamson.healthyesther.edit.NoteEventActivity;
@@ -108,14 +109,14 @@ public class HomeActivity extends DbActivity
     public void onEventSelected(EventTable.Row row) {
         Intent intent = null;
 
-        switch (com.robwilliamson.healthyesther.db.definition.Event.Type.valueOf(row.getTypeId().getId())) {
+        switch (EventTypeTable.valueOf(row.getTypeId())) {
             case MEAL:
                 intent = new Intent(this, MealEventActivity.class);
                 break;
             case MEDICATION:
                 intent = new Intent(this, MedicationEventActivity.class);
                 break;
-            case HEALTH_SCORE:
+            case HEALTH:
                 intent = new Intent(this, ScoreEventActivity.class);
                 break;
             case NOTE:

@@ -1,8 +1,8 @@
 package test;
 
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -15,10 +15,10 @@ public enum HealthDatabaseAccessor {
     public final Field MEAL_EVENT_TABLE;
     public final Field MEAL_TABLE;
 
-    private HealthDatabaseAccessor() {
+    HealthDatabaseAccessor() {
         try {
-            MEAL_EVENT_TABLE = HealthDatabase.class.getDeclaredField("MEAL_EVENT_TABLE");
-            MEAL_TABLE = HealthDatabase.class.getDeclaredField("MEAL_TABLE");
+            MEAL_EVENT_TABLE = DatabaseAccessor.class.getField("MEAL_EVENT_TABLE");
+            MEAL_TABLE = DatabaseAccessor.class.getField("MEAL_TABLE");
 
             Field[] fields = new Field[]{
                     MEAL_EVENT_TABLE,
@@ -29,8 +29,7 @@ public enum HealthDatabaseAccessor {
                 field.setAccessible(true);
 
                 // remove final modifier from field
-                Field modifiersField = null;
-                modifiersField = Field.class.getDeclaredField("modifiers");
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);
                 modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
             }

@@ -10,7 +10,6 @@ import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
@@ -18,6 +17,9 @@ import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTable.Row> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
@@ -97,14 +99,15 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
         return R.layout.fragment_edit_score_event_group;
     }
 
-    public EditScoreEventFragment getEditScoreEventFragment(HealthScore.Value score) {
+    @Nullable
+    public EditScoreEventFragment getEditScoreEventFragment(@Nonnull HealthScoreTable.Row score) {
         List<EditScoreEventFragment> fragments = getEditScoreEventFragments();
 
         for (EditScoreEventFragment fragment : fragments) {
-            HealthScore.Value fragmentScore = fragment.getScore();
-            if (fragmentScore != null && fragmentScore._id != null) {
-                boolean matchId = fragmentScore._id != 0 && fragmentScore._id.equals(score._id);
-                boolean matchName = fragmentScore.name.equals(score.name);
+            HealthScoreTable.Row fragmentScore = fragment.getScore();
+            if (fragmentScore != null && fragmentScore.isInDatabase()) {
+                boolean matchId = fragmentScore.getNextPrimaryKey().equals(score.getNextPrimaryKey());
+                boolean matchName = fragmentScore.getName().equals(score.getName());
                 if (matchId || matchName) {
                     return fragment;
                 }

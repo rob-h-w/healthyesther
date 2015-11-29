@@ -9,11 +9,11 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.test.EditEventAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
@@ -108,7 +108,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         }
 
         Database db = HealthDbHelper.getDatabase();
-        MealTable.Row[] meals = HealthDatabase.MEAL_TABLE.select(db, new Where() {
+        MealTable.Row[] meals = DatabaseAccessor.MEAL_TABLE.select(db, new Where() {
             @Override
             public String getWhere() {
                 return "";
@@ -124,7 +124,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         // Check the database contents.
         Database db = HealthDbHelper.getDatabase();
-        MealTable.Row[] meals = HealthDatabase.MEAL_TABLE.select(db, new Where() {
+        MealTable.Row[] meals = DatabaseAccessor.MEAL_TABLE.select(db, new Where() {
             @Override
             public String getWhere() {
                 return MealTable.NAME + " = \"" + name + "\"";
@@ -134,7 +134,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertThat(meals.length, is(expectedCount));
 
         final MealTable.Row meal = meals[0];
-        final MealEventTable.Row[] mealEvents = HealthDatabase.MEAL_EVENT_TABLE.select(db, new Where() {
+        final MealEventTable.Row[] mealEvents = DatabaseAccessor.MEAL_EVENT_TABLE.select(db, new Where() {
             @Override
             public String getWhere() {
                 return MealEventTable.MEAL_ID + " = " + meal.getConcretePrimaryKey().getId();
@@ -143,7 +143,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         assertThat(mealEvents.length, is(greaterThanOrEqualTo(1)));
 
-        EventTable.Row[] events = HealthDatabase.EVENT_TABLE.select(db, new Where() {
+        EventTable.Row[] events = DatabaseAccessor.EVENT_TABLE.select(db, new Where() {
             @Override
             public String getWhere() {
                 return EventTable._ID + " = " + mealEvents[0].getConcretePrimaryKey().getEventId().getId();

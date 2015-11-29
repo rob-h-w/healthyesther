@@ -3,23 +3,20 @@ package com.robwilliamson.healthyesther.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
 
-import com.robwilliamson.healthyesther.db.data.MealData;
-import com.robwilliamson.healthyesther.db.definition.MealEvent;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.joda.time.DateTime;
@@ -234,6 +231,20 @@ public final class Utils {
             return suggestionIds;
         }
 
+        @Nonnull
+        public static String cleanName(@Nonnull String name) {
+            // Strip square brackets, if present.
+            if (name.startsWith("[")) {
+                name = name.substring(1);
+            }
+
+            if (name.endsWith("]")) {
+                name = name.substring(0, name.length() - 1);
+            }
+
+            return name;
+        }
+
         public static class TestData {
             private static final String LOG_TAG = TestData.class.getName();
             private static final int pseudoRandomMax = 1000;
@@ -259,15 +270,16 @@ public final class Utils {
 
             public static void cleanOldData() {
                 HealthDbHelper.closeDb();
+
                 Database db = HealthDbHelper.getDatabase();
+
                 try (Transaction transaction = db.getTransaction()) {
-                    try {
-                        HealthDatabase.drop(transaction);
-                    } catch (SQLiteException e) {
-                        Log.e(LOG_TAG, "Error while dropping old tables.", e);
-                    }
-                    HealthDatabase.create(transaction);
+                    DatabaseAccessor.drop(transaction);
+                    DatabaseAccessor.create(transaction);
+                    transaction.commit();
                 }
+
+                HealthDbHelper.closeDb();
             }
 
             public static void insertFakeData() {
@@ -427,7 +439,6 @@ public final class Utils {
             }
 
             private static void insertMedication(int year, int month, int day, int hour, String medication, long medicationId) {
-                Contract c = Contract.getInstance();
                 com.robwilliamson.healthyesther.db.includes.DateTime time = time(year, month, day, hour);
                 EventTable.Row eventRow = new EventTable.Row(EventTypeTable.MEDICATION.getId(),
                         time,
@@ -501,29 +512,30 @@ public final class Utils {
                 transactionWithDb(new Runnable() {
                     @Override
                     public void run() {
-                        Contract c = Contract.getInstance();
-
-                        final long gruelId = c.MEAL.insert(db, new MealData("gruel"));
+                        MealTable.Row row = new MealTable.Row("gruel");
+                        row.applyTo(transaction);
 
                         for (int i = 0; i < 10; i++) {
-                            insertMeal(time(2015, 1, rand() % 28, rand() % 24), gruelId);
+                            insertMeal(time(2015, 1, rand() % 28, rand() % 24), row.getNextPrimaryKey());
                         }
                     }
 
-                    private void insertMeal(com.robwilliamson.healthyesther.db.includes.DateTime time, long mealId) {
+                    private void insertMeal(
+                            @Nonnull com.robwilliamson.healthyesther.db.includes.DateTime time,
+                            @Nonnull MealTable.PrimaryKey primaryKey) {
                         ContentValues eventValues = new ContentValues();
                         String utcTime = Utils.Time.toUtcString(time.as(DateTime.class));
-                        eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.CREATED, utcTime);
-                        eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.WHEN, utcTime);
-                        eventValues.put(com.robwilliamson.healthyesther.db.definition.Event.TYPE_ID, MealEvent.EVENT_TYPE_ID);
+                        eventValues.put(EventTable.CREATED, utcTime);
+                        eventValues.put(EventTable.WHEN, utcTime);
+                        eventValues.put(EventTable.TYPE_ID, EventTypeTable.MEAL.getId().getId());
 
-                        long eventId = db.insert(com.robwilliamson.healthyesther.db.definition.Event.TABLE_NAME, null, eventValues);
+                        long eventId = db.insert(DatabaseAccessor.EVENT_TABLE.getName(), null, eventValues);
 
                         ContentValues mealEventValues = new ContentValues();
-                        mealEventValues.put(MealEvent.MEAL_ID, mealId);
-                        mealEventValues.put(MealEvent.EVENT_ID, eventId);
+                        mealEventValues.put(MealEventTable.MEAL_ID, primaryKey.getId());
+                        mealEventValues.put(MealEventTable.EVENT_ID, eventId);
 
-                        db.insert(MealEvent.TABLE_NAME, null, mealEventValues);
+                        db.insert(DatabaseAccessor.MEAL_EVENT_TABLE.getName(), null, mealEventValues);
                     }
                 });
             }

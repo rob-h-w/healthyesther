@@ -26,7 +26,7 @@ public class Database extends BaseClassGenerator {
             JPackage jPackage) throws JClassAlreadyExistsException {
         mDb = database;
 
-        setJClass(jPackage._class(JMod.PUBLIC | JMod.FINAL, getName()));
+        setJClass(jPackage._class(JMod.PUBLIC, getName()));
 
         makeConstructor();
         makeStaticFileName();
@@ -71,7 +71,7 @@ public class Database extends BaseClassGenerator {
     }
 
     private JMethod makeConstructor() {
-        return getJClass().constructor(JMod.PRIVATE);
+        return getJClass().constructor(JMod.PROTECTED);
     }
 
     private void makeTables() throws JClassAlreadyExistsException {

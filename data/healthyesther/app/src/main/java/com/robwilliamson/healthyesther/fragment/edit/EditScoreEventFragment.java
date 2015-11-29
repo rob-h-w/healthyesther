@@ -12,37 +12,37 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.data.DataAbstraction;
-import com.robwilliamson.healthyesther.db.definition.HealthScore;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
+
+import javax.annotation.Nonnull;
 
 public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
     private static final String VALUE = "value";
     private static final String SCORE = "score";
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
+    private HealthScoreTable.Row mScore;
     private int mValue;
-    private HealthScore.Value mScore = new HealthScore.Value();
     private ContextMenu mContextMenu;
 
     @Nullable
     private Watcher mWatcher;
 
-    public static EditScoreEventFragment newInstance(HealthScore.Value score) {
+    public static EditScoreEventFragment newInstance(@Nonnull HealthScoreTable.Row score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
         fragment.mScore = score;
         return fragment;
     }
 
     public String getName() {
-        return mScore.name;
+        return mScore.getName();
     }
 
-    public HealthScore.Value getScore() {
+    public HealthScoreTable.Row getScore() {
         return mScore;
     }
 
-    public void setScore(HealthScore.Value score) {
+    public void setScore(HealthScoreTable.Row score) {
         mScore = score;
         updateUi();
     }
@@ -52,10 +52,10 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
             return;
         }
 
-        getTitle().setText(mScore.name);
-        getMinLabel().setText(mScore.minLabel);
-        getMaxLabel().setText(mScore.maxLabel);
-        getRatingBar().setMax(HealthScore.MAX);
+        getTitle().setText(mScore.getName());
+        getMaxLabel().setText(mScore.getMaxLabel());
+        getMinLabel().setText(mScore.getMinLabel());
+        getRatingBar().setMax(EditScoreDialogFragment.MAX);
         getRatingBar().setRating(mValue);
     }
 
@@ -101,7 +101,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
 
         if (a != null) {
             mValue = a.getInt(VALUE);
-            mScore = DataAbstraction.from(args.getBundle(SCORE), HealthScore.Value.class);
+            mScore = (HealthScoreTable.Row) args.getSerializable(SCORE);
         }
     }
 
@@ -136,7 +136,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
     public void onSaveInstanceState(Bundle args) {
         super.onSaveInstanceState(args);
         args.putInt(VALUE, getValue());
-        mScore.bundle(args, SCORE);
+        args.putSerializable(SCORE, mScore);
     }
 
     @Override

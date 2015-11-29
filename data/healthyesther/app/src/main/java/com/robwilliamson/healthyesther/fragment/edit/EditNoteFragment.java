@@ -5,9 +5,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.Contract;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.definition.Note;
 import com.robwilliamson.healthyesther.db.generated.NoteTable;
 
 import java.util.HashMap;
@@ -92,8 +90,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> {
 
     @Override
     public boolean validate() {
-        Note note = Contract.getInstance().NOTE;
-        return note.validateName(getName()) && note.validateNote(getNote());
+        return true; // TODO: Implement in generated code?
     }
 
     @Override

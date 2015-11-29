@@ -16,8 +16,19 @@ public class DateTime
         mString = string;
     }
 
+    @Nonnull
+    private static <T> DateTime.Converter<T> getConverter(@Nonnull Class<T> otherType) {
+        @SuppressWarnings("unchecked") DateTime.Converter<T> converter = retrieve(otherType);
+        if (converter == null) {
+            throw new NullPointerException();
+        }
+
+        return converter;
+    }
+
     public <T> DateTime(T otherType) {
-        mString = retrieve(otherType.getClass()).from(otherType).getString();
+        //noinspection unchecked
+        mString = getConverter((Class<T>) otherType.getClass()).from(otherType).getString();
     }
 
     @Nullable
@@ -26,7 +37,8 @@ public class DateTime
             return null;
         }
 
-        return retrieve(otherType.getClass()).from(otherType);
+        //noinspection unchecked
+        return getConverter((Class<T>) otherType.getClass()).from(otherType);
     }
 
     public static <T> void register(Class<T> type, DateTime.Converter<T> converter) {
@@ -55,6 +67,7 @@ public class DateTime
     @Nonnull
     public <T> T as(@Nonnull Class<T> dateType) {
         Converter converter = retrieve(dateType);
+        //noinspection unchecked
         return dateType.cast(converter.to(dateType, this));
     }
 

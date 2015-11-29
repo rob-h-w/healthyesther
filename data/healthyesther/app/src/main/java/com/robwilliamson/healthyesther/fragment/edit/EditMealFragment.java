@@ -11,12 +11,11 @@ import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.data.MealData;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 
 import java.io.Serializable;
@@ -101,7 +100,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
     @Override
     public boolean validate() {
-        return MealData.validateName(getName());
+        return true; // TODO: implement in generator?
     }
 
     @Nonnull
@@ -135,7 +134,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                MealTable.Row[] rows = HealthDatabase.MEAL_TABLE.select(database, all());
+                MealTable.Row[] rows = DatabaseAccessor.MEAL_TABLE.select(database, all());
 
                 final Map<String, Long> suggestionIds = new HashMap<>();
                 for (MealTable.Row row : rows) {

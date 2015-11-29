@@ -12,22 +12,24 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.data.DataAbstraction;
-import com.robwilliamson.healthyesther.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 
 import java.util.HashMap;
 
+import javax.annotation.Nonnull;
+
 public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
+    public static final int MAX = 5;
     private static final String SCORES = "scores";
     private static final String INITIAL_SCORE = "initial_score";
-    private HealthScore.Value mInitialScore = null;
-    private HashMap<String, HealthScore.Value> mScores = null;
+    private HealthScoreTable.Row mInitialScore = null;
+    private HashMap<String, HealthScoreTable.Row> mScores = null;
 
     public EditScoreDialogFragment() {
         super();
     }
 
-    public static EditScoreDialogFragment createDialog(HealthScore.Value score) {
+    public static EditScoreDialogFragment createDialog(@Nonnull HealthScoreTable.Row score) {
         EditScoreDialogFragment dialog = new EditScoreDialogFragment();
         dialog.mInitialScore = score;
         return dialog;
@@ -38,14 +40,10 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null && mScores == null) {
-            mScores = Utils.Bundles.get(savedInstanceState, SCORES, new Utils.Bundles.HashGetter<HealthScore.Value>() {
-                @Override
-                public HealthScore.Value get(Bundle bundle, String bundleKey) {
-                    return DataAbstraction.from(bundle.getBundle(bundleKey), HealthScore.Value.class);
-                }
-            });
+            //noinspection unchecked
+            mScores = (HashMap<String, HealthScoreTable.Row>) savedInstanceState.getSerializable(SCORES);
 
-            mInitialScore = DataAbstraction.from(savedInstanceState.getBundle(INITIAL_SCORE), HealthScore.Value.class);
+            mInitialScore = (HealthScoreTable.Row) savedInstanceState.getSerializable(INITIAL_SCORE);
         }
     }
 
@@ -63,7 +61,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
         super.onResume();
 
         SeekBar bestValue = getBestValueWidget();
-        bestValue.setMax(HealthScore.MAX - 1); // Seek bars are 0-based
+        bestValue.setMax(MAX - 1); // Seek bars are 0-based
         bestValue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -90,14 +88,8 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        Utils.Bundles.put(outState, SCORES, mScores, new Utils.Bundles.HashPutter() {
-            @Override
-            public void put(Bundle bundle, String bundleKey, String key) {
-                mScores.get(key).bundle(bundle, bundleKey);
-            }
-        });
-
-        mInitialScore.bundle(outState, INITIAL_SCORE);
+        outState.putSerializable(SCORES, mScores);
+        outState.putSerializable(INITIAL_SCORE, mInitialScore);
     }
 
     @Override
@@ -127,43 +119,52 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
 
     @Override
     protected void onOk() {
-        HealthScore.Value score = scoreFromUi();
+        HealthScoreTable.Row score = scoreFromUi();
 
         if (scoreModified(score)) {
             getWatcher().onScoreModified(score);
         }
     }
 
-    private boolean scoreModified(HealthScore.Value score) {
-        HealthScore.Value listMatch = mScores.get(score.name);
+    private boolean scoreModified(@Nonnull HealthScoreTable.Row score) {
+        HealthScoreTable.Row listMatch = mScores.get(score.getName());
 
         return !score.equals(listMatch);
     }
 
-    private void updateUiToMatch(HealthScore.Value score) {
-        setName(score.name);
-        setBestValue(score.bestValue);
-        setRandomQuery(score.randomQuery);
-        setMinLabel(score.minLabel);
-        setMaxLabel(score.maxLabel);
+    private void updateUiToMatch(@Nonnull HealthScoreTable.Row score) {
+        setName(score.getName());
+        setBestValue(score.getBestValue());
+        setRandomQuery(score.getRandomQuery());
+        setMinLabel(score.getMinLabel());
+        setMaxLabel(score.getMaxLabel());
     }
 
-    private HealthScore.Value scoreFromUi() {
-        HealthScore.Value score = new HealthScore.Value();
-        score.name = getName();
+    private HealthScoreTable.Row scoreFromUi() {
+        final String name = getName();
+        HealthScoreTable.Row score;
 
-        if (mScores.containsKey(score.name)) {
-            score._id = mScores.get(score.name)._id;
+        if (mScores.containsKey(name)) {
+            score = mScores.get(name);
+        } else {
+            score = new HealthScoreTable.Row(
+                    getBestValue(),
+                    getName(),
+                    getRandomQuery(),
+                    getMaxLabel(),
+                    getMinLabel()
+            );
         }
 
-        score.bestValue = getBestValue();
-        score.randomQuery = getRandomQuery();
-        score.minLabel = getMinLabel();
-        score.maxLabel = getMaxLabel();
-
-        if (mInitialScore != null && mInitialScore._id != 0) {
-            score._id = mInitialScore._id;
+        if (mInitialScore != null) {
+            score = mInitialScore;
         }
+
+        score.setBestValue(getBestValue());
+        score.setName(name);
+        score.setRandomQuery(getRandomQuery());
+        score.setMaxLabel(getMaxLabel());
+        score.setMinLabel(getMinLabel());
 
         return score;
     }
@@ -180,8 +181,8 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
         return getBestValueWidget().getProgress() + 1;
     }
 
-    private void setBestValue(int value) {
-        getBestValueWidget().setProgress(value - 1);
+    private void setBestValue(long value) {
+        getBestValueWidget().setProgress((int) value - 1);
     }
 
     private TextView getBestValueCurrentValue() {
@@ -233,6 +234,6 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
     }
 
     public interface Watcher {
-        void onScoreModified(HealthScore.Value score);
+        void onScoreModified(@Nonnull HealthScoreTable.Row score);
     }
 }

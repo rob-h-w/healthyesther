@@ -6,18 +6,24 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.db.definition.Event;
-import com.robwilliamson.healthyesther.db.definition.Table;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
 public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
+    static {
+        // Ensure the time converter is loaded.
+        new DateTimeConverter();
+    }
 
     private SQLiteDatabase mDb;
 
@@ -25,9 +31,10 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        mDb = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
         Utils.Db.TestData.cleanOldData();
         Utils.Db.TestData.insertV3FakeData();
+
+        mDb = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
     }
 
     /**
@@ -43,11 +50,7 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
     }
 
     public void testNormalUpgradePath() throws Exception {
-        Event event = new Event();
-        Method replaceUtcWithCurrentLocale = Event.class.getDeclaredMethod("replaceUtcWithCurrentLocale", SQLiteDatabase.class);
-        replaceUtcWithCurrentLocale.setAccessible(true);
-
-        Cursor c = mDb.query(Event.TABLE_NAME, null, null, null, null, null, null);
+        Cursor c = mDb.query(DatabaseAccessor.EVENT_TABLE.getName(), null, null, null, null, null, null);
         final Set<Integer> oldEventHashes = new HashSet<>(c.getCount());
         final Set<EventDates> oldEvents = getEvents(c);
         for (EventDates dates : oldEvents) {
@@ -55,9 +58,15 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
             oldEventHashes.add(dates.hashCode());
         }
 
-        replaceUtcWithCurrentLocale.invoke(event, mDb);
+        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(HealthDbHelper.getDatabase(), WhereContains.all());
 
-        c = mDb.query(Event.TABLE_NAME, null, null, null, null, null, null);
+        try (Transaction transaction = HealthDbHelper.getDatabase().getTransaction()) {
+            for (EventTable.Row row : rows) {
+                row.applyTo(transaction);
+            }
+        }
+
+        c = mDb.query(DatabaseAccessor.EVENT_TABLE.getName(), null, null, null, null, null, null);
         final Set<EventDates> newEvents = getEvents(c);
         for (EventDates dates : newEvents) {
             // Assert the dates are null or local.
@@ -86,9 +95,9 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
     private Set<EventDates> getEvents(Cursor c) {
         Set<EventDates> set = new HashSet<>(c.getCount());
         if (c.moveToFirst()) {
-            final int whenIndex = c.getColumnIndex(Table.cleanName(Event.WHEN));
-            final int createdIndex = c.getColumnIndex(Event.CREATED);
-            final int modifiedIndex = c.getColumnIndex(Event.MODIFIED);
+            final int whenIndex = c.getColumnIndex(Utils.Db.cleanName(EventTable.WHEN));
+            final int createdIndex = c.getColumnIndex(EventTable.CREATED);
+            final int modifiedIndex = c.getColumnIndex(EventTable.MODIFIED);
 
             do {
                 EventDates dates = new EventDates();

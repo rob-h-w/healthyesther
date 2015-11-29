@@ -5,9 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.robwilliamson.healthyesther.App;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
@@ -89,8 +89,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         synchronized (sSync) {
             Database database = new DatabaseWrapperClass(sqLiteDatabase);
             try (Transaction transaction = database.getTransaction()) {
-                HealthDatabase.create(transaction);
-                EventTypeTable.populateTable(transaction);
+                DatabaseAccessor.create(transaction);
                 transaction.commit();
             }
         }
@@ -99,7 +98,11 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
         synchronized (sSync) {
-            Contract.getInstance().upgrade(sqLiteDatabase, from, to);
+            Database database = new DatabaseWrapperClass(sqLiteDatabase);
+            try (Transaction transaction = database.getTransaction()) {
+                DatabaseAccessor.upgrade(transaction, from, to);
+                transaction.commit();
+            }
         }
     }
 

@@ -14,11 +14,11 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.DbFragment;
 
@@ -94,7 +94,7 @@ public class EventListFragment extends DbFragment implements AbsListView.OnItemC
         mWatcher.getExecutor().perform(new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                final EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
+                final EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(database, WhereContains.all());
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

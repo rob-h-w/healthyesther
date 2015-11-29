@@ -14,7 +14,7 @@ public abstract class Database {
     }
 
     public static void drop(@Nonnull Transaction transaction, @Nonnull Table[] tables) {
-        List<Table> reverse = Arrays.asList(tables);
+        List<Table> reverse = Arrays.asList(Arrays.copyOf(tables, tables.length));
         Collections.reverse(reverse);
 
         for (Table table : reverse) {

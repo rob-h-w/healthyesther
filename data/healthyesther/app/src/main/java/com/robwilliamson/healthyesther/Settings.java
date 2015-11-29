@@ -3,42 +3,36 @@ package com.robwilliamson.healthyesther;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.robwilliamson.healthyesther.db.definition.HealthScore;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 public enum Settings {
     INSTANCE;
 
     private static final int DEFAULT_EDIT_SCORE_EXCLUSION_LIST = R.string.pref_default_edit_score_exclusion_list;
 
-    private Object mLock = new Object();
+    private final Object mLock = new Object();
     private volatile SharedPreferences mPreferences;
 
-    public void hideScore(HealthScore.Value score) {
-        if (score == null) {
-            return;
-        }
-
+    public void hideScore(@Nonnull HealthScoreTable.Row score) {
         Set<String> hiddenScores = getDefaultExcludedEditScores();
-        hiddenScores.add(score.name);
+        hiddenScores.add(score.getName());
         setDefaultEditScoreExclusionList(hiddenScores);
     }
 
-    public void hideScore(String scoreName) {
+    public void hideScore(@Nonnull String scoreName) {
         Set<String> hiddenScores = getDefaultExcludedEditScores();
         hiddenScores.add(scoreName);
         setDefaultEditScoreExclusionList(hiddenScores);
     }
 
-    public void showScore(HealthScore.Value score) {
-        if (score == null) {
-            return;
-        }
-
+    public void showScore(@Nonnull HealthScoreTable.Row score) {
         Set<String> hiddenScores = getDefaultExcludedEditScores();
-        if (hiddenScores.remove(score.name)) {
+        if (hiddenScores.remove(score.getName())) {
             setDefaultEditScoreExclusionList(hiddenScores);
         }
     }
@@ -50,11 +44,10 @@ public enum Settings {
     }
 
     public Set<String> getDefaultExcludedEditScores() {
-        Set<String> exclusionSet = new HashSet<>(
+        return new HashSet<>(
                 getPreferences().getStringSet(
                         string(DEFAULT_EDIT_SCORE_EXCLUSION_LIST),
                         new HashSet<String>()));
-        return exclusionSet;
     }
 
     public void resetExclusionList() {

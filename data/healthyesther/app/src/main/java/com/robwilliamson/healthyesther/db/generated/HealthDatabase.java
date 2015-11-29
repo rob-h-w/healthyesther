@@ -10,7 +10,7 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
  * This class is generated, and should not be edited. Edits will be overwritten
  * 
  */
-public final class HealthDatabase {
+public class HealthDatabase {
 
     public final static String FILE_NAME = "health.db3";
     public final static HealthScoreTable HEALTH_SCORE_TABLE = new HealthScoreTable();
@@ -28,7 +28,7 @@ public final class HealthDatabase {
     public final static MealEventTable MEAL_EVENT_TABLE = new MealEventTable();
     public final static Table[] TABLES = new Table[] {HEALTH_SCORE_TABLE, ANDROID_METADATA_TABLE, EVENT_TYPE_TABLE, MEDICATION_TABLE, NOTE_TABLE, UNITS_TABLE, MEAL_TABLE, EVENT_TABLE, MEDICATION_NAME_TABLE, MEDICATION_EVENT_TABLE, HEALTH_SCORE_EVENT_TABLE, NOTE_EVENT_TABLE, MEAL_EVENT_TABLE };
 
-    private HealthDatabase() {
+    protected HealthDatabase() {
     }
 
     public static void create(Transaction transaction) {

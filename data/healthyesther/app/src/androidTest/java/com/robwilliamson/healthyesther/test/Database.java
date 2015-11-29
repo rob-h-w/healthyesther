@@ -6,8 +6,8 @@ import android.content.Context;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 
 import junit.framework.Assert;
 
@@ -61,7 +61,7 @@ public final class Database {
     public static int countEntries() {
         com.robwilliamson.healthyesther.db.includes.Database database = HealthDbHelper.getDatabase();
 
-        EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(database, WhereContains.all());
+        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(database, WhereContains.all());
         return rows.length;
     }
 }

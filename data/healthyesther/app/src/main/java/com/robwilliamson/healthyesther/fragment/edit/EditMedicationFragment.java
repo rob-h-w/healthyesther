@@ -7,7 +7,6 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.db.definition.Medication;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 
 public class EditMedicationFragment extends SuggestionEditFragment<MedicationTable.Row> {
@@ -48,7 +47,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
 
     @Override
     public boolean validate() {
-        return Medication.validateName(getName());
+        return true; // TODO: Implement in the generated code.
     }
 
     @Override
