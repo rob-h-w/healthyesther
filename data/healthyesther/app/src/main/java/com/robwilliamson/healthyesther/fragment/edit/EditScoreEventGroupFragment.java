@@ -12,6 +12,11 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
@@ -25,6 +30,8 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 
+    private volatile boolean mResumed = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,13 +40,52 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
             return;
         }
 
-        getFragmentManager().beginTransaction().add(R.id.edit_score_group_layout, new AddValueFragment(), ADD_VALUE_FRAGMENT).commit();
+        Utils.checkNotNull(getExecutor()).perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.all());
+
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+                for (HealthScoreTable.Row row : rows) {
+                    addFragment(EditScoreEventFragment.newInstance(row), fragmentTransaction);
+                }
+
+                fragmentTransaction.add(R.id.edit_score_group_layout, new AddValueFragment(), ADD_VALUE_FRAGMENT);
+
+                fragmentTransaction.commit();
+
+                if (mResumed) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            addOnClickListener();
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        if (getAddValueFragment() != null) {
+            addOnClickListener();
+        }
+
+        mResumed = true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mResumed = false;
+    }
+
+    protected void addOnClickListener() {
         AddValueFragment fragment = getAddValueFragment();
         fragment.setTitle(R.string.track_another_score);
         fragment.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +112,11 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
     @Override
     protected HealthScoreEventTable.Row createRow() {
         throw new UnsupportedOperationException("This is a relation row - please create and set the row from the containing activity.");
+    }
+
+    @Override
+    protected boolean canCreateRow() {
+        return false;
     }
 
     public void addFragment(final EditFragment fragment, final FragmentTransaction transaction) {

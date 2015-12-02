@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.widget.RadioButton;
@@ -10,10 +9,11 @@ import android.widget.RadioGroup;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class Utils {
-    public static String format(@NonNull Throwable e) {
+    public static String format(@Nonnull Throwable e) {
         StringBuilder str = new StringBuilder();
         final String nl = "/n";
         str.append(e.getMessage()).append(nl);
@@ -30,7 +30,7 @@ public final class Utils {
         return str.toString();
     }
 
-    @NonNull
+    @Nonnull
     public static <T> T checkNotNull(@Nullable T obj) {
         if (obj == null) {
             throw new NullPointerException();
@@ -40,7 +40,7 @@ public final class Utils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T checkAssignable(@Nullable Object obj, @NonNull Class<T> type) {
+    public static <T> T checkAssignable(@Nullable Object obj, @Nonnull Class<T> type) {
         if (obj == null) {
             return null;
         }
@@ -52,13 +52,13 @@ public final class Utils {
         return (T) obj;
     }
 
-    public static <T> T checkedCast(@Nullable Object obj, @NonNull Class<T> type) {
+    public static <T> T checkedCast(@Nullable Object obj, @Nonnull Class<T> type) {
         return checkAssignable(obj, type);
     }
 
     public static final class View {
 
-        public static void forEachRadioButton(@NonNull RadioGroup radioGroup, @NonNull RadioButtonHandler handler) {
+        public static void forEachRadioButton(@Nonnull RadioGroup radioGroup, @Nonnull RadioButtonHandler handler) {
             final int count = radioGroup.getChildCount();
             for (int i = 0; i < count; i++) {
                 android.view.View view = radioGroup.getChildAt(i);
@@ -74,25 +74,25 @@ public final class Utils {
 
         @Nullable
         public static <T extends android.view.View> T getTypeSafeView(
-                @NonNull android.view.View parent,
+                @Nonnull android.view.View parent,
                 int id,
-                @NonNull Class<T> type) {
+                @Nonnull Class<T> type) {
             return checkedCast(parent.findViewById(id), type);
         }
 
         @Nullable
         public static <T extends Fragment> T getTypeSafeFragment(
-                @NonNull FragmentManager manager,
-                @NonNull String tag,
-                @NonNull Class<T> type) {
+                @Nonnull FragmentManager manager,
+                @Nonnull String tag,
+                @Nonnull Class<T> type) {
             return checkedCast(manager.findFragmentByTag(tag), type);
         }
 
         @Nullable
         public static <T extends Fragment> T getTypeSafeFragment(
-                @NonNull FragmentManager manager,
+                @Nonnull FragmentManager manager,
                 int id,
-                @NonNull Class<T> type) {
+                @Nonnull Class<T> type) {
             return checkedCast(manager.findFragmentById(id), type);
         }
 
@@ -114,7 +114,7 @@ public final class Utils {
 
         public interface RadioButtonHandler {
             /**
-             * @param button
+             * @param button The radio button to handle next.
              * @return true to loop through the other buttons, false to exit with this one.
              */
             boolean handleRadioButton(RadioButton button);
@@ -125,7 +125,7 @@ public final class Utils {
     }
 
     public static final class Bundles {
-        public static <V> void put(Bundle bundle, String bundleKey, HashMap<String, V> map, HashPutter putter) {
+        public static <V> void put(@Nonnull Bundle bundle, @Nonnull String bundleKey, @Nonnull HashMap<String, V> map, @Nonnull HashPutter putter) {
             String[] keys = new String[map.keySet().size()];
             map.keySet().toArray(keys);
 
@@ -136,6 +136,7 @@ public final class Utils {
             }
         }
 
+        @Nullable
         public static <V> HashMap<String, V> get(Bundle bundle, String bundleKey, HashGetter<V> getter) {
             Set<String> keySet = bundle.keySet();
             if (!keySet.contains(keysName(bundleKey))) {
@@ -143,7 +144,12 @@ public final class Utils {
             }
 
             String[] keys = bundle.getStringArray(keysName(bundleKey));
-            HashMap<String, V> map = new HashMap<String, V>(keys.length);
+
+            if (keys == null) {
+                return null;
+            }
+
+            HashMap<String, V> map = new HashMap<>(keys.length);
 
             for (String k : keys) {
                 map.put(k, getter.get(bundle, valueName(bundleKey, k)));

@@ -2,7 +2,8 @@ package com.robwilliamson.healthyesther.db.integration;
 
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
-import com.robwilliamson.healthyesther.db.includes.*;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Table;
 
 public class DatabaseAccessor extends HealthDatabase {
     private final static Table[] TABLES;

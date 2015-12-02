@@ -35,13 +35,18 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
 
     protected abstract R createRow();
 
+    protected boolean canCreateRow() {
+        return true;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         if (savedInstanceState != null) {
+            //noinspection unchecked
             mRow = (R) savedInstanceState.getSerializable(ROW);
-            if (mRow == null) {
+            if (mRow == null && canCreateRow()) {
                 mRow = createRow();
             }
         }

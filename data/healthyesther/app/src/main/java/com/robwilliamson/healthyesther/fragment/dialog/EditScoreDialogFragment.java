@@ -10,9 +10,15 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 
 import java.util.HashMap;
 
@@ -44,6 +50,19 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
             mScores = (HashMap<String, HealthScoreTable.Row>) savedInstanceState.getSerializable(SCORES);
 
             mInitialScore = (HealthScoreTable.Row) savedInstanceState.getSerializable(INITIAL_SCORE);
+        }
+
+        if (mScores == null) {
+            ((DbActivity) getActivity()).getExecutor().perform(new TransactionExecutor.Operation() {
+                @Override
+                public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                    HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.all());
+                    mScores = new HashMap<String, HealthScoreTable.Row>(rows.length);
+                    for (HealthScoreTable.Row row : rows) {
+                        mScores.put(row.getName(), row);
+                    }
+                }
+            });
         }
     }
 

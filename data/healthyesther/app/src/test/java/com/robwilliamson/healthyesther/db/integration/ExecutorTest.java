@@ -47,13 +47,6 @@ public class ExecutorTest {
         mExecutor = new TestableExecutor(mObserver);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void runAsynchronouslyCalledTwice_throws() {
-        Robolectric.getBackgroundThreadScheduler().pause();
-        mExecutor.runAsynchronously(mRunnable);
-        mExecutor.runAsynchronously(mRunnable);
-    }
-
     @Test
     public void runAsynchronouslyCalledTwiceAfterExecuting_callsRunTwice() {
         mExecutor.runAsynchronously(mRunnable);

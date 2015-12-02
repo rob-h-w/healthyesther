@@ -100,15 +100,17 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        Utils.Bundles.put(outState, SUGGESTIONS, mSuggestions, new Utils.Bundles.HashPutter() {
-            @Override
-            public void put(Bundle bundle, String bundleKey, String key) {
-                Long value = mSuggestions.get(key);
-                if (value != null) {
-                    bundle.putLong(bundleKey, value);
+        if (mSuggestions != null) {
+            Utils.Bundles.put(outState, SUGGESTIONS, mSuggestions, new Utils.Bundles.HashPutter() {
+                @Override
+                public void put(Bundle bundle, String bundleKey, String key) {
+                    Long value = mSuggestions.get(key);
+                    if (value != null) {
+                        bundle.putLong(bundleKey, value);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     protected String getName() {

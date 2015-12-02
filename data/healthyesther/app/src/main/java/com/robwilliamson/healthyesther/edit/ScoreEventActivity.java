@@ -16,6 +16,7 @@ import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreDialogFragment.Watcher, BaseFragment.Watcher {
+public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreDialogFragment.Watcher, EditScoreEventFragment.Watcher, BaseFragment.Watcher {
     private final static String SCORE_GROUP_TAG = "score group";
     private final static String EVENT_TAG = "event";
 
@@ -102,5 +103,15 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     @Override
     public void onScoreModified(@Nonnull HealthScoreTable.Row score) {
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onFragmentUpdate(EditScoreEventFragment fragment) {
+        // TODO: change state here?
+    }
+
+    @Override
+    public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
+        // TODO: Update settings.
     }
 }
