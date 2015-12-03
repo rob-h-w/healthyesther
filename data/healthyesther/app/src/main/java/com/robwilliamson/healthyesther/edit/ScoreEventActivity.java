@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.edit;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
@@ -112,6 +113,9 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
 
     @Override
     public void onFragmentRemoveRequest(EditScoreEventFragment fragment) {
-        // TODO: Update settings.
+        Settings settings = Settings.INSTANCE;
+        settings.hideScore(fragment.getScore());
+        getScoreGroupFragment().removeScore(fragment);
+        invalidateOptionsMenu();
     }
 }

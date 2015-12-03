@@ -185,4 +185,8 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
 
         return scores;
     }
+
+    public void removeScore(EditScoreEventFragment fragment) {
+        getFragmentManager().beginTransaction().remove(fragment).commit();
+    }
 }

@@ -9,7 +9,6 @@ import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
-import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import java.io.IOException;
 
