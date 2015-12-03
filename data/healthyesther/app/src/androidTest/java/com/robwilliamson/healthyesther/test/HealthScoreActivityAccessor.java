@@ -55,10 +55,10 @@ public class HealthScoreActivityAccessor {
     }
 
     public static void checkUnmodifiedContent() {
-        onView(trackAnotherScoreButton()).check(matches(isDisplayed()));
+        onView(trackAnotherScoreButton()).check(matches(isEnabled()));
         checkUnmodifiedScore("Happiness", "Sad", "Happy");
         checkUnmodifiedScore("Energy", "Tired", "Energetic");
-        checkUnmodifiedScore("Drowsiness", "Sleepy", "Awake");
+        checkUnmodifiedScore("Drowsiness", "Awake", "Sleepy");
     }
 
     private static void checkUnmodifiedScore(String title, String min, String max) {
