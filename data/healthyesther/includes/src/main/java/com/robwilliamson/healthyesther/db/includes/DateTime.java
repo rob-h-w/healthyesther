@@ -1,13 +1,14 @@
 package com.robwilliamson.healthyesther.db.includes;
 
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DateTime
-        implements Comparable<DateTime> {
+        implements Comparable<DateTime>, Serializable {
 
     private final static HashMap<Class, Converter> sConverterRegistry = new HashMap<>();
     private final String mString;
