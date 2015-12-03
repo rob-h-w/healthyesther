@@ -79,11 +79,17 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                 List<Pair<HealthScoreTable.Row, Integer>> scoresAndEvents = groupFragment.getScores();
 
                 for (Pair<HealthScoreTable.Row, Integer> pair : scoresAndEvents) {
+                    if (pair.first == null) {
+                        continue;
+                    }
+
                     pair.first.applyTo(transaction);
                     Long score = pair.second == null ? null : pair.second.longValue();
                     HealthScoreEventTable.Row row = new HealthScoreEventTable.Row(event.getConcretePrimaryKey(), pair.first.getConcretePrimaryKey(), score);
                     row.applyTo(transaction);
                 }
+
+                finish();
             }
         };
     }
@@ -102,13 +108,31 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     }
 
     @Override
-    public void onScoreModified(@Nonnull HealthScoreTable.Row score) {
+    public void onScoreModified(@Nonnull final HealthScoreTable.Row score) {
         invalidateOptionsMenu();
+
+        Utils.checkNotNull(getExecutor()).perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                score.applyTo(transaction);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
+                        if (groupFragment != null) {
+                            groupFragment.clearScoreFragments();
+                            groupFragment.refreshScores();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void onFragmentUpdate(EditScoreEventFragment fragment) {
-        // TODO: change state here?
+        invalidateOptionsMenu();
     }
 
     @Override

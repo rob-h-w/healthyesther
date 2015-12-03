@@ -9,6 +9,7 @@ import android.util.Pair;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
@@ -40,6 +41,21 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
             return;
         }
 
+        refreshScores();
+    }
+
+    public void clearScoreFragments() {
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = manager.beginTransaction();
+        for (Fragment fragment : getEditScoreEventFragments()) {
+            fragmentTransaction.remove(fragment);
+        }
+        fragmentTransaction.remove(getAddValueFragment());
+        fragmentTransaction.commit();
+        manager.popBackStack();
+    }
+
+    public void refreshScores() {
         Utils.checkNotNull(getExecutor()).perform(new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
@@ -48,6 +64,9 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 
                 for (HealthScoreTable.Row row : rows) {
+                    if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(row.getName())) {
+                        continue;
+                    }
                     addFragment(EditScoreEventFragment.newInstance(row), fragmentTransaction);
                 }
 
