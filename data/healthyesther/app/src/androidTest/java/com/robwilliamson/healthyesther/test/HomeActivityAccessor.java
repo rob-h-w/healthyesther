@@ -57,6 +57,10 @@ public class HomeActivityAccessor {
             return withId(R.id.create_medication_event_button);
         }
 
+        public static Matcher<View> noteButton() {
+            return withId(R.id.create_note_event_button);
+        }
+
         public static void checkUnmodifiedContent() {
             onView(healthScoreButton()).check(matches(isClickable()));
             onView(mealScoreButton()).check(matches(isClickable()));
