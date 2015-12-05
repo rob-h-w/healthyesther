@@ -13,7 +13,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static com.robwilliamson.healthyesther.test.Espresso.both;
 
-public class NoteActivityAccessor {
+public class NoteEventActivityAccessor {
 
     public static Matcher<View> nameTitle() {
         return withId(R.id.note_name_title);
