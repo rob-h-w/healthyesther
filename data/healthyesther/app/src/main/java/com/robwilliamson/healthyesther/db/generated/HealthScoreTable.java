@@ -86,7 +86,7 @@ public class HealthScoreTable
         if (rows.length > 1) {
             throw new Table.TooManyRowsException(rows.length, where);
         }
-        return rows[ 1 ];
+        return rows[ 0 ];
     }
 
 

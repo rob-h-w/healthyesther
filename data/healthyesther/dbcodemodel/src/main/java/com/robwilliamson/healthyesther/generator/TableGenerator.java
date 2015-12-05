@@ -168,7 +168,7 @@ public class TableGenerator extends BaseClassGenerator {
         JClass exception = model().ref(Table.TooManyRowsException.class);
         body._if(length.gt(JExpr.lit(1)))._then()._throw(JExpr._new(exception).arg(length).arg(where));
 
-        body._return(rows.component(JExpr.lit(1)));
+        body._return(rows.component(JExpr.lit(0)));
     }
 
     private void makeCreate() {
