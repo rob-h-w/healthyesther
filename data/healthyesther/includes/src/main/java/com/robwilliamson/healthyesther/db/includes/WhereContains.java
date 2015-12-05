@@ -39,4 +39,15 @@ public class WhereContains {
             }
         };
     }
+
+    public static Where columnEqualling(@Nonnull final String columnName, @Nullable final String value) {
+        return new Where() {
+            @Nullable
+            @Override
+            public String getWhere() {
+                String strValue = value == null ? "null" : value;
+                return columnName + " = " + strValue;
+            }
+        };
+    }
 }
