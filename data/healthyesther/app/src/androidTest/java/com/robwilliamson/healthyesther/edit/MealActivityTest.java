@@ -38,7 +38,7 @@ import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     public MealActivityTest() {
-        super(com.robwilliamson.healthyesther.HomeActivity.class);
+        super(HomeActivity.class);
     }
 
     @Override
