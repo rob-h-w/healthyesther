@@ -60,6 +60,11 @@ public class NoteEventActivity extends AbstractEditEventActivity
 
     @Override
     public void onFragmentUpdated(BaseFragment fragment) {
+        if (fragment instanceof EditNoteFragment) {
+            EditNoteFragment editFragment = (EditNoteFragment) fragment;
+            getEventFragment().suggestEventName(editFragment.getName());
+        }
+
         invalidateOptionsMenu();
     }
 }

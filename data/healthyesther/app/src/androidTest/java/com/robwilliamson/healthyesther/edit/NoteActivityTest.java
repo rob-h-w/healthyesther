@@ -5,6 +5,8 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.test.EditEventAccessor;
+import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.NoteActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
@@ -56,5 +58,12 @@ public class NoteActivityTest extends ActivityInstrumentationTestCase2<NoteEvent
                 onView(NoteActivityAccessor.nameValue()).check(matches(withText(title)));
             }
         });
+    }
+
+    public void test_addNoteName_updatesEventName() {
+        String noteName = "A Note";
+        onView(NoteActivityAccessor.nameValue()).perform(typeText(noteName));
+
+        onView(EditEventAccessor.eventEditText()).check(matches(withText(noteName)));
     }
 }
