@@ -1,5 +1,8 @@
 package com.robwilliamson.healthyesther.db.integration;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -34,5 +37,42 @@ public class DatabaseAccessor extends HealthDatabase {
 
     public static void upgrade(com.robwilliamson.healthyesther.db.includes.Transaction transaction, int from, int to) {
         Database.upgrade(transaction, from, to, TABLES);
+
+        if (from == 3) {
+            Upgrade.from3(transaction);
+        }
+    }
+
+    private static class Upgrade {
+        public static void from3(com.robwilliamson.healthyesther.db.includes.Transaction transaction) {
+            SQLiteDatabase db = ((Transaction) transaction).db();
+            try {
+                db.beginTransaction();
+                try (
+                        android.database.Cursor cursor = db.query(
+                                "health_score",
+                                new String[]{"_id"},
+                                "name == ?",
+                                new String[]{"Drowsiness"},
+                                null,
+                                null,
+                                null)) {
+                    final int idID = cursor.getColumnIndex("_id");
+                    cursor.moveToFirst();
+                    long id = cursor.getLong(idID);
+                    ContentValues value = new ContentValues();
+                    value.put("min_label", "Awake");
+                    value.put("max_label", "Sleepy");
+                    db.update(
+                            "health_score",
+                            value,
+                            "_id == ?",
+                            new String[]{String.valueOf(id)});
+                    db.setTransactionSuccessful();
+                }
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
 }

@@ -17,6 +17,11 @@ public class DateTime
         mString = string;
     }
 
+    public <T> DateTime(T otherType) {
+        //noinspection unchecked
+        mString = getConverter((Class<T>) otherType.getClass()).from(otherType).getString();
+    }
+
     @Nonnull
     private static <T> DateTime.Converter<T> getConverter(@Nonnull Class<T> otherType) {
         @SuppressWarnings("unchecked") DateTime.Converter<T> converter = retrieve(otherType);
@@ -25,11 +30,6 @@ public class DateTime
         }
 
         return converter;
-    }
-
-    public <T> DateTime(T otherType) {
-        //noinspection unchecked
-        mString = getConverter((Class<T>) otherType.getClass()).from(otherType).getString();
     }
 
     @Nullable
