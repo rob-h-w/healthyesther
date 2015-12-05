@@ -23,6 +23,7 @@ import com.robwilliamson.healthyesther.test.Orientation;
 import javax.annotation.Nonnull;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -116,6 +117,14 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         });
 
         assertThat(meals.length, is(5));
+    }
+
+    public void test_addMealName_updatesEventName() {
+        String mealName = "A Meal";
+        onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
+        onView(MealEventActivityAccessor.dishName()).perform(typeText(mealName));
+
+        onView(EditEventAccessor.eventEditText()).check(matches(withText(mealName)));
     }
 
     private void checkDatabaseCorrectnessForName(@Nonnull final String name, int expectedCount) {

@@ -152,6 +152,11 @@ public class MealEventActivity extends AbstractEditEventActivity
 
     @Override
     public void onFragmentUpdated(BaseFragment fragment) {
+        if (fragment instanceof EditMealFragment) {
+            EditMealFragment editMealFragment = (EditMealFragment) fragment;
+            getEventFragment().suggestEventName(editMealFragment.getName());
+        }
+
         invalidateOptionsMenu();
     }
 }
