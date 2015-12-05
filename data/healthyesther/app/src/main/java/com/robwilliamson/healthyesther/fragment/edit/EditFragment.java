@@ -46,9 +46,10 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
         if (savedInstanceState != null) {
             //noinspection unchecked
             mRow = (R) savedInstanceState.getSerializable(ROW);
-            if (mRow == null && canCreateRow()) {
-                mRow = createRow();
-            }
+        }
+
+        if (mRow == null && canCreateRow()) {
+            mRow = createRow();
         }
 
         return view;
