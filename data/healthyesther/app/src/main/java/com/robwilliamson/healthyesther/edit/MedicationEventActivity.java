@@ -10,6 +10,7 @@ import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
@@ -60,8 +61,17 @@ public class MedicationEventActivity extends AbstractEditEventActivity
                 MedicationTable.Row medication = Utils.checkNotNull(getMedicationFragment().getRow());
                 event.applyTo(transaction);
                 medication.applyTo(transaction);
-                MedicationEventTable.Row medicationEvent = new MedicationEventTable.Row(event.getNextPrimaryKey(), medication.getNextPrimaryKey());
+                MedicationEventTable.Row medicationEvent = DatabaseAccessor.MEDICATION_EVENT_TABLE.select0Or1(
+                        database,
+                        new MedicationEventTable.PrimaryKey(event.getNextPrimaryKey(), medication.getNextPrimaryKey()));
+
+                if (medicationEvent == null) {
+                    medicationEvent = new MedicationEventTable.Row(event.getNextPrimaryKey(), medication.getNextPrimaryKey());
+                }
+
                 medicationEvent.applyTo(transaction);
+
+                finish();
             }
         };
     }
