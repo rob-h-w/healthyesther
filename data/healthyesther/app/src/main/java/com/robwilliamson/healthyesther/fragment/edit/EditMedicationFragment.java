@@ -9,6 +9,8 @@ import android.widget.AutoCompleteTextView;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 
+import javax.annotation.Nonnull;
+
 public class EditMedicationFragment extends SuggestionEditFragment<MedicationTable.Row> {
 
     @Override
@@ -55,8 +57,13 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
         return new MedicationTable.Row(getName());
     }
 
+    @Nonnull
     public String getName() {
-        return getNameView().getText().toString();
+        if (getNameView() != null) {
+            return getNameView().getText().toString();
+        }
+
+        return "";
     }
 
     @Override
