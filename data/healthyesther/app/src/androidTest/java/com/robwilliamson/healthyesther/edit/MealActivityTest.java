@@ -13,6 +13,7 @@ import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.test.EditEventAccessor;
@@ -23,7 +24,6 @@ import com.robwilliamson.healthyesther.test.Orientation;
 import javax.annotation.Nonnull;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -109,12 +109,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         }
 
         Database db = HealthDbHelper.getDatabase();
-        MealTable.Row[] meals = DatabaseAccessor.MEAL_TABLE.select(db, new Where() {
-            @Override
-            public String getWhere() {
-                return "";
-            }
-        });
+        MealTable.Row[] meals = DatabaseAccessor.MEAL_TABLE.select(db, WhereContains.all());
 
         assertThat(meals.length, is(5));
     }
