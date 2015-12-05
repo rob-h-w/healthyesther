@@ -31,6 +31,9 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 updateAttachedActivity();
+                if (getRow() != null) {
+                    getRow().setName(getName());
+                }
             }
 
             @Override
