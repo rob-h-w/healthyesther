@@ -118,9 +118,9 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
     }
 
     @Override
-    public boolean validate() {
+    public boolean isValid() {
         for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
-            if (fragment.validate()) {
+            if (fragment.isValid()) {
                 return true;
             }
         }

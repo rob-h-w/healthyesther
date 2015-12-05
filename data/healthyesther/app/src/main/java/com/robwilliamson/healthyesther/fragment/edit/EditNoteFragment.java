@@ -89,11 +89,6 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> {
     }
 
     @Override
-    public boolean validate() {
-        return true; // TODO: Implement in generated code?
-    }
-
-    @Override
     protected NoteTable.Row createRow() {
         return new NoteTable.Row(getName(), getNote());
     }

@@ -332,6 +332,11 @@ public class HealthScoreEventTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

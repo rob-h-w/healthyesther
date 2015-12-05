@@ -284,6 +284,14 @@ public class MealTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            if ((mName == null)||mName.equals("")) {
+                return false;
+            }
+            return true;
+        }
+
     }
 
 }

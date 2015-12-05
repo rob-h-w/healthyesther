@@ -31,7 +31,10 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
         return mRow != null;
     }
 
-    public abstract boolean validate();
+    public boolean isValid() {
+        return getRow() != null && getRow().isValid();
+
+    }
 
     protected abstract R createRow();
 

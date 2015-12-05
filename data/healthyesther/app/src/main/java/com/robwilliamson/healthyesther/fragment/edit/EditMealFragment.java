@@ -98,11 +98,6 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         });
     }
 
-    @Override
-    public boolean validate() {
-        return true; // TODO: implement in generator?
-    }
-
     @Nonnull
     @Override
     protected MealTable.Row createRow() {

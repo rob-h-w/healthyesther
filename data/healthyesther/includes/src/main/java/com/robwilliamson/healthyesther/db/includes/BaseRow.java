@@ -35,6 +35,8 @@ public abstract class BaseRow<T extends Key> extends BaseTransactable implements
         mNextKey = key;
     }
 
+    public abstract boolean isValid();
+
     protected void updatePrimaryKeyFromNext() {
         mKey = mNextKey;
         mNextKey = null;

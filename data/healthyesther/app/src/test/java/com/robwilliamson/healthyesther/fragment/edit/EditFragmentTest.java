@@ -51,7 +51,7 @@ public class EditFragmentTest {
     private static class TestableEditFragment extends EditFragment<TestableRow> {
 
         @Override
-        public boolean validate() {
+        public boolean isValid() {
             return false;
         }
 
@@ -82,6 +82,11 @@ public class EditFragmentTest {
         @Override
         protected void remove(@Nonnull Transaction transaction) {
 
+        }
+
+        @Override
+        public boolean isValid() {
+            return false;
         }
     }
 

@@ -292,6 +292,11 @@ public class MedicationEventTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

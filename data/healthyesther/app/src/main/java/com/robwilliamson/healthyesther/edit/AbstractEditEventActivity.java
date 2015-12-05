@@ -65,7 +65,7 @@ public abstract class AbstractEditEventActivity extends DbActivity {
 
         List<Pair<EditFragment, String>> fragments = getEditFragments(false);
         for (Pair<EditFragment, String> fragmentStringPair : fragments) {
-            if (!fragmentStringPair.first.validate()) {
+            if (!fragmentStringPair.first.isValid()) {
                 return false;
             }
         }

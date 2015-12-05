@@ -288,6 +288,11 @@ public class MedicationNameTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

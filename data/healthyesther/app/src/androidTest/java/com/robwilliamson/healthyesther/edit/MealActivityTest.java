@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -120,6 +121,11 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(MealEventActivityAccessor.dishName()).perform(typeText(mealName));
 
         onView(EditEventAccessor.eventEditText()).check(matches(withText(mealName)));
+    }
+
+    public void test_emptyName_cannotCommit() {
+        onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
+        onView(EditEventAccessor.ok()).check(doesNotExist());
     }
 
     private void checkDatabaseCorrectnessForName(@Nonnull final String name, int expectedCount) {

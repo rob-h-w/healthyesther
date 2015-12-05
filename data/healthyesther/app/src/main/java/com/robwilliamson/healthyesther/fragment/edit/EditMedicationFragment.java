@@ -48,11 +48,6 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
     }
 
     @Override
-    public boolean validate() {
-        return true; // TODO: Implement in the generated code.
-    }
-
-    @Override
     protected MedicationTable.Row createRow() {
         return new MedicationTable.Row(getName());
     }

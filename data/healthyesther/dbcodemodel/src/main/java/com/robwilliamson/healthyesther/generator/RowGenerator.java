@@ -114,6 +114,7 @@ public class RowGenerator extends BaseClassGenerator {
                 makeUpdate();
                 makeRemove();
                 makeEquals();
+                makeIsValid();
             }
         });
     }
@@ -474,6 +475,41 @@ public class RowGenerator extends BaseClassGenerator {
             body._return(populateArgumentsFor(body.invoke(transaction, "insert").arg(mTableGenerator.getTable().getName()), nullables));
         }
 
+    }
+
+    private void makeIsValid() {
+        TableGenerator generator = getTableGenerator();
+        JMethod method = getJClass().method(JMod.PUBLIC, model().BOOLEAN, "isValid");
+        method.annotate(Override.class);
+        final JBlock block = method.body();
+
+        // Check nullness.
+        Column.Visitor<BaseColumns> nullCheck = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                JType type = column.getPrimitiveType(model());
+                boolean isString = type.equals(model()._ref(String.class));
+                if (column.isNotNull() && isString) {
+                    ColumnField field = context.columnFieldFor(column);
+                    if (field == null) {
+                        return;
+                    }
+
+                    JExpression nullCheck = field.fieldVar.eq(JExpr._null());
+
+                    if (column.getPrimitiveType(model()).equals(model()._ref(String.class))) {
+                        block._if(nullCheck.cor(field.fieldVar.invoke("equals").arg(JExpr.lit(""))))._then()._return(JExpr.FALSE);
+                    } else {
+                        block._if(nullCheck)._then()._return(JExpr.FALSE);
+                    }
+                }
+            }
+        };
+
+        mBasicColumns.forEach(nullCheck);
+        mPrimaryKeyColumns.forEach(nullCheck);
+
+        block._return(JExpr.TRUE);
     }
 
     private void setIsModifiedCall(JBlock block, boolean isModified) {

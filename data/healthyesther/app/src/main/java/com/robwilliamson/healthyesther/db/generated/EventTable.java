@@ -432,6 +432,11 @@ public class EventTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

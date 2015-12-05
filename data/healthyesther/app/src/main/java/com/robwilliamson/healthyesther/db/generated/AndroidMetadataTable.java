@@ -217,6 +217,11 @@ public class AndroidMetadataTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

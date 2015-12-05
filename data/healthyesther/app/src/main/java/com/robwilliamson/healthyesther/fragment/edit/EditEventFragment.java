@@ -123,12 +123,6 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     }
 
     @Override
-    public boolean validate() {
-        // TODO
-        return true;
-    }
-
-    @Override
     protected EventTable.Row createRow() {
         throw new UnsupportedOperationException("The event has to be set by the owning activity.");
     }

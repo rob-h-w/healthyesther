@@ -369,6 +369,11 @@ public class MealEventTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

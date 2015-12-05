@@ -292,6 +292,11 @@ public class NoteEventTable
             return true;
         }
 
+        @Override
+        public boolean isValid() {
+            return true;
+        }
+
     }
 
 }

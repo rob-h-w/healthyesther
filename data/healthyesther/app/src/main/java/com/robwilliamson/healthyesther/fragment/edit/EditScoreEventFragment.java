@@ -145,7 +145,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
     }
 
     @Override
-    public boolean validate() {
+    public boolean isValid() {
         return getValue() != 0;
     }
 
