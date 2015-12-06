@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 public class EditMedicationFragment extends SuggestionEditFragment<MedicationTable.Row>
-    implements InitializationQuerier {
+        implements InitializationQuerier {
 
     private static final String NAME_TO_ROW_MAP = "name_to_row_map";
     private Map<String, MedicationTable.Row> mNameToRowMap = new HashMap<>();
