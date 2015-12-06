@@ -46,7 +46,7 @@ public class WhereContains {
             @Override
             public String getWhere() {
                 String strValue = value == null ? "null" : value;
-                return columnName + " = " + strValue;
+                return columnName + " = \"" + strValue + "\"";
             }
         };
     }
