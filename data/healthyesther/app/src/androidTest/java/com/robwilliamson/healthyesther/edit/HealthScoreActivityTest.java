@@ -3,33 +3,42 @@ package com.robwilliamson.healthyesther.edit;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
+import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.EditEventAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
+import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
 import junit.framework.Assert;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static org.hamcrest.Matchers.not;
 
-public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<ScoreEventActivity> {
+public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     public HealthScoreActivityTest() {
-        super(ScoreEventActivity.class);
+        super(HomeActivity.class);
     }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
+        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
+
         Utils.Db.TestData.cleanOldData();
         Settings.INSTANCE.resetExclusionList();
 
         getActivity();
+
+        HomeActivityAccessor.AddMode.start();
+
+        onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
     }
 
     public void testOpenAddScoreActivity() {
@@ -62,6 +71,12 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Sc
                 not(withChild(HealthScoreActivityAccessor.score("Energy", "Tired", "Energetic")))));
         Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Happiness"));
         Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Energy"));
+    }
+
+    public void test_addScore_updatesDatabase() {
+        onView(HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy")).perform(click());
+
+        onView(EditEventAccessor.ok()).perform(click());
     }
 
     public void test_emptyName_cannotCommit() {

@@ -12,6 +12,8 @@ import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
@@ -83,9 +85,28 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                         continue;
                     }
 
-                    pair.first.applyTo(transaction);
+                    HealthScoreTable.Row healthScoreRow = DatabaseAccessor.HEALTH_SCORE_TABLE.select0Or1(
+                            database,
+                            WhereContains.columnEqualling(
+                                    HealthScoreTable.NAME,
+                                    pair.first.getName()));
+
+                    if (healthScoreRow == null) {
+                        healthScoreRow = pair.first;
+                    }
+
+                    healthScoreRow.applyTo(transaction);
                     Long score = pair.second == null ? null : pair.second.longValue();
-                    HealthScoreEventTable.Row row = new HealthScoreEventTable.Row(event.getConcretePrimaryKey(), pair.first.getConcretePrimaryKey(), score);
+                    HealthScoreEventTable.Row row = DatabaseAccessor.HEALTH_SCORE_EVENT_TABLE.select0Or1(database,
+                            WhereContains.and(
+                                    WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
+                                    WhereContains.foreignKey(HealthScoreEventTable.HEALTH_SCORE_ID, healthScoreRow.getNextPrimaryKey().getId())
+                            ));
+
+                    if (row == null) {
+                        row = new HealthScoreEventTable.Row(event.getNextPrimaryKey(), healthScoreRow.getNextPrimaryKey(), score);
+                    }
+
                     row.applyTo(transaction);
                 }
 
