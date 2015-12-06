@@ -45,6 +45,8 @@ public abstract class AbstractEditEventActivity extends DbActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        boolean result = super.onOptionsItemSelected(item);
+
         if (item.getItemId() == R.id.action_modify) {
             TransactionExecutor.Operation operation = onModifySelected();
             if (operation == null) {
@@ -52,9 +54,11 @@ public abstract class AbstractEditEventActivity extends DbActivity {
             } else {
                 getExecutor().perform(operation);
             }
+
+            result = true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return result;
     }
 
     @Override
