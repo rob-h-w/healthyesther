@@ -319,6 +319,9 @@ public class EventTypeTable
             if ((mName == null)||mName.equals("")) {
                 return false;
             }
+            if (mName.length()> 30) {
+                return false;
+            }
             return true;
         }
 

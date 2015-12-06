@@ -319,6 +319,9 @@ public class UnitsTable
             if ((mName == null)||mName.equals("")) {
                 return false;
             }
+            if (mName.length()> 40) {
+                return false;
+            }
             return true;
         }
 

@@ -289,6 +289,9 @@ public class MedicationTable
             if ((mName == null)||mName.equals("")) {
                 return false;
             }
+            if (mName.length()> 50) {
+                return false;
+            }
             return true;
         }
 

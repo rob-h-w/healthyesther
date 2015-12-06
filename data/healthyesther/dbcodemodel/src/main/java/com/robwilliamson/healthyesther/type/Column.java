@@ -11,19 +11,43 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Column {
+    @SuppressWarnings("unused")
     private String name;
+    @SuppressWarnings("unused")
     private String type;
+    @SuppressWarnings({"unused", "MismatchedReadAndWriteOfArray"})
     private Constraint[] constraints;
     private transient ColumnDependency mColumnDependency;
     private transient boolean mNotNull = false;
     private transient Table mTable;
     private transient boolean mPrimaryKey = false;
+    private transient Integer mMaxLength = null;
 
     Column() {
     }
 
+    @Nullable
+    public Integer getMaxLength() {
+        if (!isString()) {
+            return null;
+        }
+
+        if (mMaxLength == null) {
+            String ddl = mTable.getDdl();
+            Pattern re = Pattern.compile(".*" + getName() + "\\s+TEXT\\s*\\(\\s*(\\d+)\\s*\\).*", Pattern.DOTALL | Pattern.MULTILINE);
+            Matcher matcher = re.matcher(ddl);
+            if (matcher.find()) {
+                mMaxLength = Integer.valueOf(matcher.group(1));
+            }
+        }
+
+        return mMaxLength;
+    }
+
+    @Nonnull
     public String getName() {
         return name;
     }
@@ -80,6 +104,7 @@ public class Column {
         return mNotNull;
     }
 
+    @Nonnull
     public String getType() {
         return type;
     }
@@ -110,6 +135,10 @@ public class Column {
             default:
                 throw new IllegalArgumentException("Unrecognized type " + getType());
         }
+    }
+
+    public boolean isString() {
+        return getType().equals("TEXT");
     }
 
     @Nonnull
@@ -160,24 +189,6 @@ public class Column {
             type = getNullableType(model);
         }
 
-        if (isForeignKey()) {
-            type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
-        } else if (mPrimaryKey) {
-            type = getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
-        }
-
-        return type;
-    }
-
-    /**
-     * Like {@link #getNullableType(JCodeModel)}, but resolves dependencies.
-     *
-     * @param model The model to use to generate basic types.
-     * @return The type that should be written in places that use this column.
-     */
-    @Nonnull
-    public JType getDependentNullableJtype(@Nonnull JCodeModel model) {
-        JType type = getNullableType(model);
         if (isForeignKey()) {
             type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
         } else if (mPrimaryKey) {

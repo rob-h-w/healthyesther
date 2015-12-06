@@ -393,6 +393,15 @@ public class HealthScoreTable
             if ((mName == null)||mName.equals("")) {
                 return false;
             }
+            if (mName.length()> 140) {
+                return false;
+            }
+            if (mMaxLabel.length()> 140) {
+                return false;
+            }
+            if (mMinLabel.length()> 140) {
+                return false;
+            }
             return true;
         }
 

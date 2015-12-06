@@ -487,9 +487,7 @@ public class RowGenerator extends BaseClassGenerator {
         Column.Visitor<BaseColumns> nullCheck = new Column.Visitor<BaseColumns>() {
             @Override
             public void visit(Column column, BaseColumns context) {
-                JType type = column.getPrimitiveType(model());
-                boolean isString = type.equals(model()._ref(String.class));
-                if (column.isNotNull() && isString) {
+                if (column.isNotNull() && column.isString()) {
                     ColumnField field = context.columnFieldFor(column);
                     if (field == null) {
                         return;
@@ -508,6 +506,26 @@ public class RowGenerator extends BaseClassGenerator {
 
         mBasicColumns.forEach(nullCheck);
         mPrimaryKeyColumns.forEach(nullCheck);
+
+        // Check string length.
+        Column.Visitor<BaseColumns> checkStringLength = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                Integer maxLength = column.getMaxLength();
+                if (maxLength != null) {
+                    ColumnField field = context.columnFieldFor(column);
+                    if (field == null) {
+                        return;
+                    }
+
+                    block._if(field.fieldVar.invoke("length").gt(JExpr.lit(maxLength)))
+                            ._then()._return(JExpr.FALSE);
+                }
+            }
+        };
+
+        mBasicColumns.forEach(checkStringLength);
+        mPrimaryKeyColumns.forEach(checkStringLength);
 
         block._return(JExpr.TRUE);
     }

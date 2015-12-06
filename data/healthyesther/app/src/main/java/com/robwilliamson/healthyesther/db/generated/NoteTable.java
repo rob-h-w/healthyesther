@@ -319,6 +319,9 @@ public class NoteTable
             if ((mName == null)||mName.equals("")) {
                 return false;
             }
+            if (mName.length()> 140) {
+                return false;
+            }
             return true;
         }
 

@@ -434,6 +434,9 @@ public class EventTable
 
         @Override
         public boolean isValid() {
+            if (mName.length()> 140) {
+                return false;
+            }
             return true;
         }
 
