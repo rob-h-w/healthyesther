@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.generator;
 import com.robwilliamson.healthyesther.CodeGenerator;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
+import com.robwilliamson.healthyesther.db.includes.Order;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
@@ -101,21 +102,32 @@ public class TableGenerator extends BaseClassGenerator {
             @Override
             public void run() {
                 mRowGenerator.init();
-                makeSelect();
+                makeSelect(false);
+                makeSelect(true);
             }
         });
     }
 
-    private void makeSelect() {
+    private void makeSelect(boolean ordered) {
         JDefinedClass rowClass = getRow().getJClass();
         JType whereClass = model()._ref(Where.class);
         JMethod select = makeSelect(whereClass);
 
         JVar db = select.params().get(0);
         JVar where = select.params().get(1);
+        JVar order = null;
+
+        if (ordered) {
+            order = select.param(Order.class, "order");
+            order.annotate(Nonnull.class);
+        }
 
         JBlock body = select.body();
-        JVar cursor = body.decl(JMod.FINAL, model()._ref(Cursor.class), "cursor", db.invoke("select").arg(where).arg(JExpr._this()));
+        JInvocation selectCall = db.invoke("select").arg(where).arg(JExpr._this());
+        if (ordered) {
+            selectCall.arg(order);
+        }
+        JVar cursor = body.decl(JMod.FINAL, model()._ref(Cursor.class), "cursor", selectCall);
         JVar rows = body.decl(JMod.FINAL, rowClass.array(), "rows", JExpr.newArray(rowClass, cursor.invoke("count")));
         JVar index = body.decl(model().INT, "index", JExpr.lit(0));
         JBlock moreThan1 = body._if(cursor.invoke("count").gt(JExpr.lit(0)))._then();
@@ -133,9 +145,21 @@ public class TableGenerator extends BaseClassGenerator {
         db = selectOverload.params().get(0);
         where = selectOverload.params().get(1);
 
-        selectOverload.body()._return(JExpr.invoke(null, select).arg(db).arg(JExpr.cast(whereClass, where)));
+        if (ordered) {
+            order = selectOverload.param(Order.class, "order");
+            order.annotate(Nonnull.class);
+        }
 
-        makeSelect0Or1(select);
+        selectCall = JExpr.invoke(null, select).arg(db).arg(JExpr.cast(whereClass, where));
+        if (ordered) {
+            selectCall.arg(order);
+        }
+
+        selectOverload.body()._return(selectCall);
+
+        if (!ordered) {
+            makeSelect0Or1(select);
+        }
     }
 
     private JMethod makeSelect(JType whereType) {

@@ -31,5 +31,8 @@ public abstract class Database {
     @Nonnull
     public abstract Cursor select(@Nonnull Where where, @Nonnull Table table);
 
+    @Nonnull
+    public abstract Cursor select(@Nonnull Where where, @Nonnull Table table, @Nonnull Order order);
+
     public abstract Transaction getTransaction();
 }

@@ -10,6 +10,7 @@ import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Key;
+import com.robwilliamson.healthyesther.db.includes.Order;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
@@ -88,6 +89,37 @@ public class EventTable
             throw new Table.TooManyRowsException(rows.length, where);
         }
         return rows[ 0 ];
+    }
+
+    @Nonnull
+    public EventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where,
+        @Nonnull
+        Order order) {
+        final Cursor cursor = database.select(where, this, order);
+        final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
+        int index = 0;
+        if (cursor.count()> 0) {
+            cursor.moveToFirst();
+            do {
+                rows[index ++] = new EventTable.Row(cursor);
+            } while (cursor.moveToNext());
+        }
+        return rows;
+    }
+
+    @Nonnull
+    public EventTable.Row[] select(
+        @Nonnull
+        Database database,
+        @Nonnull
+        EventTable.PrimaryKey where,
+        @Nonnull
+        Order order) {
+        return select(database, ((Where) where), order);
     }
 
 
