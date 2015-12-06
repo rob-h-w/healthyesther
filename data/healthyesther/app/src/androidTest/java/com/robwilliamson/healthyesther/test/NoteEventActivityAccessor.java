@@ -27,4 +27,8 @@ public class NoteEventActivityAccessor {
         onView(nameTitle()).check(matches(isDisplayed()));
         onView(nameValue()).check(matches(both(isDisplayed(), isEnabled())));
     }
+
+    public static Matcher<View> noteContent() {
+        return withId(R.id.note_content);
+    }
 }

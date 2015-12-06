@@ -24,12 +24,16 @@ import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 public class NoteEventActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+    private static final String NOTE_NAME = "A Note";
+    private static final String NOTE_CONTENT = "Some important notes.";
+
     public NoteEventActivityTest() {
         super(HomeActivity.class);
     }
@@ -48,7 +52,7 @@ public class NoteEventActivityTest extends ActivityInstrumentationTestCase2<Home
         HomeActivityAccessor.AddMode.start();
     }
 
-    public void testOpenNoteActivity() {
+    public void test_openNoteActivity() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         Orientation.check(new Orientation.Subject() {
             @Override
@@ -63,7 +67,7 @@ public class NoteEventActivityTest extends ActivityInstrumentationTestCase2<Home
         });
     }
 
-    public void testTextRetention() {
+    public void test_textRetention() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         final String title = "note title";
         onView(NoteEventActivityAccessor.nameValue()).perform(typeText(title));
@@ -82,18 +86,36 @@ public class NoteEventActivityTest extends ActivityInstrumentationTestCase2<Home
 
     public void test_addNoteName_updatesEventName() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
-        String noteName = "A Note";
-        onView(NoteEventActivityAccessor.nameValue()).perform(typeText(noteName));
+        onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
 
-        onView(EditEventAccessor.eventEditText()).check(matches(withText(noteName)));
+        onView(EditEventAccessor.eventEditText()).check(matches(withText(NOTE_NAME)));
     }
 
-    private void checkDatabaseCorrectness(@Nullable String name) {
+    public void test_addNoteName_enablesOk() {
+        onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
+        onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
+
+        onView(EditEventAccessor.ok()).check(matches(isEnabled()));
+    }
+
+    public void test_createNote_updatesDatabase() {
+        onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
+        onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
+        onView(NoteEventActivityAccessor.noteContent()).perform(typeText(NOTE_CONTENT));
+        onView(EditEventAccessor.ok()).perform(click());
+
+        checkDatabaseCorrectness(NOTE_NAME, NOTE_CONTENT);
+    }
+
+    private void checkDatabaseCorrectness(@Nullable String name, @Nullable String content) {
         onView(HomeActivityAccessor.AddMode.noteButton()).check(matches(isDisplayed()));
 
         Database db = HealthDbHelper.getDatabase();
         NoteTable.Row row = DatabaseAccessor.NOTE_TABLE.select0Or1(db, WhereContains.columnEqualling(NoteTable.NAME, name));
 
-        assertThat(row, not(is((NoteTable.Row) nullValue())));
+        assertThat(row, not(is((NoteTable.Row) null)));
+        //noinspection ConstantConditions
+        assertThat(row.getName(), is(name));
+        assertThat(row.getNote(), is(content));
     }
 }

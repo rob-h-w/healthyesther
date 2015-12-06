@@ -1,6 +1,8 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
@@ -35,6 +37,39 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> {
 
     public void setAlwaysCreate(boolean alwaysCreate) {
         mAlwaysCreate = alwaysCreate;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        com.robwilliamson.healthyesther.Utils.checkNotNull(getNoteView()).addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (getRow() != null) {
+                    getRow().setNote(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onNameChanged() {
+        super.onNameChanged();
+
+        if (getRow() != null) {
+            getRow().setName(getName());
+        }
     }
 
     @Override

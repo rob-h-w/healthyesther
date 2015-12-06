@@ -2,9 +2,16 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.util.Pair;
 
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.NoteEventTable;
+import com.robwilliamson.healthyesther.db.generated.NoteTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
@@ -12,6 +19,8 @@ import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditNoteFragment;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nonnull;
 
 public class NoteEventActivity extends AbstractEditEventActivity
         implements BaseFragment.Watcher {
@@ -47,7 +56,29 @@ public class NoteEventActivity extends AbstractEditEventActivity
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return null; // TODO
+        return new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                EventTable.Row row = Utils.checkNotNull(getEventFragment().getRow());
+                row.applyTo(transaction);
+
+                NoteTable.Row note = Utils.checkNotNull(getNoteFragment().getRow());
+                note.applyTo(transaction);
+
+                NoteEventTable.Row noteEventRow = DatabaseAccessor.NOTE_EVENT_TABLE.select0Or1(
+                        database, WhereContains.and(
+                                WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getNextPrimaryKey().getId()),
+                                WhereContains.foreignKey(NoteEventTable.NOTE_ID, note.getNextPrimaryKey().getId())));
+
+                if (noteEventRow == null) {
+                    noteEventRow = new NoteEventTable.Row(row.getNextPrimaryKey(), note.getNextPrimaryKey());
+                }
+
+                noteEventRow.applyTo(transaction);
+
+                finish();
+            }
+        };
     }
 
     private EditNoteFragment getNoteFragment() {
