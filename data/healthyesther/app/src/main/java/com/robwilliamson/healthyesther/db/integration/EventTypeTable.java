@@ -22,7 +22,7 @@ public enum EventTypeTable {
 
     @Nonnull
     public static EventTypeTable valueOf(long id) {
-        return EventTypeTable.values()[(int) id + 1];
+        return EventTypeTable.values()[(int) id];
     }
 
     @Nonnull
