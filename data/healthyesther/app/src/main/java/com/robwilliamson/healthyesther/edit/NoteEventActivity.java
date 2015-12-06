@@ -60,6 +60,7 @@ public class NoteEventActivity extends AbstractEditEventActivity
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 EventTable.Row row = Utils.checkNotNull(getEventFragment().getRow());
+                row.setTypeId(EventTypeTable.NOTE.getId());
                 row.applyTo(transaction);
 
                 NoteTable.Row note = Utils.checkNotNull(getNoteFragment().getRow());

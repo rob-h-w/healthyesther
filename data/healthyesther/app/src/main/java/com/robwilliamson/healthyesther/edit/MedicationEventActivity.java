@@ -58,6 +58,7 @@ public class MedicationEventActivity extends AbstractEditEventActivity
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
+                event.setTypeId(EventTypeTable.MEDICATION.getId());
                 MedicationTable.Row medication = Utils.checkNotNull(getMedicationFragment().getRow());
                 event.applyTo(transaction);
                 medication.applyTo(transaction);
