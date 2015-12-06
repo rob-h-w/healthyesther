@@ -60,35 +60,12 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onNameChanged() {
+        super.onNameChanged();
 
-        getNameView().addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateAttachedActivity();
-                if (getRow() != null) {
-                    getRow().setName(getName());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        getNameView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateAttachedActivity();
-            }
-        });
+        if (getRow() != null) {
+            getRow().setName(getName());
+        }
     }
 
     /**
