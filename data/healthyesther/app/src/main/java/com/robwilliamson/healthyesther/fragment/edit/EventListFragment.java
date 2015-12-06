@@ -8,13 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.adapter.EventListAdapter;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.OrderBy;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
@@ -94,7 +94,10 @@ public class EventListFragment extends DbFragment implements AbsListView.OnItemC
         mWatcher.getExecutor().perform(new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                final EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(database, WhereContains.all());
+                final EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(
+                        database,
+                        WhereContains.all(),
+                        OrderBy.column().named(EventTable.WHEN).desc());
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -106,29 +109,8 @@ public class EventListFragment extends DbFragment implements AbsListView.OnItemC
         });
     }
 
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = getListView().getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
-        }
-    }
-
-    protected AbsListView getListView() {
-        return getListView(null);
-    }
-
     protected AbsListView getListView(View parent) {
         return Utils.View.getTypeSafeView(Utils.checkNotNull(parent == null ? getView() : parent), android.R.id.list, AbsListView.class);
-    }
-
-    protected EventListAdapter getAdapter() {
-        return mAdapter;
     }
 
     /**
