@@ -85,7 +85,12 @@ public class MealEventActivity extends AbstractEditEventActivity
                     mealEvent.applyTo(transaction);
                 }
 
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                });
             }
         };
     }

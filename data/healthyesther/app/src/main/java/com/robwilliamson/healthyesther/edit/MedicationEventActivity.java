@@ -72,7 +72,12 @@ public class MedicationEventActivity extends AbstractEditEventActivity
 
                 medicationEvent.applyTo(transaction);
 
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                });
             }
         };
     }

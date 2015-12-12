@@ -77,7 +77,12 @@ public class NoteEventActivity extends AbstractEditEventActivity
 
                 noteEventRow.applyTo(transaction);
 
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                });
             }
         };
     }

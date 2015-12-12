@@ -110,7 +110,12 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                     row.applyTo(transaction);
                 }
 
-                finish();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                });
             }
         };
     }
