@@ -428,10 +428,10 @@ public class HealthScoreTable
             if (mName.length()> 140) {
                 return false;
             }
-            if (mMaxLabel.length()> 140) {
+            if ((mMaxLabel!= null)&&(mMaxLabel.length()> 140)) {
                 return false;
             }
-            if (mMinLabel.length()> 140) {
+            if ((mMinLabel!= null)&&(mMinLabel.length()> 140)) {
                 return false;
             }
             return true;

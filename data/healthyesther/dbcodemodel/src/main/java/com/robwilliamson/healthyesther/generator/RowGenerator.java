@@ -495,7 +495,7 @@ public class RowGenerator extends BaseClassGenerator {
 
                     JExpression nullCheck = field.fieldVar.eq(JExpr._null());
 
-                    if (column.getPrimitiveType(model()).equals(model()._ref(String.class))) {
+                    if (column.isString()) {
                         block._if(nullCheck.cor(field.fieldVar.invoke("equals").arg(JExpr.lit(""))))._then()._return(JExpr.FALSE);
                     } else {
                         block._if(nullCheck)._then()._return(JExpr.FALSE);
@@ -518,8 +518,15 @@ public class RowGenerator extends BaseClassGenerator {
                         return;
                     }
 
-                    block._if(field.fieldVar.invoke("length").gt(JExpr.lit(maxLength)))
-                            ._then()._return(JExpr.FALSE);
+                    JExpression lengthCheck = field.fieldVar.invoke("length").gt(JExpr.lit(maxLength));
+
+                    if (column.isNotNull()) {
+                        block._if(lengthCheck)
+                                ._then()._return(JExpr.FALSE);
+                    } else {
+                        block._if(field.fieldVar.ne(JExpr._null()).cand(lengthCheck))
+                                ._then()._return(JExpr.FALSE);
+                    }
                 }
             }
         };
