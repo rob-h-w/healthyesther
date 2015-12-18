@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.edit.MealEventActivity;
 import com.robwilliamson.healthyesther.edit.MedicationEventActivity;
@@ -125,7 +126,7 @@ public class HomeActivity extends DbActivity
         }
 
         Bundle extras = new Bundle();
-        extras.putSerializable(EventTable.NAME, row);
+        extras.putSerializable(HealthDatabase.EVENT_TABLE.getName(), row);
         intent.putExtras(extras);
 
         this.startActivity(intent);

@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Allows the user to edit an event's name and when properties.
@@ -26,6 +27,8 @@ import javax.annotation.Nonnull;
 public class EditEventFragment extends EditFragment<EventTable.Row>
         implements DateTimePickerListener {
     private boolean mUserEditedEventName;
+    private boolean mSettingRowName;
+    private boolean mRowNameSet;
 
     public static EditEventFragment getInstance(@Nonnull EventTable.Row row) {
         EditEventFragment fragment = new EditEventFragment();
@@ -36,8 +39,8 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     @Override
     public void setRow(@NonNull EventTable.Row row) {
         super.setRow(row);
-        setName(row.getName());
-        setWhen(row.getWhen().as(DateTime.class));
+        mRowNameSet = !Utils.Strings.nullOrEmpty(row.getName());
+        updateUi();
     }
 
     @Override
@@ -80,6 +83,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 mUserEditedEventName = !getName().isEmpty();
+                mRowNameSet = false;
             }
         });
 
@@ -91,12 +95,14 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // TODO
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                if (mSettingRowName) {
+                    return;
+                }
+                updateRowName(s.toString());
             }
         });
 
@@ -129,7 +135,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
 
     public void suggestEventName(String name) {
 
-        if (mUserEditedEventName && !getName().isEmpty()) {
+        if ((!getName().isEmpty() && mUserEditedEventName) || mRowNameSet) {
             return;
         }
 
@@ -142,18 +148,16 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
         return getNameView().getText().toString();
     }
 
-    public void setName(String name) {
-        AutoCompleteTextView nameView = getNameView();
+    public void setName(@Nullable String name) {
+        updateRowName(name);
 
-        if (nameView != null) {
-            getNameView().getText().clear();
-            getNameView().getText().append(name);
-        }
+        updateUi();
+    }
 
+    private void updateRowName(@Nullable String name) {
         if (getRow() != null) {
             getRow().setName(name);
         }
-        updateUi();
     }
 
     public DateTime getWhen() {
@@ -178,12 +182,16 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     }
 
     private void updateUi() {
+        mSettingRowName = true;
         if (hasRow()) {
             @SuppressWarnings("ConstantConditions") @Nonnull EventTable.Row row = getRow();
             if (getNameView() != null) {
-                getNameView().getText().clear();
-                if (row.getName() != null) {
-                    getNameView().getText().append(row.getName());
+                String rowName = row.getName();
+                Editable editable = getNameView().getEditableText();
+
+                editable.clear();
+                if (rowName != null) {
+                    editable.append(rowName);
                 }
             }
 
@@ -195,6 +203,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
                 getDateButton().setText(Utils.Time.toString(row.getWhen().as(DateTime.class), DateTimeFormat.mediumDate()));
             }
         }
+        mSettingRowName = false;
     }
 
     private Button getTimeButton() {

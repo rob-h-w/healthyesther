@@ -1,8 +1,10 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.content.Intent;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -58,6 +60,19 @@ public class MealEventActivity extends AbstractEditEventActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent launchIntent = getIntent();
+        if (launchIntent != null && launchIntent.getExtras() != null) {
+            EventTable.Row row = (EventTable.Row) launchIntent.getExtras().getSerializable(HealthDatabase.EVENT_TABLE.getName());
+            if (row != null) {
+                onEventFromIntent(row);
+            }
+        }
+    }
+
+    @Override
     protected TransactionExecutor.Operation onModifySelected() {
         return new TransactionExecutor.Operation() {
             @Override
@@ -77,11 +92,11 @@ public class MealEventActivity extends AbstractEditEventActivity
                 }
                 event.setTypeId(EventTypeTable.MEAL.getId());
                 event.applyTo(transaction);
-                MealEventTable.Row[] mealEvents = DatabaseAccessor.MEAL_EVENT_TABLE.select(database, and(
+                MealEventTable.Row mealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
                         foreignKey(MealEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
                         foreignKey(MealEventTable.MEAL_ID, meal.getNextPrimaryKey().getId())));
-                if (mealEvents.length == 0) {
-                    MealEventTable.Row mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, 0D);
+                if (mealEvent == null) {
+                    mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, 0D);
                     mealEvent.applyTo(transaction);
                 }
 
@@ -104,7 +119,7 @@ public class MealEventActivity extends AbstractEditEventActivity
     }
 
     public void onEventFromIntent(@Nonnull final EventTable.Row event) {
-        if (event.getTypeId() != EventTypeTable.MEAL.getId()) {
+        if (!event.getTypeId().equals(EventTypeTable.MEAL.getId())) {
             throw new EventTypeTable.BadEventTypeException(EventTypeTable.MEAL, event.getTypeId().getId());
         }
 
