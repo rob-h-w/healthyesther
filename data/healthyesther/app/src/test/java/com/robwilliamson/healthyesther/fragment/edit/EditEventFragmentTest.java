@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
@@ -90,6 +91,18 @@ public class EditEventFragmentTest {
         mEditEventFragment.getTextChangedListener().afterTextChanged(mEditable);
 
         verify(mRow).setName(ANOTHER_NAME);
+    }
+
+    @Test
+    public void setName_updatesRowAndName() {
+        mEditEventFragment.onResume();
+        Mockito.reset(mEditable);
+        doReturn(ANOTHER_NAME).when(mRow).getName();
+        mEditEventFragment.setName(ANOTHER_NAME);
+
+        verify(mRow).setName(ANOTHER_NAME);
+        verify(mEditable).clear();
+        verify(mEditable).append(ANOTHER_NAME);
     }
 
     @Test
