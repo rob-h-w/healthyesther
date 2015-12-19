@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther.db.integration;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Order;
@@ -32,7 +31,7 @@ public class DatabaseWrapperClass extends Database {
     @Nonnull
     @Override
     public com.robwilliamson.healthyesther.db.includes.Cursor select(@Nonnull Where where, @Nonnull Table table, @Nonnull Order order) {
-        return new Cursor(mDatabase.query(false, table.getName(), null, where.getWhere(), new String[] {}, null, null, order.getOrder(), null));
+        return new Cursor(mDatabase.query(false, table.getName(), null, where.getWhere(), new String[]{}, null, null, order.getOrder(), null));
     }
 
     @Override

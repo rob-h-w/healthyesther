@@ -28,7 +28,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 
 public class NoteEventActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
     private static final String NOTE_NAME = "A Note";
