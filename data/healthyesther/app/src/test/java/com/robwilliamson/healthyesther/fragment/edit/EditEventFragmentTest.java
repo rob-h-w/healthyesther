@@ -95,8 +95,6 @@ public class EditEventFragmentTest {
 
     @Test
     public void setName_updatesRowAndName() {
-        mEditEventFragment.onResume();
-        Mockito.reset(mEditable);
         doReturn(ANOTHER_NAME).when(mRow).getName();
         mEditEventFragment.setName(ANOTHER_NAME);
 
