@@ -79,17 +79,22 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
             }
         });
 
-        getNameView().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        getNameView().setOnFocusChangeListener(createFocusChangeListener());
+
+        getNameView().addTextChangedListener(createTextChangedListener());
+
+        updateUi();
+    }
+
+    @Nonnull
+    View.OnFocusChangeListener createFocusChangeListener() {
+        return new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 mUserEditedEventName = !getName().isEmpty();
                 mRowNameSet = false;
             }
-        });
-
-        getNameView().addTextChangedListener(createTextChangedListener());
-
-        updateUi();
+        };
     }
 
     @Nonnull

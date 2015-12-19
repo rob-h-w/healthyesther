@@ -30,6 +30,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -66,6 +67,7 @@ public class EditEventFragmentTest {
 
         // Mock view editable text.
         doReturn(mEditable).when(mNameView).getEditableText();
+        doReturn(mEditable).when(mNameView).getText();
     }
 
     @Test
@@ -104,6 +106,26 @@ public class EditEventFragmentTest {
     }
 
     @Test
+    public void suggestEventNameWhenRowNameSet_doesNothing() {
+        mEditEventFragment.setRow(mRow);
+        Mockito.reset(mRow);
+        Mockito.reset(mEditable);
+        mEditEventFragment.suggestEventName(ANOTHER_NAME);
+
+        verifyNoMoreInteractions(mRow);
+        verifyNoMoreInteractions(mEditable);
+    }
+
+    @Test
+    public void suggestEventNameWhenRowNameNotSetAndNameIsEmpty_setsEventName() {
+        //noinspection ResultOfMethodCallIgnored
+        doReturn("").when(mEditable).toString();
+        mEditEventFragment.suggestEventName(ANOTHER_NAME);
+
+        verify(mRow).setName(ANOTHER_NAME);
+    }
+
+    @Test
     public void whenResumed_setsDateOnClickListener() {
         mEditEventFragment.onResume();
 
@@ -138,6 +160,7 @@ public class EditEventFragmentTest {
         private AutoCompleteTextView mNameView;
         private Button mTimeButton;
         private TextWatcher mTextWatcher;
+        private View.OnFocusChangeListener mFocusChangeListener;
 
         @Override
         protected Button getDateButton() {
@@ -164,6 +187,18 @@ public class EditEventFragmentTest {
         @Nullable
         public TextWatcher getTextChangedListener() {
             return mTextWatcher;
+        }
+
+        @Nonnull
+        @Override
+        View.OnFocusChangeListener createFocusChangeListener() {
+            mFocusChangeListener = super.createFocusChangeListener();
+            return mFocusChangeListener;
+        }
+
+        @Nullable
+        public View.OnFocusChangeListener getFocusChangeListener() {
+            return mFocusChangeListener;
         }
     }
 }
