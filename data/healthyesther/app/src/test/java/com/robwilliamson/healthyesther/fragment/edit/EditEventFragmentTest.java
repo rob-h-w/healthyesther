@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -31,6 +35,12 @@ import static org.mockito.Mockito.verify;
 public class EditEventFragmentTest {
     private static final DateTime WHEN = DateTime.from(org.joda.time.DateTime.now());
     private static final String NAME = "Event Name";
+    private static final String ANOTHER_NAME = "Another name";
+
+    static {
+        DateTimeConverter.now();
+    }
+
     @Mock
     private EventTable.Row mRow;
     @Mock
@@ -59,6 +69,26 @@ public class EditEventFragmentTest {
     @Test
     public void getRowWhenRowIsSet_returnsRow() {
         assertThat(mEditEventFragment.getRow(), is(mRow));
+    }
+
+    @Test
+    public void setRow_updatesName() {
+        doReturn(ANOTHER_NAME).when(mRow).getName();
+        mEditEventFragment.setRow(mRow);
+
+        verify(mEditable).clear();
+        verify(mEditable).append(ANOTHER_NAME);
+    }
+
+    @Test
+    public void nameChanged_updatesRow() {
+        mEditEventFragment.onResume();
+        //noinspection ResultOfMethodCallIgnored
+        doReturn(ANOTHER_NAME).when(mEditable).toString();
+        //noinspection ConstantConditions
+        mEditEventFragment.getTextChangedListener().afterTextChanged(mEditable);
+
+        verify(mRow).setName(ANOTHER_NAME);
     }
 
     @Test
@@ -95,6 +125,7 @@ public class EditEventFragmentTest {
         private Button mDateButton;
         private AutoCompleteTextView mNameView;
         private Button mTimeButton;
+        private TextWatcher mTextWatcher;
 
         @Override
         protected Button getDateButton() {
@@ -109,6 +140,18 @@ public class EditEventFragmentTest {
         @Override
         protected Button getTimeButton() {
             return mTimeButton;
+        }
+
+        @Override
+        @Nonnull
+        TextWatcher createTextChangedListener() {
+            mTextWatcher = super.createTextChangedListener();
+            return mTextWatcher;
+        }
+
+        @Nullable
+        public TextWatcher getTextChangedListener() {
+            return mTextWatcher;
         }
     }
 }

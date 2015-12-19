@@ -87,7 +87,14 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
             }
         });
 
-        getNameView().addTextChangedListener(new TextWatcher() {
+        getNameView().addTextChangedListener(createTextChangedListener());
+
+        updateUi();
+    }
+
+    @Nonnull
+    TextWatcher createTextChangedListener() {
+        return new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -104,9 +111,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
                 }
                 updateRowName(s.toString());
             }
-        });
-
-        updateUi();
+        };
     }
 
     @Override
