@@ -33,12 +33,13 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class EditEventFragmentTest {
-    private static final DateTime WHEN = DateTime.from(org.joda.time.DateTime.now());
+    private static final DateTime WHEN;
     private static final String NAME = "Event Name";
     private static final String ANOTHER_NAME = "Another name";
 
     static {
         DateTimeConverter.now();
+        WHEN = DateTime.from(org.joda.time.DateTime.now());
     }
 
     @Mock
