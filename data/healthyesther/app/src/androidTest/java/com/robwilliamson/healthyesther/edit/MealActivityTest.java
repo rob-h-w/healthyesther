@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
@@ -12,9 +13,12 @@ import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.test.EditEventAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
@@ -24,6 +28,7 @@ import com.robwilliamson.healthyesther.test.Orientation;
 import javax.annotation.Nonnull;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -38,6 +43,14 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+    private static final DateTime when;
+    private static final String MEAL_NAME = "Bacon";
+    private static final String EVENT_NAME = "Breakfast";
+
+    static {
+        when = DateTimeConverter.now();
+    }
+
     public MealActivityTest() {
         super(HomeActivity.class);
     }
@@ -126,6 +139,57 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     public void test_emptyName_cannotCommit() {
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
         onView(EditEventAccessor.ok()).check(doesNotExist());
+    }
+
+    public void test_editExisting_orientation() {
+        setupMealEvent();
+        HomeActivityAccessor.EditMode.start();
+        onView(HomeActivityAccessor.EditMode.eventList()).perform(click());
+
+        Orientation.check(new Orientation.Subject() {
+            @Override
+            public InstrumentationTestCase getTestCase() {
+                return MealActivityTest.this;
+            }
+
+            @Override
+            public void checkContent() {
+                onView(EditEventAccessor.eventEditText()).check(matches(withText(MEAL_NAME)));
+                onView(MealEventActivityAccessor.dishName()).check(matches(withText(MEAL_NAME)));
+            }
+        });
+    }
+
+    public void test_editExisting_commitsUpdate() {
+        setupMealEvent();
+        HomeActivityAccessor.EditMode.start();
+        onView(HomeActivityAccessor.EditMode.eventList()).perform(click());
+
+        ViewInteraction eventEditText = onView(EditEventAccessor.eventEditText());
+        eventEditText.perform(clearText());
+        eventEditText.perform(typeText(EVENT_NAME));
+        onView(EditEventAccessor.ok()).perform(click());
+
+        EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(HealthDbHelper.getDatabase(), WhereContains.all());
+        if (event == null) {
+            fail("No event in the database.");
+        }
+
+        assertThat(event.getName(), is(EVENT_NAME));
+    }
+
+    private void setupMealEvent() {
+        Database db = HealthDbHelper.getDatabase();
+        EventTable.Row event = null;
+        try (Transaction transaction = db.getTransaction()) {
+            event = new EventTable.Row(EventTypeTable.MEAL.getId(), when, when, null, MEAL_NAME);
+            event.applyTo(transaction);
+            MealTable.Row meal = new MealTable.Row(MEAL_NAME);
+            meal.applyTo(transaction);
+            MealEventTable.Row mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, null);
+            mealEvent.applyTo(transaction);
+            transaction.commit();
+        }
     }
 
     private void checkDatabaseCorrectnessForName(@Nonnull final String name, int expectedCount) {
