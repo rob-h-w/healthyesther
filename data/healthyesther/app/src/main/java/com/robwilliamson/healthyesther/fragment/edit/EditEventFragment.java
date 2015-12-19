@@ -206,19 +206,19 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
         mSettingRowName = false;
     }
 
-    private Button getTimeButton() {
+    protected Button getTimeButton() {
         return getButton(R.id.edit_event_time_button);
     }
 
-    private Button getDateButton() {
+    protected Button getDateButton() {
         return getButton(R.id.edit_event_date_button);
     }
 
-    private Button getButton(int id) {
+    protected Button getButton(int id) {
         return getTypeSafeView(id, Button.class);
     }
 
-    private AutoCompleteTextView getNameView() {
+    protected AutoCompleteTextView getNameView() {
         return getTypeSafeView(R.id.edit_event_name, AutoCompleteTextView.class);
     }
 }
