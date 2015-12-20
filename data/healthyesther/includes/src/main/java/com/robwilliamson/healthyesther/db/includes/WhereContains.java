@@ -54,4 +54,15 @@ public class WhereContains {
             }
         };
     }
+
+    @Nonnull
+    public static Where columnEqualling(@Nonnull final String columnName, final long id) {
+        return new Where() {
+            @Nullable
+            @Override
+            public String getWhere() {
+                return columnName + " = " + String.valueOf(id);
+            }
+        };
+    }
 }
