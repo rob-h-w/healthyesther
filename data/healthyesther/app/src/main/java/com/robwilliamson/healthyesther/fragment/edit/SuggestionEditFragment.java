@@ -92,15 +92,6 @@ public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFrag
         });
     }
 
-    protected void appendSuggestionIds(HashMap<String, Long> suggestionIds) {
-        if (null == suggestionIds) {
-            return;
-        }
-
-        mSuggestionIds.putAll(suggestionIds);
-        setSuggestionIds(mSuggestionIds);
-    }
-
     protected Long getSuggestionId(String name) {
         return mSuggestionIds == null ? null : mSuggestionIds.get(name);
     }
