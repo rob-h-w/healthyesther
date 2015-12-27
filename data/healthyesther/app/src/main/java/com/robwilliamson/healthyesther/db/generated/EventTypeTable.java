@@ -190,10 +190,11 @@ public class EventTypeTable
         private String mIcon;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(3);
 
         static {
             COLUMN_NAMES.add("_id");
+            COLUMN_NAMES_FOR_UPDATE.add("_id");
             COLUMN_NAMES.add("name");
             COLUMN_NAMES_FOR_INSERTION.add("name");
             COLUMN_NAMES_FOR_UPDATE.add("name");
@@ -286,7 +287,8 @@ public class EventTypeTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             final Object icon = ((mIcon == null)?String.class:mIcon);
-            int actual = transaction.update("event_type", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, icon);
+            EventTypeTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("event_type", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mName, icon);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

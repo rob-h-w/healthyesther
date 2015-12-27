@@ -206,11 +206,13 @@ public class HealthScoreEventTable
         @Nullable
         private Long mScore;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(3);
 
         static {
             COLUMN_NAMES.add("event_id");
+            COLUMN_NAMES_FOR_UPDATE.add("event_id");
             COLUMN_NAMES.add("health_score_id");
+            COLUMN_NAMES_FOR_UPDATE.add("health_score_id");
             COLUMN_NAMES.add("score");
             COLUMN_NAMES_FOR_UPDATE.add("score");
         }
@@ -307,7 +309,8 @@ public class HealthScoreEventTable
             }
             applyToRows(transaction);
             final Object score = ((mScore == null)?Long.class:mScore);
-            int actual = transaction.update("health_score_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, score);
+            HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("health_score_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), score);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

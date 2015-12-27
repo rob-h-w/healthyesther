@@ -101,7 +101,7 @@ public class RowGenerator extends BaseClassGenerator {
                 JMod.PUBLIC | JMod.STATIC | JMod.FINAL,
                 stringListType,
                 "COLUMN_NAMES_FOR_UPDATE");
-        mUpdateNames.init(JExpr._new(stringListType).arg(JExpr.lit(mBasicColumns.columns.size())));
+        mUpdateNames.init(JExpr._new(stringListType).arg(JExpr.lit(mTableGenerator.getTable().getColumns().length)));
 
         CodeGenerator.ASYNC.schedule(new Runnable() {
             @Override
@@ -179,9 +179,7 @@ public class RowGenerator extends BaseClassGenerator {
                         .arg(JExpr.lit(name));
             }
 
-            if (!column.isPrimaryKey()) {
-                classConstructor.invoke(mUpdateNames, "add").arg(JExpr.lit(name));
-            }
+            classConstructor.invoke(mUpdateNames, "add").arg(JExpr.lit(name));
         }
     }
 
@@ -190,9 +188,9 @@ public class RowGenerator extends BaseClassGenerator {
         update.annotate(Override.class);
         JVar transaction = update.param(Transaction.class, "transaction");
         Utils.annotateNonull(transaction, true);
-        JBlock body = update.body();
+        final JBlock body = update.body();
 
-        if (mPrimaryKeyColumns.columns.isEmpty() || mBasicColumns.columns.isEmpty()) {
+        if (mPrimaryKeyColumns.columns.isEmpty()) {
             body._throw(JExpr._new(model()._ref(UnsupportedOperationException.class)));
             return;
         }
@@ -210,29 +208,54 @@ public class RowGenerator extends BaseClassGenerator {
         final JInvocation updateInvocation = transaction.invoke("update").arg(mTableGenerator.getTable().getName()).arg(where).arg(mUpdateNames);
 
         Column.Visitor<BaseColumns> addUpdateArg = new Column.Visitor<BaseColumns>() {
+            private JVar mNextPrimaryKey = null;
+
             @Override
             public void visit(Column column, BaseColumns context) {
                 if (nullables.containsKey(column)) {
                     updateInvocation.arg(nullables.get(column));
                 } else {
-                    ColumnField columnField = context.columnFieldFor(column);
-                    if (columnField == null) {
-                        throw new NullPointerException("The column, " + column.getName() + ", should have a row field.");
-                    }
-                    if (column.isForeignKey()) {
-                        RowField rowField = context.rowFieldFor(column);
-                        if (rowField == null) {
-                            throw new NullPointerException("Foreign key columns, like " + column.getName() + ", should have row fields.");
+                    if (column.isPrimaryKey()) {
+                        // Primary key field.
+                        if (column.isForeignKey()) {
+                            updateInvocation.arg(getPrimaryKey().invoke(getTableGenerator().getPrimaryKeyGenerator().getGetterFor(column)).invoke("getId"));
+                        } else {
+                            updateInvocation.arg(getPrimaryKey().invoke(getTableGenerator().getPrimaryKeyGenerator().getGetterFor(column)));
+                        }
+                    } else {
+                        ColumnField columnField = context.columnFieldFor(column);
+                        if (columnField == null) {
+                            columnField = mPrimaryKeyColumns.columnFieldFor(column);
+
+                            if (columnField == null) {
+                                throw new NullPointerException("The column, " + column.getName() + ", in table " + column.getTable().getName() + " should have a row field.");
+                            }
                         }
 
-                        PrimaryKeyGenerator foreignKeyGenerator = rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
-                        updateInvocation.arg(columnField.fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
-                    } else {
-                        updateInvocation.arg(columnField.fieldVar);
+                        if (column.isForeignKey()) {
+                            RowField rowField = context.rowFieldFor(column);
+                            if (rowField == null) {
+                                throw new NullPointerException("Foreign key columns, like " + column.getName() + ", should have row fields.");
+                            }
+
+                            PrimaryKeyGenerator foreignKeyGenerator = rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
+                            updateInvocation.arg(columnField.fieldVar.invoke(foreignKeyGenerator.getRowIdGetter()));
+                        } else {
+                            updateInvocation.arg(columnField.fieldVar);
+                        }
                     }
                 }
             }
+
+            private JVar getPrimaryKey() {
+                if (mNextPrimaryKey == null) {
+                    mNextPrimaryKey = body.decl(getTableGenerator().getPrimaryKeyGenerator().getJClass(), "nextPrimaryKey", callGetNextPrimaryKey(null, null));
+                }
+
+                return mNextPrimaryKey;
+            }
         };
+        mPrimaryKeyColumns.forEach(addUpdateArg);
         mBasicColumns.forEach(addUpdateArg);
 
         JVar actual = body.decl(model().INT, "actual", updateInvocation);

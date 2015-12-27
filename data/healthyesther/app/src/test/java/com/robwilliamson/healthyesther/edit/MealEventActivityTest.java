@@ -94,6 +94,12 @@ public class MealEventActivityTest {
     @Mock
     private MealTable mMealTable;
 
+    @Mock
+    private MealEventTable.Row mMealEventRow;
+
+    @Mock
+    private MealEventTable.PrimaryKey mMealEventKey;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -162,8 +168,9 @@ public class MealEventActivityTest {
     }
 
     @Test
-    public void modifyOperation_callsFinish() {
-        doReturn(new MealEventTable.Row[]{}).when(mMealEventTable).select(eq(mDatabase), any(Where.class));
+    public void modifyOperation_callsFinish() throws InterruptedException {
+        doReturn(mMealEventKey).when(mMealEventRow).getNextPrimaryKey();
+        doReturn(mMealEventRow).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
 
         mActivity.onModifySelected().doTransactionally(mDatabase, mTransaction);
 

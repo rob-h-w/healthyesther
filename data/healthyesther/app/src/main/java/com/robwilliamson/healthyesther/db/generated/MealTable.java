@@ -187,10 +187,11 @@ public class MealTable
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(1);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(1);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
 
         static {
             COLUMN_NAMES.add("_id");
+            COLUMN_NAMES_FOR_UPDATE.add("_id");
             COLUMN_NAMES.add("name");
             COLUMN_NAMES_FOR_INSERTION.add("name");
             COLUMN_NAMES_FOR_UPDATE.add("name");
@@ -259,7 +260,8 @@ public class MealTable
             if (!isInDatabase()) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
-            int actual = transaction.update("meal", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName);
+            MealTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("meal", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mName);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

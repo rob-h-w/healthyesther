@@ -201,10 +201,11 @@ public class EventTable
         private String mName;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(6);
 
         static {
             COLUMN_NAMES.add("_id");
+            COLUMN_NAMES_FOR_UPDATE.add("_id");
             COLUMN_NAMES.add("type_id");
             COLUMN_NAMES_FOR_INSERTION.add("type_id");
             COLUMN_NAMES_FOR_UPDATE.add("type_id");
@@ -395,7 +396,8 @@ public class EventTable
             applyToRows(transaction);
             final Object modified = ((mModified == null)?DateTime.class:mModified);
             final Object name = ((mName == null)?String.class:mName);
-            int actual = transaction.update("event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mTypeId.getId(), mCreated, mWhen, modified, name);
+            EventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mTypeId.getId(), mCreated, mWhen, modified, name);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

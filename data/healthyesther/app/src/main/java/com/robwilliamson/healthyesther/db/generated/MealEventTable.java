@@ -210,11 +210,13 @@ public class MealEventTable
         @Nullable
         private Double mAmount;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(4);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(4);
 
         static {
             COLUMN_NAMES.add("event_id");
+            COLUMN_NAMES_FOR_UPDATE.add("event_id");
             COLUMN_NAMES.add("meal_id");
+            COLUMN_NAMES_FOR_UPDATE.add("meal_id");
             COLUMN_NAMES.add("units_id");
             COLUMN_NAMES_FOR_UPDATE.add("units_id");
             COLUMN_NAMES.add("amount");
@@ -341,7 +343,8 @@ public class MealEventTable
             applyToRows(transaction);
             final Object unitsId = ((mUnitsId == null)?com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey.class:mUnitsId.getId());
             final Object amount = ((mAmount == null)?Double.class:mAmount);
-            int actual = transaction.update("meal_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, unitsId, amount);
+            MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("meal_event", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMealId().getId(), unitsId, amount);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

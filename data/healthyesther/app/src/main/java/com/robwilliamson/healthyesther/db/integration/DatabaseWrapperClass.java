@@ -65,27 +65,32 @@ public class DatabaseWrapperClass extends Database {
 
         @Override
         public Boolean getBoolean(@Nonnull String column) {
-            return mCursor.getInt(get(column)) != 0;
+            int id = get(column);
+            return mCursor.isNull(id) ? null : mCursor.getInt(get(column)) != 0;
         }
 
         @Override
         public Double getDouble(@Nonnull String column) {
-            return mCursor.getDouble(get(column));
+            int id = get(column);
+            return mCursor.isNull(id) ? null : mCursor.getDouble(get(column));
         }
 
         @Override
         public Long getLong(@Nonnull String column) {
-            return mCursor.getLong(get(column));
+            int id = get(column);
+            return mCursor.isNull(id) ? null : mCursor.getLong(id);
         }
 
         @Override
         public String getString(@Nonnull String column) {
-            return mCursor.getString(get(column));
+            int id = get(column);
+            return mCursor.isNull(id) ? null : mCursor.getString(get(column));
         }
 
         @Override
         public DateTime getDateTime(@Nonnull String column) {
-            return new DateTime(getString(column));
+            int id = get(column);
+            return mCursor.isNull(id) ? null : new DateTime(getString(column));
         }
 
         @Override

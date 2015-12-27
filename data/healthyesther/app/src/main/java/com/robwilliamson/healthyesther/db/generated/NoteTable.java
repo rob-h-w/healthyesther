@@ -190,10 +190,11 @@ public class NoteTable
         private String mNote;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(3);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(2);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(3);
 
         static {
             COLUMN_NAMES.add("_id");
+            COLUMN_NAMES_FOR_UPDATE.add("_id");
             COLUMN_NAMES.add("name");
             COLUMN_NAMES_FOR_INSERTION.add("name");
             COLUMN_NAMES_FOR_UPDATE.add("name");
@@ -286,7 +287,8 @@ public class NoteTable
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed("Could not update because the row is not in the database.");
             }
             final Object note = ((mNote == null)?String.class:mNote);
-            int actual = transaction.update("note", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mName, note);
+            NoteTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("note", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mName, note);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }

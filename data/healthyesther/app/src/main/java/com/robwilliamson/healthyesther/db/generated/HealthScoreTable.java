@@ -197,10 +197,11 @@ public class HealthScoreTable
         private String mMinLabel;
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(6);
 
         static {
             COLUMN_NAMES.add("_id");
+            COLUMN_NAMES_FOR_UPDATE.add("_id");
             COLUMN_NAMES.add("best_value");
             COLUMN_NAMES_FOR_INSERTION.add("best_value");
             COLUMN_NAMES_FOR_UPDATE.add("best_value");
@@ -351,7 +352,8 @@ public class HealthScoreTable
             }
             final Object maxLabel = ((mMaxLabel == null)?String.class:mMaxLabel);
             final Object minLabel = ((mMinLabel == null)?String.class:mMinLabel);
-            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, mBestValue, mName, mRandomQuery, maxLabel, minLabel);
+            HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mBestValue, mName, mRandomQuery, maxLabel, minLabel);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
