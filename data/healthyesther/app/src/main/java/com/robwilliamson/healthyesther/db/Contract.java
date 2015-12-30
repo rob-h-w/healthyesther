@@ -7,5 +7,5 @@ import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
  */
 public final class Contract {
     public static final String NAME = DatabaseAccessor.FILE_NAME;
-    public static final int VERSION = 4;
+    public static final int VERSION = 5;
 }
