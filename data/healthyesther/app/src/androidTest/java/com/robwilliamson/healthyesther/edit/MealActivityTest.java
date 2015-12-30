@@ -178,6 +178,36 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertThat(event.getName(), is(EVENT_NAME));
     }
 
+    public void test_editExistingModifyMealName_commitsUpdate() {
+        final String NEW_FOOD = "Egg";
+        setupMealEvent();
+        HomeActivityAccessor.EditMode.start();
+        onView(HomeActivityAccessor.EditMode.eventList()).perform(click());
+
+        ViewInteraction mealEditText = onView(MealEventActivityAccessor.dishName());
+        mealEditText.perform(clearText());
+        mealEditText.perform(typeText(NEW_FOOD));
+        onView(EditEventAccessor.ok()).perform(click());
+
+        Database db = HealthDbHelper.getDatabase();
+        EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(db, WhereContains.all());
+        if (event == null) {
+            fail("No event in the database.");
+        }
+
+        MealEventTable.Row mealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(db, WhereContains.columnEqualling(MealEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+        if (mealEvent == null) {
+            fail("Meal event not found.");
+        }
+
+        MealTable.Row meal = DatabaseAccessor.MEAL_TABLE.select0Or1(db, mealEvent.getConcretePrimaryKey().getMealId());
+        if (meal == null) {
+            fail("Meal not found.");
+        }
+
+        assertThat(meal.getName(), is(NEW_FOOD));
+    }
+
     private void setupMealEvent() {
         Database db = HealthDbHelper.getDatabase();
         EventTable.Row event = null;

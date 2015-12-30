@@ -78,6 +78,9 @@ public class MealEventActivity extends AbstractEditEventActivity
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 MealTable.Row meal = getMealFragment().getRow();
+                MealTable.Row oldMeal = getMealFragment().getOldRow();
+
+                MealTable.PrimaryKey oldKey = oldMeal == null ? null : oldMeal.getConcretePrimaryKey();
 
                 meal.applyTo(transaction);
 
@@ -92,13 +95,22 @@ public class MealEventActivity extends AbstractEditEventActivity
                 }
                 event.setTypeId(EventTypeTable.MEAL.getId());
                 event.applyTo(transaction);
-                MealEventTable.Row mealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
-                        foreignKey(MealEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
-                        foreignKey(MealEventTable.MEAL_ID, meal.getNextPrimaryKey().getId())));
+                EventTable.PrimaryKey eventKey = event.getNextPrimaryKey();
+                MealEventTable.Row mealEvent = null;
+
+                if (eventKey != null && oldKey != null) {
+                    mealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
+                            foreignKey(MealEventTable.EVENT_ID, eventKey.getId()),
+                            foreignKey(MealEventTable.MEAL_ID, oldKey.getId())));
+                }
+
                 if (mealEvent == null) {
                     mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, 0D);
-                    mealEvent.applyTo(transaction);
+                } else {
+                    mealEvent.setNextPrimaryKey(new MealEventTable.PrimaryKey(event.getNextPrimaryKey(), meal.getNextPrimaryKey()));
                 }
+
+                mealEvent.applyTo(transaction);
 
                 runOnUiThread(new Runnable() {
                     @Override

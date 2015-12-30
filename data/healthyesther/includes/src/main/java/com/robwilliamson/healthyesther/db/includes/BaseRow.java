@@ -28,7 +28,7 @@ public abstract class BaseRow<T extends Key> extends BaseTransactable implements
         return mNextKey == null ? mKey : mNextKey;
     }
 
-    protected void setNextPrimaryKey(T key) {
+    public void setNextPrimaryKey(T key) {
         if (mNextKey == key || (mNextKey != null && mNextKey.equals(key))) {
             return;
         }
