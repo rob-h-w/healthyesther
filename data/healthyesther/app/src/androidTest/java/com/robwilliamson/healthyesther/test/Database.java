@@ -17,6 +17,22 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 
 public final class Database {
+    public static void useV4Database(Instrumentation instrumentation) throws IOException, NoSuchFieldException, IllegalAccessException {
+        Context testContext = instrumentation.getContext();
+        Context targetContext = instrumentation.getTargetContext();
+
+        // Record the string before we delete the db because deletion also resets HealthDbHelper.
+        String dbPath = getDatabaseAbsolutePath(targetContext);
+
+        deleteDatabase(targetContext);
+
+        int v4DbId = testContext.getResources().getIdentifier("v4", "raw", testContext.getPackageName());
+
+        try (InputStream v4InputStream = testContext.getResources().openRawResource(v4DbId)) {
+            Utils.File.copy(v4InputStream, dbPath);
+        }
+    }
+
     public static void useV3Database(Instrumentation instrumentation) throws IOException, NoSuchFieldException, IllegalAccessException {
         Context testContext = instrumentation.getContext();
         Context targetContext = instrumentation.getTargetContext();
