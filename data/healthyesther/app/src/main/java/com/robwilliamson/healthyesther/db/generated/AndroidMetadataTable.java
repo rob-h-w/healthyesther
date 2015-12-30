@@ -49,15 +49,19 @@ public class AndroidMetadataTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new AndroidMetadataTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new AndroidMetadataTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -94,15 +98,19 @@ public class AndroidMetadataTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new AndroidMetadataTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final AndroidMetadataTable.Row[] rows = new AndroidMetadataTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new AndroidMetadataTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

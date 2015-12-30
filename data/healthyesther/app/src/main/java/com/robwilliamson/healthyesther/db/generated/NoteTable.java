@@ -51,15 +51,19 @@ public class NoteTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new NoteTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new NoteTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -96,15 +100,19 @@ public class NoteTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new NoteTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final NoteTable.Row[] rows = new NoteTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new NoteTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

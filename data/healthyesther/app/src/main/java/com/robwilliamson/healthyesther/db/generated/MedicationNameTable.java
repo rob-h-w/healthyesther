@@ -50,15 +50,19 @@ public class MedicationNameTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final MedicationNameTable.Row[] rows = new MedicationNameTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new MedicationNameTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final MedicationNameTable.Row[] rows = new MedicationNameTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new MedicationNameTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -95,15 +99,19 @@ public class MedicationNameTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final MedicationNameTable.Row[] rows = new MedicationNameTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new MedicationNameTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final MedicationNameTable.Row[] rows = new MedicationNameTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new MedicationNameTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

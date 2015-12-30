@@ -54,15 +54,19 @@ public class HealthScoreTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final HealthScoreTable.Row[] rows = new HealthScoreTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new HealthScoreTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final HealthScoreTable.Row[] rows = new HealthScoreTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new HealthScoreTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -99,15 +103,19 @@ public class HealthScoreTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final HealthScoreTable.Row[] rows = new HealthScoreTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new HealthScoreTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final HealthScoreTable.Row[] rows = new HealthScoreTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new HealthScoreTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

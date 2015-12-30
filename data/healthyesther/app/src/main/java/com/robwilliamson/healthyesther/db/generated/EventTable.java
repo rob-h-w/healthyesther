@@ -55,15 +55,19 @@ public class EventTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new EventTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new EventTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -100,15 +104,19 @@ public class EventTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new EventTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final EventTable.Row[] rows = new EventTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new EventTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

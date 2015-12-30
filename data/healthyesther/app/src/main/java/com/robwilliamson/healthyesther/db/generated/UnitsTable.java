@@ -51,15 +51,19 @@ public class UnitsTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final UnitsTable.Row[] rows = new UnitsTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new UnitsTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final UnitsTable.Row[] rows = new UnitsTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new UnitsTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -96,15 +100,19 @@ public class UnitsTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final UnitsTable.Row[] rows = new UnitsTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new UnitsTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final UnitsTable.Row[] rows = new UnitsTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new UnitsTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

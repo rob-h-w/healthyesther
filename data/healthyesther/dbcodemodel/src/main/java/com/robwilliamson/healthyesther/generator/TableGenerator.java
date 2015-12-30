@@ -18,6 +18,7 @@ import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JTryBlock;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
@@ -128,6 +129,9 @@ public class TableGenerator extends BaseClassGenerator {
             selectCall.arg(order);
         }
         JVar cursor = body.decl(JMod.FINAL, model()._ref(Cursor.class), "cursor", selectCall);
+        JTryBlock tryBlock = body._try();
+        tryBlock._finally().invoke(cursor, "close");
+        body = tryBlock.body();
         JVar rows = body.decl(JMod.FINAL, rowClass.array(), "rows", JExpr.newArray(rowClass, cursor.invoke("count")));
         JVar index = body.decl(model().INT, "index", JExpr.lit(0));
         JBlock moreThan1 = body._if(cursor.invoke("count").gt(JExpr.lit(0)))._then();
@@ -138,7 +142,7 @@ public class TableGenerator extends BaseClassGenerator {
         rowConstruction.arg(cursor);
         loop.assign(rows.component(index.incr()), rowConstruction);
 
-        select.body()._return(rows);
+        body._return(rows);
 
         JMethod selectOverload = makeSelect(getPrimaryKeyGenerator().getJClass());
 

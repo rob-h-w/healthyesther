@@ -46,7 +46,10 @@ public class DatabaseWrapperClass extends Database {
 
     public static class Cursor implements com.robwilliamson.healthyesther.db.includes.Cursor {
 
+        @Nonnull
         private final android.database.Cursor mCursor;
+
+        @Nonnull
         private final Map<String, Integer> map = new HashMap<>();
 
         Cursor(@Nonnull android.database.Cursor cursor) {
@@ -106,6 +109,11 @@ public class DatabaseWrapperClass extends Database {
         @Override
         public int count() {
             return mCursor.getCount();
+        }
+
+        @Override
+        public void close() {
+            mCursor.close();
         }
     }
 }

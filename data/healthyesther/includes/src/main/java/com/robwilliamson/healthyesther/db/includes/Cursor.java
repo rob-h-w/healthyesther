@@ -2,7 +2,7 @@ package com.robwilliamson.healthyesther.db.includes;
 
 import javax.annotation.Nonnull;
 
-public interface Cursor {
+public interface Cursor extends AutoCloseable {
     Boolean getBoolean(@Nonnull String column);
 
     Double getDouble(@Nonnull String column);
@@ -18,4 +18,6 @@ public interface Cursor {
     boolean moveToNext();
 
     int count();
+
+    void close();
 }

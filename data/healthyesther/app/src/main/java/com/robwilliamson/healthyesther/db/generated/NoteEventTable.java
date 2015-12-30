@@ -50,15 +50,19 @@ public class NoteEventTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final NoteEventTable.Row[] rows = new NoteEventTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new NoteEventTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final NoteEventTable.Row[] rows = new NoteEventTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new NoteEventTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -95,15 +99,19 @@ public class NoteEventTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final NoteEventTable.Row[] rows = new NoteEventTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new NoteEventTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final NoteEventTable.Row[] rows = new NoteEventTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new NoteEventTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull

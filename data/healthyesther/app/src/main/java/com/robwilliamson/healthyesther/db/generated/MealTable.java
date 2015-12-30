@@ -50,15 +50,19 @@ public class MealTable
         @Nonnull
         Where where) {
         final Cursor cursor = database.select(where, this);
-        final MealTable.Row[] rows = new MealTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new MealTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final MealTable.Row[] rows = new MealTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new MealTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
@@ -95,15 +99,19 @@ public class MealTable
         @Nonnull
         Order order) {
         final Cursor cursor = database.select(where, this, order);
-        final MealTable.Row[] rows = new MealTable.Row[cursor.count()] ;
-        int index = 0;
-        if (cursor.count()> 0) {
-            cursor.moveToFirst();
-            do {
-                rows[index ++] = new MealTable.Row(cursor);
-            } while (cursor.moveToNext());
+        try {
+            final MealTable.Row[] rows = new MealTable.Row[cursor.count()] ;
+            int index = 0;
+            if (cursor.count()> 0) {
+                cursor.moveToFirst();
+                do {
+                    rows[index ++] = new MealTable.Row(cursor);
+                } while (cursor.moveToNext());
+            }
+            return rows;
+        } finally {
+            cursor.close();
         }
-        return rows;
     }
 
     @Nonnull
