@@ -10,6 +10,7 @@ import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
@@ -28,6 +29,7 @@ import org.robolectric.util.ActivityController;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -100,6 +102,34 @@ public class MedicationEventActivityTest {
         EventTable.Row row = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.all());
         //noinspection ConstantConditions
         assertThat(row.getName(), is(EVENT_NAME));
+    }
+
+    @Test
+    public void whenANewMedicationIsAdded_medicationEventRefersToEvent() {
+        aNewMedicationIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row eventRow = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.all());
+
+        MedicationEventTable.Row medEventRow = HealthDatabase.MEDICATION_EVENT_TABLE.select0Or1(db, WhereContains.all());
+
+        //noinspection ConstantConditions
+        assertThat(eventRow.getConcretePrimaryKey(), equalTo(medEventRow.getConcretePrimaryKey().getEventId()));
+    }
+
+    @Test
+    public void whenANewMedicationIsAdded_medicationEventRefersToMedication() {
+        aNewMedicationIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        MedicationTable.Row medRow = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.all());
+
+        MedicationEventTable.Row medEventRow = HealthDatabase.MEDICATION_EVENT_TABLE.select0Or1(db, WhereContains.all());
+
+        //noinspection ConstantConditions
+        assertThat(medRow.getConcretePrimaryKey(), equalTo(medEventRow.getConcretePrimaryKey().getMedicationId()));
     }
 
     private void aNewMedicationIsAdded() {
