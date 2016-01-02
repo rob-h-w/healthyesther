@@ -148,7 +148,7 @@ public class MedicationEventActivityTest {
     private void anExistingMedicationNameIsEdited() {
         Database db = HealthDbHelper.getDatabase();
 
-        try(Transaction transaction = db.getTransaction()) {
+        try (Transaction transaction = db.getTransaction()) {
             EventTable.Row event = new EventTable.Row(
                     EventTypeTable.MEDICATION.getId(),
                     mNow,

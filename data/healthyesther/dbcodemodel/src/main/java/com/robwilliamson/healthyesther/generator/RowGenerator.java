@@ -129,7 +129,7 @@ public class RowGenerator extends BaseClassGenerator {
         final JVar transaction = mApplyToRows.param(Transaction.class, "transaction");
         Utils.annotateNonull(transaction, true);
         final JBlock body = mApplyToRows.body();
-        final JVar nextPrimaryKey =getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys() ? body.decl(
+        final JVar nextPrimaryKey = getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys() ? body.decl(
                 primaryKeyClass,
                 "nextPrimaryKey",
                 callGetNextPrimaryKey(null, null)) : null;
@@ -165,7 +165,7 @@ public class RowGenerator extends BaseClassGenerator {
         mBasicColumns.forEach(updateRowDependency);
 
         if (getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys()) {
-            final JExpression[] makeNewPrimaryKey = { nextPrimaryKey.eq(JExpr._null()) };
+            final JExpression[] makeNewPrimaryKey = {nextPrimaryKey.eq(JExpr._null())};
 
             Column.Visitor<BaseColumns> populateMakeNewPrimaryCondition = new Column.Visitor<BaseColumns>() {
                 @Override

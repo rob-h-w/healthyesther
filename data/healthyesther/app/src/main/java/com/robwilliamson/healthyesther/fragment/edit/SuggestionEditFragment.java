@@ -9,7 +9,6 @@ import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
