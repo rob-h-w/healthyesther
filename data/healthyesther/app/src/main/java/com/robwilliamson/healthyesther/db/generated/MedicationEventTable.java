@@ -240,6 +240,7 @@ public class MedicationEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
+            setNextPrimaryKey(new MedicationEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mMedicationIdRow = medicationId;
         }
@@ -247,11 +248,22 @@ public class MedicationEventTable
         private void applyToRows(
             @Nonnull
             Transaction transaction) {
+            MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setEventId(mEventIdRow.getNextPrimaryKey());
+                }
             }
             if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setMedicationId(mMedicationIdRow.getNextPrimaryKey());
+                }
+            }
+            if (((nextPrimaryKey == null)&&(mEventIdRow!= null))&&(mMedicationIdRow!= null)) {
+                MedicationEventTable.PrimaryKey oldNextPrimaryKey = getNextPrimaryKey();
+                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMedicationIdRow.getNextPrimaryKey()));
             }
         }
 
@@ -262,9 +274,12 @@ public class MedicationEventTable
             Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
-            // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new MedicationEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getMedicationId()));
             MedicationEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new MedicationEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getMedicationId()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
             transaction.insert("medication_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMedicationId().getId());
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

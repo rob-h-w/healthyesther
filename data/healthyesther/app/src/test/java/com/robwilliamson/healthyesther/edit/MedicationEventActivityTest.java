@@ -13,7 +13,11 @@ import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,16 +44,20 @@ import static org.mockito.Mockito.doReturn;
 public class MedicationEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
     private static final String MEDICATION_NAME = "Paracetamol";
+    private static final String EDITED_MEDICATION_NAME = "Erythromycin";
 
     private ActivityController<TestableMedicationEventActivity> mActivityController;
 
     private TestableMedicationEventActivity mActivity;
+    private DateTime mNow;
 
     @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
+
         Utils.Db.TestData.cleanOldData();
 
-        MockitoAnnotations.initMocks(this);
+        mNow = DateTimeConverter.now();
 
         mActivityController = Robolectric.buildActivity(TestableMedicationEventActivity.class);
 
@@ -130,6 +138,28 @@ public class MedicationEventActivityTest {
 
         //noinspection ConstantConditions
         assertThat(medRow.getConcretePrimaryKey(), equalTo(medEventRow.getConcretePrimaryKey().getMedicationId()));
+    }
+
+    @Test
+    public void whenAnExistingMedicationNameIsEdited_aNewMedicationTypeIsAdded() {
+        anExistingMedicationNameIsEdited();
+    }
+
+    private void anExistingMedicationNameIsEdited() {
+        Database db = HealthDbHelper.getDatabase();
+
+        try(Transaction transaction = db.getTransaction()) {
+            EventTable.Row event = new EventTable.Row(
+                    EventTypeTable.MEDICATION.getId(),
+                    mNow,
+                    mNow,
+                    null,
+                    EVENT_NAME);
+
+            MedicationTable.Row med = new MedicationTable.Row(MEDICATION_NAME);
+            MedicationEventTable.Row medEvent = new MedicationEventTable.Row(event, med);
+            medEvent.applyTo(transaction);
+        }
     }
 
     private void aNewMedicationIsAdded() {

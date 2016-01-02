@@ -251,6 +251,7 @@ public class HealthScoreEventTable
             com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreId,
             @Nullable
             Long score) {
+            setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mHealthScoreIdRow = healthScoreId;
             mScore = score;
@@ -274,11 +275,22 @@ public class HealthScoreEventTable
         private void applyToRows(
             @Nonnull
             Transaction transaction) {
+            HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setEventId(mEventIdRow.getNextPrimaryKey());
+                }
             }
             if (mHealthScoreIdRow!= null) {
                 mHealthScoreIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setHealthScoreId(mHealthScoreIdRow.getNextPrimaryKey());
+                }
+            }
+            if (((nextPrimaryKey == null)&&(mEventIdRow!= null))&&(mHealthScoreIdRow!= null)) {
+                HealthScoreEventTable.PrimaryKey oldNextPrimaryKey = getNextPrimaryKey();
+                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mHealthScoreIdRow.getNextPrimaryKey()));
             }
         }
 
@@ -290,9 +302,12 @@ public class HealthScoreEventTable
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
             final Object score = ((mScore == null)?Long.class:mScore);
-            // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getHealthScoreId()));
             HealthScoreEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getHealthScoreId()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
             transaction.insert("health_score_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getHealthScoreId().getId(), score);
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

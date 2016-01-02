@@ -240,6 +240,7 @@ public class NoteEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteId) {
+            setNextPrimaryKey(new NoteEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mNoteIdRow = noteId;
         }
@@ -247,11 +248,22 @@ public class NoteEventTable
         private void applyToRows(
             @Nonnull
             Transaction transaction) {
+            NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setEventId(mEventIdRow.getNextPrimaryKey());
+                }
             }
             if (mNoteIdRow!= null) {
                 mNoteIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setNoteId(mNoteIdRow.getNextPrimaryKey());
+                }
+            }
+            if (((nextPrimaryKey == null)&&(mEventIdRow!= null))&&(mNoteIdRow!= null)) {
+                NoteEventTable.PrimaryKey oldNextPrimaryKey = getNextPrimaryKey();
+                setNextPrimaryKey(new NoteEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mNoteIdRow.getNextPrimaryKey()));
             }
         }
 
@@ -262,9 +274,12 @@ public class NoteEventTable
             Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
-            // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new NoteEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getNoteId()));
             NoteEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new NoteEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getNoteId()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
             transaction.insert("note_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getNoteId().getId());
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

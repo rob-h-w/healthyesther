@@ -263,6 +263,7 @@ public class MealEventTable
             com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId,
             @Nullable
             Double amount) {
+            setNextPrimaryKey(new MealEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mMealIdRow = mealId;
             mUnitsIdRow = unitsId;
@@ -302,15 +303,26 @@ public class MealEventTable
         private void applyToRows(
             @Nonnull
             Transaction transaction) {
+            MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (mEventIdRow!= null) {
                 mEventIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setEventId(mEventIdRow.getNextPrimaryKey());
+                }
             }
             if (mMealIdRow!= null) {
                 mMealIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setMealId(mMealIdRow.getNextPrimaryKey());
+                }
             }
             if (mUnitsIdRow!= null) {
                 mUnitsIdRow.applyTo(transaction);
                 mUnitsId = mUnitsIdRow.getNextPrimaryKey();
+            }
+            if (((nextPrimaryKey == null)&&(mEventIdRow!= null))&&(mMealIdRow!= null)) {
+                MealEventTable.PrimaryKey oldNextPrimaryKey = getNextPrimaryKey();
+                setNextPrimaryKey(new MealEventTable.PrimaryKey(mEventIdRow.getNextPrimaryKey(), mMealIdRow.getNextPrimaryKey()));
             }
         }
 
@@ -323,9 +335,12 @@ public class MealEventTable
             applyToRows(transaction);
             final Object unitsId = ((mUnitsId == null)?com.robwilliamson.healthyesther.db.generated.UnitsTable.PrimaryKey.class:mUnitsId.getId());
             final Object amount = ((mAmount == null)?Double.class:mAmount);
-            // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new MealEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getMealId()));
             MealEventTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new MealEventTable.PrimaryKey(getConcretePrimaryKey().getEventId(), getConcretePrimaryKey().getMealId()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
             transaction.insert("meal_event", COLUMN_NAMES, nextPrimaryKey.getEventId().getId(), nextPrimaryKey.getMealId().getId(), unitsId, amount);
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

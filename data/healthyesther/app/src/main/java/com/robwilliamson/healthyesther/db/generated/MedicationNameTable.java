@@ -239,15 +239,23 @@ public class MedicationNameTable
             String name,
             @Nullable
             com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
-            getPrimaryKey();
+            setNextPrimaryKey(new MedicationNameTable.PrimaryKey(name, null));
             mMedicationIdRow = medicationId;
         }
 
         private void applyToRows(
             @Nonnull
             Transaction transaction) {
+            MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (mMedicationIdRow!= null) {
                 mMedicationIdRow.applyTo(transaction);
+                if (nextPrimaryKey!= null) {
+                    nextPrimaryKey.setMedicationId(mMedicationIdRow.getNextPrimaryKey());
+                }
+            }
+            if ((nextPrimaryKey == null)&&(mMedicationIdRow!= null)) {
+                MedicationNameTable.PrimaryKey oldNextPrimaryKey = getNextPrimaryKey();
+                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(oldNextPrimaryKey.getName(), mMedicationIdRow.getNextPrimaryKey()));
             }
         }
 
@@ -258,9 +266,12 @@ public class MedicationNameTable
             Transaction transaction) {
             // Ensure all keys are updated from any rows passed.
             applyToRows(transaction);
-            // This table does not use a row ID as a primary key.
-            setNextPrimaryKey(new MedicationNameTable.PrimaryKey(getConcretePrimaryKey().getName(), getConcretePrimaryKey().getMedicationId()));
             MedicationNameTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
+            if (nextPrimaryKey == null) {
+                setNextPrimaryKey(new MedicationNameTable.PrimaryKey(getConcretePrimaryKey().getName(), getConcretePrimaryKey().getMedicationId()));
+                nextPrimaryKey = getNextPrimaryKey();
+            }
+            // This table does not use a row ID as a primary key.
             transaction.insert("medication_name", COLUMN_NAMES, nextPrimaryKey.getName(), nextPrimaryKey.getMedicationId().getId());
             setIsModified(false);
             transaction.addCompletionHandler(new Transaction.CompletionHandler() {

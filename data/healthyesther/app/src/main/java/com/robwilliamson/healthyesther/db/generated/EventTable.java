@@ -272,6 +272,7 @@ public class EventTable
             DateTime modified,
             @Nullable
             String name) {
+            setNextPrimaryKey(new EventTable.PrimaryKey(null));
             mTypeIdRow = typeId;
             mCreated = created;
             mWhen = when;

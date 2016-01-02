@@ -124,16 +124,22 @@ public class RowGenerator extends BaseClassGenerator {
             return;
         }
 
+        final JClass primaryKeyClass = getTableGenerator().getPrimaryKeyGenerator().getJClass();
         mApplyToRows = getJClass().method(JMod.PRIVATE, model().VOID, "applyToRows");
         final JVar transaction = mApplyToRows.param(Transaction.class, "transaction");
         Utils.annotateNonull(transaction, true);
         final JBlock body = mApplyToRows.body();
+        final JVar nextPrimaryKey =getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys() ? body.decl(
+                primaryKeyClass,
+                "nextPrimaryKey",
+                callGetNextPrimaryKey(null, null)) : null;
 
         // Ensure row dependencies are up to date.
-        Column.Visitor<BaseColumns> rowDependencyUpdater = new Column.Visitor<BaseColumns>() {
+        Column.Visitor<BaseColumns> updateRowDependency = new Column.Visitor<BaseColumns>() {
             @Override
             public void visit(Column column, BaseColumns context) {
                 RowField rowField = context.rowFieldFor(column);
+
                 if (rowField == null) {
                     return;
                 }
@@ -144,11 +150,66 @@ public class RowGenerator extends BaseClassGenerator {
                 if (columnField != null && rowField.rowGenerator.hasRowIdPrimaryKey()) {
                     rowPresent.assign(columnField.fieldVar, callGetNextPrimaryKey(null, rowField.fieldVar));
                 }
+
+                if (column.isPrimaryKey() && column.isForeignKey()) {
+                    // update the next primary key.
+                    rowPresent._if(nextPrimaryKey.ne(JExpr._null()))._then().invoke(
+                            nextPrimaryKey,
+                            getTableGenerator().getPrimaryKeyGenerator().getSetterFor(column))
+                            .arg(rowField.rowGenerator.callGetNextPrimaryKey(null, rowField.fieldVar));
+                }
             }
         };
 
-        mPrimaryKeyColumns.forEach(rowDependencyUpdater);
-        mBasicColumns.forEach(rowDependencyUpdater);
+        mPrimaryKeyColumns.forEach(updateRowDependency);
+        mBasicColumns.forEach(updateRowDependency);
+
+        if (getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys()) {
+            final JExpression[] makeNewPrimaryKey = { nextPrimaryKey.eq(JExpr._null()) };
+
+            Column.Visitor<BaseColumns> populateMakeNewPrimaryCondition = new Column.Visitor<BaseColumns>() {
+                @Override
+                public void visit(Column column, BaseColumns context) {
+                    RowField rowField = context.rowFieldFor(column);
+                    if (rowField != null) {
+                        makeNewPrimaryKey[0] = makeNewPrimaryKey[0].cand(rowField.fieldVar.ne(JExpr._null()));
+                    }
+                }
+            };
+
+            mPrimaryKeyColumns.forEach(populateMakeNewPrimaryCondition);
+
+            JBlock primaryKeyAbsent = body._if(makeNewPrimaryKey[0])._then();
+            final JVar oldNextPrimaryKey = primaryKeyAbsent.decl(
+                    primaryKeyClass,
+                    "oldNextPrimaryKey",
+                    callGetNextPrimaryKey(null, null));
+            final JInvocation newPrimaryKey = JExpr._new(primaryKeyClass);
+
+            Column.Visitor<BaseColumns> populatePrimaryKeyConstructor = new Column.Visitor<BaseColumns>() {
+                @Override
+                public void visit(Column column, BaseColumns context) {
+                    RowField rowField = context.rowFieldFor(column);
+
+                    if (rowField == null) {
+                        ColumnField columnField = context.columnFieldFor(column);
+                        if (columnField == null) {
+                            // Use the value from the existing next primary key.
+                            newPrimaryKey.arg(
+                                    oldNextPrimaryKey.invoke(getTableGenerator().getPrimaryKeyGenerator().getGetterFor(column)));
+                        } else {
+                            newPrimaryKey.arg(columnField.fieldVar);
+                        }
+                    } else {
+                        newPrimaryKey.arg(rowField.rowGenerator.callGetNextPrimaryKey(null, rowField.fieldVar));
+                    }
+                }
+            };
+
+            mPrimaryKeyColumns.forEach(populatePrimaryKeyConstructor);
+
+            callSetNextPrimaryKey(primaryKeyAbsent, null).arg(newPrimaryKey);
+        }
     }
 
     private void asyncInit() {
@@ -380,22 +441,19 @@ public class RowGenerator extends BaseClassGenerator {
 
         if (keyGenerator.hasPrimaryKeys()) {
             // If we need to create a primary key upfront:
-            final JVar nextPrimaryKey;
-            final JBlock doConstruction;
-            final JBlock updateRowId;
+            final JVar nextPrimaryKey = body.decl(primaryKeyType, "nextPrimaryKey", callGetNextPrimaryKey(null, null));
 
             final JInvocation newPrimaryKey = JExpr._new(primaryKeyType);
 
             final JInvocation insertionCall;
+            JConditional ifConstruct = body._if(nextPrimaryKey.eq(JExpr._null()));
+            final JBlock doConstruction = ifConstruct._then();
+            final JBlock updateRowId;
 
             if (hasRowIdPrimaryKey()) {
-                nextPrimaryKey = body.decl(primaryKeyType, "nextPrimaryKey", callGetNextPrimaryKey(null, null));
-                JConditional ifConstruct = body._if(nextPrimaryKey.eq(JExpr._null()));
-                doConstruction = ifConstruct._then();
                 updateRowId = ifConstruct._else();
                 insertionCall = JExpr.invoke(transaction, "insert");
             } else {
-                doConstruction = null;
                 updateRowId = null;
                 body.directStatement("// This table does not use a row ID as a primary key.");
 
@@ -418,8 +476,6 @@ public class RowGenerator extends BaseClassGenerator {
                 };
 
                 mPrimaryKeyColumns.forEach(addConstructorArgument);
-                body.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
-                nextPrimaryKey = body.decl(primaryKeyType, "nextPrimaryKey", callGetNextPrimaryKey(null, null));
                 insertionCall = body.invoke(transaction, "insert");
             }
 
@@ -470,7 +526,7 @@ public class RowGenerator extends BaseClassGenerator {
                     model().VOID,
                     "onCompleted").body();
 
-            if (hasRowIdPrimaryKey() && doConstruction != null) { // Null check added to remove warning.
+            if (hasRowIdPrimaryKey()) {
                 body.directStatement("// This table uses a row ID as a primary key.");
 
                 // If we have to create a primary key after insertion:
@@ -481,12 +537,13 @@ public class RowGenerator extends BaseClassGenerator {
                         newPrimaryKey.arg(mPrimaryKeyColumns.columnFieldFor(column).fieldVar);
                     }
                 }
-                doConstruction.invoke(null, "setNextPrimaryKey").arg(newPrimaryKey);
-                doConstruction.assign(nextPrimaryKey, callGetNextPrimaryKey(null, null));
                 if (updateRowId != null) {
                     updateRowId.invoke(nextPrimaryKey, "setId").arg(insertionCall);
                 }
             }
+
+            callSetNextPrimaryKey(doConstruction, null).arg(newPrimaryKey);
+            doConstruction.assign(nextPrimaryKey, callGetNextPrimaryKey(null, null));
 
             setIsModifiedCall(body, false);
             callMethod("updatePrimaryKeyFromNext", callback, null);
@@ -665,8 +722,24 @@ public class RowGenerator extends BaseClassGenerator {
 
         JBlock body = mJoinConstructor.body();
 
-        Map<Column, JVar> primaryParams = mPrimaryKeyColumns.makeRowParamsFor(mJoinConstructor, picker);
+        final Map<Column, JVar> primaryParams = mPrimaryKeyColumns.makeRowParamsFor(mJoinConstructor, picker);
         Map<Column, JVar> basicParams = mBasicColumns.makeRowParamsFor(mJoinConstructor, picker);
+
+        final JInvocation newPrimaryKey = JExpr._new(getTableGenerator().getPrimaryKeyGenerator().getJClass());
+
+        Column.Visitor<RowGenerator.BaseColumns> addToConstructor = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                JExpression arg = primaryParams.get(column);
+                arg = arg == null ? JExpr._null() : arg;
+                arg = mPrimaryKeyColumns.rowFieldFor(column) != null ? JExpr._null() : arg;
+                newPrimaryKey.arg(arg);
+            }
+        };
+
+        mPrimaryKeyColumns.forEach(addToConstructor);
+
+        callSetNextPrimaryKey(body, null).arg(newPrimaryKey);
 
         for (Column column : mPrimaryKeyColumns.columns) {
             RowField rowField = mPrimaryKeyColumns.rowFieldFor(column);
@@ -677,9 +750,6 @@ public class RowGenerator extends BaseClassGenerator {
 
             if (rowField != null) {
                 body.assign(rowField.fieldVar, param);
-            } else {
-                JInvocation getPrimaryKey = body.invoke(null, "getPrimaryKey");
-                getPrimaryKey.invoke(mTableGenerator.getPrimaryKeyGenerator().getSetterFor(column)).arg(param);
             }
         }
 
@@ -729,6 +799,10 @@ public class RowGenerator extends BaseClassGenerator {
 
     private JInvocation callGetConcretePrimaryKey(JBlock body, JExpression expression) {
         return callMethod("getConcretePrimaryKey", body, expression);
+    }
+
+    private JInvocation callSetNextPrimaryKey(JBlock body, JExpression expression) {
+        return callMethod("setNextPrimaryKey", body, expression);
     }
 
     private JInvocation callGetNextPrimaryKey(JBlock body, JExpression expression) {

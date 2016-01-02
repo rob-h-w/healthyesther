@@ -133,6 +133,16 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
         return !mSortedPrimaryKeyFields.isEmpty();
     }
 
+    public boolean hasForeignPrimaryKeys() {
+        for (ColumnField field : mSortedPrimaryKeyFields) {
+            if (field.column.isForeignKey()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public String getName() {
         return Strings.capitalize(getName(PrimaryKeyGenerator.class));
