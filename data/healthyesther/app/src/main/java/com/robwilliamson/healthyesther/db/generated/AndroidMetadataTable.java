@@ -84,7 +84,7 @@ public class AndroidMetadataTable
             return null;
         }
         if (rows.length > 1) {
-            throw new Table.TooManyRowsException(rows.length, where);
+            throw new Table.TooManyRowsException(this, rows.length, where);
         }
         return rows[ 0 ];
     }
@@ -122,6 +122,19 @@ public class AndroidMetadataTable
         @Nonnull
         Order order) {
         return select(database, ((Where) where), order);
+    }
+
+    @Nonnull
+    public AndroidMetadataTable.Row select1(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        AndroidMetadataTable.Row row = select0Or1(database, where);
+        if (row == null) {
+            throw new Table.NotFoundException(this, where);
+        }
+        return row;
     }
 
 

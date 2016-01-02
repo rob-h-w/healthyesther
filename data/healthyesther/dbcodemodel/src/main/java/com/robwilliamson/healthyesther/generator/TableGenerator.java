@@ -37,6 +37,7 @@ public class TableGenerator extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.semantic.Table mTable;
     private RowGenerator mRowGenerator;
     private PrimaryKeyGenerator mPrimaryKeyGenerator;
+    private JMethod mSelect0Or1;
 
     public TableGenerator(
             JPackage jPackage,
@@ -105,6 +106,7 @@ public class TableGenerator extends BaseClassGenerator {
                 mRowGenerator.init();
                 makeSelect(false);
                 makeSelect(true);
+                makeSelect1();
             }
         });
     }
@@ -179,24 +181,46 @@ public class TableGenerator extends BaseClassGenerator {
 
     private void makeSelect0Or1(@Nonnull JMethod select) {
         JDefinedClass rowClass = getRow().getJClass();
-        JMethod select0Or1 = getJClass().method(JMod.PUBLIC, rowClass, "select0Or1");
-        select0Or1.annotate(Nullable.class);
+        mSelect0Or1 = getJClass().method(JMod.PUBLIC, rowClass, "select0Or1");
+        mSelect0Or1.annotate(Nullable.class);
 
-        JVar db = select0Or1.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+        JVar db = mSelect0Or1.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
         db.annotate(Nonnull.class);
-        JVar where = select0Or1.param(Where.class, "where");
+        JVar where = mSelect0Or1.param(Where.class, "where");
         where.annotate(Nonnull.class);
 
-        JBlock body = select0Or1.body();
+        JBlock body = mSelect0Or1.body();
         JVar rows = body.decl(rowClass.array(), "rows", JExpr.invoke(select).arg(db).arg(where));
         JFieldRef length = JExpr.ref(rows, "length");
 
         body._if(length.eq(JExpr.lit(0)))._then()._return(JExpr._null());
 
         JClass exception = model().ref(Table.TooManyRowsException.class);
-        body._if(length.gt(JExpr.lit(1)))._then()._throw(JExpr._new(exception).arg(length).arg(where));
+        body._if(length.gt(JExpr.lit(1)))._then()._throw(JExpr._new(exception).arg(JExpr._this()).arg(length).arg(where));
 
         body._return(rows.component(JExpr.lit(0)));
+    }
+
+    private void makeSelect1() {
+        JDefinedClass rowClass = getRow().getJClass();
+        JMethod method = getJClass().method(JMod.PUBLIC, rowClass, "select1");
+        method.annotate(Nonnull.class);
+
+        JVar db = method.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+        db.annotate(Nonnull.class);
+        JVar where = method.param(Where.class, "where");
+        where.annotate(Nonnull.class);
+
+        JBlock body = method.body();
+        JVar row = body.decl(
+                rowClass,
+                "row",
+                JExpr.invoke(mSelect0Or1).arg(db).arg(where));
+
+        body._if(row.eq(JExpr._null()))._then().
+                _throw(JExpr._new(model().ref(Table.NotFoundException.class)).arg(JExpr._this()).arg(where));
+
+        body._return(row);
     }
 
     private void makeCreate() {

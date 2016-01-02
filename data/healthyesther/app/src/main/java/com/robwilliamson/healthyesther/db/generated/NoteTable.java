@@ -86,7 +86,7 @@ public class NoteTable
             return null;
         }
         if (rows.length > 1) {
-            throw new Table.TooManyRowsException(rows.length, where);
+            throw new Table.TooManyRowsException(this, rows.length, where);
         }
         return rows[ 0 ];
     }
@@ -124,6 +124,19 @@ public class NoteTable
         @Nonnull
         Order order) {
         return select(database, ((Where) where), order);
+    }
+
+    @Nonnull
+    public NoteTable.Row select1(
+        @Nonnull
+        Database database,
+        @Nonnull
+        Where where) {
+        NoteTable.Row row = select0Or1(database, where);
+        if (row == null) {
+            throw new Table.NotFoundException(this, where);
+        }
+        return row;
     }
 
 

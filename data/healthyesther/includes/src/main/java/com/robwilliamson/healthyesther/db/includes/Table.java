@@ -31,8 +31,14 @@ public abstract class Table {
     }
 
     public static class TooManyRowsException extends RuntimeException {
-        public TooManyRowsException(int count, @Nonnull Where where) {
-            super("Expected to get 0 or 1 rows from selection statement \"" + where.getWhere() + "\", instead got " + count + ".");
+        public TooManyRowsException(@Nonnull Table table, int count, @Nonnull Where where) {
+            super("Expected to get 0 or 1 rows from table " + table.getName() + " matching selection statement \"" + where.getWhere() + "\", instead got " + count + ".");
+        }
+    }
+
+    public static class NotFoundException extends RuntimeException {
+        public NotFoundException(@Nonnull Table table, @Nonnull Where where) {
+            super("Could not find a row from table " + table.getName() + " matching selection statement \"" + where.getWhere() +"\".");
         }
     }
 }
