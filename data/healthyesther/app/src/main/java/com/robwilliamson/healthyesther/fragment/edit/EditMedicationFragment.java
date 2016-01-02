@@ -118,7 +118,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
         return new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                MedicationTable.Row[] rows = DatabaseAccessor.MEDICATION_TABLE.select(database, WhereContains.all());
+                MedicationTable.Row[] rows = DatabaseAccessor.MEDICATION_TABLE.select(database, WhereContains.any());
 
                 Map<String, Long> suggestionIds = new HashMap<>();
                 for (MedicationTable.Row row : rows) {

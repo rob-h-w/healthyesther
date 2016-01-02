@@ -96,7 +96,7 @@ public class EventListFragment extends DbFragment implements AbsListView.OnItemC
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 final EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(
                         database,
-                        WhereContains.all(),
+                        WhereContains.any(),
                         OrderBy.column().named(EventTable.WHEN).desc());
                 getActivity().runOnUiThread(new Runnable() {
                     @Override

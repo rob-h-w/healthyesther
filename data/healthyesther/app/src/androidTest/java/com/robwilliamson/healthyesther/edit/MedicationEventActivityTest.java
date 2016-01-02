@@ -100,7 +100,7 @@ public class MedicationEventActivityTest extends ActivityInstrumentationTestCase
         onView(EditEventAccessor.ok()).perform(click());
 
         Database db = HealthDbHelper.getDatabase();
-        MedicationTable.Row medication = DatabaseAccessor.MEDICATION_TABLE.select0Or1(db, WhereContains.all());
+        MedicationTable.Row medication = DatabaseAccessor.MEDICATION_TABLE.select0Or1(db, WhereContains.any());
         assertThat(medication, not(is((MedicationTable.Row) null)));
         //noinspection ConstantConditions
         assertThat(medication.getName(), is(MED_NAME));

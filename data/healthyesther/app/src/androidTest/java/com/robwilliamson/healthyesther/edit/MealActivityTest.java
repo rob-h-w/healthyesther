@@ -123,7 +123,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         }
 
         Database db = HealthDbHelper.getDatabase();
-        MealTable.Row[] meals = DatabaseAccessor.MEAL_TABLE.select(db, WhereContains.all());
+        MealTable.Row[] meals = DatabaseAccessor.MEAL_TABLE.select(db, WhereContains.any());
 
         assertThat(meals.length, is(5));
     }
@@ -170,7 +170,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         eventEditText.perform(typeText(EVENT_NAME));
         onView(EditEventAccessor.ok()).perform(click());
 
-        EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(HealthDbHelper.getDatabase(), WhereContains.all());
+        EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(HealthDbHelper.getDatabase(), WhereContains.any());
         if (event == null) {
             fail("No event in the database.");
         }
@@ -190,7 +190,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(EditEventAccessor.ok()).perform(click());
 
         Database db = HealthDbHelper.getDatabase();
-        EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(db, WhereContains.all());
+        EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(db, WhereContains.any());
         if (event == null) {
             fail("No event in the database.");
         }

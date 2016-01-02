@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 public class WhereContains {
     @Nonnull
-    public static Where all() {
+    public static Where any() {
         return new Where() {
             @Nullable
             @Override

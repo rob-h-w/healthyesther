@@ -61,7 +61,7 @@ public final class Database {
     public static int countEntries() {
         com.robwilliamson.healthyesther.db.includes.Database database = HealthDbHelper.getDatabase();
 
-        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(database, WhereContains.all());
+        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(database, WhereContains.any());
         return rows.length;
     }
 }

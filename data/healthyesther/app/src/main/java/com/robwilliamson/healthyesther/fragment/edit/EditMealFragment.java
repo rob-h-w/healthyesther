@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.robwilliamson.healthyesther.db.includes.WhereContains.all;
+import static com.robwilliamson.healthyesther.db.includes.WhereContains.any;
 
 public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         implements InitializationQuerier {
@@ -143,7 +143,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                MealTable.Row[] rows = DatabaseAccessor.MEAL_TABLE.select(database, all());
+                MealTable.Row[] rows = DatabaseAccessor.MEAL_TABLE.select(database, any());
 
                 final Map<String, Long> suggestionIds = new HashMap<>();
                 for (MealTable.Row row : rows) {

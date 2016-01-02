@@ -68,7 +68,7 @@ public class MedicationEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        MedicationTable.Row row = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.all());
+        MedicationTable.Row row = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.any());
         assertThat(row, is(notNullValue()));
     }
 
@@ -78,7 +78,7 @@ public class MedicationEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        MedicationTable.Row row = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.all());
+        MedicationTable.Row row = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.any());
         //noinspection ConstantConditions
         assertThat(row.getName(), is(MEDICATION_NAME));
     }
@@ -89,7 +89,7 @@ public class MedicationEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        EventTable.Row row = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.all());
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.any());
         assertThat(row, is(notNullValue()));
     }
 
@@ -99,7 +99,7 @@ public class MedicationEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        EventTable.Row row = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.all());
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.any());
         //noinspection ConstantConditions
         assertThat(row.getName(), is(EVENT_NAME));
     }
@@ -110,9 +110,9 @@ public class MedicationEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        EventTable.Row eventRow = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.all());
+        EventTable.Row eventRow = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.any());
 
-        MedicationEventTable.Row medEventRow = HealthDatabase.MEDICATION_EVENT_TABLE.select0Or1(db, WhereContains.all());
+        MedicationEventTable.Row medEventRow = HealthDatabase.MEDICATION_EVENT_TABLE.select0Or1(db, WhereContains.any());
 
         //noinspection ConstantConditions
         assertThat(eventRow.getConcretePrimaryKey(), equalTo(medEventRow.getConcretePrimaryKey().getEventId()));
@@ -124,9 +124,9 @@ public class MedicationEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        MedicationTable.Row medRow = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.all());
+        MedicationTable.Row medRow = HealthDatabase.MEDICATION_TABLE.select0Or1(db, WhereContains.any());
 
-        MedicationEventTable.Row medEventRow = HealthDatabase.MEDICATION_EVENT_TABLE.select0Or1(db, WhereContains.all());
+        MedicationEventTable.Row medEventRow = HealthDatabase.MEDICATION_EVENT_TABLE.select0Or1(db, WhereContains.any());
 
         //noinspection ConstantConditions
         assertThat(medRow.getConcretePrimaryKey(), equalTo(medEventRow.getConcretePrimaryKey().getMedicationId()));

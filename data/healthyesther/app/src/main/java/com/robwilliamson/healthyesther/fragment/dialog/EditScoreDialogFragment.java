@@ -56,7 +56,7 @@ public class EditScoreDialogFragment extends AbstractAddNamedDialogFragment {
             ((DbActivity) getActivity()).getExecutor().perform(new TransactionExecutor.Operation() {
                 @Override
                 public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                    HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.all());
+                    HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.any());
                     mScores = new HashMap<String, HealthScoreTable.Row>(rows.length);
                     for (HealthScoreTable.Row row : rows) {
                         mScores.put(row.getName(), row);

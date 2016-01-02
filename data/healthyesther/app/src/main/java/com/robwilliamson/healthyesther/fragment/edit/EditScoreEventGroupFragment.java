@@ -59,7 +59,7 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
         Utils.checkNotNull(getExecutor()).perform(new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.all());
+                HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.any());
 
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 

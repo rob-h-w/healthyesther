@@ -58,7 +58,7 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
             oldEventHashes.add(dates.hashCode());
         }
 
-        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(HealthDbHelper.getDatabase(), WhereContains.all());
+        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(HealthDbHelper.getDatabase(), WhereContains.any());
 
         try (Transaction transaction = HealthDbHelper.getDatabase().getTransaction()) {
             for (EventTable.Row row : rows) {
