@@ -50,6 +50,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @Config(constants = BuildConfig.class)
 public class MealEventActivityTest {
     private ActivityController<TestableMealEventActivity> mActivityController;
+
     private TestableMealEventActivity mActivity;
 
     @Mock

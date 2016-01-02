@@ -2,7 +2,6 @@ package com.robwilliamson.healthyesther;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -150,7 +149,6 @@ public abstract class DbActivity extends BusyActivity
         super.onResume();
     }
 
-    @NonNull
     @Nonnull
     public TransactionExecutor getExecutor() {
         return com.robwilliamson.healthyesther.Utils.checkNotNull(mExecutor);
