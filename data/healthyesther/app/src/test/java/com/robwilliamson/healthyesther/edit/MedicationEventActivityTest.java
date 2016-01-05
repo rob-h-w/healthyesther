@@ -1,8 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.text.Editable;
+import android.content.Intent;
 import android.view.MenuItem;
-import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.R;
@@ -30,8 +29,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ActivityController;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import test.view.EditEventFragmentAccessor;
+import test.view.EditMedicationFragmentAccessor;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -51,6 +50,9 @@ public class MedicationEventActivityTest {
     private TestableMedicationEventActivity mActivity;
     private DateTime mNow;
 
+    private EditEventFragmentAccessor mEventFragmentAccessor;
+    private EditMedicationFragmentAccessor mMedicationFragmentAccessor;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -62,6 +64,9 @@ public class MedicationEventActivityTest {
         mActivityController = Robolectric.buildActivity(TestableMedicationEventActivity.class);
 
         mActivity = mActivityController.get();
+
+        mEventFragmentAccessor = new EditEventFragmentAccessor(mActivity);
+        mMedicationFragmentAccessor = new EditMedicationFragmentAccessor(mActivity);
     }
 
     @After
@@ -141,51 +146,99 @@ public class MedicationEventActivityTest {
     }
 
     @Test
-    public void whenAnExistingMedicationNameIsEdited_aNewMedicationTypeIsAdded() {
-        anExistingMedicationNameIsEdited();
+    public void whenOpenedWithAnExistingMedicationEvent_textViewShowsEventText() {
+        openedWithAnExistingMedicationEvent();
+
+        assertThat(mEventFragmentAccessor.getName(), is(EVENT_NAME));
     }
 
-    private void anExistingMedicationNameIsEdited() {
+    @Test
+    public void whenOpenedWithAnExistingMedicationEvent_textViewShowsMedicationText() {
+        openedWithAnExistingMedicationEvent();
+
+        assertThat(mMedicationFragmentAccessor.getName(), is(MEDICATION_NAME));
+    }
+
+    @Test
+    public void whenAnExistingMedicationNameIsEdited_aNewMedicationTypeIsAdded() {
+        anExistingMedicationNameIsEdited();
+
         Database db = HealthDbHelper.getDatabase();
 
+        MedicationTable.Row[] rows = HealthDatabase.MEDICATION_TABLE.select(db, WhereContains.any());
+
+        assertThat(rows.length, is(2));
+    }
+
+    @Test
+    public void whenAnExistingMedicationNameIsEdited_noNewEventIsAdded() {
+        anExistingMedicationNameIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row[] rows = HealthDatabase.EVENT_TABLE.select(db, WhereContains.any());
+
+        assertThat(rows.length, is(1));
+    }
+
+    @Test
+    public void whenAnExistingMedicationNameIsEdited_noNewMedicationEventIsAdded() {
+        anExistingMedicationNameIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        MedicationEventTable.Row[] rows = HealthDatabase.MEDICATION_EVENT_TABLE.select(db, WhereContains.any());
+
+        assertThat(rows.length, is(1));
+    }
+
+    private MedicationEventTable.Row openedWithAnExistingMedicationEvent() {
+        Database db = HealthDbHelper.getDatabase();
+        EventTable.Row event;
+        MedicationEventTable.Row medEvent;
+
         try (Transaction transaction = db.getTransaction()) {
-            EventTable.Row event = new EventTable.Row(
+            event = new EventTable.Row(
                     EventTypeTable.MEDICATION.getId(),
                     mNow,
                     mNow,
                     null,
                     EVENT_NAME);
-
             MedicationTable.Row med = new MedicationTable.Row(MEDICATION_NAME);
-            MedicationEventTable.Row medEvent = new MedicationEventTable.Row(event, med);
+
+            medEvent = new MedicationEventTable.Row(event, med);
             medEvent.applyTo(transaction);
+            transaction.commit();
+            Robolectric.flushBackgroundThreadScheduler();
         }
+
+        Intent intent = new Intent();
+        intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
+        mActivity = mActivityController.withIntent(intent).create().start().resume().get();
+        return medEvent;
     }
 
-    private void aNewMedicationIsAdded() {
-        mActivity = mActivityController.create().start().resume().get();
-        setMedication(MEDICATION_NAME);
-        setEvent(EVENT_NAME);
+    private void anExistingMedicationNameIsEdited() {
+        openedWithAnExistingMedicationEvent();
+
+        mMedicationFragmentAccessor.setName(EDITED_MEDICATION_NAME);
         mActivity.pressOk();
         Robolectric.flushBackgroundThreadScheduler();
         Robolectric.flushForegroundThreadScheduler();
     }
 
-    private void setMedication(@Nonnull String name) {
-        setText(name, R.id.medication_name);
-    }
-
-    private void setEvent(@Nullable String name) {
-        setText(name, R.id.edit_event_name);
-    }
-
-    private void setText(@Nullable String text, int id) {
-        Editable editable = ((AutoCompleteTextView) mActivity.findViewById(id)).getEditableText();
-        editable.clear();
-        editable.append(text);
+    private void aNewMedicationIsAdded() {
+        mActivity = mActivityController.create().start().resume().get();
+        mMedicationFragmentAccessor.setName(MEDICATION_NAME);
+        mEventFragmentAccessor.setName(EVENT_NAME);
+        mActivity.pressOk();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
     }
 
     private static class TestableMedicationEventActivity extends MedicationEventActivity {
+        private volatile boolean mBusy;
+
         public void pressOk() {
             MenuItem item = Mockito.mock(MenuItem.class);
             doReturn(R.id.action_modify).when(item).getItemId();
@@ -194,8 +247,12 @@ public class MedicationEventActivityTest {
 
         @Override
         protected void setBusy(boolean busy) {
-            // TODO: Find a way to avoid the countdown latch lock.
-            //super.setBusy(busy);
+            mBusy = busy;
+        }
+
+        @Override
+        protected boolean isBusy() {
+            return mBusy;
         }
     }
 }

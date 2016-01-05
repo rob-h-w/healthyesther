@@ -144,7 +144,6 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     }
 
     public void suggestEventName(String name) {
-
         if ((!getName().isEmpty() && mUserEditedEventName) || mRowNameSet) {
             return;
         }

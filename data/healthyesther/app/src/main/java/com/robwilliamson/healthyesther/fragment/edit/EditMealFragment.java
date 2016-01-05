@@ -31,13 +31,9 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         implements InitializationQuerier {
 
     private static final String NAME_TO_ROW_MAP = "name to row map";
-    private static final String OLD_ROW = "Old Row";
 
     @Nonnull
     private Map<String, MealTable.Row> mNameToRowMap = new HashMap<>();
-
-    @Nullable
-    private MealTable.Row mOldRow = null;
 
     @Override
     protected int getFragmentLayout() {
@@ -65,10 +61,6 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
             //noinspection unchecked
             Map<String, MealTable.Row> nameToRowMap = (Map<String, MealTable.Row>) savedInstanceState.getSerializable(NAME_TO_ROW_MAP);
             mNameToRowMap = nameToRowMap == null ? new HashMap<String, MealTable.Row>() : nameToRowMap;
-
-            if (savedInstanceState.containsKey(OLD_ROW)) {
-                mOldRow = (MealTable.Row) savedInstanceState.getSerializable(OLD_ROW);
-            }
         }
     }
 
@@ -77,10 +69,6 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(NAME_TO_ROW_MAP, (Serializable) mNameToRowMap);
-
-        if (mOldRow != null) {
-            outState.putSerializable(OLD_ROW, mOldRow);
-        }
     }
 
     @Override
@@ -159,38 +147,22 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
     @Nonnull
     public MealTable.Row getRow() {
-        String name = getName();
-
-        if (mNameToRowMap.containsKey(name)) {
-            MealTable.Row row = mNameToRowMap.get(name);
-
-            if (row != null) {
-                super.setRow(row);
-                return row;
+        return getRow(mNameToRowMap, getName(), new NameComparator<MealTable.Row>() {
+            @Override
+            public boolean equals(@Nonnull MealTable.Row row, @Nonnull String name) {
+                return name.equals(row.getName());
             }
-        }
-
-        if (hasRow()) {
-            //noinspection ConstantConditions
-            return super.getRow();
-        }
-
-        return createRow();
+        });
     }
 
     public void setRow(@NonNull final MealTable.Row row) {
         super.setRow(row);
-        mOldRow = row;
+
         this.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Utils.checkNotNull(getNameView()).setText(row.getName());
             }
         });
-    }
-
-    @Nullable
-    public MealTable.Row getOldRow() {
-        return mOldRow;
     }
 }

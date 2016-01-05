@@ -30,12 +30,11 @@ public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFrag
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                onNameChanged();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                onNameChanged();
             }
         });
 
@@ -78,7 +77,7 @@ public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFrag
                 String[] suggestions = new String[set.size()];
                 set.toArray(suggestions);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                         android.R.layout.simple_dropdown_item_1line,
                         suggestions);
 

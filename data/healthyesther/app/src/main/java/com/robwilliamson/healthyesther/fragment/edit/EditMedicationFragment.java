@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
@@ -55,13 +56,31 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
         }
     }
 
+    @Nonnull
+    @Override
+    public MedicationTable.Row getRow() {
+        final String name = getName();
+        return getRow(mNameToRowMap, getName(), new NameComparator<MedicationTable.Row>() {
+            @Override
+            public boolean equals(@Nonnull MedicationTable.Row row, @Nonnull String name) {
+                return name.equals(row.getName());
+            }
+        });
+    }
+
+    @Override
+    public void setRow(@Nonnull MedicationTable.Row row) {
+        super.setRow(row);
+        Editable editable = getNameView().getEditableText();
+        editable.clear();
+        editable.append(row.getName());
+    }
+
     @Override
     protected void onNameChanged() {
         super.onNameChanged();
 
-        if (getRow() != null) {
-            getRow().setName(getName());
-        }
+        getRow().setName(getName());
     }
 
     /**

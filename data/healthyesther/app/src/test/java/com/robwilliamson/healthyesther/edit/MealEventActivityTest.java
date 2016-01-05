@@ -1,28 +1,31 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.support.annotation.NonNull;
+import android.content.Intent;
 import android.util.Pair;
+import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.BuildConfig;
+import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
-import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.Table;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditMealFragment;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
@@ -33,109 +36,49 @@ import org.robolectric.util.ActivityController;
 import java.util.ArrayList;
 import java.util.List;
 
-import test.HealthDatabaseAccessor;
+import test.view.EditEventFragmentAccessor;
+import test.view.EditMealFragmentAccessor;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class MealEventActivityTest {
+    private static final String EVENT_NAME = "Event Name";
+    private static final String MEAL_NAME = "Bacon";
+    private static final String EDITED_MEAL_NAME = "Christmas Pud";
+
     private ActivityController<TestableMealEventActivity> mActivityController;
 
     private TestableMealEventActivity mActivity;
+    private DateTime mNow;
 
-    @Mock
-    private Database mDatabase;
-
-    @Mock
-    private Transaction mTransaction;
-
-    @Mock
-    private Cursor mCursor;
-
-    @Mock
-    private EditMealFragment mMealFragment;
-
-    @Mock
-    private EditEventFragment mEditEventFragment;
-
-    @Mock
-    private MealTable.Row mMealTableRow;
-
-    @Mock
-    private MealTable.PrimaryKey mMealPrimaryKey;
-
-    @Mock
-    private EventTable.Row mEventTableRow;
-
-    @Mock
-    private EventTable.PrimaryKey mEventPrimaryKey;
-
-    @Mock
-    private MealEventTable mMealEventTable;
-
-    @Mock
-    private MealEventTable.Row mMealEventTableRow;
-
-    @Mock
-    private MealEventTable.PrimaryKey mMealEventTablePrimaryKey;
-
-    @Mock
-    private TransactionExecutor mTransactionExecutor;
-
-    @Mock
-    private MealTable mMealTable;
-
-    @Mock
-    private MealEventTable.Row mMealEventRow;
-
-    @Mock
-    private MealEventTable.PrimaryKey mMealEventKey;
+    private EditEventFragmentAccessor mEventAccessor;
+    private EditMealFragmentAccessor mMealAccessor;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        doReturn(mCursor).when(mDatabase).select(any(Where.class), any(Table.class));
-        doReturn(mTransaction).when(mDatabase).getTransaction();
-        doReturn(mMealTableRow).when(mMealFragment).getRow();
-        doReturn(mEventTableRow).when(mEditEventFragment).getRow();
+        Utils.Db.TestData.cleanOldData();
+
+        mNow = DateTimeConverter.now();
 
         mActivityController = Robolectric.buildActivity(TestableMealEventActivity.class);
         mActivity = mActivityController.get();
 
-        mActivity.mEditEventFragment = mEditEventFragment;
-        mActivity.mMealFragment = mMealFragment;
-        mActivity.mTransactionExecutor = mTransactionExecutor;
+        mEventAccessor = new EditEventFragmentAccessor(mActivity);
+        mMealAccessor = new EditMealFragmentAccessor(mActivity);
+    }
 
-        doReturn(mMealPrimaryKey).when(mMealTableRow).getNextPrimaryKey();
-        doReturn(mEventPrimaryKey).when(mEventTableRow).getNextPrimaryKey();
-
-        doReturn(1L).when(mMealPrimaryKey).getId();
-        doReturn(2L).when(mEventPrimaryKey).getId();
-
-        HealthDatabaseAccessor.INSTANCE.setMealEventTable(mMealEventTable);
-        HealthDatabaseAccessor.INSTANCE.setMealTable(mMealTable);
-
-        doReturn(EventTypeTable.MEAL.getId()).when(mEventTableRow).getTypeId();
-        doReturn(mEventPrimaryKey).when(mEventTableRow).getConcretePrimaryKey();
-        doReturn(3L).when(mEventPrimaryKey).getId();
-
-        doReturn(new MealEventTable.Row[]{mMealEventTableRow}).when(mMealEventTable).select(eq(mDatabase), any(Where.class));
-        doReturn(mMealEventTableRow).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
-
-        doReturn(mMealEventTablePrimaryKey).when(mMealEventTableRow).getConcretePrimaryKey();
-        doReturn(mMealPrimaryKey).when(mMealEventTablePrimaryKey).getMealId();
-        doReturn(mMealTableRow).when(mMealTable).select0Or1(eq(mDatabase), any(Where.class));
+    @After
+    public void teardown() {
+        Utils.Db.TestData.cleanOldData();
+        HealthDbHelper.closeDb();
     }
 
     @Test
@@ -169,148 +112,51 @@ public class MealEventActivityTest {
     }
 
     @Test
-    public void modifyOperation_callsFinish() throws InterruptedException {
-        doReturn(mMealEventKey).when(mMealEventRow).getNextPrimaryKey();
-        doReturn(mMealEventRow).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
+    public void whenOpenedWithAnExistingEventFromAnIntent_setsEventNameOnEventEditFragment() {
+        openedWithAnExistingEventFromAnIntent();
 
-        mActivity.onModifySelected().doTransactionally(mDatabase, mTransaction);
-
-        assertThat(mActivity.finishCalled, is(true));
+        assertThat(mEventAccessor.getName(), is(EVENT_NAME));
     }
 
     @Test
-    public void modifyOperationWith0LengthMealEvent_createsMealAndEventAndMealEvent() {
-        doReturn(mCursor).when(mDatabase).select(any(Where.class), any(Table.class));
+    public void whenOpenedWithAnExistingEventFromAnIntent_setsMealOnMealEditFragment() {
+        openedWithAnExistingEventFromAnIntent();
+
+        assertThat(mMealAccessor.getName(), is(MEAL_NAME));
     }
 
-    @Test(expected = EventTypeTable.BadEventTypeException.class)
-    public void onEventFromIntentWithWrongType_throws() {
-        doReturn(EventTypeTable.HEALTH.getId()).when(mEventTableRow).getTypeId();
+    private void openedWithAnExistingEventFromAnIntent() {
+        Database db = HealthDbHelper.getDatabase();
+        EventTable.Row event;
+        MealEventTable.Row mealEvent;
 
-        mActivity.onEventFromIntent(mEventTableRow);
-    }
+        try (Transaction transaction = db.getTransaction()) {
+            event = new EventTable.Row(
+                    EventTypeTable.MEAL.getId(),
+                    mNow,
+                    mNow,
+                    null,
+                    EVENT_NAME);
+            MealTable.Row meal = new MealTable.Row(MEAL_NAME);
 
-    @Test
-    public void onEventFromIntent_setsEvent() {
-        mActivity.onEventFromIntent(mEventTableRow);
+            mealEvent = new MealEventTable.Row(event, meal, null, null);
+            mealEvent.applyTo(transaction);
+            transaction.commit();
+            Robolectric.flushBackgroundThreadScheduler();
+        }
 
-        verify(mEditEventFragment).setRow(mEventTableRow);
-    }
-
-    @Test
-    public void onEventFromIntentNotInDb_doesNotPerformAnOperation() {
-        doReturn(null).when(mEventTableRow).getConcretePrimaryKey();
-
-        mActivity.onEventFromIntent(mEventTableRow);
-
-        verify(mTransactionExecutor, never()).perform(any(TransactionExecutor.Operation.class));
-    }
-
-    @Test
-    public void onEventFromIntentInDb_performsAnOperation() {
-        mActivity.onEventFromIntent(mEventTableRow);
-
-        verify(mTransactionExecutor).perform(any(TransactionExecutor.Operation.class));
-    }
-
-    @Test
-    public void onEventFromIntentOpertation_requestsMealEventWithCorrectEventId() {
-        mActivity.onEventFromIntent(mEventTableRow);
-
-        TransactionExecutor.Operation operation = interceptRequestedOperation();
-
-        operation.doTransactionally(mDatabase, mTransaction);
-
-        ArgumentCaptor<Where> whereArgumentCaptor = ArgumentCaptor.forClass(Where.class);
-        verify(mMealEventTable).select0Or1(eq(mDatabase), whereArgumentCaptor.capture());
-
-        assertThat(whereArgumentCaptor.getValue().getWhere(), is("event_id = 3"));
-    }
-
-    @Test
-    public void onEventFromIntentOperationNullMealEvent_doesNothingMore() {
-        doReturn(null).when(mMealEventTable).select0Or1(eq(mDatabase), any(Where.class));
-
-        mActivity.onEventFromIntent(mEventTableRow);
-
-        TransactionExecutor.Operation operation = interceptRequestedOperation();
-
-        operation.doTransactionally(mDatabase, mTransaction);
-
-        verifyNoMoreInteractions(mTransactionExecutor);
-    }
-
-    @Test
-    public void onEventFromIntentOperationWithMealEvent_requestsMeal() {
-        mActivity.onEventFromIntent(mEventTableRow);
-
-        TransactionExecutor.Operation operation = interceptMealRequestOperation();
-
-        Mockito.reset(mMealEventTable); // So we can expect 1 call to select0or1 again.
-
-        operation.doTransactionally(mDatabase, mTransaction);
-
-        ArgumentCaptor<Where> whereArgumentCaptor = ArgumentCaptor.forClass(Where.class);
-        verify(mMealTable).select0Or1(eq(mDatabase), whereArgumentCaptor.capture());
-
-        assertThat(whereArgumentCaptor.getValue().getWhere(), is("_id = 1"));
-    }
-
-    @Test
-    public void onEventFromIntentOperationWithMealEvent_setsMealOnMealEditFragment() {
-        mActivity.onEventFromIntent(mEventTableRow);
-
-        TransactionExecutor.Operation operation = interceptMealRequestOperation();
-
-        operation.doTransactionally(mDatabase, mTransaction);
-
-        verify(mMealFragment).setRow(mMealTableRow);
-    }
-
-    @NonNull
-    private TransactionExecutor.Operation interceptMealRequestOperation() {
-
-        TransactionExecutor.Operation operation = interceptRequestedOperation();
-
-        operation.doTransactionally(mDatabase, mTransaction);
-
-        return interceptRequestedOperation();
-    }
-
-    @NonNull
-    private TransactionExecutor.Operation interceptRequestedOperation() {
-        ArgumentCaptor<TransactionExecutor.Operation> operationArgumentCaptor = ArgumentCaptor.forClass(TransactionExecutor.Operation.class);
-        verify(mTransactionExecutor).perform(operationArgumentCaptor.capture());
-
-        Mockito.reset(mTransactionExecutor); // Allow the next interception.
-
-        return operationArgumentCaptor.getValue();
+        Intent intent = new Intent();
+        intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
+        mActivity = mActivityController.withIntent(intent).create().start().resume().get();
     }
 
     private static class TestableMealEventActivity extends MealEventActivity {
         public boolean finishCalled = false;
-        public EditMealFragment mMealFragment;
-        public EditEventFragment mEditEventFragment;
-        public TransactionExecutor mTransactionExecutor;
 
-        @Override
-        public List<Pair<EditFragment, String>> getEditFragments(boolean create) {
-            return super.getEditFragments(create);
-        }
-
-        @Override
-        public TransactionExecutor.Operation onModifySelected() {
-            return super.onModifySelected();
-        }
-
-        @Override
-        protected EditEventFragment getEventFragment() {
-            return mEditEventFragment;
-        }
-
-        @Override
-        protected EditMealFragment getMealFragment() {
-            return mMealFragment;
+        public void pressOk() {
+            MenuItem item = Mockito.mock(MenuItem.class);
+            doReturn(R.id.action_modify).when(item).getItemId();
+            onOptionsItemSelected(item);
         }
 
         @Override
@@ -323,12 +169,6 @@ public class MealEventActivityTest {
         protected void setBusy(boolean busy) {
             // TODO: Find a way to avoid the countdown latch lock.
             //super.setBusy(busy);
-        }
-
-        @NonNull
-        @Override
-        public TransactionExecutor getExecutor() {
-            return mTransactionExecutor;
         }
     }
 }

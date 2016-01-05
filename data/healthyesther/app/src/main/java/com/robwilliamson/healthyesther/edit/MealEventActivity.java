@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.db.generated.EventTable;
@@ -12,6 +13,7 @@ import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
@@ -33,6 +35,10 @@ public class MealEventActivity extends AbstractEditEventActivity
         implements BaseFragment.Watcher {
     private final static String MEAL_TAG = "meal";
     private final static String EVENT_TAG = "event";
+    private final static String MEAL_EVENT = "meal event";
+
+    @Nullable
+    private MealEventTable.Row mMealEvent;
 
     @Override
     protected List<Pair<EditFragment, String>> getEditFragments(boolean create) {
@@ -60,6 +66,22 @@ public class MealEventActivity extends AbstractEditEventActivity
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mMealEvent = (MealEventTable.Row) savedInstanceState.getSerializable(MEAL_EVENT);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(MEAL_EVENT, mMealEvent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -78,9 +100,6 @@ public class MealEventActivity extends AbstractEditEventActivity
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 MealTable.Row meal = getMealFragment().getRow();
-                MealTable.Row oldMeal = getMealFragment().getOldRow();
-
-                MealTable.PrimaryKey oldKey = oldMeal == null ? null : oldMeal.getConcretePrimaryKey();
 
                 meal.applyTo(transaction);
 
@@ -93,24 +112,27 @@ public class MealEventActivity extends AbstractEditEventActivity
                             null,
                             null);
                 }
+
                 event.setTypeId(EventTypeTable.MEAL.getId());
                 event.applyTo(transaction);
-                EventTable.PrimaryKey eventKey = event.getNextPrimaryKey();
-                MealEventTable.Row mealEvent = null;
 
-                if (eventKey != null && oldKey != null) {
-                    mealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
-                            foreignKey(MealEventTable.EVENT_ID, eventKey.getId()),
+                MealTable.PrimaryKey oldKey = mMealEvent == null ? null : mMealEvent.getConcretePrimaryKey().getMealId();
+
+                EventTable.PrimaryKey oldEvent = mMealEvent == null ? null : mMealEvent.getConcretePrimaryKey().getEventId();
+
+                if (oldEvent != null && oldKey != null) {
+                    mMealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
+                            foreignKey(MealEventTable.EVENT_ID, oldEvent.getId()),
                             foreignKey(MealEventTable.MEAL_ID, oldKey.getId())));
                 }
 
-                if (mealEvent == null) {
-                    mealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, 0D);
+                if (mMealEvent == null) {
+                    mMealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, null);
                 } else {
-                    mealEvent.setNextPrimaryKey(new MealEventTable.PrimaryKey(event.getNextPrimaryKey(), meal.getNextPrimaryKey()));
+                    mMealEvent.setNextPrimaryKey(new MealEventTable.PrimaryKey(event.getNextPrimaryKey(), meal.getNextPrimaryKey()));
                 }
 
-                mealEvent.applyTo(transaction);
+                mMealEvent.applyTo(transaction);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -142,7 +164,7 @@ public class MealEventActivity extends AbstractEditEventActivity
             getExecutor().perform(new TransactionExecutor.Operation() {
                 @Override
                 public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                    final MealEventTable.Row mealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(
+                    mMealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select1(
                             database,
                             new Where() {
                                 @Nullable
@@ -153,28 +175,15 @@ public class MealEventActivity extends AbstractEditEventActivity
                             }
                     );
 
-                    if (mealEvent == null) {
-                        // There's nothing more to do here.
-                        return;
-                    }
-
                     getExecutor().perform(new TransactionExecutor.Operation() {
                         @Override
                         public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                            MealTable.Row meal = DatabaseAccessor.MEAL_TABLE.select0Or1(
+                            MealTable.Row meal = DatabaseAccessor.MEAL_TABLE.select1(
                                     database,
-                                    new Where() {
-                                        @Nullable
-                                        @Override
-                                        public String getWhere() {
-                                            return MealTable._ID + " = " + mealEvent.getConcretePrimaryKey().getMealId().getId();
-                                        }
-                                    }
+                                    WhereContains.foreignKey(MealTable._ID, mMealEvent.getConcretePrimaryKey().getMealId().getId())
                             );
 
-                            if (meal != null) {
-                                getMealFragment().setRow(meal);
-                            }
+                            getMealFragment().setRow(meal);
                         }
                     });
                 }

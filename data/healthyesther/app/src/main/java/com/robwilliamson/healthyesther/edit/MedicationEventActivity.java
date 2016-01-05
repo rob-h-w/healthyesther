@@ -1,9 +1,12 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -20,11 +23,19 @@ import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static com.robwilliamson.healthyesther.db.includes.WhereContains.and;
+import static com.robwilliamson.healthyesther.db.includes.WhereContains.foreignKey;
 
 public class MedicationEventActivity extends AbstractEditEventActivity
         implements BaseFragment.Watcher {
     private final static String MEDICATION_TAG = "medication";
     private final static String EVENT_TAG = "event";
+    private final static String MEDICATION_EVENT = "medication event";
+
+    @Nullable
+    private MedicationEventTable.Row mMedEvent;
 
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
@@ -53,24 +64,89 @@ public class MedicationEventActivity extends AbstractEditEventActivity
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mMedEvent = (MedicationEventTable.Row) savedInstanceState.getSerializable(MEDICATION_EVENT);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(MEDICATION_EVENT, mMedEvent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent launchIntent = getIntent();
+        if (launchIntent != null && launchIntent.getExtras() != null) {
+            EventTable.Row row = (EventTable.Row) launchIntent.getExtras().getSerializable(HealthDatabase.EVENT_TABLE.getName());
+            if (row != null) {
+                onEventFromIntent(row);
+            }
+        }
+    }
+
+    private void onEventFromIntent(@Nonnull final EventTable.Row event) {
+        if (!event.getTypeId().equals(EventTypeTable.MEDICATION.getId())) {
+            throw new EventTypeTable.BadEventTypeException(EventTypeTable.MEDICATION, event.getTypeId().getId());
+        }
+
+        getEventFragment().setRow(event);
+
+        getExecutor().perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                mMedEvent = HealthDatabase.MEDICATION_EVENT_TABLE.select1(
+                        database,
+                        foreignKey(MedicationEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+
+                final MedicationTable.Row med = HealthDatabase.MEDICATION_TABLE.select1(
+                        database,
+                        foreignKey(MedicationTable._ID, mMedEvent.getConcretePrimaryKey().getMedicationId().getId()));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMedicationFragment().setRow(med);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
     protected TransactionExecutor.Operation onModifySelected() {
         return new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
                 EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
+                EventTable.PrimaryKey oldEventKey = mMedEvent == null ? null : mMedEvent.getConcretePrimaryKey().getEventId();
                 event.setTypeId(EventTypeTable.MEDICATION.getId());
                 MedicationTable.Row medication = Utils.checkNotNull(getMedicationFragment().getRow());
-                event.applyTo(transaction);
-                medication.applyTo(transaction);
-                MedicationEventTable.Row medicationEvent = DatabaseAccessor.MEDICATION_EVENT_TABLE.select0Or1(
-                        database,
-                        new MedicationEventTable.PrimaryKey(event.getNextPrimaryKey(), medication.getNextPrimaryKey()));
+                MedicationTable.PrimaryKey oldMedicationKey = mMedEvent == null ? null : mMedEvent.getConcretePrimaryKey().getMedicationId();
 
-                if (medicationEvent == null) {
-                    medicationEvent = new MedicationEventTable.Row(event.getNextPrimaryKey(), medication.getNextPrimaryKey());
+                if (oldEventKey != null && oldMedicationKey != null) {
+                    mMedEvent = DatabaseAccessor.MEDICATION_EVENT_TABLE.select0Or1(database, and(
+                            foreignKey(MedicationEventTable.EVENT_ID, oldEventKey.getId()),
+                            foreignKey(MedicationEventTable.MEDICATION_ID, oldMedicationKey.getId())));
                 }
 
-                medicationEvent.applyTo(transaction);
+                event.applyTo(transaction);
+                medication.applyTo(transaction);
+
+                if (mMedEvent == null) {
+                    mMedEvent = new MedicationEventTable.Row(event.getNextPrimaryKey(), medication.getNextPrimaryKey());
+                } else {
+                    mMedEvent.setNextPrimaryKey(new MedicationEventTable.PrimaryKey(event.getNextPrimaryKey(), medication.getNextPrimaryKey()));
+                }
+
+                mMedEvent.applyTo(transaction);
 
                 runOnUiThread(new Runnable() {
                     @Override
