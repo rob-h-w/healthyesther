@@ -2,21 +2,15 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
 import android.util.Pair;
-import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.BuildConfig;
-import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
-import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -26,16 +20,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import test.ActivityTestContext;
 import test.view.EditEventFragmentAccessor;
 import test.view.EditMealFragmentAccessor;
 
@@ -43,7 +35,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -52,38 +43,27 @@ public class MealEventActivityTest {
     private static final String MEAL_NAME = "Bacon";
     private static final String EDITED_MEAL_NAME = "Christmas Pud";
 
-    private ActivityController<TestableMealEventActivity> mActivityController;
-
-    private TestableMealEventActivity mActivity;
-    private DateTime mNow;
+    private ActivityTestContext<TestableMealEventActivity> mContext;
 
     private EditEventFragmentAccessor mEventAccessor;
     private EditMealFragmentAccessor mMealAccessor;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        mContext = new ActivityTestContext<>(this, TestableMealEventActivity.class);
 
-        Utils.Db.TestData.cleanOldData();
-
-        mNow = DateTimeConverter.now();
-
-        mActivityController = Robolectric.buildActivity(TestableMealEventActivity.class);
-        mActivity = mActivityController.get();
-
-        mEventAccessor = new EditEventFragmentAccessor(mActivity);
-        mMealAccessor = new EditMealFragmentAccessor(mActivity);
+        mEventAccessor = new EditEventFragmentAccessor(mContext.getActivity());
+        mMealAccessor = new EditMealFragmentAccessor(mContext.getActivity());
     }
 
     @After
     public void teardown() {
-        Utils.Db.TestData.cleanOldData();
-        HealthDbHelper.closeDb();
+        mContext.close();
     }
 
     @Test
     public void getEditFragmentsWithTrue_returnsAListOfNewFragmentTagPairs() {
-        List<Pair<EditFragment, String>> list = mActivity.getEditFragments(true);
+        List<Pair<EditFragment, String>> list = mContext.getActivity().getEditFragments(true);
 
         List<EditFragment> fragments = new ArrayList<>();
         for (Pair<EditFragment, String> pair : list) {
@@ -97,9 +77,9 @@ public class MealEventActivityTest {
 
     @Test
     public void getEditFragmentsWhenShownWithFalse_returnsAListOfExistingFragmentTagPairs() {
-        mActivityController.create().start().resume().visible();
+        mContext.getActivityController().create().start().resume().visible();
 
-        List<Pair<EditFragment, String>> list = mActivity.getEditFragments(false);
+        List<Pair<EditFragment, String>> list = mContext.getActivity().getEditFragments(false);
 
         List<EditFragment> fragments = new ArrayList<>();
         for (Pair<EditFragment, String> pair : list) {
@@ -133,8 +113,8 @@ public class MealEventActivityTest {
         try (Transaction transaction = db.getTransaction()) {
             event = new EventTable.Row(
                     EventTypeTable.MEAL.getId(),
-                    mNow,
-                    mNow,
+                    mContext.getNow(),
+                    mContext.getNow(),
                     null,
                     EVENT_NAME);
             MealTable.Row meal = new MealTable.Row(MEAL_NAME);
@@ -147,17 +127,11 @@ public class MealEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mActivity = mActivityController.withIntent(intent).create().start().resume().get();
+        mContext.getActivityController().withIntent(intent).create().start().resume();
     }
 
     private static class TestableMealEventActivity extends MealEventActivity {
         public boolean finishCalled = false;
-
-        public void pressOk() {
-            MenuItem item = Mockito.mock(MenuItem.class);
-            doReturn(R.id.action_modify).when(item).getItemId();
-            onOptionsItemSelected(item);
-        }
 
         @Override
         public void finish() {

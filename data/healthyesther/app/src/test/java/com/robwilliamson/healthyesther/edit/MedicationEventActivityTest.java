@@ -1,34 +1,27 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
-import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.BuildConfig;
-import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
-import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
-import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
 
+import test.ActivityTestContext;
 import test.view.EditEventFragmentAccessor;
 import test.view.EditMedicationFragmentAccessor;
 
@@ -36,7 +29,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -45,34 +37,22 @@ public class MedicationEventActivityTest {
     private static final String MEDICATION_NAME = "Paracetamol";
     private static final String EDITED_MEDICATION_NAME = "Erythromycin";
 
-    private ActivityController<TestableMedicationEventActivity> mActivityController;
-
-    private TestableMedicationEventActivity mActivity;
-    private DateTime mNow;
+    private ActivityTestContext<TestableMedicationEventActivity> mContext;
 
     private EditEventFragmentAccessor mEventFragmentAccessor;
     private EditMedicationFragmentAccessor mMedicationFragmentAccessor;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        mContext = new ActivityTestContext<>(this, TestableMedicationEventActivity.class);
 
-        Utils.Db.TestData.cleanOldData();
-
-        mNow = DateTimeConverter.now();
-
-        mActivityController = Robolectric.buildActivity(TestableMedicationEventActivity.class);
-
-        mActivity = mActivityController.get();
-
-        mEventFragmentAccessor = new EditEventFragmentAccessor(mActivity);
-        mMedicationFragmentAccessor = new EditMedicationFragmentAccessor(mActivity);
+        mEventFragmentAccessor = new EditEventFragmentAccessor(mContext.getActivity());
+        mMedicationFragmentAccessor = new EditMedicationFragmentAccessor(mContext.getActivity());
     }
 
     @After
     public void teardown() {
-        Utils.Db.TestData.cleanOldData();
-        HealthDbHelper.closeDb();
+        mContext.close();
     }
 
     @Test
@@ -200,8 +180,8 @@ public class MedicationEventActivityTest {
         try (Transaction transaction = db.getTransaction()) {
             event = new EventTable.Row(
                     EventTypeTable.MEDICATION.getId(),
-                    mNow,
-                    mNow,
+                    mContext.getNow(),
+                    mContext.getNow(),
                     null,
                     EVENT_NAME);
             MedicationTable.Row med = new MedicationTable.Row(MEDICATION_NAME);
@@ -214,7 +194,7 @@ public class MedicationEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mActivity = mActivityController.withIntent(intent).create().start().resume().get();
+        mContext.getActivityController().withIntent(intent).create().start().resume();
         return medEvent;
     }
 
@@ -222,37 +202,27 @@ public class MedicationEventActivityTest {
         openedWithAnExistingMedicationEvent();
 
         mMedicationFragmentAccessor.setName(EDITED_MEDICATION_NAME);
-        mActivity.pressOk();
-        Robolectric.flushBackgroundThreadScheduler();
-        Robolectric.flushForegroundThreadScheduler();
+        mContext.pressOk();
     }
 
     private void aNewMedicationIsAdded() {
-        mActivity = mActivityController.create().start().resume().get();
+        mContext.getActivityController().create().start().resume();
         mMedicationFragmentAccessor.setName(MEDICATION_NAME);
         mEventFragmentAccessor.setName(EVENT_NAME);
-        mActivity.pressOk();
-        Robolectric.flushBackgroundThreadScheduler();
-        Robolectric.flushForegroundThreadScheduler();
+        mContext.pressOk();
     }
 
     private static class TestableMedicationEventActivity extends MedicationEventActivity {
         private volatile boolean mBusy;
 
-        public void pressOk() {
-            MenuItem item = Mockito.mock(MenuItem.class);
-            doReturn(R.id.action_modify).when(item).getItemId();
-            onOptionsItemSelected(item);
+        @Override
+        protected boolean isBusy() {
+            return mBusy;
         }
 
         @Override
         protected void setBusy(boolean busy) {
             mBusy = busy;
-        }
-
-        @Override
-        protected boolean isBusy() {
-            return mBusy;
         }
     }
 }
