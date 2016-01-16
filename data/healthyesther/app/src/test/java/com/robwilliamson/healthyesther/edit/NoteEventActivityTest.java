@@ -6,6 +6,7 @@ import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +51,16 @@ public class NoteEventActivityTest {
 
     @Test
     public void whenNewNoteIsAdded_createsNewNoteEvent() {
+        newNoteIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        assertThat(row.getTypeId(), is(EventTypeTable.NOTE.getId()));
+    }
+
+    @Test
+    public void whenNewNoteIsAdded_createsNewNoteEventWithName() {
         newNoteIsAdded();
 
         Database db = HealthDbHelper.getDatabase();
