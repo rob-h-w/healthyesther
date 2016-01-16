@@ -54,8 +54,7 @@ public class NoteEventActivityTest {
 
         Database db = HealthDbHelper.getDatabase();
 
-        EventTable.Row row = HealthDatabase.EVENT_TABLE.select0Or1(db, WhereContains.any());
-        //noinspection ConstantConditions
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
         assertThat(row.getName(), is(EVENT_NAME));
     }
 
