@@ -4,6 +4,8 @@ import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.NoteEventTable;
+import com.robwilliamson.healthyesther.db.generated.NoteTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
@@ -50,7 +52,7 @@ public class NoteEventActivityTest {
     }
 
     @Test
-    public void whenNewNoteIsAdded_createsNewNoteEvent() {
+    public void whenNewNoteIsAdded_createsNewEvent() {
         newNoteIsAdded();
 
         Database db = HealthDbHelper.getDatabase();
@@ -60,13 +62,60 @@ public class NoteEventActivityTest {
     }
 
     @Test
-    public void whenNewNoteIsAdded_createsNewNoteEventWithName() {
+    public void whenNewNoteIsAdded_createsNewEventWithName() {
         newNoteIsAdded();
 
         Database db = HealthDbHelper.getDatabase();
 
         EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
         assertThat(row.getName(), is(EVENT_NAME));
+    }
+
+    @Test
+    public void whenNewNoteIsAdded_createsNewNoteEvent() {
+        newNoteIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        HealthDatabase.NOTE_EVENT_TABLE.select1(db, WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+    }
+
+    @Test
+    public void whenNewNoteIsAdded_createsNewNoteAttachedToEvent() {
+        newNoteIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        NoteEventTable.Row noteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(db, WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+        HealthDatabase.NOTE_TABLE.select1(db, noteEvent.getConcretePrimaryKey().getNoteId());
+    }
+
+    @Test
+    public void whenNewNoteIsAdded_createsNewNoteAttachedToEventWithName() {
+        newNoteIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        NoteEventTable.Row noteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(db, WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+        NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(db, noteEvent.getConcretePrimaryKey().getNoteId());
+
+        assertThat(note.getName(), is(NOTE_NAME));
+    }
+
+    @Test
+    public void whenNewNoteIsAdded_createsNewNoteAttachedToEventWithDetail() {
+        newNoteIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        NoteEventTable.Row noteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(db, WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+        NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(db, noteEvent.getConcretePrimaryKey().getNoteId());
+
+        assertThat(note.getNote(), is(NOTE_DETAIL));
     }
 
     private void newNoteIsAdded() {
