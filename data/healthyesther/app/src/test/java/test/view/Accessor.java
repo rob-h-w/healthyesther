@@ -6,12 +6,14 @@ import android.widget.TextView;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import test.ActivityTestContext;
+
 abstract class Accessor {
     @Nonnull
-    private final Activity mActivity;
+    private final ActivityTestContext mContext;
 
-    Accessor(@Nonnull Activity activity) {
-        mActivity = activity;
+    Accessor(@Nonnull ActivityTestContext context) {
+        mContext = context;
     }
 
     @Nullable
@@ -25,6 +27,6 @@ abstract class Accessor {
 
     @Nonnull
     protected Activity getActivity() {
-        return mActivity;
+        return mContext.getActivity();
     }
 }

@@ -11,11 +11,7 @@ import test.ActivityTestContext;
 
 public class EditEventFragmentAccessor extends Accessor {
     public EditEventFragmentAccessor(@Nonnull ActivityTestContext context) {
-        this(context.getActivity());
-    }
-
-    public EditEventFragmentAccessor(@Nonnull Activity activity) {
-        super(activity);
+        super(context);
     }
 
     @Nullable

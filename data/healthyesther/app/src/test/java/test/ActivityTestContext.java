@@ -20,14 +20,19 @@ import static org.mockito.Mockito.doReturn;
 
 public class ActivityTestContext<T extends Activity> {
 
+    @SuppressWarnings("NullableProblems")
     @Nonnull
     private ActivityController<T> mActivityController;
 
+    @SuppressWarnings("NullableProblems")
     @Nonnull
     private T mActivity;
 
     @Nonnull
-    private DateTime mNow;
+    private final DateTime mNow;
+
+    @Nonnull
+    private final Class<T> mActivityClass;
 
     public ActivityTestContext(@Nonnull Object testCase, @Nonnull Class<T> activityClass) {
         MockitoAnnotations.initMocks(testCase);
@@ -36,9 +41,9 @@ public class ActivityTestContext<T extends Activity> {
 
         mNow = DateTimeConverter.now();
 
-        mActivityController = Robolectric.buildActivity(activityClass);
+        mActivityClass = activityClass;
 
-        mActivity = mActivityController.get();
+        reset();
     }
 
     @Nonnull
@@ -54,6 +59,11 @@ public class ActivityTestContext<T extends Activity> {
     @Nonnull
     public DateTime getNow() {
         return mNow;
+    }
+
+    public void reset() {
+        mActivityController = Robolectric.buildActivity(mActivityClass);
+        mActivity = mActivityController.get();
     }
 
     public void close() {

@@ -52,8 +52,8 @@ public class MealEventActivityTest {
     public void setup() {
         mContext = new ActivityTestContext<>(this, TestableMealEventActivity.class);
 
-        mEventAccessor = new EditEventFragmentAccessor(mContext.getActivity());
-        mMealAccessor = new EditMealFragmentAccessor(mContext.getActivity());
+        mEventAccessor = new EditEventFragmentAccessor(mContext);
+        mMealAccessor = new EditMealFragmentAccessor(mContext);
     }
 
     @After

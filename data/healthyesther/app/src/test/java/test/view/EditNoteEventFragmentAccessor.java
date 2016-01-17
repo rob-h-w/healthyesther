@@ -6,7 +6,7 @@ import test.ActivityTestContext;
 
 public class EditNoteEventFragmentAccessor extends Accessor {
     public EditNoteEventFragmentAccessor(ActivityTestContext context) {
-        super(context.getActivity());
+        super(context);
     }
 
     public String getName() {

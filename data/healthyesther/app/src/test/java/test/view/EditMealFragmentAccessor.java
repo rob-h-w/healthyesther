@@ -1,15 +1,15 @@
 package test.view;
 
-import android.app.Activity;
-
 import com.robwilliamson.healthyesther.R;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import test.ActivityTestContext;
+
 public class EditMealFragmentAccessor extends Accessor {
-    public EditMealFragmentAccessor(@Nonnull Activity activity) {
-        super(activity);
+    public EditMealFragmentAccessor(@Nonnull ActivityTestContext context) {
+        super(context);
     }
 
     @Nullable

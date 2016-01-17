@@ -46,8 +46,8 @@ public class MedicationEventActivityTest {
     public void setup() {
         mContext = new ActivityTestContext<>(this, TestableMedicationEventActivity.class);
 
-        mEventFragmentAccessor = new EditEventFragmentAccessor(mContext.getActivity());
-        mMedicationFragmentAccessor = new EditMedicationFragmentAccessor(mContext.getActivity());
+        mEventFragmentAccessor = new EditEventFragmentAccessor(mContext);
+        mMedicationFragmentAccessor = new EditMedicationFragmentAccessor(mContext);
     }
 
     @After
@@ -194,7 +194,7 @@ public class MedicationEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mContext.getActivityController().withIntent(intent).create().start().resume();
+        mContext.getActivityController().withIntent(intent).setup();
         return medEvent;
     }
 

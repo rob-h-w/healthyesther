@@ -3,12 +3,15 @@ package test.view;
 import android.app.Activity;
 
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 
 import javax.annotation.Nonnull;
 
+import test.ActivityTestContext;
+
 public class EditMedicationFragmentAccessor extends Accessor {
-    public EditMedicationFragmentAccessor(@Nonnull Activity activity) {
-        super(activity);
+    public EditMedicationFragmentAccessor(@Nonnull ActivityTestContext context) {
+        super(context);
     }
 
     public String getName() {
