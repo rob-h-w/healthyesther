@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.content.Intent;
+
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
@@ -7,6 +9,7 @@ import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.NoteEventTable;
 import com.robwilliamson.healthyesther.db.generated.NoteTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
@@ -14,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -116,6 +120,35 @@ public class NoteEventActivityTest {
         NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(db, noteEvent.getConcretePrimaryKey().getNoteId());
 
         assertThat(note.getNote(), is(NOTE_DETAIL));
+    }
+
+    @Test
+    public void whenOpenedWithAnExistingNote_showsEventTitle() {
+        openedWithAnExistingNote();
+
+        assertThat(mEventFragmentAccessor.getName(), is(EVENT_NAME));
+    }
+
+    private void openedWithAnExistingNote() {
+        Database db = HealthDbHelper.getDatabase();
+        EventTable.Row event;
+
+        try (Transaction transaction = db.getTransaction()) {
+            event = new EventTable.Row(EventTypeTable.NOTE.getId(),
+                    mContext.getNow(),
+                    mContext.getNow(),
+                    mContext.getNow(),
+                    EVENT_NAME);
+            NoteTable.Row note = new NoteTable.Row(NOTE_NAME, NOTE_DETAIL);
+
+            (new NoteEventTable.Row(event, note)).applyTo(transaction);
+            transaction.commit();
+            Robolectric.flushBackgroundThreadScheduler();
+        }
+
+        Intent intent = new Intent();
+        intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
+        mContext.getActivityController().withIntent(intent).create().start().resume();
     }
 
     private void newNoteIsAdded() {

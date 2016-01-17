@@ -1,9 +1,9 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
@@ -66,32 +66,10 @@ public class MealEventActivity extends AbstractEditEventActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            mMealEvent = (MealEventTable.Row) savedInstanceState.getSerializable(MEAL_EVENT);
-        }
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
         outState.putSerializable(MEAL_EVENT, mMealEvent);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        Intent launchIntent = getIntent();
-        if (launchIntent != null && launchIntent.getExtras() != null) {
-            EventTable.Row row = (EventTable.Row) launchIntent.getExtras().getSerializable(HealthDatabase.EVENT_TABLE.getName());
-            if (row != null) {
-                onEventFromIntent(row);
-            }
-        }
     }
 
     @Override
@@ -144,15 +122,10 @@ public class MealEventActivity extends AbstractEditEventActivity
         };
     }
 
-    protected EditMealFragment getMealFragment() {
-        return getFragment(MEAL_TAG, EditMealFragment.class);
-    }
+    @Override
+    protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
+        final EventTable.Row event = Utils.checkNotNull((EventTable.Row) bundle.getSerializable(HealthDatabase.EVENT_TABLE.getName()));
 
-    protected EditEventFragment getEventFragment() {
-        return getFragment(EVENT_TAG, EditEventFragment.class);
-    }
-
-    public void onEventFromIntent(@Nonnull final EventTable.Row event) {
         if (!event.getTypeId().equals(EventTypeTable.MEAL.getId())) {
             throw new EventTypeTable.BadEventTypeException(EventTypeTable.MEAL, event.getTypeId().getId());
         }
@@ -189,6 +162,19 @@ public class MealEventActivity extends AbstractEditEventActivity
                 }
             });
         }
+    }
+
+    @Override
+    protected void resumeFromSavedState(@Nonnull Bundle bundle) {
+        mMealEvent = (MealEventTable.Row) bundle.getSerializable(MEAL_EVENT);
+    }
+
+    protected EditMealFragment getMealFragment() {
+        return getFragment(MEAL_TAG, EditMealFragment.class);
+    }
+
+    protected EditEventFragment getEventFragment() {
+        return getFragment(EVENT_TAG, EditEventFragment.class);
     }
 
     @Override

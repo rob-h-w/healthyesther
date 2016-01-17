@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.os.Bundle;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
@@ -118,6 +119,16 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                 });
             }
         };
+    }
+
+    @Override
+    protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
+
+    }
+
+    @Override
+    protected void resumeFromSavedState(@Nonnull Bundle bundle) {
+
     }
 
     private EditScoreEventGroupFragment getScoreGroupFragment() {

@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,19 +23,41 @@ import javax.annotation.Nonnull;
 
 public abstract class AbstractEditEventActivity extends DbActivity {
 
+    private Bundle mSavedInstanceState;
+
     protected abstract List<Pair<EditFragment, String>> getEditFragments(boolean create);
 
     protected abstract TransactionExecutor.Operation onModifySelected();
+
+    protected abstract void resumeFromIntentExtras(@Nonnull Bundle bundle);
+
+    protected abstract void resumeFromSavedState(@Nonnull Bundle bundle);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
+            mSavedInstanceState = savedInstanceState;
             return;
         }
 
         resetFragments(getEditFragments(true));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mSavedInstanceState != null) {
+            resumeFromSavedState(mSavedInstanceState);
+            mSavedInstanceState = null;
+        } else {
+            Intent intent = getIntent();
+            if (intent != null && intent.getExtras() != null) {
+                resumeFromIntentExtras(intent.getExtras());
+            }
+        }
     }
 
     @Override

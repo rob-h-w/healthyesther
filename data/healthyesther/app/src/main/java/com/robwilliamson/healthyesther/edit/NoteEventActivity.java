@@ -1,9 +1,11 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.os.Bundle;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.NoteEventTable;
 import com.robwilliamson.healthyesther.db.generated.NoteTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -22,10 +24,14 @@ import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
 
+import static com.robwilliamson.healthyesther.db.includes.WhereContains.foreignKey;
+
 public class NoteEventActivity extends AbstractEditEventActivity
         implements BaseFragment.Watcher {
     private final static String EVENT_TAG = "event";
     private final static String NOTE_TAG = "note";
+
+    private NoteEventTable.Row mNoteEvent;
 
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
@@ -85,6 +91,41 @@ public class NoteEventActivity extends AbstractEditEventActivity
                 });
             }
         };
+    }
+
+    @Override
+    protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
+        final EventTable.Row event = Utils.checkNotNull((EventTable.Row) bundle.getSerializable(HealthDatabase.EVENT_TABLE.getName()));
+        if (!event.getTypeId().equals(EventTypeTable.NOTE.getId())) {
+            throw new EventTypeTable.BadEventTypeException(EventTypeTable.NOTE, event.getTypeId().getId());
+        }
+
+        getEventFragment().setRow(event);
+
+        getExecutor().perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
+                mNoteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(
+                        database,
+                        foreignKey(NoteEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+
+                final NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(
+                        database,
+                        mNoteEvent.getConcretePrimaryKey().getNoteId());
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getNoteFragment().setRow(note);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    protected void resumeFromSavedState(@Nonnull Bundle bundle) {
+
     }
 
     private EditNoteFragment getNoteFragment() {
