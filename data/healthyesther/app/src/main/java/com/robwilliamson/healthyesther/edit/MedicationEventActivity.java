@@ -83,6 +83,10 @@ public class MedicationEventActivity extends AbstractEditEventActivity
     protected void onResume() {
         super.onResume();
 
+        if (mMedEvent != null) {
+            return;
+        }
+
         Intent launchIntent = getIntent();
         if (launchIntent != null && launchIntent.getExtras() != null) {
             EventTable.Row row = (EventTable.Row) launchIntent.getExtras().getSerializable(HealthDatabase.EVENT_TABLE.getName());

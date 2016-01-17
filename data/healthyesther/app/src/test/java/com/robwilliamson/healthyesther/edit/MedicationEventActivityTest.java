@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
@@ -36,6 +37,7 @@ public class MedicationEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
     private static final String MEDICATION_NAME = "Paracetamol";
     private static final String EDITED_MEDICATION_NAME = "Erythromycin";
+    private static final String EDITED_EVENT_NAME = "New Event Name";
 
     private ActivityTestContext<TestableMedicationEventActivity> mContext;
 
@@ -172,6 +174,32 @@ public class MedicationEventActivityTest {
         assertThat(rows.length, is(1));
     }
 
+    @Test
+    public void whenOpenedWithAnExistingMedicationEventAndEditedAndReopened_textViewShowsEditedEventText() {
+        openedWithAnExistingMedicationEventAndEditedAndReopened();
+
+        assertThat(mEventFragmentAccessor.getName(), is(EDITED_EVENT_NAME));
+    }
+
+    private void openedWithAnExistingMedicationEventAndEditedAndReopened() {
+        anExistingMedicationNameIsEdited();
+
+        Intent intent = mContext.getActivity().getIntent();
+        Bundle bundle = new Bundle();
+        mContext.getActivityController().pause().saveInstanceState(bundle).stop().destroy();
+        mContext.reset();
+
+        mContext.getActivityController().withIntent(intent).setup(bundle);
+    }
+
+    private void anExistingMedicationNameIsEdited() {
+        openedWithAnExistingMedicationEvent();
+
+        mMedicationFragmentAccessor.setName(EDITED_MEDICATION_NAME);
+        mEventFragmentAccessor.setName(EDITED_EVENT_NAME);
+        mContext.pressOk();
+    }
+
     private MedicationEventTable.Row openedWithAnExistingMedicationEvent() {
         Database db = HealthDbHelper.getDatabase();
         EventTable.Row event;
@@ -196,13 +224,6 @@ public class MedicationEventActivityTest {
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
         mContext.getActivityController().withIntent(intent).setup();
         return medEvent;
-    }
-
-    private void anExistingMedicationNameIsEdited() {
-        openedWithAnExistingMedicationEvent();
-
-        mMedicationFragmentAccessor.setName(EDITED_MEDICATION_NAME);
-        mContext.pressOk();
     }
 
     private void aNewMedicationIsAdded() {
