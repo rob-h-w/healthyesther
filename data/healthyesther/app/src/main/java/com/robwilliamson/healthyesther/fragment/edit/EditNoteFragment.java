@@ -82,6 +82,32 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> {
         suggestNote(mNoteContents.get(mUserSelectedId));
     }
 
+    @Override
+    public void setRow(@Nonnull NoteTable.Row row) {
+        super.setRow(row);
+
+        updateUi();
+    }
+
+    private void updateUi() {
+        NoteTable.Row row = getRow();
+        if (row == null) {
+            return;
+        }
+
+        EditText noteView = getNoteView();
+
+        if (noteView != null) {
+            noteView.setText(row.getNote());
+        }
+
+        AutoCompleteTextView nameView = getNameView();
+
+        if (nameView != null) {
+            nameView.setText(row.getName());
+        }
+    }
+
     public void suggestNote(String note) {
         if (mAlwaysCreate) {
             return;

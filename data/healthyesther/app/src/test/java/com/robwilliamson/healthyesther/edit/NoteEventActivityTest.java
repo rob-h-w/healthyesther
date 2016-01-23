@@ -129,6 +129,20 @@ public class NoteEventActivityTest {
         assertThat(mEventFragmentAccessor.getName(), is(EVENT_NAME));
     }
 
+    @Test
+    public void whenOpenedWithAnExistingNote_showsNoteTitle() {
+        openedWithAnExistingNote();
+
+        assertThat(mNoteEventFragmentAccessor.getName(), is(NOTE_NAME));
+    }
+
+    @Test
+    public void whenOpenedWithAnExistingNote_showsNoteDetail() {
+        openedWithAnExistingNote();
+
+        assertThat(mNoteEventFragmentAccessor.getDetail(), is(NOTE_DETAIL));
+    }
+
     private void openedWithAnExistingNote() {
         Database db = HealthDbHelper.getDatabase();
         EventTable.Row event;
@@ -149,6 +163,8 @@ public class NoteEventActivityTest {
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
         mContext.getActivityController().withIntent(intent).create().start().resume();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
     }
 
     private void newNoteIsAdded() {
