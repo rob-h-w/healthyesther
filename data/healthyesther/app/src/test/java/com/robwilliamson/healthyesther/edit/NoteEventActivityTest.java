@@ -230,7 +230,7 @@ public class NoteEventActivityTest {
     }
 
     private void newNoteIsAdded() {
-        mContext.getActivityController().create().start().resume();
+        mContext.getActivityController().setup();
         mNoteEventFragmentAccessor.setName(NOTE_NAME);
         mNoteEventFragmentAccessor.setDetail(NOTE_DETAIL);
         mEventFragmentAccessor.setName(EVENT_NAME);
