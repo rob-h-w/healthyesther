@@ -34,6 +34,7 @@ public class NoteEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
     private static final String NOTE_NAME = "Note";
     private static final String NOTE_DETAIL = "Note detail.";
+    private static final String EDITED_EVENT_NAME = "Don't read this";
     private static final String EDITED_NOTE_NAME = "Diary Entry";
     private static final String EDITED_NOTE_DETAIL = "Secret diary notes.";
 
@@ -141,6 +142,67 @@ public class NoteEventActivityTest {
         openedWithAnExistingNote();
 
         assertThat(mNoteEventFragmentAccessor.getDetail(), is(NOTE_DETAIL));
+    }
+
+    @Test
+    public void whenExistingNoteIsEdited_replacesEvent() {
+        existingNoteIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+
+        assertThat(row.getName(), is(EDITED_EVENT_NAME));
+    }
+
+    @Test
+    public void whenExistingNoteIsEdited_replacesNoteEvent() {
+        existingNoteIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        NoteEventTable.Row[] noteEvents = HealthDatabase.NOTE_EVENT_TABLE.select(db, WhereContains.any());
+
+        assertThat(noteEvents.length, is(1));
+        assertThat(noteEvents[0].getConcretePrimaryKey().getEventId(), is(row.getConcretePrimaryKey()));
+    }
+
+    @Test
+    public void whenExistingNoteIsEdited_replacesNoteName() {
+        existingNoteIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        NoteEventTable.Row noteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(db, WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+        NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(db, WhereContains.foreignKey(NoteTable._ID, noteEvent.getConcretePrimaryKey().getNoteId().getId()));
+
+        assertThat(note.getName(), is(EDITED_NOTE_NAME));
+    }
+
+    @Test
+    public void whenExistingNoteIsEdited_replacesNoteDetail() {
+        existingNoteIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        NoteEventTable.Row noteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(db, WhereContains.foreignKey(NoteEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+        NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(db, WhereContains.foreignKey(NoteTable._ID, noteEvent.getConcretePrimaryKey().getNoteId().getId()));
+
+        assertThat(note.getNote(), is(EDITED_NOTE_DETAIL));
+    }
+
+    private void existingNoteIsEdited() {
+        openedWithAnExistingNote();
+
+        mEventFragmentAccessor.setName(EDITED_EVENT_NAME);
+        mNoteEventFragmentAccessor.setName(EDITED_NOTE_NAME);
+        mNoteEventFragmentAccessor.setDetail(EDITED_NOTE_DETAIL);
+        mContext.pressOk();
+        Robolectric.flushForegroundThreadScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
     }
 
     private void openedWithAnExistingNote() {
