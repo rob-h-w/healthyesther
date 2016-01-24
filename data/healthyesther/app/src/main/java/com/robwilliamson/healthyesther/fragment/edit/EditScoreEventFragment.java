@@ -30,6 +30,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
 
     public static EditScoreEventFragment newInstance(@Nonnull HealthScoreTable.Row score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
+        fragment.setRow(score);
         fragment.mScore = score;
         return fragment;
     }

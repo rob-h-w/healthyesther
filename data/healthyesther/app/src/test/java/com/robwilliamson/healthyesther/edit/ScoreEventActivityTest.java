@@ -5,7 +5,9 @@ import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 import org.junit.After;
@@ -109,6 +111,29 @@ public class ScoreEventActivityTest {
         HealthScoreEventTable.Row[] scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
 
         assertThat(scoreEvent.length, is(1));
+    }
+
+    @Test
+    public void whenNewScoreEventIsAdded_createsANewScoreEventWithScore() {
+        newScoreEventIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        HealthScoreEventTable.Row scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select1(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+
+        assertThat(scoreEvent.getScore(), is(5L));
+    }
+
+    @Test
+    public void whenNewScoreEventIsAdded_doesNotCreateAScore() {
+        newScoreEventIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row[] scores = HealthDatabase.HEALTH_SCORE_TABLE.select(db, WhereContains.any());
+
+        assertThat(scores.length, is(DEFAULT_SCORE_TITLES.length));
     }
 
     private void newScoreEventIsAdded() {

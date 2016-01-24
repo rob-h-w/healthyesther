@@ -105,6 +105,10 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                             ));
 
                     if (row == null) {
+                        if (pair.second == null || pair.second == 0) {
+                            continue;
+                        }
+
                         row = new HealthScoreEventTable.Row(event.getNextPrimaryKey(), healthScoreRow.getNextPrimaryKey(), score);
                     }
 
