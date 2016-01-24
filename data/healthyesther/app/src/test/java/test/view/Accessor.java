@@ -1,6 +1,7 @@
 package test.view;
 
 import android.app.Activity;
+import android.view.View;
 import android.widget.TextView;
 
 import javax.annotation.Nonnull;
@@ -18,7 +19,12 @@ abstract class Accessor {
 
     @Nullable
     public String getText(int id) {
-        return ((TextView) getActivity().findViewById(id)).getText().toString();
+        return getText(getActivity().findViewById(id).getRootView(), id);
+    }
+
+    @Nullable
+    public String getText(View view, int id) {
+        return ((TextView) view.findViewById(id)).getText().toString();
     }
 
     public void setText(@Nullable String text, int id) {
@@ -28,5 +34,10 @@ abstract class Accessor {
     @Nonnull
     protected Activity getActivity() {
         return mContext.getActivity();
+    }
+
+    @Nonnull
+    protected ActivityTestContext getContext() {
+        return mContext;
     }
 }
