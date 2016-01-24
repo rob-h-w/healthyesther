@@ -1,13 +1,11 @@
 package com.robwilliamson.healthyesther;
 
 import android.app.Dialog;
-import android.support.v4.app.Fragment;
 import android.view.Window;
 
 import java.util.concurrent.CountDownLatch;
 
 public class BusyActivity extends BaseFragmentActivity {
-    private static final String BUSY_TAG = "Busy";
     private static volatile Dialog mDialog;
     private volatile int mBusy = 0;
 
@@ -55,14 +53,6 @@ public class BusyActivity extends BaseFragmentActivity {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-    }
-
-    private Fragment getBusyFragment() {
-        return getFragment(BUSY_TAG);
-    }
-
-    private boolean hasBusyFragment() {
-        return getBusyFragment() != null;
     }
 
     private void updateUi() {
