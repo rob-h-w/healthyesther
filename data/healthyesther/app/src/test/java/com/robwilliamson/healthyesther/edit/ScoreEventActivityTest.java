@@ -4,6 +4,7 @@ import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
@@ -31,12 +32,15 @@ import static org.junit.Assert.assertThat;
 @Config(constants = BuildConfig.class)
 public class ScoreEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
+    private static final String HAPPINESS = "Happiness";
+    private static final String ENERGY = "Energy";
+    private static final String DROWSINESS = "Drowsiness";
     private static final String EDITED_EVENT_NAME = "My Score!";
 
     private static final String[] DEFAULT_SCORE_TITLES = {
-            "Happiness",
-            "Energy",
-            "Drowsiness"
+            HAPPINESS,
+            ENERGY,
+            DROWSINESS
     };
 
     private ActivityTestContext<TestableScoreEventActivity> mContext;
@@ -95,10 +99,24 @@ public class ScoreEventActivityTest {
         assertThat(row.getName(), is(EVENT_NAME));
     }
 
+    @Test
+    public void whenNewScoreEventIsAdded_createsANewScoreEvent() {
+        newScoreEventIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        HealthScoreEventTable.Row[] scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
+
+        assertThat(scoreEvent.length, is(1));
+    }
+
     private void newScoreEventIsAdded() {
         coreEventEditorIsShown();
 
         mEventFragmentAccessor.setName(EVENT_NAME);
+        //noinspection ConstantConditions
+        mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).setRating(5);
 
         mContext.pressOk();
 

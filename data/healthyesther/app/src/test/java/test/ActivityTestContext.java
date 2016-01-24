@@ -1,6 +1,7 @@
 package test;
 
 import android.app.Activity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.robwilliamson.healthyesther.R;
@@ -16,6 +17,7 @@ import org.robolectric.util.ActivityController;
 
 import javax.annotation.Nonnull;
 
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
 public class ActivityTestContext<T extends Activity> {
@@ -72,9 +74,15 @@ public class ActivityTestContext<T extends Activity> {
     }
 
     public void pressOk() {
+        Activity activity = getActivity();
+        if (!activity.onPrepareOptionsMenu(Mockito.mock(Menu.class))) {
+            fail("The OK method was not enabled.");
+        }
+
         MenuItem item = Mockito.mock(MenuItem.class);
         doReturn(R.id.action_modify).when(item).getItemId();
-        getActivity().onOptionsItemSelected(item);
+        activity.onOptionsItemSelected(item);
+
         Robolectric.flushBackgroundThreadScheduler();
         Robolectric.flushForegroundThreadScheduler();
     }
