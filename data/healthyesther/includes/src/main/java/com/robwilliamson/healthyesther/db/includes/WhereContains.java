@@ -33,7 +33,7 @@ public class WhereContains {
     }
 
     @Nonnull
-    public static Where foreignKey(@Nonnull final String columnName, @Nullable final Object value) {
+    public static Where foreignKey(@Nonnull final String columnName, @Nullable final Long value) {
         return new Where() {
             @Nullable
             @Override
