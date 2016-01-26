@@ -1,12 +1,14 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -24,7 +26,9 @@ import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -34,12 +38,12 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
 
     @Override
     protected void onResume() {
-        super.onResume();
-
         EditEventFragment fragment = getEventFragment();
         if (!fragment.isEventNameEditedByUser()) {
             fragment.setName(getString(R.string.health_score));
         }
+
+        super.onResume();
     }
 
     @Override
@@ -127,7 +131,45 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
 
     @Override
     protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
+        final EventTable.Row event = Utils.checkNotNull((EventTable.Row) bundle.getSerializable(HealthDatabase.EVENT_TABLE.getName()));
+        if (!event.getTypeId().equals(EventTypeTable.HEALTH.getId())) {
+            throw new EventTypeTable.BadEventTypeException(EventTypeTable.HEALTH, event.getTypeId().getId());
+        }
 
+        getEventFragment().setRow(event);
+
+        getExecutor().perform(new TransactionExecutor.Operation() {
+            @Override
+            public void doTransactionally(@Nonnull final Database database, @Nonnull Transaction transaction) {
+                HealthScoreEventTable.Row[] scoreEvents = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(database, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+                final Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scores = new HashMap<>();
+
+                for (HealthScoreEventTable.Row scoreEvent : scoreEvents) {
+                    HealthScoreTable.Row scoreType = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, WhereContains.foreignKey(HealthScoreTable._ID, scoreEvent.getConcretePrimaryKey().getHealthScoreId().getId()));
+                    scores.put(scoreType, scoreEvent);
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        EditScoreEventGroupFragment eventGroupFragment = getScoreGroupFragment();
+                        eventGroupFragment.clearScoreFragments();
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        for (Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> entry : scores.entrySet()) {
+                            EditScoreEventFragment fragment = EditScoreEventFragment.newInstance(entry.getKey());
+                            eventGroupFragment.addFragment(fragment, transaction);
+
+                            Long value = entry.getValue().getScore();
+                            value = value == null ? 0L : value;
+                            fragment.setValue(value.intValue());
+                        }
+
+                        transaction.commit();
+                    }
+                });
+            }
+        });
     }
 
     @Override

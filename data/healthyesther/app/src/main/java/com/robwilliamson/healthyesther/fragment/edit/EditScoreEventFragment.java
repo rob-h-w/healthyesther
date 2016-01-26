@@ -156,7 +156,19 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
     }
 
     public int getValue() {
-        return (int) getRatingBar().getRating();
+        if (isResumed()) {
+            mValue = (int) getRatingBar().getRating();
+        }
+
+        return mValue;
+    }
+
+    public void setValue(int value) {
+        mValue = value;
+
+        if (isResumed()) {
+            getRatingBar().setRating(mValue);
+        }
     }
 
     private TextView getTitle() {

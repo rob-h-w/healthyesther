@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.content.Intent;
+
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
@@ -122,7 +124,7 @@ public class ScoreEventActivityTest {
         EventTable.Row row = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
         HealthScoreEventTable.Row scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select1(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, row.getConcretePrimaryKey().getId()));
 
-        assertThat(scoreEvent.getScore(), is(5L));
+        assertThat(scoreEvent.getScore(), is(4L));
     }
 
     @Test
@@ -136,12 +138,31 @@ public class ScoreEventActivityTest {
         assertThat(scores.length, is(DEFAULT_SCORE_TITLES.length));
     }
 
+    @Test
+    public void whenLaunchedWithExistingScore_showsEventName() {
+        launchedWithExistingScore();
+
+        assertThat(mEventFragmentAccessor.getName(), is(EVENT_NAME));
+    }
+
+    private void launchedWithExistingScore() {
+        newScoreEventIsAdded();
+
+        Database db = HealthDbHelper.getDatabase();
+        EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+
+        Intent intent = new Intent();
+        intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
+        mContext.reset();
+        mContext.getActivityController().withIntent(intent).setup();
+    }
+
     private void newScoreEventIsAdded() {
         coreEventEditorIsShown();
 
         mEventFragmentAccessor.setName(EVENT_NAME);
         //noinspection ConstantConditions
-        mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).setRating(5);
+        mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).setRating(4);
 
         mContext.pressOk();
 
