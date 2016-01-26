@@ -31,8 +31,6 @@ public class NoteEventActivity extends AbstractEditEventActivity
     private final static String EVENT_TAG = "event";
     private final static String NOTE_TAG = "note";
 
-    private NoteEventTable.Row mNoteEvent;
-
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(1);
@@ -105,13 +103,13 @@ public class NoteEventActivity extends AbstractEditEventActivity
         getExecutor().perform(new TransactionExecutor.Operation() {
             @Override
             public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                mNoteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(
+                NoteEventTable.Row noteEvent = HealthDatabase.NOTE_EVENT_TABLE.select1(
                         database,
                         foreignKey(NoteEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
 
                 final NoteTable.Row note = HealthDatabase.NOTE_TABLE.select1(
                         database,
-                        mNoteEvent.getConcretePrimaryKey().getNoteId());
+                        noteEvent.getConcretePrimaryKey().getNoteId());
 
                 runOnUiThread(new Runnable() {
                     @Override
