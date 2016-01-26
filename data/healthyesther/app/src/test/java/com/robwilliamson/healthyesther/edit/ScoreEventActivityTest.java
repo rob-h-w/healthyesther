@@ -9,7 +9,6 @@ import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 import org.junit.After;
@@ -143,6 +142,22 @@ public class ScoreEventActivityTest {
         launchedWithExistingScore();
 
         assertThat(mEventFragmentAccessor.getName(), is(EVENT_NAME));
+    }
+
+    @Test
+    public void whenLaunchedWithExistingScore_showsHappinessScoreValue() {
+        launchedWithExistingScore();
+
+        //noinspection ConstantConditions
+        assertThat(mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).getRating(), is(4f));
+    }
+
+    @Test
+    public void whenLaunchedWithExistingScore_doesNotShowUnsetScoreValues() {
+        launchedWithExistingScore();
+
+        assertThat(mScoreEventGroupFramgentAccessor.getScore(ENERGY), is((EditScoreEventAccessor) null));
+        assertThat(mScoreEventGroupFramgentAccessor.getScore(DROWSINESS), is((EditScoreEventAccessor) null));
     }
 
     private void launchedWithExistingScore() {
