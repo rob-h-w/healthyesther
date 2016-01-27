@@ -160,6 +160,43 @@ public class ScoreEventActivityTest {
         assertThat(mScoreEventGroupFramgentAccessor.getScore(DROWSINESS), is((EditScoreEventAccessor) null));
     }
 
+    @Test
+    public void whenExistingScoreIsEdited_updatesEventName() {
+        existingScoreIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+
+        assertThat(event.getName(), is(EDITED_EVENT_NAME));
+    }
+
+    @Test
+    public void whenExistingScoreIsEdited_doesNotCreateNewScoreEvent() {
+        existingScoreIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        HealthScoreEventTable.Row scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select1(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+
+        assertThat(event.getName(), is(EDITED_EVENT_NAME));
+    }
+
+    private void existingScoreIsEdited() {
+        launchedWithExistingScore();
+
+        mEventFragmentAccessor.setName(EDITED_EVENT_NAME);
+
+        //noinspection ConstantConditions
+        mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).setRating(5f);
+
+        mContext.pressOk();
+
+        Robolectric.flushForegroundThreadScheduler();
+        Robolectric.flushBackgroundThreadScheduler();
+    }
+
     private void launchedWithExistingScore() {
         newScoreEventIsAdded();
 
