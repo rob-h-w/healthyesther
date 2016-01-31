@@ -2,7 +2,7 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
@@ -49,8 +49,8 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);
-        EditFragment scoreGroup;
-        EditFragment event;
+        EditScoreEventGroupFragment scoreGroup;
+        EditEventFragment event;
         if (create) {
             scoreGroup = new EditScoreEventGroupFragment();
             DateTime now = DateTime.from(com.robwilliamson.healthyesther.db.Utils.Time.localNow());
@@ -61,13 +61,14 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                             now,
                             null,
                             null));
+            scoreGroup.setRow(Utils.checkNotNull(event.getRow()));
         } else {
             scoreGroup = getScoreGroupFragment();
             event = getEventFragment();
         }
 
-        list.add(new Pair<>(scoreGroup, SCORE_GROUP_TAG));
-        list.add(new Pair<>(event, EVENT_TAG));
+        list.add(new Pair<>((EditFragment) scoreGroup, SCORE_GROUP_TAG));
+        list.add(new Pair<>((EditFragment) event, EVENT_TAG));
 
         return list;
     }
@@ -83,9 +84,9 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
 
                 EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
 
-                List<Pair<HealthScoreTable.Row, Integer>> scoresAndEvents = groupFragment.getScores();
+                List<Pair<HealthScoreTable.Row, HealthScoreEventTable.Row>> scoresAndEvents = groupFragment.getScores();
 
-                for (Pair<HealthScoreTable.Row, Integer> pair : scoresAndEvents) {
+                for (Pair<HealthScoreTable.Row, HealthScoreEventTable.Row> pair : scoresAndEvents) {
                     if (pair.first == null) {
                         continue;
                     }
@@ -101,22 +102,26 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                     }
 
                     healthScoreRow.applyTo(transaction);
-                    Long score = pair.second == null ? null : pair.second.longValue();
-                    HealthScoreEventTable.Row row = DatabaseAccessor.HEALTH_SCORE_EVENT_TABLE.select0Or1(database,
-                            WhereContains.and(
-                                    WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
-                                    WhereContains.foreignKey(HealthScoreEventTable.HEALTH_SCORE_ID, healthScoreRow.getNextPrimaryKey().getId())
-                            ));
 
+                    HealthScoreEventTable.Row row = pair.second;
                     if (row == null) {
-                        if (pair.second == null || pair.second == 0) {
+                        row = DatabaseAccessor.HEALTH_SCORE_EVENT_TABLE.select0Or1(database,
+                                WhereContains.and(
+                                        WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
+                                        WhereContains.foreignKey(HealthScoreEventTable.HEALTH_SCORE_ID, healthScoreRow.getNextPrimaryKey().getId())
+                                ));
+                    }
+
+                    if (row != null) {
+                        if (row.getScore() == null && !row.isInDatabase()) {
                             continue;
                         }
 
-                        row = new HealthScoreEventTable.Row(event.getNextPrimaryKey(), healthScoreRow.getNextPrimaryKey(), score);
+                        row.getNextPrimaryKey().setEventId(event.getNextPrimaryKey());
+
+                        row.applyTo(transaction);
                     }
 
-                    row.applyTo(transaction);
                 }
 
                 runOnUiThread(new Runnable() {
@@ -157,12 +162,8 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                         for (Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> entry : scores.entrySet()) {
-                            EditScoreEventFragment fragment = EditScoreEventFragment.newInstance(entry.getKey());
+                            EditScoreEventFragment fragment = EditScoreEventFragment.newInstance(entry);
                             eventGroupFragment.addFragment(fragment, transaction);
-
-                            Long value = entry.getValue().getScore();
-                            value = value == null ? 0L : value;
-                            fragment.setValue(value.intValue());
                         }
 
                         transaction.commit();

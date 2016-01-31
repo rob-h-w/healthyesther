@@ -1,7 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;

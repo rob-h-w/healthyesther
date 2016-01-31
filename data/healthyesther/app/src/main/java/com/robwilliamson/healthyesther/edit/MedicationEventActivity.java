@@ -1,7 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.os.Bundle;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;

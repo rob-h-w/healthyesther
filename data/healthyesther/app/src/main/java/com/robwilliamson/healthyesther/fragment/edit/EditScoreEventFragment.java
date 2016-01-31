@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.fragment.edit;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,27 +13,57 @@ import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 
-public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
-    private static final String VALUE = "value";
+public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.Row> {
     private static final String SCORE = "score";
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
     private HealthScoreTable.Row mScore;
-    private int mValue;
     private ContextMenu mContextMenu;
 
     @Nullable
     private Watcher mWatcher;
 
-    public static EditScoreEventFragment newInstance(@Nonnull HealthScoreTable.Row score) {
+    public static EditScoreEventFragment newInstance(@Nonnull EventTable.Row event, @Nonnull HealthScoreTable.Row score) {
         EditScoreEventFragment fragment = new EditScoreEventFragment();
-        fragment.setRow(score);
+        fragment.setRow(new HealthScoreEventTable.Row(event.getNextPrimaryKey(), score.getNextPrimaryKey(), 0L));
         fragment.mScore = score;
         return fragment;
+    }
+
+    public static EditScoreEventFragment newInstance(@Nonnull HealthScoreEventTable.Row scoreEvent, @Nonnull HealthScoreTable.Row score) {
+        EditScoreEventFragment fragment = new EditScoreEventFragment();
+        fragment.setRow(scoreEvent);
+        fragment.mScore = score;
+        return fragment;
+    }
+
+    public static EditScoreEventFragment newInstance(@Nonnull Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> pair) {
+        return newInstance(Utils.checkNotNull(pair.getValue()), Utils.checkNotNull(pair.getKey()));
+    }
+
+    public static EditScoreEventFragment newInstance(@Nonnull Pair<HealthScoreTable.Row, HealthScoreEventTable.Row> pair) {
+        return newInstance(Utils.checkNotNull(pair.second), Utils.checkNotNull(pair.first));
+    }
+
+    @javax.annotation.Nullable
+    @Override
+    public HealthScoreEventTable.Row getRow() {
+        HealthScoreEventTable.Row row = super.getRow();
+        if (row != null) {
+            if ((row.getScore() == null || row.getScore() == 0L) && !row.isInDatabase()) {
+                return null;
+            }
+        }
+
+        return row;
     }
 
     public String getName() {
@@ -57,7 +88,12 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
         getMaxLabel().setText(mScore.getMaxLabel());
         getMinLabel().setText(mScore.getMinLabel());
         getRatingBar().setMax(EditScoreDialogFragment.MAX);
-        getRatingBar().setRating(mValue);
+        HealthScoreEventTable.Row row = getRow();
+        if (row != null && row.getScore() != null) {
+            getRatingBar().setRating(row.getScore());
+        } else {
+            getRatingBar().setRating(0);
+        }
     }
 
     @Override
@@ -101,7 +137,6 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
         }
 
         if (a != null) {
-            mValue = a.getInt(VALUE);
             mScore = (HealthScoreTable.Row) args.getSerializable(SCORE);
         }
     }
@@ -126,6 +161,11 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
         getRatingBar().setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                HealthScoreEventTable.Row row = EditScoreEventFragment.super.getRow();
+                if (row != null) {
+                    row.setScore((long)Math.round(rating));
+                }
+
                 if (mWatcher != null) {
                     mWatcher.onFragmentUpdate(EditScoreEventFragment.this);
                 }
@@ -136,7 +176,6 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
     @Override
     public void onSaveInstanceState(Bundle args) {
         super.onSaveInstanceState(args);
-        args.putInt(VALUE, getValue());
         args.putSerializable(SCORE, mScore);
     }
 
@@ -147,28 +186,13 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreTable.Row> {
 
     @Override
     public boolean isValid() {
-        return getValue() != 0;
+        HealthScoreEventTable.Row row = getRow();
+        return row != null && row.isValid();
     }
 
     @Override
-    protected HealthScoreTable.Row createRow() {
-        return new HealthScoreTable.Row(0L, "", false, null, null);
-    }
-
-    public int getValue() {
-        if (isResumed()) {
-            mValue = (int) getRatingBar().getRating();
-        }
-
-        return mValue;
-    }
-
-    public void setValue(int value) {
-        mValue = value;
-
-        if (isResumed()) {
-            getRatingBar().setRating(mValue);
-        }
+    protected HealthScoreEventTable.Row createRow() {
+        throw new UnsupportedOperationException("This edits a join row; the row can't be created independently.");
     }
 
     private TextView getTitle() {

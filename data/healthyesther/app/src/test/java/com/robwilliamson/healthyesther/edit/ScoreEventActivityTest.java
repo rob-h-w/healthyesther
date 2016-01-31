@@ -9,7 +9,9 @@ import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import org.junit.After;
 import org.junit.Before;
@@ -178,9 +180,19 @@ public class ScoreEventActivityTest {
         Database db = HealthDbHelper.getDatabase();
 
         EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select1(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+    }
+
+    @Test
+    public void whenExistingScoreIsEdited_updatesTheScore() {
+        existingScoreIsEdited();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
         HealthScoreEventTable.Row scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select1(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
 
-        assertThat(event.getName(), is(EDITED_EVENT_NAME));
+        assertThat(scoreEvent.getScore().intValue(), is(5));
     }
 
     private void existingScoreIsEdited() {
@@ -198,10 +210,32 @@ public class ScoreEventActivityTest {
     }
 
     private void launchedWithExistingScore() {
-        newScoreEventIsAdded();
-
         Database db = HealthDbHelper.getDatabase();
-        EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
+        HealthScoreTable.Row[] scores = HealthDatabase.HEALTH_SCORE_TABLE.select(db, WhereContains.any());
+
+        EventTable.Row event;
+        try (Transaction transaction = db.getTransaction()) {
+            event = new EventTable.Row(
+                    EventTypeTable.HEALTH.getId(),
+                    mContext.getNow(),
+                    mContext.getNow(),
+                    null,
+                    EVENT_NAME
+            );
+
+            event.applyTo(transaction);
+
+            for (HealthScoreTable.Row scoreType : scores) {
+                if (scoreType.getName().equals(HAPPINESS)) {
+                    HealthScoreEventTable.Row scoreEvent = new HealthScoreEventTable.Row(event.getNextPrimaryKey(), scoreType.getNextPrimaryKey(), 4L);
+                    scoreEvent.applyTo(transaction);
+                    break;
+                }
+            }
+
+            transaction.commit();
+            Robolectric.flushBackgroundThreadScheduler();
+        }
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);

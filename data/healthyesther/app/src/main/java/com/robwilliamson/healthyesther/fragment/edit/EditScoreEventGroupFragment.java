@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Pair;
+import android.support.v4.util.Pair;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -21,28 +22,17 @@ import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTable.Row> {
+public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 
     private volatile boolean mResumed = false;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            return;
-        }
-
-        refreshScores();
-    }
 
     public void clearScoreFragments() {
         FragmentManager manager = getFragmentManager();
@@ -62,12 +52,13 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
                 HealthScoreTable.Row[] rows = DatabaseAccessor.HEALTH_SCORE_TABLE.select(database, WhereContains.any());
 
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                EventTable.Row event = Utils.checkNotNull(getRow());
 
                 for (HealthScoreTable.Row row : rows) {
                     if (Settings.INSTANCE.getDefaultExcludedEditScores().contains(row.getName())) {
                         continue;
                     }
-                    addFragment(EditScoreEventFragment.newInstance(row), fragmentTransaction);
+                    addFragment(EditScoreEventFragment.newInstance(event, row), fragmentTransaction);
                 }
 
                 fragmentTransaction.add(R.id.edit_score_group_layout, new AddValueFragment(), ADD_VALUE_FRAGMENT);
@@ -129,7 +120,7 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
     }
 
     @Override
-    protected HealthScoreEventTable.Row createRow() {
+    protected EventTable.Row createRow() {
         throw new UnsupportedOperationException("This is a relation row - please create and set the row from the containing activity.");
     }
 
@@ -169,35 +160,26 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
         return R.layout.fragment_edit_score_event_group;
     }
 
-    @Nullable
-    public EditScoreEventFragment getEditScoreEventFragment(@Nonnull HealthScoreTable.Row score) {
-        List<EditScoreEventFragment> fragments = getEditScoreEventFragments();
-
-        for (EditScoreEventFragment fragment : fragments) {
-            HealthScoreTable.Row fragmentScore = fragment.getScore();
-            if (fragmentScore != null && fragmentScore.isInDatabase()) {
-                boolean matchId = fragmentScore.getNextPrimaryKey().equals(score.getNextPrimaryKey());
-                boolean matchName = fragmentScore.getName().equals(score.getName());
-                if (matchId || matchName) {
-                    return fragment;
-                }
-            }
-        }
-
-        return null;
-    }
-
     private AddValueFragment getAddValueFragment() {
         return Utils.View.getTypeSafeFragment(getFragmentManager(), ADD_VALUE_FRAGMENT, AddValueFragment.class);
     }
 
-    public List<Pair<HealthScoreTable.Row, Integer>> getScores() {
-        List<Pair<HealthScoreTable.Row, Integer>> scores = new ArrayList<>();
+    @Nonnull
+    public List<Pair<HealthScoreTable.Row, HealthScoreEventTable.Row>> getScores() {
+        List<Pair<HealthScoreTable.Row, HealthScoreEventTable.Row>> scores = new ArrayList<>();
         for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
-            HealthScoreTable.Row row = fragment.getRow();
-            Pair<HealthScoreTable.Row, Integer> pair = new Pair<>(
-                    row,
-                    fragment.getValue()
+            HealthScoreTable.Row score = fragment.getScore();
+            HealthScoreEventTable.Row scoreEvent = fragment.getRow();
+
+            if (scoreEvent == null) {
+                continue;
+            }
+
+            scoreEvent.getNextPrimaryKey().setEventId(Utils.checkNotNull(getRow()).getNextPrimaryKey());
+
+            Pair<HealthScoreTable.Row, HealthScoreEventTable.Row> pair = new Pair<>(
+                    score,
+                    scoreEvent
             );
             scores.add(pair);
         }
@@ -207,5 +189,21 @@ public class EditScoreEventGroupFragment extends EditFragment<HealthScoreEventTa
 
     public void removeScore(EditScoreEventFragment fragment) {
         getFragmentManager().beginTransaction().remove(fragment).commit();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable(HealthScoreEventTable.SCORE, (Serializable) getScores());
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            refreshScores();
+        }
     }
 }
