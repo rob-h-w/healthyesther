@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.semantic;
 
+import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.generator.TableGenerator;
 import com.robwilliamson.healthyesther.type.Column;
 import com.robwilliamson.healthyesther.type.Constraint;
@@ -98,6 +99,7 @@ public class Table extends DbObject {
     }
 
     public static Table byName(List<Table> tables, String name) {
+        name = Strings.stripSquareBrackets(name);
         for (Table table : tables) {
             if (table.getName().equals(name)) {
                 return table;
@@ -145,10 +147,13 @@ public class Table extends DbObject {
             for (Constraint constraint : this.getConstraints()) {
                 if ("PRIMARY KEY".equals(constraint.getType())) {
                     // PRIMARY KEY ( medication_id, name )
-                    Pattern referencePattern = Pattern.compile("PRIMARY KEY \\( (.+) \\)");
+                    Pattern referencePattern = Pattern.compile("PRIMARY\\s*KEY\\s*\\(\\s*(.+)\\s*\\)");
                     Matcher matcher = referencePattern.matcher(constraint.getDefinition());
                     if (matcher.lookingAt()) {
-                        String[] columnNames = matcher.group(1).split(", ");
+                        String[] columnNames = matcher.group(1).split(",");
+                        for (int i = 0; i < columnNames.length; i++) {
+                            columnNames[i] = Strings.stripSquareBrackets(columnNames[i]);
+                        }
                         mPrimaryKeyColumnNames.addAll(Arrays.asList(columnNames));
                     }
                 }

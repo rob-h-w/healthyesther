@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.type;
 
+import com.robwilliamson.healthyesther.Strings;
+
 import java.util.Arrays;
 
 public class DbObject {
@@ -27,7 +29,7 @@ public class DbObject {
     }
 
     public String getName() {
-        return name;
+        return Strings.stripSquareBrackets(name);
     }
 
     public Column[] getColumns() {

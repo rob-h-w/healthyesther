@@ -86,4 +86,20 @@ public final class Strings {
 
         return builder.toString();
     }
+
+    public static String stripSquareBrackets(String string) {
+        string = string.trim();
+
+        while (string.startsWith("[")) {
+            string = string.substring(1);
+            string = string.trim();
+        }
+
+        while (string.endsWith("]")) {
+            string = string.substring(0, string.length() - 1);
+            string = string.trim();
+        }
+
+        return string;
+    }
 }

@@ -37,7 +37,7 @@ public class Column {
 
         if (mMaxLength == null) {
             String ddl = mTable.getDdl();
-            Pattern re = Pattern.compile(".*" + getName() + "\\s+TEXT\\s*\\(\\s*(\\d+)\\s*\\).*", Pattern.DOTALL | Pattern.MULTILINE);
+            Pattern re = Pattern.compile(".*[\\[]?\\s*" + getName() + "\\s*[\\]]?\\s+TEXT\\s*\\(\\s*(\\d+)\\s*\\).*", Pattern.DOTALL | Pattern.MULTILINE);
             Matcher matcher = re.matcher(ddl);
             if (matcher.find()) {
                 mMaxLength = Integer.valueOf(matcher.group(1));
@@ -49,7 +49,7 @@ public class Column {
 
     @Nonnull
     public String getName() {
-        return name;
+        return Strings.stripSquareBrackets(name);
     }
 
     public String getVarName() {
@@ -61,7 +61,7 @@ public class Column {
 
             if (constraints != null) {
                 // REFERENCES event_type ( _id )
-                Pattern referencePattern = Pattern.compile("REFERENCES (\\w+) \\( ([\\w\\s]+) \\).*");
+                Pattern referencePattern = Pattern.compile("\\s*REFERENCES\\s*[\\[]?(\\w+)[\\]]?\\s*\\(\\s*[\\[]?([\\w\\s]+)[\\]]?\\s*\\).*");
 
                 for (Constraint constraint : constraints) {
                     switch (constraint.getType()) {
@@ -106,6 +106,10 @@ public class Column {
 
     @Nonnull
     public String getType() {
+        if (isForeignKey() || type.isEmpty()) {
+            return "INTEGER";
+        }
+
         return type;
     }
 
@@ -117,10 +121,6 @@ public class Column {
      */
     @Nonnull
     public JType getPrimitiveType(@Nonnull JCodeModel model) {
-        if (isForeignKey() || mPrimaryKey) {
-            return model.LONG;
-        }
-
         switch (getType()) {
             case "BOOLEAN":
                 return model.BOOLEAN;
@@ -162,13 +162,11 @@ public class Column {
 
     @Nonnull
     private JType handleUnknownColumnType(@Nonnull JType indexer) {
-        String typeName = getType();
-
-        if (Strings.isEmpty(typeName)) {
-            if (isForeignKey()) {
-                return indexer;
-            }
+        if (isForeignKey()) {
+            return indexer;
         }
+
+        String typeName = getType();
 
         throw new IllegalArgumentException("Type " + typeName + " is unsupported.");
     }
