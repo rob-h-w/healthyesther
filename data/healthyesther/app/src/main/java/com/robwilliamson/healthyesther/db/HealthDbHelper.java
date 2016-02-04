@@ -49,6 +49,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         return sInstance;
     }
 
+    @Nonnull
     public static Database getDatabase() {
         return getDatabaseWrapper();
     }
