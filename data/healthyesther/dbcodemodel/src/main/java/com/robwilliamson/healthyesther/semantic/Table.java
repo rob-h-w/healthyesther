@@ -126,7 +126,10 @@ public class Table extends DbObject {
         List<Table> tableDependencies = new ArrayList<>();
         for (Column column : getColumns()) {
             if (column.isForeignKey()) {
-                tableDependencies.add(column.getColumnDependency().getDependency().getTable());
+                ColumnDependency columnDependency = column.getColumnDependency();
+                if (columnDependency != null) {
+                    tableDependencies.add(columnDependency.getDependency().getTable());
+                }
             }
         }
 

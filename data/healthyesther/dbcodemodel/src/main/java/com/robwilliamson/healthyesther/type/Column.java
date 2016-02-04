@@ -52,10 +52,12 @@ public class Column {
         return Strings.stripSquareBrackets(name);
     }
 
+    @Nonnull
     public String getVarName() {
         return Strings.lowerCase(Strings.underscoresToCamel(getName()));
     }
 
+    @Nullable
     public ColumnDependency getColumnDependency() {
         if (mColumnDependency == null) {
 
@@ -75,8 +77,8 @@ public class Column {
                                 continue;
                             }
 
-                            String tableName = matcher.group(1);
-                            String columnName = matcher.group(2);
+                            String tableName = Strings.stripSquareBrackets(matcher.group(1));
+                            String columnName = Strings.stripSquareBrackets(matcher.group(2));
 
                             mColumnDependency = new ColumnDependency(this, tableName, columnName);
                             break;
@@ -188,7 +190,10 @@ public class Column {
         }
 
         if (isForeignKey()) {
-            type = getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+            ColumnDependency columnDependency = getColumnDependency();
+            if (columnDependency != null) {
+                type = columnDependency.getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+            }
         } else if (mPrimaryKey) {
             type = getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
         }
