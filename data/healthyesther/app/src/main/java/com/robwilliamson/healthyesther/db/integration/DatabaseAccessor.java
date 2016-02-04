@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.db.integration;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -41,6 +42,10 @@ public class DatabaseAccessor extends HealthDatabase {
         if (from == 3) {
             Upgrade.from3(transaction);
         }
+
+        if (from == 4) {
+            Upgrade.from4(transaction);
+        }
     }
 
     private static class Upgrade {
@@ -73,6 +78,10 @@ public class DatabaseAccessor extends HealthDatabase {
             } finally {
                 db.endTransaction();
             }
+        }
+
+        public static void from4(com.robwilliamson.healthyesther.db.includes.Transaction transaction) {
+            HealthDatabase.create(transaction);
         }
     }
 }
