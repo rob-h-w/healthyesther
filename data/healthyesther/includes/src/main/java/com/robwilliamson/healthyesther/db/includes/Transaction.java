@@ -22,6 +22,8 @@ public interface Transaction extends AutoCloseable {
 
     void rollBack();
 
+    Database getDatabase();
+
     interface CompletionHandler {
         void onCompleted();
     }

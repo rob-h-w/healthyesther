@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
+import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Where;
 
@@ -17,22 +18,18 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
     private static final String LOG_TAG = Transaction.class.getName();
     private final Set<CompletionHandler> mCompletionHandlers = new HashSet<>();
     @Nonnull
-    private SQLiteDatabase mDatabase;
+    private DatabaseWrapperClass mDatabase;
     private volatile boolean mIsInTransaction;
 
-    Transaction(@Nonnull SQLiteDatabase database) {
-        mDatabase = database;
+    Transaction(@Nonnull DatabaseWrapperClass databaseWrapperClass) {
+        mDatabase = databaseWrapperClass;
         db().beginTransaction();
         mIsInTransaction = true;
     }
 
     @Nonnull
     protected SQLiteDatabase db() {
-        if (!mDatabase.isOpen()) {
-            mDatabase = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
-        }
-
-        return mDatabase;
+        return mDatabase.getSqliteDatabase();
     }
 
     private ContentValues valuesFrom(@Nonnull List<String> columnNames, @Nonnull Object... columnValues) {
@@ -127,6 +124,11 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
         db().endTransaction();
 
         mIsInTransaction = false;
+    }
+
+    @Override
+    public Database getDatabase() {
+        return HealthDbHelper.getDatabaseWrapper();
     }
 
     @Override

@@ -87,8 +87,8 @@ public class TransactionTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        TestableTransaction.sqLiteDatabase = mDatabase;
-        mTransaction = new TestableTransaction(mDatabase);
+        TestableTransaction.database = new DatabaseWrapperClass(mDatabase);
+        mTransaction = new TestableTransaction(TestableTransaction.database);
 
         doReturn(WHERE).when(mWhere).getWhere();
     }
@@ -200,16 +200,16 @@ public class TransactionTest {
     }
 
     private static class TestableTransaction extends Transaction {
-        public static SQLiteDatabase sqLiteDatabase;
+        public static DatabaseWrapperClass database;
 
-        public TestableTransaction(@Nonnull SQLiteDatabase database) {
+        public TestableTransaction(@Nonnull DatabaseWrapperClass database) {
             super(database);
         }
 
         @Nonnull
         @Override
         protected SQLiteDatabase db() {
-            return sqLiteDatabase;
+            return database.getSqliteDatabase();
         }
     }
 }

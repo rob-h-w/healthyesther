@@ -36,7 +36,7 @@ public class DatabaseWrapperClass extends Database {
 
     @Override
     public Transaction getTransaction() {
-        return new com.robwilliamson.healthyesther.db.integration.Transaction(mDatabase);
+        return new com.robwilliamson.healthyesther.db.integration.Transaction(this);
     }
 
     @Nonnull
