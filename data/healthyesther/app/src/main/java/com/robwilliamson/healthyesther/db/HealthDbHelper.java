@@ -69,6 +69,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             if (sDatabase != null) {
                 sDatabase.getSqliteDatabase().close();
                 sDatabase = null;
+                sInstance = null;
             }
         }
     }
@@ -87,8 +88,8 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         synchronized (sSync) {
-            Database database = new DatabaseWrapperClass(sqLiteDatabase);
-            try (Transaction transaction = database.getTransaction()) {
+            sDatabase = new DatabaseWrapperClass(sqLiteDatabase);
+            try (Transaction transaction = sDatabase.getTransaction()) {
                 DatabaseAccessor.create(transaction);
                 transaction.commit();
             }
@@ -98,8 +99,8 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int from, int to) {
         synchronized (sSync) {
-            Database database = new DatabaseWrapperClass(sqLiteDatabase);
-            try (Transaction transaction = database.getTransaction()) {
+            sDatabase = new DatabaseWrapperClass(sqLiteDatabase);
+            try (Transaction transaction = sDatabase.getTransaction()) {
                 DatabaseAccessor.upgrade(transaction, from, to);
                 transaction.commit();
             }
