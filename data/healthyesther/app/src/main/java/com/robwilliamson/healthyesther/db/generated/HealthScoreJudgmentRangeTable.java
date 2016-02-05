@@ -38,7 +38,7 @@ public class HealthScoreJudgmentRangeTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE IF NOT EXISTS health_score_judgment_range (_id PRIMARY KEY NOT NULL UNIQUE, score_id REFERENCES health_score (_id) ON DELETE CASCADE ON UPDATE NO ACTION NOT NULL, best_value INTEGER NOT NULL, start_time INTEGER, end_time INTEGER)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS health_score_judgment_range (_id INTEGER PRIMARY KEY NOT NULL UNIQUE, score_id REFERENCES health_score (_id) ON DELETE CASCADE ON UPDATE NO ACTION NOT NULL, best_value INTEGER NOT NULL, start_time INTEGER, end_time INTEGER)");
     }
 
     @Override
