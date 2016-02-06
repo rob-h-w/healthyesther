@@ -1,8 +1,13 @@
 package com.robwilliamson.healthyesther.util.time;
 
+import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
+
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.ReadableInstant;
+
+import javax.annotation.Nonnull;
 
 public class Range extends TimeRegion {
     public final DateTime centre;
@@ -20,6 +25,11 @@ public class Range extends TimeRegion {
         this.sigma = sigma;
     }
 
+    @Nonnull
+    public static Builder Starting(@Nonnull DateTime dateTime) {
+        return new Builder(dateTime);
+    }
+
     public Range startingFrom(DateTime time) {
         return new Range(time, time.plus(sigma).plus(sigma));
     }
@@ -30,6 +40,10 @@ public class Range extends TimeRegion {
 
     public Range startingYesterday() {
         return startingFrom(from.minus(Duration.standardDays(1)));
+    }
+
+    public Duration length() {
+        return new Duration(from, to);
     }
 
     @Override
@@ -72,5 +86,26 @@ public class Range extends TimeRegion {
     @Override
     protected boolean isIn(TimeRegion region, Comparison comparison) {
         return region.contains(from, comparison) && region.contains(to, comparison);
+    }
+
+    public static class Builder {
+        @Nonnull
+        private final DateTime mStarting;
+
+        public Builder(@Nonnull DateTime starting) {
+            mStarting = starting.withZone(Utils.Time.localNow().getZone()).withMillisOfDay(0);
+        }
+
+        @Nonnull
+        public Range from(@Nonnull HealthScoreJudgmentRangeTable.Row healthScoreJudgmentRange) {
+            Long start = healthScoreJudgmentRange.getStartTime();
+            Long end = healthScoreJudgmentRange.getEndTime();
+
+            if (start == null || end == null) {
+                return new Range(mStarting, mStarting.plusDays(1));
+            } else {
+                return new Range(mStarting.plusMillis(start.intValue()), mStarting.plusMillis(end.intValue()));
+            }
+        }
     }
 }

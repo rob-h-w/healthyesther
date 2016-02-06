@@ -8,8 +8,11 @@ import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
+import com.robwilliamson.healthyesther.util.time.Range;
 
+import org.joda.time.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -103,6 +107,19 @@ public class DbV4ToV5Test {
     }
 
     @Test
+    public void whenOpeningV4_happinessJudgementIsInterpretedAsRoundTheClock() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
+        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+
+        DateTime now = DateTimeConverter.now();
+        Range range = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgement);
+
+        assertThat(range.length(), equalTo(Duration.standardDays(1)));
+    }
+
+    @Test
     public void whenOpeningV4_creates2DrowsinessJudgements() {
         Database db = HealthDbHelper.getDatabase();
 
@@ -110,5 +127,43 @@ public class DbV4ToV5Test {
         HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
 
         assertThat(scoreJudgements.length, is(2));
+    }
+
+    @Test
+    public void whenOpeningV4_createsDayDrowsinessJudgement() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row drowsiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Drowsiness"));
+        HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
+
+        DateTime now = DateTimeConverter.now();
+        Range day = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[0]);
+        Range night = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[1]);
+
+        if (day.from.isAfter(night.to)) {
+            day = night;
+        }
+
+        assertThat(day.from.hourOfDay().get(), is(8));
+        assertThat(day.to.hourOfDay().get(), is(20));
+    }
+
+    @Test
+    public void whenOpeningV4_createsNightDrowsinessJudgement() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row drowsiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Drowsiness"));
+        HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
+
+        DateTime now = DateTimeConverter.now();
+        Range day = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[0]);
+        Range night = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[1]);
+
+        if (day.from.isAfter(night.to)) {
+            night = day;
+        }
+
+        assertThat(night.from.hourOfDay().get(), is(22));
+        assertThat(night.to.hourOfDay().get(), is(6));
     }
 }
