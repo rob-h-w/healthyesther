@@ -166,4 +166,17 @@ public class DbV4ToV5Test {
         assertThat(night.from.hourOfDay().get(), is(22));
         assertThat(night.to.hourOfDay().get(), is(6));
     }
+
+    @Test
+    public void whenOpeningV4_createsRoundTheClockJudgmentsForCustomScores() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row foonsness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Foonsness"));
+        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, foonsness.getConcretePrimaryKey().getId()));
+
+        DateTime now = DateTimeConverter.now();
+        Range range = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgement);
+
+        assertThat(range.length(), equalTo(Duration.standardDays(1)));
+    }
 }
