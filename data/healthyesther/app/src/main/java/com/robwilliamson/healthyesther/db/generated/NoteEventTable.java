@@ -253,7 +253,6 @@ public class NoteEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.NoteTable.Row noteId) {
-            setNextPrimaryKey(new NoteEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mNoteIdRow = noteId;
         }

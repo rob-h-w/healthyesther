@@ -276,7 +276,6 @@ public class MealEventTable
             com.robwilliamson.healthyesther.db.generated.UnitsTable.Row unitsId,
             @Nullable
             Double amount) {
-            setNextPrimaryKey(new MealEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mMealIdRow = mealId;
             mUnitsIdRow = unitsId;

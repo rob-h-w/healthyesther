@@ -1,10 +1,13 @@
 package com.robwilliamson.healthyesther.db.integration;
 
 
+import android.provider.ContactsContract;
+
 import com.robwilliamson.healthyesther.App;
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
@@ -40,7 +43,8 @@ public class DbV4ToV5Test {
 
         String dbFolder = App.getInstance().getDatabasePath(HealthDatabase.FILE_NAME).getParentFile().getAbsolutePath();
 
-        File f = new File(dbFolder + HealthDatabase.FILE_NAME);
+        new File(dbFolder).mkdirs();
+        File f = new File(dbFolder + '/' + HealthDatabase.FILE_NAME);
         try {
             try (FileOutputStream outputStream = new FileOutputStream(f)) {
                 int readBytes;
@@ -60,6 +64,21 @@ public class DbV4ToV5Test {
 
         HealthScoreTable.Row[] scoreTypes = HealthDatabase.HEALTH_SCORE_TABLE.select(db, WhereContains.any());
 
-        assertThat(scoreTypes.length, is(3));
+        assertThat(scoreTypes.length, is(4));
+    }
+
+    @Test
+    public void whenOpeningV4_createsScoreJudgementTable() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.any());
+    }
+
+    @Test
+    public void whenOpeningV4_createsJudgementForHappiness() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
+        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
     }
 }

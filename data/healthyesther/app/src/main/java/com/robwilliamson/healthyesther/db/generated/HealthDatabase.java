@@ -13,21 +13,21 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 public class HealthDatabase {
 
     public final static String FILE_NAME = "health.db3";
-    public final static UnitsTable UNITS_TABLE = new UnitsTable();
-    public final static EventTypeTable EVENT_TYPE_TABLE = new EventTypeTable();
-    public final static NoteTable NOTE_TABLE = new NoteTable();
-    public final static EventTable EVENT_TABLE = new EventTable();
-    public final static MedicationTable MEDICATION_TABLE = new MedicationTable();
-    public final static MealTable MEAL_TABLE = new MealTable();
     public final static HealthScoreTable HEALTH_SCORE_TABLE = new HealthScoreTable();
+    public final static MealTable MEAL_TABLE = new MealTable();
+    public final static MedicationTable MEDICATION_TABLE = new MedicationTable();
+    public final static NoteTable NOTE_TABLE = new NoteTable();
+    public final static UnitsTable UNITS_TABLE = new UnitsTable();
+    public final static HealthScoreJudgmentRangeTable HEALTH_SCORE_JUDGMENT_RANGE_TABLE = new HealthScoreJudgmentRangeTable();
     public final static MedicationNameTable MEDICATION_NAME_TABLE = new MedicationNameTable();
     public final static AndroidMetadataTable ANDROID_METADATA_TABLE = new AndroidMetadataTable();
-    public final static HealthScoreJudgmentRangeTable HEALTH_SCORE_JUDGMENT_RANGE_TABLE = new HealthScoreJudgmentRangeTable();
-    public final static NoteEventTable NOTE_EVENT_TABLE = new NoteEventTable();
-    public final static HealthScoreEventTable HEALTH_SCORE_EVENT_TABLE = new HealthScoreEventTable();
+    public final static EventTypeTable EVENT_TYPE_TABLE = new EventTypeTable();
+    public final static EventTable EVENT_TABLE = new EventTable();
     public final static MealEventTable MEAL_EVENT_TABLE = new MealEventTable();
     public final static MedicationEventTable MEDICATION_EVENT_TABLE = new MedicationEventTable();
-    public final static Table[] TABLES = new Table[] {UNITS_TABLE, EVENT_TYPE_TABLE, NOTE_TABLE, EVENT_TABLE, MEDICATION_TABLE, MEAL_TABLE, HEALTH_SCORE_TABLE, MEDICATION_NAME_TABLE, ANDROID_METADATA_TABLE, HEALTH_SCORE_JUDGMENT_RANGE_TABLE, NOTE_EVENT_TABLE, HEALTH_SCORE_EVENT_TABLE, MEAL_EVENT_TABLE, MEDICATION_EVENT_TABLE };
+    public final static HealthScoreEventTable HEALTH_SCORE_EVENT_TABLE = new HealthScoreEventTable();
+    public final static NoteEventTable NOTE_EVENT_TABLE = new NoteEventTable();
+    public final static Table[] TABLES = new Table[] {HEALTH_SCORE_TABLE, MEAL_TABLE, MEDICATION_TABLE, NOTE_TABLE, UNITS_TABLE, HEALTH_SCORE_JUDGMENT_RANGE_TABLE, MEDICATION_NAME_TABLE, ANDROID_METADATA_TABLE, EVENT_TYPE_TABLE, EVENT_TABLE, MEAL_EVENT_TABLE, MEDICATION_EVENT_TABLE, HEALTH_SCORE_EVENT_TABLE, NOTE_EVENT_TABLE };
 
     protected HealthDatabase() {
     }

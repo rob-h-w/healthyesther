@@ -252,7 +252,6 @@ public class MedicationNameTable
             String name,
             @Nullable
             com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
-            setNextPrimaryKey(new MedicationNameTable.PrimaryKey(name, null));
             mMedicationIdRow = medicationId;
         }
 

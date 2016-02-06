@@ -267,7 +267,6 @@ public class HealthScoreJudgmentRangeTable
             Long endTime,
             @Nullable
             Long startTime) {
-            setNextPrimaryKey(new HealthScoreJudgmentRangeTable.PrimaryKey(null));
             mScoreIdRow = scoreId;
             mBestValue = bestValue;
             mEndTime = endTime;

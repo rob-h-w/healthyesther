@@ -725,22 +725,6 @@ public class RowGenerator extends BaseClassGenerator {
         final Map<Column, JVar> primaryParams = mPrimaryKeyColumns.makeRowParamsFor(mJoinConstructor, picker);
         Map<Column, JVar> basicParams = mBasicColumns.makeRowParamsFor(mJoinConstructor, picker);
 
-        final JInvocation newPrimaryKey = JExpr._new(getTableGenerator().getPrimaryKeyGenerator().getJClass());
-
-        Column.Visitor<RowGenerator.BaseColumns> addToConstructor = new Column.Visitor<BaseColumns>() {
-            @Override
-            public void visit(Column column, BaseColumns context) {
-                JExpression arg = primaryParams.get(column);
-                arg = arg == null ? JExpr._null() : arg;
-                arg = mPrimaryKeyColumns.rowFieldFor(column) != null ? JExpr._null() : arg;
-                newPrimaryKey.arg(arg);
-            }
-        };
-
-        mPrimaryKeyColumns.forEach(addToConstructor);
-
-        callSetNextPrimaryKey(body, null).arg(newPrimaryKey);
-
         for (Column column : mPrimaryKeyColumns.columns) {
             RowField rowField = mPrimaryKeyColumns.rowFieldFor(column);
             JVar param = primaryParams.get(column);

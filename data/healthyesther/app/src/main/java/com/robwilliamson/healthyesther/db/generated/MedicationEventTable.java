@@ -253,7 +253,6 @@ public class MedicationEventTable
             com.robwilliamson.healthyesther.db.generated.EventTable.Row eventId,
             @Nonnull
             com.robwilliamson.healthyesther.db.generated.MedicationTable.Row medicationId) {
-            setNextPrimaryKey(new MedicationEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mMedicationIdRow = medicationId;
         }

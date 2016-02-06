@@ -264,7 +264,6 @@ public class HealthScoreEventTable
             com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row healthScoreId,
             @Nullable
             Long score) {
-            setNextPrimaryKey(new HealthScoreEventTable.PrimaryKey(null, null));
             mEventIdRow = eventId;
             mHealthScoreIdRow = healthScoreId;
             mScore = score;

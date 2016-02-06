@@ -5,11 +5,14 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Table;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 public class DatabaseAccessor extends HealthDatabase {
+    private final static String HAPPINESS_NAME = "Happiness";
     private final static Table[] TABLES;
 
     static {
@@ -27,7 +30,7 @@ public class DatabaseAccessor extends HealthDatabase {
         Database.create(transaction, TABLES);
         EventTypeTable.populateTable(transaction);
 
-        new HealthScoreTable.Row(5, "Happiness", true, "Happy", "Sad").applyTo(transaction);
+        new HealthScoreTable.Row(5, HAPPINESS_NAME, true, "Happy", "Sad").applyTo(transaction);
         new HealthScoreTable.Row(5, "Energy", true, "Energetic", "Tired").applyTo(transaction);
         new HealthScoreTable.Row(1, "Drowsiness", true, "Sleepy", "Awake").applyTo(transaction);
     }
@@ -82,6 +85,15 @@ public class DatabaseAccessor extends HealthDatabase {
 
         public static void from4(com.robwilliamson.healthyesther.db.includes.Transaction transaction) {
             HealthDatabase.create(transaction);
+
+            Database db = transaction.getDatabase();
+
+            HealthScoreTable.Row[] scores = HealthDatabase.HEALTH_SCORE_TABLE.select(db, WhereContains.any());
+
+            for (HealthScoreTable.Row score : scores) {
+                HealthScoreJudgmentRangeTable.Row judgment = new HealthScoreJudgmentRangeTable.Row(score, score.getBestValue(), null, null);
+                judgment.applyTo(transaction);
+            }
         }
     }
 }
