@@ -71,14 +71,14 @@ public class DbV4ToV5Test {
     }
 
     @Test
-    public void whenOpeningV4_createsScoreJudgementTable() {
+    public void whenOpeningV4_createsScoreJudgmentTable() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.any());
     }
 
     @Test
-    public void whenOpeningV4_createsJudgementForHappiness() {
+    public void whenOpeningV4_createsJudgmentForHappiness() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
@@ -86,59 +86,59 @@ public class DbV4ToV5Test {
     }
 
     @Test
-    public void whenOpeningV4_happinessJudgementBestValueIsSame() {
+    public void whenOpeningV4_happinessJudgmentBestValueIsSame() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
-        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row scoreJudgment = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
 
-        assertThat(scoreJudgement.getBestValue(), is(5L));
+        assertThat(scoreJudgment.getBestValue(), is(5L));
     }
 
     @Test
-    public void whenOpeningV4_happinessJudgementIsRoundTheClock() {
+    public void whenOpeningV4_happinessJudgmentIsRoundTheClock() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
-        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row scoreJudgment = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
 
-        assertThat(scoreJudgement.getStartTime(), is((Long) null));
-        assertThat(scoreJudgement.getEndTime(), is((Long) null));
+        assertThat(scoreJudgment.getStartTime(), is((Long) null));
+        assertThat(scoreJudgment.getEndTime(), is((Long) null));
     }
 
     @Test
-    public void whenOpeningV4_happinessJudgementIsInterpretedAsRoundTheClock() {
+    public void whenOpeningV4_happinessJudgmentIsInterpretedAsRoundTheClock() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
-        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row scoreJudgment = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
 
         DateTime now = DateTimeConverter.now();
-        Range range = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgement);
+        Range range = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgment);
 
         assertThat(range.length(), equalTo(Duration.standardDays(1)));
     }
 
     @Test
-    public void whenOpeningV4_creates2DrowsinessJudgements() {
+    public void whenOpeningV4_creates2DrowsinessJudgments() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row drowsiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Drowsiness"));
-        HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row[] scoreJudgments = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
 
-        assertThat(scoreJudgements.length, is(2));
+        assertThat(scoreJudgments.length, is(2));
     }
 
     @Test
-    public void whenOpeningV4_createsDayDrowsinessJudgement() {
+    public void whenOpeningV4_createsDayDrowsinessJudgment() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row drowsiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Drowsiness"));
-        HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row[] scoreJudgments = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
 
         DateTime now = DateTimeConverter.now();
-        Range day = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[0]);
-        Range night = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[1]);
+        Range day = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgments[0]);
+        Range night = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgments[1]);
 
         if (day.from.isAfter(night.to)) {
             day = night;
@@ -149,15 +149,15 @@ public class DbV4ToV5Test {
     }
 
     @Test
-    public void whenOpeningV4_createsNightDrowsinessJudgement() {
+    public void whenOpeningV4_createsNightDrowsinessJudgment() {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row drowsiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Drowsiness"));
-        HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row[] scoreJudgments = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
 
         DateTime now = DateTimeConverter.now();
-        Range day = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[0]);
-        Range night = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgements[1]);
+        Range day = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgments[0]);
+        Range night = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgments[1]);
 
         if (day.from.isAfter(night.to)) {
             night = day;
@@ -172,10 +172,10 @@ public class DbV4ToV5Test {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row foonsness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Foonsness"));
-        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, foonsness.getConcretePrimaryKey().getId()));
+        HealthScoreJudgmentRangeTable.Row scoreJudgment = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, foonsness.getConcretePrimaryKey().getId()));
 
         DateTime now = DateTimeConverter.now();
-        Range range = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgement);
+        Range range = Range.Starting(now.as(org.joda.time.DateTime.class)).from(scoreJudgment);
 
         assertThat(range.length(), equalTo(Duration.standardDays(1)));
     }
