@@ -1,8 +1,6 @@
 package com.robwilliamson.healthyesther.db.integration;
 
 
-import android.provider.ContactsContract;
-
 import com.robwilliamson.healthyesther.App;
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
@@ -43,6 +41,7 @@ public class DbV4ToV5Test {
 
         String dbFolder = App.getInstance().getDatabasePath(HealthDatabase.FILE_NAME).getParentFile().getAbsolutePath();
 
+        //noinspection ResultOfMethodCallIgnored
         new File(dbFolder).mkdirs();
         File f = new File(dbFolder + '/' + HealthDatabase.FILE_NAME);
         try {
@@ -79,6 +78,37 @@ public class DbV4ToV5Test {
         Database db = HealthDbHelper.getDatabase();
 
         HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
+        HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+    }
+
+    @Test
+    public void whenOpeningV4_happinessJudgementBestValueIsSame() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
         HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+
+        assertThat(scoreJudgement.getBestValue(), is(5L));
+    }
+
+    @Test
+    public void whenOpeningV4_happinessJudgementIsRoundTheClock() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row happiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Happiness"));
+        HealthScoreJudgmentRangeTable.Row scoreJudgement = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, happiness.getConcretePrimaryKey().getId()));
+
+        assertThat(scoreJudgement.getStartTime(), is((Long) null));
+        assertThat(scoreJudgement.getEndTime(), is((Long) null));
+    }
+
+    @Test
+    public void whenOpeningV4_creates2DrowsinessJudgements() {
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row drowsiness = HealthDatabase.HEALTH_SCORE_TABLE.select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, "Drowsiness"));
+        HealthScoreJudgmentRangeTable.Row[] scoreJudgements = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, drowsiness.getConcretePrimaryKey().getId()));
+
+        assertThat(scoreJudgements.length, is(2));
     }
 }

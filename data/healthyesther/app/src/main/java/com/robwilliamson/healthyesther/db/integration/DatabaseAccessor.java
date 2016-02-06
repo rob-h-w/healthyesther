@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.db.integration;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
@@ -13,6 +12,11 @@ import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 public class DatabaseAccessor extends HealthDatabase {
     private final static String HAPPINESS_NAME = "Happiness";
+    private final static String DROWSINESS_NAME = "Drowsiness";
+    private final static long SECOND_MS = 1000;
+    private final static long MINUTE_MS = 60 * SECOND_MS;
+    private final static long HOUR_MS = 60 * MINUTE_MS;
+    private final static long DAY_MS = 24 * HOUR_MS;
     private final static Table[] TABLES;
 
     static {
@@ -32,7 +36,7 @@ public class DatabaseAccessor extends HealthDatabase {
 
         new HealthScoreTable.Row(5, HAPPINESS_NAME, true, "Happy", "Sad").applyTo(transaction);
         new HealthScoreTable.Row(5, "Energy", true, "Energetic", "Tired").applyTo(transaction);
-        new HealthScoreTable.Row(1, "Drowsiness", true, "Sleepy", "Awake").applyTo(transaction);
+        new HealthScoreTable.Row(1, DROWSINESS_NAME, true, "Sleepy", "Awake").applyTo(transaction);
     }
 
     public static void drop(com.robwilliamson.healthyesther.db.includes.Transaction transaction) {
@@ -91,8 +95,23 @@ public class DatabaseAccessor extends HealthDatabase {
             HealthScoreTable.Row[] scores = HealthDatabase.HEALTH_SCORE_TABLE.select(db, WhereContains.any());
 
             for (HealthScoreTable.Row score : scores) {
-                HealthScoreJudgmentRangeTable.Row judgment = new HealthScoreJudgmentRangeTable.Row(score, score.getBestValue(), null, null);
-                judgment.applyTo(transaction);
+                if (score.getName().equals(DROWSINESS_NAME)) {
+                    HealthScoreJudgmentRangeTable.Row day = new HealthScoreJudgmentRangeTable.Row(
+                            score,
+                            score.getBestValue(),
+                            8 * HOUR_MS,
+                            20 * HOUR_MS);
+                    HealthScoreJudgmentRangeTable.Row night = new HealthScoreJudgmentRangeTable.Row(
+                            score,
+                            5L,
+                            22 * HOUR_MS,
+                            DAY_MS + 6 * HOUR_MS);
+                    day.applyTo(transaction);
+                    night.applyTo(transaction);
+                } else {
+                    HealthScoreJudgmentRangeTable.Row judgment = new HealthScoreJudgmentRangeTable.Row(score, score.getBestValue(), null, null);
+                    judgment.applyTo(transaction);
+                }
             }
         }
     }
