@@ -1,6 +1,8 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
@@ -14,15 +16,17 @@ import android.widget.TextView;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
+import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
-import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
+import com.robwilliamson.healthyesther.edit.ScoreActivity;
 
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.Row> {
+    private static final int REQUEST_ID = 1;
     private static final String SCORE = "score";
     private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
     private HealthScoreTable.Row mScore;
@@ -53,7 +57,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
         return newInstance(Utils.checkNotNull(pair.second), Utils.checkNotNull(pair.first));
     }
 
-    @javax.annotation.Nullable
+    @Nullable
     @Override
     public HealthScoreEventTable.Row getRow() {
         HealthScoreEventTable.Row row = super.getRow();
@@ -87,7 +91,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
         getTitle().setText(mScore.getName());
         getMaxLabel().setText(mScore.getMaxLabel());
         getMinLabel().setText(mScore.getMinLabel());
-        getRatingBar().setMax(EditScoreDialogFragment.MAX);
+        getRatingBar().setMax(EditScoreFragment.MAX);
         HealthScoreEventTable.Row row = getRow();
         if (row != null && row.getScore() != null) {
             getRatingBar().setRating(row.getScore());
@@ -114,8 +118,9 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
 
         switch (item.getItemId()) {
             case R.id.action_edit:
-                EditScoreDialogFragment dialog = EditScoreDialogFragment.createDialog(mScore);
-                dialog.show(getFragmentManager(), EDIT_SCORE_FRAGMENT);
+                Intent intent = new Intent(getActivity(), ScoreActivity.class);
+                intent.putExtra(HealthDatabase.HEALTH_SCORE_TABLE.getName(), mScore);
+                startActivityForResult(intent, REQUEST_ID);
                 return true;
             case R.id.action_hide:
                 if (mWatcher != null) {
@@ -125,6 +130,24 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    /**
+     * Receive the result from a previous call to
+     * {@link #startActivityForResult(Intent, int)}.  This follows the
+     * related Activity API as described there in
+     * {@link Activity#onActivityResult(int, int, Intent)}.
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -163,7 +186,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 HealthScoreEventTable.Row row = EditScoreEventFragment.super.getRow();
                 if (row != null) {
-                    row.setScore((long)Math.round(rating));
+                    row.setScore((long) Math.round(rating));
                 }
 
                 if (mWatcher != null) {
@@ -190,6 +213,7 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
         return row != null && row.isValid();
     }
 
+    @javax.annotation.Nullable
     @Override
     protected HealthScoreEventTable.Row createRow() {
         throw new UnsupportedOperationException("This edits a join row; the row can't be created independently.");

@@ -21,10 +21,11 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractEditEventActivity extends DbActivity {
+public abstract class AbstractEditActivity extends DbActivity {
 
     private Bundle mSavedInstanceState;
 
+    @Nonnull
     protected abstract List<Pair<EditFragment, String>> getEditFragments(boolean create);
 
     protected abstract TransactionExecutor.Operation onModifySelected();

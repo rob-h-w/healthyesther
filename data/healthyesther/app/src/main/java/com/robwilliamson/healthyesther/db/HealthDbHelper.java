@@ -77,10 +77,9 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
     @Override
     public void onConfigure(SQLiteDatabase sqLiteDatabase) {
         synchronized (sSync) {
-            super.onConfigure(sqLiteDatabase);
-
-            if (!sqLiteDatabase.isReadOnly()) {
-                sqLiteDatabase.execSQL("PRAGMA foreign_keys = ON;");
+            sDatabase = new DatabaseWrapperClass(sqLiteDatabase);
+            try (Transaction transaction = sDatabase.getTransaction()) {
+                DatabaseAccessor.configure(transaction);
             }
         }
     }

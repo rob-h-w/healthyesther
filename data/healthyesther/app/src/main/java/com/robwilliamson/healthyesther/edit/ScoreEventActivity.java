@@ -19,11 +19,11 @@ import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
-import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment;
+import com.robwilliamson.healthyesther.fragment.edit.EditScoreFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-public class ScoreEventActivity extends AbstractEditEventActivity implements EditScoreDialogFragment.Watcher, EditScoreEventFragment.Watcher, BaseFragment.Watcher {
+public class ScoreEventActivity extends AbstractEditActivity implements EditScoreFragment.Watcher, EditScoreEventFragment.Watcher, BaseFragment.Watcher {
     private final static String SCORE_GROUP_TAG = "score group";
     private final static String EVENT_TAG = "event";
 
@@ -46,6 +46,7 @@ public class ScoreEventActivity extends AbstractEditEventActivity implements Edi
         super.onResume();
     }
 
+    @Nonnull
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);

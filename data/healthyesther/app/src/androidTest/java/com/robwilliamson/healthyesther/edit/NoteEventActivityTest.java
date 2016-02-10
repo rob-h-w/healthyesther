@@ -11,7 +11,7 @@ import com.robwilliamson.healthyesther.db.generated.NoteTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
-import com.robwilliamson.healthyesther.test.EditEventAccessor;
+import com.robwilliamson.healthyesther.test.EditAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.NoteEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -87,21 +87,21 @@ public class NoteEventActivityTest extends ActivityInstrumentationTestCase2<Home
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
 
-        onView(EditEventAccessor.eventEditText()).check(matches(withText(NOTE_NAME)));
+        onView(EditAccessor.eventEditText()).check(matches(withText(NOTE_NAME)));
     }
 
     public void test_addNoteName_enablesOk() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
 
-        onView(EditEventAccessor.ok()).check(matches(isEnabled()));
+        onView(EditAccessor.ok()).check(matches(isEnabled()));
     }
 
     public void test_createNote_updatesDatabase() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
         onView(NoteEventActivityAccessor.noteContent()).perform(typeText(NOTE_CONTENT));
-        onView(EditEventAccessor.ok()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
 
         checkDatabaseCorrectness(NOTE_NAME, NOTE_CONTENT);
     }

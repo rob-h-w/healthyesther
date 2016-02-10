@@ -25,7 +25,6 @@ public class HealthScoreTable
 {
 
     public final static String _ID = "_id";
-    public final static String BEST_VALUE = "best_value";
     public final static String NAME = "name";
     public final static String RANDOM_QUERY = "random_query";
     public final static String MAX_LABEL = "max_label";
@@ -39,7 +38,7 @@ public class HealthScoreTable
 
     @Override
     public void create(Transaction transaction) {
-        transaction.execSQL("CREATE TABLE IF NOT EXISTS health_score ( \n    _id          INTEGER      PRIMARY KEY AUTOINCREMENT,\n    name         TEXT( 140 )  NOT NULL\n                              UNIQUE,\n    best_value   INTEGER      NOT NULL,\n    random_query BOOLEAN      NOT NULL\n                              DEFAULT ( 0 ),\n    min_label    TEXT( 140 ),\n    max_label    TEXT( 140 ) \n)");
+        transaction.execSQL("CREATE TABLE IF NOT EXISTS health_score (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT (140) NOT NULL UNIQUE, random_query BOOLEAN NOT NULL DEFAULT (0), min_label TEXT (140), max_label TEXT (140))");
     }
 
     @Override
@@ -208,7 +207,6 @@ public class HealthScoreTable
         implements Serializable
     {
 
-        private long mBestValue;
         @Nonnull
         private String mName;
         private boolean mRandomQuery;
@@ -216,16 +214,13 @@ public class HealthScoreTable
         private String mMaxLabel;
         @Nullable
         private String mMinLabel;
-        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
-        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(6);
+        public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(5);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(4);
+        public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(5);
 
         static {
             COLUMN_NAMES.add("_id");
             COLUMN_NAMES_FOR_UPDATE.add("_id");
-            COLUMN_NAMES.add("best_value");
-            COLUMN_NAMES_FOR_INSERTION.add("best_value");
-            COLUMN_NAMES_FOR_UPDATE.add("best_value");
             COLUMN_NAMES.add("name");
             COLUMN_NAMES_FOR_INSERTION.add("name");
             COLUMN_NAMES_FOR_UPDATE.add("name");
@@ -243,7 +238,6 @@ public class HealthScoreTable
         public Row(
             @Nonnull
             Cursor cursor) {
-            setBestValue(cursor.getLong("best_value"));
             setName(cursor.getString("name"));
             setRandomQuery(cursor.getBoolean("random_query"));
             setMaxLabel(cursor.getString("max_label"));
@@ -252,30 +246,17 @@ public class HealthScoreTable
             setIsInDatabase(true);
         }
 
-        public Row(long bestValue,
+        public Row(
             @Nonnull
             String name, boolean randomQuery,
             @Nullable
             String maxLabel,
             @Nullable
             String minLabel) {
-            mBestValue = bestValue;
             mName = name;
             mRandomQuery = randomQuery;
             mMaxLabel = maxLabel;
             mMinLabel = minLabel;
-        }
-
-        public void setBestValue(long bestValue) {
-            if (mBestValue == bestValue) {
-                return ;
-            }
-            mBestValue = bestValue;
-            setIsModified(true);
-        }
-
-        public long getBestValue() {
-            return mBestValue;
         }
 
         public void setName(
@@ -344,10 +325,10 @@ public class HealthScoreTable
             final Object minLabel = ((mMinLabel == null)?String.class:mMinLabel);
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
             if (nextPrimaryKey == null) {
-                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, maxLabel, minLabel)));
+                setNextPrimaryKey(new HealthScoreTable.PrimaryKey(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mName, mRandomQuery, maxLabel, minLabel)));
                 nextPrimaryKey = getNextPrimaryKey();
             } else {
-                nextPrimaryKey.setId(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mBestValue, mName, mRandomQuery, maxLabel, minLabel));
+                nextPrimaryKey.setId(transaction.insert("health_score", COLUMN_NAMES_FOR_INSERTION, mName, mRandomQuery, maxLabel, minLabel));
             }
             // This table uses a row ID as a primary key.
             setIsModified(false);
@@ -374,7 +355,7 @@ public class HealthScoreTable
             final Object maxLabel = ((mMaxLabel == null)?String.class:mMaxLabel);
             final Object minLabel = ((mMinLabel == null)?String.class:mMinLabel);
             HealthScoreTable.PrimaryKey nextPrimaryKey = getNextPrimaryKey();
-            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mBestValue, mName, mRandomQuery, maxLabel, minLabel);
+            int actual = transaction.update("health_score", getConcretePrimaryKey(), COLUMN_NAMES_FOR_UPDATE, nextPrimaryKey.getId(), mName, mRandomQuery, maxLabel, minLabel);
             if (actual!= 1) {
                 throw new com.robwilliamson.healthyesther.db.includes.BaseTransactable.UpdateFailed(1, actual);
             }
@@ -415,9 +396,6 @@ public class HealthScoreTable
                 return false;
             }
             HealthScoreTable.Row theRow = ((HealthScoreTable.Row) other);
-            if (!(mBestValue == theRow.mBestValue)) {
-                return false;
-            }
             if (!(((mName == null)&&(theRow.mName == null))||((mName!= null)&&mName.equals(theRow.mName)))) {
                 return false;
             }

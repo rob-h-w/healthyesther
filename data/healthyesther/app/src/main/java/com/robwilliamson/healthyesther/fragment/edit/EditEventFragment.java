@@ -138,6 +138,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
         return R.layout.fragment_edit_event;
     }
 
+    @Nullable
     @Override
     protected EventTable.Row createRow() {
         throw new UnsupportedOperationException("The event has to be set by the owning activity.");

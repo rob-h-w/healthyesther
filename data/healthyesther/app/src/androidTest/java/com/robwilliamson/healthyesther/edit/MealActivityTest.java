@@ -20,7 +20,7 @@ import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
-import com.robwilliamson.healthyesther.test.EditEventAccessor;
+import com.robwilliamson.healthyesther.test.EditAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MealEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -98,7 +98,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
             }
         });
 
-        onView(EditEventAccessor.ok()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
 
         checkDatabaseCorrectnessForName(text, 1);
     }
@@ -117,7 +117,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         for (String meal : mealNames) {
             onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
             onView(MealEventActivityAccessor.dishName()).perform(typeText(meal));
-            onView(EditEventAccessor.ok()).perform(click());
+            onView(EditAccessor.ok()).perform(click());
             onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
             checkDatabaseCorrectnessForName(meal, 1);
         }
@@ -133,12 +133,12 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
         onView(MealEventActivityAccessor.dishName()).perform(typeText(mealName));
 
-        onView(EditEventAccessor.eventEditText()).check(matches(withText(mealName)));
+        onView(EditAccessor.eventEditText()).check(matches(withText(mealName)));
     }
 
     public void test_emptyName_cannotCommit() {
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
-        onView(EditEventAccessor.ok()).check(doesNotExist());
+        onView(EditAccessor.ok()).check(doesNotExist());
     }
 
     public void test_editExisting_orientation() {
@@ -154,7 +154,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
             @Override
             public void checkContent() {
-                onView(EditEventAccessor.eventEditText()).check(matches(withText(MEAL_NAME)));
+                onView(EditAccessor.eventEditText()).check(matches(withText(MEAL_NAME)));
                 onView(MealEventActivityAccessor.dishName()).check(matches(withText(MEAL_NAME)));
             }
         });
@@ -165,10 +165,10 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         HomeActivityAccessor.EditMode.start();
         onView(HomeActivityAccessor.EditMode.eventList()).perform(click());
 
-        ViewInteraction eventEditText = onView(EditEventAccessor.eventEditText());
+        ViewInteraction eventEditText = onView(EditAccessor.eventEditText());
         eventEditText.perform(clearText());
         eventEditText.perform(typeText(EVENT_NAME));
-        onView(EditEventAccessor.ok()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
 
         EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(HealthDbHelper.getDatabase(), WhereContains.any());
         if (event == null) {
@@ -187,7 +187,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         ViewInteraction mealEditText = onView(MealEventActivityAccessor.dishName());
         mealEditText.perform(clearText());
         mealEditText.perform(typeText(NEW_FOOD));
-        onView(EditEventAccessor.ok()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
 
         Database db = HealthDbHelper.getDatabase();
         EventTable.Row event = DatabaseAccessor.EVENT_TABLE.select0Or1(db, WhereContains.any());

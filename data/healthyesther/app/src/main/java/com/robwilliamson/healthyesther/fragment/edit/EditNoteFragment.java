@@ -149,6 +149,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> {
         return getNoteView().getText().toString();
     }
 
+    @javax.annotation.Nullable
     @Override
     protected NoteTable.Row createRow() {
         return new NoteTable.Row(getName(), getNote());

@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,16 +20,18 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
+import com.robwilliamson.healthyesther.edit.ScoreActivity;
 import com.robwilliamson.healthyesther.fragment.AddValueFragment;
-import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
+    private static final int REQUEST_ID = 1;
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
     private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 
@@ -101,9 +104,8 @@ public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
         fragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditScoreDialogFragment dialog = new EditScoreDialogFragment();
-
-                dialog.show(getFragmentManager(), ADD_SCORE_FRAGMENT);
+                Intent intent = new Intent(getActivity(), ScoreActivity.class);
+                startActivityForResult(intent, REQUEST_ID);
             }
         });
     }
@@ -119,6 +121,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
         return false;
     }
 
+    @Nullable
     @Override
     protected EventTable.Row createRow() {
         throw new UnsupportedOperationException("This is a relation row - please create and set the row from the containing activity.");

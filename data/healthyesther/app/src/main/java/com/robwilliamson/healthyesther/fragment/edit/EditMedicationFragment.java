@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class EditMedicationFragment extends SuggestionEditFragment<MedicationTable.Row>
         implements InitializationQuerier {
@@ -109,6 +110,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
         outState.putSerializable(NAME_TO_ROW_MAP, (Serializable) mNameToRowMap);
     }
 
+    @Nullable
     @Override
     protected MedicationTable.Row createRow() {
         String name = getName();

@@ -100,7 +100,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
         });
     }
 
-    @Nonnull
+    @Nullable
     @Override
     protected MealTable.Row createRow() {
         String name = getName();

@@ -7,8 +7,7 @@ import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.edit.ScoreEventActivity;
-import com.robwilliamson.healthyesther.fragment.dialog.EditScoreDialogFragment;
-import com.robwilliamson.healthyesther.test.EditScoreDialogAccessor;
+import com.robwilliamson.healthyesther.test.EditScoreFragmentAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
@@ -29,7 +28,7 @@ public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreE
 
     public void testOpenExisting() {
         HealthScoreActivityAccessor.editScore("Happiness");
-        final HealthScoreTable.Row score = new HealthScoreTable.Row(EditScoreDialogFragment.MAX, "Happiness", true, "Happy", "Sad");
+        final HealthScoreTable.Row score = new HealthScoreTable.Row("Happiness", true, "Happy", "Sad");
         Orientation.check(new Orientation.Subject() {
             @Override
             public InstrumentationTestCase getTestCase() {
@@ -38,7 +37,7 @@ public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreE
 
             @Override
             public void checkContent() {
-                EditScoreDialogAccessor.checkUnmodifiedContent(score);
+                EditScoreFragmentAccessor.checkUnmodifiedContent(score);
             }
         });
     }

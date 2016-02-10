@@ -104,6 +104,10 @@ public final class Utils {
     }
 
     public static class Time {
+        public final static long SECOND_MS = 1000;
+        public final static long MINUTE_MS = 60 * SECOND_MS;
+        public final static long HOUR_MS = 60 * MINUTE_MS;
+        public final static long DAY_MS = 24 * HOUR_MS;
         private static final String LOG_TAG = Time.class.getSimpleName();
         private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";

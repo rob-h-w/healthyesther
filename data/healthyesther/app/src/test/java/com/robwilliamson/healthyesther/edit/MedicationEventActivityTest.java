@@ -227,7 +227,7 @@ public class MedicationEventActivityTest {
     }
 
     private void aNewMedicationIsAdded() {
-        mContext.getActivityController().create().start().resume();
+        mContext.getActivityController().setup();
         mMedicationFragmentAccessor.setName(MEDICATION_NAME);
         mEventFragmentAccessor.setName(EVENT_NAME);
         mContext.pressOk();

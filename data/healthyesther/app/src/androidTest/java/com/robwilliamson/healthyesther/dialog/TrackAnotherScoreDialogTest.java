@@ -5,6 +5,7 @@ import android.test.InstrumentationTestCase;
 
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.db.Utils;
+import com.robwilliamson.healthyesther.test.EditAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -17,7 +18,6 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 
 public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase2<HomeActivity> {
@@ -85,8 +85,7 @@ public class TrackAnotherScoreDialogTest extends ActivityInstrumentationTestCase
         onView(TrackAnotherScoreDialogAccessor.healthScoreEditBox()).perform(typeText(name));
         closeSoftKeyboard();
         sleep();
-        onView(TrackAnotherScoreDialogAccessor.okButton()).check(matches(isDisplayed()));
-        onView(TrackAnotherScoreDialogAccessor.okButton()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
     }
 
     private void checkScoreIsPresent(String name) {

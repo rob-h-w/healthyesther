@@ -28,7 +28,7 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
     }
 
     @Nonnull
-    protected SQLiteDatabase db() {
+    SQLiteDatabase db() {
         return mDatabase.getSqliteDatabase();
     }
 

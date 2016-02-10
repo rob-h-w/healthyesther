@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.fragment.DbFragment;
 
@@ -28,7 +29,7 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
         mRow = row;
     }
 
-    @Nonnull
+    @Nullable
     protected R getRow(@Nonnull Map<String, R> nameToRowMap, @Nonnull String name, @Nullable NameComparator<R> comparator) {
         if (nameToRowMap.containsKey(name)) {
             R row = nameToRowMap.get(name);
@@ -39,15 +40,13 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
             }
         }
 
-        if (hasRow() && mRow != null && comparator != null && comparator.equals(mRow, name)) {
-            //noinspection ConstantConditions
+        if (hasRow() && comparator != null && comparator.equals(Utils.checkNotNull(mRow), name)) {
             return mRow;
         }
 
         return createRow();
     }
 
-    //noinspection
     public boolean hasRow() {
         return mRow != null;
     }
@@ -57,6 +56,7 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
 
     }
 
+    @Nullable
     protected abstract R createRow();
 
     protected boolean canCreateRow() {

@@ -37,6 +37,10 @@
             android:icon="@mipmap/ic_health"
             android:label="@string/health_score" />
         <activity
+            android:name=".edit.ScoreActivity"
+            android:icon="@mipmap/ic_health"
+            android:label="@string/health_score" />
+        <activity
             android:name=".edit.NoteEventActivity"
             android:icon="@mipmap/ic_note"
             android:label="@string/note" />

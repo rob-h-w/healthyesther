@@ -13,7 +13,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.robwilliamson.healthyesther.test.Espresso.both;
 
-public class EditEventAccessor {
+public class EditAccessor {
     public static Matcher<View> ok() {
         return both(withContentDescription("OK"), withId(App.getInstance().getResources().getIdentifier("action_modify", "id", "com.robwilliamson.healthyesther")));
     }

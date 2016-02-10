@@ -26,11 +26,12 @@ import javax.annotation.Nonnull;
 
 import static com.robwilliamson.healthyesther.db.includes.WhereContains.foreignKey;
 
-public class NoteEventActivity extends AbstractEditEventActivity
+public class NoteEventActivity extends AbstractEditActivity
         implements BaseFragment.Watcher {
     private final static String EVENT_TAG = "event";
     private final static String NOTE_TAG = "note";
 
+    @Nonnull
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(1);

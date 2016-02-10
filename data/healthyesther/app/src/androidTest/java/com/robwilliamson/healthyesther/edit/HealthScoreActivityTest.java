@@ -6,7 +6,7 @@ import android.test.InstrumentationTestCase;
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.Utils;
-import com.robwilliamson.healthyesther.test.EditEventAccessor;
+import com.robwilliamson.healthyesther.test.EditAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -76,10 +76,10 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Ho
     public void test_addScore_updatesDatabase() {
         onView(HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy")).perform(click());
 
-        onView(EditEventAccessor.ok()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
     }
 
     public void test_emptyName_cannotCommit() {
-        onView(EditEventAccessor.ok()).check(doesNotExist());
+        onView(EditAccessor.ok()).check(doesNotExist());
     }
 }

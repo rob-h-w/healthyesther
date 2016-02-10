@@ -12,7 +12,7 @@ import com.robwilliamson.healthyesther.db.generated.MedicationTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
-import com.robwilliamson.healthyesther.test.EditEventAccessor;
+import com.robwilliamson.healthyesther.test.EditAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MedicationEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
@@ -53,7 +53,7 @@ public class MedicationEventActivityTest extends ActivityInstrumentationTestCase
     public void testOkAbsentWhenNameEmpty() {
         onView(HomeActivityAccessor.AddMode.medicationScoreButton()).perform(click());
 
-        onView(EditEventAccessor.ok()).check(doesNotExist());
+        onView(EditAccessor.ok()).check(doesNotExist());
     }
 
     public void testUiInBothOrientations() {
@@ -87,7 +87,7 @@ public class MedicationEventActivityTest extends ActivityInstrumentationTestCase
             @Override
             public void checkContent() {
                 onView(MedicationEventActivityAccessor.medName()).check(matches(withText(MED_NAME)));
-                onView(EditEventAccessor.eventEditText()).check(matches(withText(MED_NAME)));
+                onView(EditAccessor.eventEditText()).check(matches(withText(MED_NAME)));
             }
         });
     }
@@ -97,7 +97,7 @@ public class MedicationEventActivityTest extends ActivityInstrumentationTestCase
 
         onView(MedicationEventActivityAccessor.medName()).perform(typeText(MED_NAME));
 
-        onView(EditEventAccessor.ok()).perform(click());
+        onView(EditAccessor.ok()).perform(click());
 
         Database db = HealthDbHelper.getDatabase();
         MedicationTable.Row medication = DatabaseAccessor.MEDICATION_TABLE.select0Or1(db, WhereContains.any());

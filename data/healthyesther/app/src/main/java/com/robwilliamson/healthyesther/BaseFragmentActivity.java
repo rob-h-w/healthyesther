@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import javax.annotation.Nullable;
+
 public class BaseFragmentActivity extends FragmentActivity {
     private volatile boolean mActive = false;
 
@@ -62,14 +64,17 @@ public class BaseFragmentActivity extends FragmentActivity {
         return R.id.base_activity_content_layout;
     }
 
+    @Nullable
     protected LinearLayout getActivityContentLayout() {
         return (LinearLayout) findViewById(getActivityContentLayoutResourceId());
     }
 
+    @Nullable
     protected <T extends Fragment> T getFragment(String tag, Class<T> type) {
         return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), tag, type);
     }
 
+    @Nullable
     protected Fragment getFragment(String tag) {
         return getFragment(tag, Fragment.class);
     }

@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import static com.robwilliamson.healthyesther.db.includes.WhereContains.and;
 import static com.robwilliamson.healthyesther.db.includes.WhereContains.foreignKey;
 
-public class MedicationEventActivity extends AbstractEditEventActivity
+public class MedicationEventActivity extends AbstractEditActivity
         implements BaseFragment.Watcher {
     private final static String MEDICATION_TAG = "medication";
     private final static String EVENT_TAG = "event";
@@ -36,6 +36,7 @@ public class MedicationEventActivity extends AbstractEditEventActivity
     @Nullable
     private MedicationEventTable.Row mMedEvent;
 
+    @Nonnull
     @Override
     protected ArrayList<Pair<EditFragment, String>> getEditFragments(boolean create) {
         ArrayList<Pair<EditFragment, String>> list = new ArrayList<>(2);
