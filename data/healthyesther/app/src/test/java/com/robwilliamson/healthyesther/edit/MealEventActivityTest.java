@@ -2,8 +2,10 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
 import android.support.v4.util.Pair;
+import android.widget.AutoCompleteTextView;
 
 import com.robwilliamson.healthyesther.BuildConfig;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
@@ -103,6 +105,34 @@ public class MealEventActivityTest {
         openedWithAnExistingEventFromAnIntent();
 
         assertThat(mMealAccessor.getName(), is(MEAL_NAME));
+    }
+
+    @Test
+    public void withExistingMeal_populatesAutocompleteList() {
+        withExistingMeal();
+
+        assertThat(Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getCount(), is(1));
+    }
+
+    @Test
+    public void withExistingMeal_populatesAutocompleteListWithMealName() {
+        withExistingMeal();
+
+        assertThat(((String)Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
+                is(MEAL_NAME));
+    }
+
+    private void withExistingMeal() {
+        Database db = HealthDbHelper.getDatabase();
+
+        try (Transaction transaction = db.getTransaction()) {
+            MealTable.Row meal = new MealTable.Row(MEAL_NAME);
+            meal.applyTo(transaction);
+            transaction.commit();
+            Robolectric.flushBackgroundThreadScheduler();
+        }
+
+        mContext.getActivityController().setup();
     }
 
     private void openedWithAnExistingEventFromAnIntent() {
