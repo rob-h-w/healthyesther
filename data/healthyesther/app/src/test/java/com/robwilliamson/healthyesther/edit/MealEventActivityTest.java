@@ -157,7 +157,7 @@ public class MealEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mContext.getActivityController().withIntent(intent).create().start().resume();
+        mContext.getActivityController().withIntent(intent).setup();
     }
 
     private static class TestableMealEventActivity extends MealEventActivity {
