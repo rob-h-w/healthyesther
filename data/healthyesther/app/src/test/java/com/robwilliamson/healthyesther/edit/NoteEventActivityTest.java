@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.edit;
 import android.content.Intent;
 
 import com.robwilliamson.healthyesther.BuildConfig;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
@@ -194,6 +195,34 @@ public class NoteEventActivityTest {
         assertThat(note.getNote(), is(EDITED_NOTE_DETAIL));
     }
 
+    @Test
+    public void whenNoteAlreadyExists_populatesAutocomplete() {
+        noteAlreadyExists();
+
+        assertThat(Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getCount(), is(1));
+    }
+
+    @Test
+    public void whenNoteAlreadyExists_populatesAutocompleteWithNoteName() {
+        noteAlreadyExists();
+
+        assertThat((String) Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
+    }
+
+    private void noteAlreadyExists() {
+        Database db = HealthDbHelper.getDatabase();
+
+        try (Transaction transaction = db.getTransaction()) {
+            NoteTable.Row note = new NoteTable.Row(NOTE_NAME, NOTE_DETAIL);
+            note.applyTo(transaction);
+            transaction.commit();
+        }
+
+        mContext.getActivityController().setup();
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+    }
+
     private void existingNoteIsEdited() {
         openedWithAnExistingNote();
 
@@ -224,7 +253,7 @@ public class NoteEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mContext.getActivityController().withIntent(intent).create().start().resume();
+        mContext.getActivityController().withIntent(intent).setup();
         Robolectric.flushBackgroundThreadScheduler();
         Robolectric.flushForegroundThreadScheduler();
     }
