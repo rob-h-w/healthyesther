@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
 import android.support.v4.util.Pair;
+import android.text.Editable;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.Utils;
@@ -12,6 +13,7 @@ import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 import com.robwilliamson.healthyesther.fragment.edit.EditEventFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -32,6 +34,7 @@ import test.ActivityTestContext;
 import test.view.EditEventFragmentAccessor;
 import test.view.EditMealFragmentAccessor;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
@@ -136,6 +139,46 @@ public class MealEventActivityTest {
                 is(MEAL_NAME));
     }
 
+    @Test
+    public void whenMealIsRenamed_newMealTypeIsCreated() {
+        mealIsRenamed();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        assertThat(HealthDatabase.MEAL_TABLE.select(db, WhereContains.any()).length, is(2));
+    }
+
+    @Test
+    public void whenMealIsRenamed_newMealTypeIsUsed() {
+        mealIsRenamed();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        MealEventTable.Row mealEvent = HealthDatabase.MEAL_EVENT_TABLE.select1(db, WhereContains.any());
+        MealTable.Row meal = HealthDatabase.MEAL_TABLE.select1(db, WhereContains.columnEqualling(MealTable.NAME, EDITED_MEAL_NAME));
+
+        assertThat(mealEvent.getConcretePrimaryKey().getMealId(), equalTo(meal.getConcretePrimaryKey()));
+    }
+
+    @Test
+    public void whenMealIsRenamed_noNewEventIsCreated() {
+        mealIsRenamed();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        assertThat(HealthDatabase.EVENT_TABLE.select(db, WhereContains.any()).length, is(1));
+    }
+
+    private void mealIsRenamed() {
+        openedWithAnExistingEventFromAnIntent();
+
+        Editable editable = Utils.checkNotNull(mMealAccessor.getNameTextView()).getEditableText();
+        editable.clear();
+        editable.append(EDITED_MEAL_NAME);
+
+        mContext.pressOk();
+    }
+
     private void withExistingMealConfigurationChanged() {
         withExistingMeal();
 
@@ -182,6 +225,7 @@ public class MealEventActivityTest {
 
     private static class TestableMealEventActivity extends MealEventActivity {
         public boolean finishCalled = false;
+        private boolean mBusy = false;
 
         @Override
         public void finish() {
@@ -190,9 +234,13 @@ public class MealEventActivityTest {
         }
 
         @Override
+        protected boolean isBusy() {
+            return mBusy;
+        }
+
+        @Override
         protected void setBusy(boolean busy) {
-            // TODO: Find a way to avoid the countdown latch lock.
-            //super.setBusy(busy);
+            mBusy = busy;
         }
     }
 }
