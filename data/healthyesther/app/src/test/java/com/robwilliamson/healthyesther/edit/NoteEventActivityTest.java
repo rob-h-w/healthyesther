@@ -209,6 +209,26 @@ public class NoteEventActivityTest {
         assertThat((String) Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
     }
 
+    @Test
+    public void whenNoteAlreadyExistsAfterConfigurationChange_populatesAutocomplete() {
+        noteAlreadyExistsAfterConfigurationChange();
+
+        assertThat(Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getCount(), is(1));
+    }
+
+    @Test
+    public void whenNoteAlreadyExistsAfterConfigurationChange_populatesAutocompleteWithNoteName() {
+        noteAlreadyExistsAfterConfigurationChange();
+
+        assertThat((String) Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
+    }
+
+    private void noteAlreadyExistsAfterConfigurationChange() {
+        noteAlreadyExists();
+
+        mContext.configurationChange();
+    }
+
     private void noteAlreadyExists() {
         Database db = HealthDbHelper.getDatabase();
 
