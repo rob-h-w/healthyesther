@@ -145,12 +145,12 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
     @Nonnull
     public MealTable.Row getRow() {
-        return getRow(mNameToRowMap, getName(), new NameComparator<MealTable.Row>() {
+        return Utils.checkNotNull(getRow(mNameToRowMap, getName(), new NameComparator<MealTable.Row>() {
             @Override
             public boolean equals(@Nonnull MealTable.Row row, @Nonnull String name) {
                 return name.equals(row.getName());
             }
-        });
+        }));
     }
 
     public void setRow(@NonNull final MealTable.Row row) {

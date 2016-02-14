@@ -1,7 +1,6 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.support.v4.util.Pair;
 
 import com.robwilliamson.healthyesther.BuildConfig;
@@ -118,7 +117,7 @@ public class MealEventActivityTest {
     public void withExistingMeal_populatesAutocompleteListWithMealName() {
         withExistingMeal();
 
-        assertThat(((String)Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
+        assertThat(((String) Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
                 is(MEAL_NAME));
     }
 
@@ -133,7 +132,7 @@ public class MealEventActivityTest {
     public void withExistingMealConfigurationChanged_populatesAutocompleteListWithMealName() {
         withExistingMealConfigurationChanged();
 
-        assertThat(((String)Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
+        assertThat(((String) Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
                 is(MEAL_NAME));
     }
 
