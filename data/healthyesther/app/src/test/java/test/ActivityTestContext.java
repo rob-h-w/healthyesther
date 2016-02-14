@@ -1,6 +1,7 @@
 package test;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -85,5 +86,12 @@ public class ActivityTestContext<T extends Activity> {
 
         Robolectric.flushBackgroundThreadScheduler();
         Robolectric.flushForegroundThreadScheduler();
+    }
+
+    public void configurationChange() {
+        Bundle bundle = new Bundle();
+        mActivityController.saveInstanceState(bundle).pause().stop().destroy();
+        mActivityController = Robolectric.buildActivity(mActivityClass).create(bundle).start().restoreInstanceState(bundle).resume();
+        mActivity = mActivityController.get();
     }
 }
