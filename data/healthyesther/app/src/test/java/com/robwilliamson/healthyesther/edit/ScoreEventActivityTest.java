@@ -1,6 +1,8 @@
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
@@ -192,7 +194,21 @@ public class ScoreEventActivityTest {
         EventTable.Row event = HealthDatabase.EVENT_TABLE.select1(db, WhereContains.any());
         HealthScoreEventTable.Row scoreEvent = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select1(db, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
 
+        //noinspection ConstantConditions
         assertThat(scoreEvent.getScore().intValue(), is(5));
+    }
+
+    @Test
+    public void whenPersistedAndRestored_doesNotCrash() {
+        mContext.getActivityController().setup();
+
+        //noinspection ConstantConditions
+        mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).setRating(4f);
+
+        Bundle outState = new Bundle();
+        mContext.getActivityController().saveInstanceState(outState);
+
+        mContext.getActivityController().restoreInstanceState(outState);
     }
 
     private void existingScoreIsEdited() {
