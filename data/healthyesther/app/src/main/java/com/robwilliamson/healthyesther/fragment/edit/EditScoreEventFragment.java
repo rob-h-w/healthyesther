@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,7 +27,6 @@ import javax.annotation.Nonnull;
 public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.Row> {
     private static final int REQUEST_ID = 1;
     private static final String SCORE = "score";
-    private static final String EDIT_SCORE_FRAGMENT = "edit_score_fragment";
     private HealthScoreTable.Row mScore;
     private ContextMenu mContextMenu;
 
@@ -51,10 +49,6 @@ public class EditScoreEventFragment extends EditFragment<HealthScoreEventTable.R
 
     public static EditScoreEventFragment newInstance(@Nonnull Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> pair) {
         return newInstance(Utils.checkNotNull(pair.getValue()), Utils.checkNotNull(pair.getKey()));
-    }
-
-    public static EditScoreEventFragment newInstance(@Nonnull Pair<HealthScoreTable.Row, HealthScoreEventTable.Row> pair) {
-        return newInstance(Utils.checkNotNull(pair.second), Utils.checkNotNull(pair.first));
     }
 
     @Nullable
