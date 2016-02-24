@@ -27,7 +27,6 @@ import com.robwilliamson.healthyesther.fragment.edit.EditScoreFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -85,10 +84,10 @@ public class ScoreEventActivity extends AbstractEditActivity implements EditScor
 
                 EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
 
-                List<Pair<HealthScoreTable.Row, HealthScoreEventTable.Row>> scoresAndEvents = groupFragment.getScores();
+                Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scoresAndEvents = groupFragment.getScores();
 
-                for (Pair<HealthScoreTable.Row, HealthScoreEventTable.Row> pair : scoresAndEvents) {
-                    if (pair.first == null) {
+                for (Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> pair : scoresAndEvents.entrySet()) {
+                    if (pair.getKey() == null) {
                         continue;
                     }
 
@@ -96,15 +95,15 @@ public class ScoreEventActivity extends AbstractEditActivity implements EditScor
                             database,
                             WhereContains.columnEqualling(
                                     HealthScoreTable.NAME,
-                                    pair.first.getName()));
+                                    pair.getKey().getName()));
 
                     if (healthScoreRow == null) {
-                        healthScoreRow = pair.first;
+                        healthScoreRow = pair.getKey();
                     }
 
                     healthScoreRow.applyTo(transaction);
 
-                    HealthScoreEventTable.Row row = pair.second;
+                    HealthScoreEventTable.Row row = pair.getValue();
                     if (row == null) {
                         row = DatabaseAccessor.HEALTH_SCORE_EVENT_TABLE.select0Or1(database,
                                 WhereContains.and(

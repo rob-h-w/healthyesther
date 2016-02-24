@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.Pair;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.R;
@@ -25,7 +24,9 @@ import com.robwilliamson.healthyesther.fragment.AddValueFragment;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,7 +34,6 @@ import javax.annotation.Nullable;
 public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
     private static final int REQUEST_ID = 1;
     private static final String ADD_VALUE_FRAGMENT = "add_value_fragment";
-    private static final String ADD_SCORE_FRAGMENT = "add_score_fragment";
 
     private volatile boolean mResumed = false;
 
@@ -168,8 +168,8 @@ public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
     }
 
     @Nonnull
-    public List<Pair<HealthScoreTable.Row, HealthScoreEventTable.Row>> getScores() {
-        List<Pair<HealthScoreTable.Row, HealthScoreEventTable.Row>> scores = new ArrayList<>();
+    public Map<HealthScoreTable.Row, HealthScoreEventTable.Row> getScores() {
+        Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scores = new HashMap<>();
         for (EditScoreEventFragment fragment : getEditScoreEventFragments()) {
             HealthScoreTable.Row score = fragment.getScore();
             HealthScoreEventTable.Row scoreEvent = fragment.getRow();
@@ -180,11 +180,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
 
             scoreEvent.getNextPrimaryKey().setEventId(Utils.checkNotNull(getRow()).getNextPrimaryKey());
 
-            Pair<HealthScoreTable.Row, HealthScoreEventTable.Row> pair = new Pair<>(
-                    score,
-                    scoreEvent
-            );
-            scores.add(pair);
+            scores.put(score, scoreEvent);
         }
 
         return scores;

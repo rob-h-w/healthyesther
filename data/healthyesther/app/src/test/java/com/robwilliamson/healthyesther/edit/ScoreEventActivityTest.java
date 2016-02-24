@@ -198,19 +198,6 @@ public class ScoreEventActivityTest {
         assertThat(scoreEvent.getScore().intValue(), is(5));
     }
 
-    @Test
-    public void whenPersistedAndRestored_doesNotCrash() {
-        mContext.getActivityController().setup();
-
-        //noinspection ConstantConditions
-        mScoreEventGroupFramgentAccessor.getScore(HAPPINESS).setRating(4f);
-
-        Bundle outState = new Bundle();
-        mContext.getActivityController().saveInstanceState(outState);
-
-        mContext.getActivityController().restoreInstanceState(outState);
-    }
-
     private void existingScoreIsEdited() {
         launchedWithExistingScore();
 

@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
+import android.view.View;
 
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.Settings;
@@ -13,11 +14,16 @@ import com.robwilliamson.healthyesther.test.Orientation;
 
 import junit.framework.Assert;
 
+import org.hamcrest.Matcher;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.not;
 
 public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
@@ -81,5 +87,20 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Ho
 
     public void test_emptyName_cannotCommit() {
         onView(EditAccessor.ok()).check(doesNotExist());
+    }
+
+    public void test_setARatingThenEdit_doesNotCrash() {
+        Matcher<View> happinessScore = HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy");
+        onView(happinessScore).perform(click());
+        onView(HealthScoreActivityAccessor.scoreTitle("Happiness")).perform(longClick());
+        onView(withText("Edit")).perform(click());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        onView(withText("Happiness")).check(matches(isDisplayed()));
+        onView(withText("Sad")).check(matches(isDisplayed()));
+        onView(withText("Happy")).check(matches(isDisplayed()));
     }
 }
