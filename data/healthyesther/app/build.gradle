@@ -2,15 +2,20 @@ apply plugin: 'com.android.application'
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
+def dropboxKey = System.getenv('HEALTHY_ESTHER_DROPBOX_KEY')
+def dropboxSecret = System.getenv('HEALTHY_ESTHER_DROPBOX_SECRET')
+
 android {
     buildTypes {
         debug {
-            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_KEY', "${System.getenv('HEALTHY_ESTHER_DROPBOX_KEY')}"
-            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_SECRET', "${System.getenv('HEALTHY_ESTHER_DROPBOX_SECRET')}"
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_KEY', "\"${dropboxKey}\""
+            resValue 'string', 'HEALTHY_ESTHER_DROPBOX_KEY', "db-${dropboxKey}"
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_SECRET', "\"${dropboxSecret}\""
         }
         release {
-            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_KEY', "${System.getenv('HEALTHY_ESTHER_DROPBOX_KEY')}"
-            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_SECRET', "${System.getenv('HEALTHY_ESTHER_DROPBOX_SECRET')}"
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_KEY', "\"${dropboxKey}\""
+            resValue 'string', 'HEALTHY_ESTHER_DROPBOX_KEY', "db-${dropboxKey}"
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_SECRET', "\"${dropboxSecret}\""
         }
     }
     signingConfigs {
@@ -45,6 +50,18 @@ android {
     compileOptions {
         sourceCompatibility javaVersion
         targetCompatibility javaVersion
+    }
+}
+
+task checkEnvironnment {
+    configure {
+        if (dropboxKey == null) {
+            throw new GradleException("No Dropbox API key found. Please define it in the HEALTHY_ESTHER_DROPBOX_KEY environment variable.")
+        }
+
+        if (dropboxSecret == null) {
+            throw new GradleException("No Dropbox API secret found. Please define it in the HEALTHY_ESTHER_DROPBOX_SECRET environment variable.")
+        }
     }
 }
 
