@@ -3,6 +3,16 @@ sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
 android {
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_KEY', "${System.getenv('HEALTHY_ESTHER_DROPBOX_KEY')}"
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_SECRET', "${System.getenv('HEALTHY_ESTHER_DROPBOX_SECRET')}"
+        }
+        release {
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_KEY', "${System.getenv('HEALTHY_ESTHER_DROPBOX_KEY')}"
+            buildConfigField 'String', 'HEALTHY_ESTHER_DROPBOX_SECRET', "${System.getenv('HEALTHY_ESTHER_DROPBOX_SECRET')}"
+        }
+    }
     signingConfigs {
         release {
             keyAlias 'test1'
@@ -42,6 +52,7 @@ tasks.preBuild.dependsOn(":dbcodemodel:sqlite2Java")
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile group: 'com.dropbox.core', name: 'dropbox-core-sdk', version: '2.0-beta-7'
     compile 'com.android.support:support-v4:23.2.0'
     compile 'net.danlew:android.joda:2.7.1'
     compile 'com.jjoe64:graphview:3.1.3'
