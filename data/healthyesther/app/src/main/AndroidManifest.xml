@@ -49,6 +49,20 @@
             android:icon="@mipmap/ic_settings"
             android:label="@string/title_activity_settings" />
 
+        <activity
+            android:name="com.dropbox.core.android.AuthActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <data android:scheme="@string/HEALTHY_ESTHER_DROPBOX_KEY" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".reminder.ServiceAutoStarter">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
