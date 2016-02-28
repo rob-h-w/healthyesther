@@ -65,5 +65,6 @@
     <string name="getting_more">Getting more…</string>
     <string name="event_icon_content_description">Image indicating the type of event displayed.</string>
     <string name="event_date_time_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="dropbox">Dropbox</string>
 
 </resources>

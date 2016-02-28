@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.robwilliamson.healthyesther">
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -48,6 +50,10 @@
             android:name=".SettingsActivity"
             android:icon="@mipmap/ic_settings"
             android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".dropbox.DropboxSyncActivity"
+            android:icon="@mipmap/ic_settings"
+            android:label="@string/dropbox" />
 
         <activity
             android:name="com.dropbox.core.android.AuthActivity"

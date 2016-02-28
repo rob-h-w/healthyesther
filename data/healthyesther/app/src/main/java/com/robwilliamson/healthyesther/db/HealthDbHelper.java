@@ -4,12 +4,21 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.dropbox.core.DbxDownloader;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.SearchResult;
+import com.dropbox.core.v2.files.UploadUploader;
 import com.robwilliamson.healthyesther.App;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
+import com.robwilliamson.healthyesther.dropbox.DropboxClientFactory;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
@@ -106,25 +115,59 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void backupToDropbox() throws IOException {
+    @Nonnull
+    private static String getDropboxFileName() {
+        String name = App.getInstance().getUsername();
+
+        if (name == null) {
+            name = "test";
+        }
+
+        return name + ".db3";
+    }
+
+    public void backupToDropbox() throws IOException, DbxException {
         synchronized (sSync) {
             closeDb();
-            Utils.File.copy(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath(),
-                    Utils.File.Dropbox.dbFile());
+
+            @Nonnull
+            final DbxClientV2 client = DropboxClientFactory.getClient();
+            @Nonnull
+            final UploadUploader uploader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.upload("/" + getDropboxFileName()));
+
+            try (FileInputStream fileInputStream = new FileInputStream(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath())) {
+                uploader.uploadAndFinish(fileInputStream);
+            }
         }
     }
 
-    public void restoreFromDropbox(@Nonnull Context context) throws IOException {
+    public void restoreFromDropbox() throws IOException, DbxException {
         synchronized (sSync) {
+
+            @Nonnull
+            final DbxClientV2 client = DropboxClientFactory.getClient();
+            @Nonnull
+            final String dbFilename = getDropboxFileName();
+            @Nonnull
+            final SearchResult result = client.files.search("", dbFilename);
+
+            if (result.getMatches().isEmpty()) {
+                return;
+            }
+
             // Close the DB.
             closeDb();
 
-            Utils.File.copy(Utils.File.Dropbox.dbFile(),
-                    mContext.getDatabasePath(getDatabaseName()).getAbsolutePath());
+            @Nonnull
+            final DbxDownloader<FileMetadata> dbxDownloader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.download("/" + dbFilename));
+
+            try (FileOutputStream fileOutputStream = new FileOutputStream(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath())) {
+                dbxDownloader.download(fileOutputStream);
+            }
 
             // We'll need to be re-created after this event in case the dropbox version is different
             // from this one.
-            sInstance = getInstance(context);
+            sInstance = getInstance(App.getInstance());
         }
     }
 }

@@ -559,57 +559,26 @@ public final class Utils {
 
         public static void mkdirs(String directories) {
             java.io.File dirs = new java.io.File(directories);
+            //noinspection ResultOfMethodCallIgnored
             dirs.mkdirs();
         }
 
         public static void copy(String from, String to) throws IOException {
-            InputStream in = new FileInputStream(new java.io.File(from));
 
-            try {
+            try (InputStream in = new FileInputStream(new java.io.File(from))) {
                 copy(in, to);
-            } finally {
-                in.close();
             }
         }
 
         public static void copy(InputStream from, String to) throws IOException {
-            OutputStream out = new FileOutputStream(new java.io.File(to));
 
-            try {
+            try (OutputStream out = new FileOutputStream(new java.io.File(to))) {
 
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = from.read(buf)) > 0) {
                     out.write(buf, 0, len);
                 }
-            } finally {
-                out.close();
-            }
-        }
-
-        public static class Dropbox {
-            private static final String ANDROID_DATA = "Android/data";
-            private static final String COM_DROPBOX_ANDROID_FILES_SCRATCH = "com.dropbox.android/files/scratch";
-
-            public static boolean isDbFileInDropboxAppFolder() {
-                return Utils.File.exists(dbFile());
-            }
-
-            public static boolean isDropboxPresent() {
-                return Utils.File.exists(folder());
-            }
-
-            public static String dbFile() {
-                return Utils.File.join(
-                        folder(),
-                        Contract.NAME);
-            }
-
-            private static String folder() {
-                return Utils.File.join(
-                        Environment.getExternalStorageDirectory().getAbsolutePath(),
-                        ANDROID_DATA,
-                        COM_DROPBOX_ANDROID_FILES_SCRATCH);
             }
         }
     }

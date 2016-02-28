@@ -1,20 +1,18 @@
 package com.robwilliamson.healthyesther;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.robwilliamson.healthyesther.db.HealthDbHelper;
-import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.db.integration.Executor;
+import com.robwilliamson.healthyesther.dropbox.DropboxSyncActivity;
 import com.robwilliamson.healthyesther.fragment.DbFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.ConfirmationDialogFragment;
-
-import java.io.IOException;
 
 import javax.annotation.Nonnull;
 
@@ -79,11 +77,11 @@ public abstract class DbActivity extends BusyActivity
         setEnabled(
                 menu,
                 R.id.action_backup_to_dropbox,
-                Utils.File.Dropbox.isDropboxPresent());
+                true);
         setEnabled(
                 menu,
                 R.id.action_restore_from_dropbox,
-                Utils.File.Dropbox.isDbFileInDropboxAppFolder());
+                true);
 
         return returnValue;
     }
@@ -103,17 +101,9 @@ public abstract class DbActivity extends BusyActivity
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (item.getItemId() == R.id.action_backup_to_dropbox) {
-            runAsTask(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        HealthDbHelper.getInstance().backupToDropbox();
-                    } catch (IOException e) {
-                        // TODO: Do some error handling UI.
-                        e.printStackTrace();
-                    }
-                }
-            });
+            Intent startBackupIntent = new Intent(this, DropboxSyncActivity.class);
+            startBackupIntent.putExtra(DropboxSyncActivity.RESTORE, false);
+            startActivity(startBackupIntent);
             return true;
         }
 
@@ -134,12 +124,9 @@ public abstract class DbActivity extends BusyActivity
         runAsTask(new Runnable() {
             @Override
             public void run() {
-                try {
-                    HealthDbHelper.getInstance().restoreFromDropbox(App.getInstance());
-                } catch (IOException e) {
-                    // TODO: Do some error handling UI.
-                    e.printStackTrace();
-                }
+                Intent startRestoreIntent = new Intent(DbActivity.this, DropboxSyncActivity.class);
+                startRestoreIntent.putExtra(DropboxSyncActivity.RESTORE, true);
+                startActivity(startRestoreIntent);
             }
         });
     }

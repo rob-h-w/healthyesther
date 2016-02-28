@@ -16,6 +16,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -23,8 +24,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
 
 public class HomeActivityAccessor {
+    public static Matcher<View> navigationDrawer() {
+        return withContentDescription("Esther's Health App, Open navigation drawer");
+    }
+
     public static void openNavigationDrawer() {
-        onView(withContentDescription("Esther's Health App, Open navigation drawer")).perform(click());
+        onView(navigationDrawer()).perform(click());
     }
 
     public static void setShowNavigationDrawer(Boolean show, Context targetContext) {
@@ -32,9 +37,11 @@ public class HomeActivityAccessor {
     }
 
     public static void checkUnmodifiedMenuContent(Context context) {
+        // Ensure we're at the home screen.
+        onView(navigationDrawer()).check(matches(isDisplayed()));
         openActionBarOverflowOrOptionsMenu(context);
         onView(MenuAccessor.backupToDropbox()).check(matches(isEnabled()));
-        onView(MenuAccessor.restoreFromDropbox()).check(matches(not(isEnabled())));
+        onView(MenuAccessor.restoreFromDropbox()).check(matches(isEnabled()));
         onView(MenuAccessor.settings()).check(matches(isEnabled()));
         Espresso.pressBack();
     }

@@ -1,6 +1,5 @@
 package com.robwilliamson.healthyesther;
 
-import android.os.Environment;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.InstrumentationTestCase;
 
@@ -10,8 +9,6 @@ import com.robwilliamson.healthyesther.test.Database;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
-
-import java.io.File;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
@@ -23,9 +20,6 @@ import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.AddMode.
 import static org.hamcrest.Matchers.not;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
-    private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
-            "/Android/data/com.dropbox.android";
-    private static final String DB_PATH = DROPBOX_PATH + "/files/scratch";
 
     public HomeActivityTest() {
         super(HomeActivity.class);
@@ -38,20 +32,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
 
         Utils.Db.TestData.cleanOldData();
-
-        if (Utils.File.exists(DROPBOX_PATH)) {
-            File file;
-
-            if (Utils.File.exists(Utils.File.Dropbox.dbFile())) {
-                file = new File(Utils.File.Dropbox.dbFile());
-                //noinspection ResultOfMethodCallIgnored
-                file.delete();
-            }
-
-            file = new File(DROPBOX_PATH);
-            //noinspection ResultOfMethodCallIgnored
-            file.delete();
-        }
 
         getActivity();
     }
@@ -73,23 +53,19 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     public void testBackupToDropboxDisabled() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.backupToDropbox()).check(matches(isDisplayed()));
-        onView(MenuAccessor.backupToDropbox()).check(matches(not(isClickable())));
+        onView(MenuAccessor.backupToDropbox()).check(matches(isClickable()));
     }
 
     public void testBackupToDropbox() {
-        Utils.File.mkdirs(DB_PATH);
-        assertTrue(Utils.File.exists(DB_PATH));
-        assertFalse(Utils.File.exists(Utils.File.Dropbox.dbFile()));
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
         onView(healthScoreButton()).check(matches(isDisplayed()));
-        assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
     }
 
     public void testRestoreFromDropboxDisabled() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.restoreFromDropbox()).check(matches(isDisplayed()));
-        onView(MenuAccessor.restoreFromDropbox()).check(matches(not(isClickable())));
+        onView(MenuAccessor.restoreFromDropbox()).check(matches(isClickable()));
     }
 
     public void testRestoreFromDropbox() throws Exception {
@@ -158,8 +134,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     private int enableRestoreDropbox() {
-        Utils.File.mkdirs(DB_PATH);
-
         // Remove original data.
         Utils.Db.TestData.cleanOldData();
 
@@ -174,8 +148,8 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
 
-        // Check that worked.
-        assertTrue(Utils.File.exists(Utils.File.Dropbox.dbFile()));
+        // Ensure we're at the home screen again.
+        onView(HomeActivityAccessor.AddMode.healthScoreButton()).check(matches(isDisplayed()));
 
         return expectedCount;
     }
