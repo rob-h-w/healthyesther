@@ -11,6 +11,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.SearchResult;
 import com.dropbox.core.v2.files.UploadUploader;
 import com.robwilliamson.healthyesther.App;
+import com.robwilliamson.healthyesther.Log;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
@@ -160,8 +161,11 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
             @Nonnull
             final DbxDownloader<FileMetadata> dbxDownloader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.download("/" + dbFilename));
+            @Nonnull
+            final String outputPath = mContext.getDatabasePath(getDatabaseName()).getAbsolutePath();
+            Log.d(getClass().getName(), outputPath);
 
-            try (FileOutputStream fileOutputStream = new FileOutputStream(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath())) {
+            try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath)) {
                 dbxDownloader.download(fileOutputStream);
             }
 

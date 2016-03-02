@@ -44,6 +44,7 @@ public class HomeActivityAccessor {
         onView(MenuAccessor.restoreFromDropbox()).check(matches(isEnabled()));
         onView(MenuAccessor.settings()).check(matches(isEnabled()));
         Espresso.pressBack();
+        onView(navigationDrawer()).check(matches(isDisplayed()));
     }
 
     public static class AddMode {

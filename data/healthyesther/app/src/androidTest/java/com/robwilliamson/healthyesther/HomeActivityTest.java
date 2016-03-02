@@ -14,10 +14,8 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.AddMode.healthScoreButton;
-import static org.hamcrest.Matchers.not;
 
 public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
 
@@ -50,26 +48,21 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         });
     }
 
-    public void testBackupToDropboxDisabled() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(MenuAccessor.backupToDropbox()).check(matches(isDisplayed()));
-        onView(MenuAccessor.backupToDropbox()).check(matches(isClickable()));
-    }
-
     public void testBackupToDropbox() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
         onView(healthScoreButton()).check(matches(isDisplayed()));
     }
 
-    public void testRestoreFromDropboxDisabled() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(MenuAccessor.restoreFromDropbox()).check(matches(isDisplayed()));
-        onView(MenuAccessor.restoreFromDropbox()).check(matches(isClickable()));
-    }
-
     public void testRestoreFromDropbox() throws Exception {
-        final int expectedCount = enableRestoreDropbox();
+        final int expectedCount = populateSomeDropboxData();
+
+        // Backup the data to Dropbox.
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(MenuAccessor.backupToDropbox()).perform(click());
+
+        // Ensure we're back in the home activity.
+        onView(HomeActivityAccessor.navigationDrawer()).check(matches(isDisplayed()));
 
         // Remove it from current use.
         Database.deleteDatabase(getInstrumentation().getTargetContext());
@@ -85,13 +78,16 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // Confirm.
         onView(ConfirmationDialogAccessor.okButton()).perform(click());
 
+        // Ensure we're back in the home activity.
+        onView(HomeActivityAccessor.navigationDrawer()).check(matches(isDisplayed()));
+
         // Check we have the same number of entries as before.
         final int finalCount = Database.countEntries();
         assertEquals(expectedCount, finalCount);
     }
 
     public void testConfirmationDialogOrientation() {
-        enableRestoreDropbox();
+        populateSomeDropboxData();
 
         // Open the dialog.
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
@@ -112,7 +108,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
     }
 
     public void testConfirmationDialogCancel() throws Exception {
-        enableRestoreDropbox();
+        populateSomeDropboxData();
 
         // Remove it from current use.
         Database.deleteDatabase(getInstrumentation().getTargetContext());
@@ -133,7 +129,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertEquals(0, emptyCount);
     }
 
-    private int enableRestoreDropbox() {
+    private int populateSomeDropboxData() {
         // Remove original data.
         Utils.Db.TestData.cleanOldData();
 
@@ -143,13 +139,6 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         // Check that we have some entries.
         final int expectedCount = Database.countEntries();
         assertTrue("expected " + expectedCount + " to be greater than 0.", expectedCount > 0);
-
-        // Put it in the dropbox folder.
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
-        onView(MenuAccessor.backupToDropbox()).perform(click());
-
-        // Ensure we're at the home screen again.
-        onView(HomeActivityAccessor.AddMode.healthScoreButton()).check(matches(isDisplayed()));
 
         return expectedCount;
     }
