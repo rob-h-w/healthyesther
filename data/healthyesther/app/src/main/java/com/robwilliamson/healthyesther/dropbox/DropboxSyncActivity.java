@@ -3,14 +3,10 @@ package com.robwilliamson.healthyesther.dropbox;
 import android.content.Intent;
 import android.os.AsyncTask;
 
-
 import com.dropbox.core.DbxException;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
-import com.robwilliamson.healthyesther.db.Utils;
 
 import java.io.IOException;
-
-import javax.annotation.Nonnull;
 
 public class DropboxSyncActivity extends DropboxActivity {
     public static final String RESTORE = "restore";
