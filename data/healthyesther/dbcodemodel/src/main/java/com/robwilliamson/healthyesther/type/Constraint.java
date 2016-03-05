@@ -1,7 +1,9 @@
 package com.robwilliamson.healthyesther.type;
 
 public class Constraint {
+    @SuppressWarnings("unused")
     private String type;
+    @SuppressWarnings("unused")
     private String definition;
 
     public Constraint() {

@@ -26,10 +26,9 @@ public class CodeGenerator {
         JCodeModel codeModel = new JCodeModel();
         JPackage rootPackage = codeModel._package(mDestination.getPackage());
         try {
-            com.robwilliamson.healthyesther.generator.Database database =
-                    new com.robwilliamson.healthyesther.generator.Database(
-                            dbFromJson,
-                            rootPackage);
+            new com.robwilliamson.healthyesther.generator.Database(
+                    dbFromJson,
+                    rootPackage);
             ASYNC.execute();
             codeModel.build(mDestination.getFolder());
         } catch (JClassAlreadyExistsException | IOException e) {

@@ -49,7 +49,17 @@ public class Table extends DbObject {
                 }
 
                 ColumnDependency dependency = column.getColumnDependency();
+                if (dependency == null) {
+                    throw new NullPointerException(
+                            "dependency should not be null for column " + column.getFullyQualifiedName() + ".");
+                }
+
                 Column columnDependendOn = byDependency(tables, dependency);
+                if (columnDependendOn == null) {
+                    throw new NullPointerException(
+                            "columnDependedOn should not be null for column " + column.getFullyQualifiedName() + " claiming to relate to " + dependency.table + "." + dependency.column + ".");
+                }
+
                 dependency.setDependency(columnDependendOn);
             }
         }
@@ -197,6 +207,10 @@ public class Table extends DbObject {
                     builder.append(columnIndent).append(column.getName()).append(":{\n");
 
                     ColumnDependency dependency = column.getColumnDependency();
+                    if (dependency == null) {
+                        throw new NullPointerException("dependency should not be null for " + column.getFullyQualifiedName() + ".");
+                    }
+
                     builder.append(dependencyIndent)
                             .append(dependency.table)
                             .append(": ")

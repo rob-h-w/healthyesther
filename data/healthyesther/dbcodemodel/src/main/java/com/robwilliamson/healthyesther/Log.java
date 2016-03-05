@@ -13,7 +13,7 @@ public final class Log {
     }
 
     private static void log(boolean enabled, String message, Object... parameters) {
-        if (!verbose) {
+        if (!verbose || !enabled) {
             return;
         }
 

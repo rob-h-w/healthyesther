@@ -7,6 +7,7 @@ import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.semantic.BaseField;
+import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.RowField;
 import com.robwilliamson.healthyesther.type.Column;
@@ -151,7 +152,7 @@ public class RowGenerator extends BaseClassGenerator {
                     rowPresent.assign(columnField.fieldVar, callGetNextPrimaryKey(null, rowField.fieldVar));
                 }
 
-                if (column.isPrimaryKey() && column.isForeignKey()) {
+                if (column.isPrimaryKey() && column.isForeignKey() && nextPrimaryKey != null) {
                     // update the next primary key.
                     rowPresent._if(nextPrimaryKey.ne(JExpr._null()))._then().invoke(
                             nextPrimaryKey,
@@ -164,7 +165,7 @@ public class RowGenerator extends BaseClassGenerator {
         mPrimaryKeyColumns.forEach(updateRowDependency);
         mBasicColumns.forEach(updateRowDependency);
 
-        if (getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys()) {
+        if (getTableGenerator().getPrimaryKeyGenerator().hasForeignPrimaryKeys() && nextPrimaryKey != null) {
             final JExpression[] makeNewPrimaryKey = {nextPrimaryKey.eq(JExpr._null())};
 
             Column.Visitor<BaseColumns> populateMakeNewPrimaryCondition = new Column.Visitor<BaseColumns>() {
@@ -376,6 +377,10 @@ public class RowGenerator extends BaseClassGenerator {
             @Override
             public void visit(Column column, BaseColumns context) {
                 ColumnField field = context.columnFieldFor(column);
+                if (field == null) {
+                    throw new NullPointerException("Column field for " + column.getFullyQualifiedName() + " could not be found.");
+                }
+
                 JBlock ifBlock = body._if(makeEquals(field.fieldVar, otherType.ref(field.fieldVar)).not())._then();
                 ifBlock._return(JExpr.lit(false));
             }
@@ -401,6 +406,11 @@ public class RowGenerator extends BaseClassGenerator {
             public void visit(Column column, BaseColumns context) {
                 if (!column.isNotNull()) {
                     ColumnField columnField = context.columnFieldFor(column);
+
+                    if (columnField == null) {
+                        throw new NullPointerException("Column field for " + column.getFullyQualifiedName() + " could not be found.");
+                    }
+
                     JFieldVar fieldVar = columnField.fieldVar;
                     JExpression value = column.isForeignKey() ? fieldVar.invoke("getId") : fieldVar;
                     JVar object = body.decl(
@@ -497,7 +507,12 @@ public class RowGenerator extends BaseClassGenerator {
                     if (column.isPrimaryKey()) {
 
                         if (column.isForeignKey()) {
-                            PrimaryKeyGenerator foreignKeyGenerator = context.rowFieldFor(column).rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
+                            RowField rowField = context.rowFieldFor(column);
+                            if (rowField == null) {
+                                throw new NullPointerException("Row field for column " + column.getFullyQualifiedName() + " could not be found.");
+                            }
+
+                            PrimaryKeyGenerator foreignKeyGenerator = rowField.rowGenerator.getTableGenerator().getPrimaryKeyGenerator();
                             insertionCall.arg(nextPrimaryKey.invoke(keyGenerator.getGetterFor(column)).invoke(foreignKeyGenerator.getRowIdGetter()));
                         } else {
                             insertionCall.arg(nextPrimaryKey.invoke(keyGenerator.getGetterFor(column)));
@@ -506,6 +521,10 @@ public class RowGenerator extends BaseClassGenerator {
                         if (nullables.containsKey(column)) {
                             insertionCall.arg(nullables.get(column));
                         } else {
+                            if (field == null) {
+                                throw new NullPointerException("Column field for " + column.getFullyQualifiedName() + " could not be found.");
+                            }
+
                             if (column.isForeignKey()) {
                                 insertionCall.arg(field.fieldVar.invoke("getId"));
                             } else {
@@ -534,7 +553,12 @@ public class RowGenerator extends BaseClassGenerator {
                     if (column.isRowId()) {
                         newPrimaryKey.arg(insertionCall);
                     } else {
-                        newPrimaryKey.arg(mPrimaryKeyColumns.columnFieldFor(column).fieldVar);
+                        ColumnField columnField = mPrimaryKeyColumns.columnFieldFor(column);
+                        if (columnField == null) {
+                            throw new NullPointerException("Could not find column field for " + column.getFullyQualifiedName() + ".");
+                        }
+
+                        newPrimaryKey.arg(columnField.fieldVar);
                     }
                 }
                 if (updateRowId != null) {
@@ -558,7 +582,6 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private void makeIsValid() {
-        TableGenerator generator = getTableGenerator();
         JMethod method = getJClass().method(JMod.PUBLIC, model().BOOLEAN, "isValid");
         method.annotate(Override.class);
         final JBlock block = method.body();
@@ -640,7 +663,12 @@ public class RowGenerator extends BaseClassGenerator {
                 }
             }
 
-            invocation = invocation.arg(mBasicColumns.columnFieldFor(column).fieldVar);
+            ColumnField columnField = mBasicColumns.columnFieldFor(column);
+            if (columnField == null) {
+                throw new NullPointerException("Could not get column field for " + column.getFullyQualifiedName() + ".");
+            }
+
+            invocation = invocation.arg(columnField.fieldVar);
         }
 
         return invocation;
@@ -678,9 +706,16 @@ public class RowGenerator extends BaseClassGenerator {
             public void visit(Column column, RowGenerator.BaseColumns context) {
                 String columnName = column.getName();
                 JInvocation getValue = cursor.invoke(getCursorMethodFor(column)).arg(columnName);
+
+                ColumnDependency columnDependency = column.getColumnDependency();
+
                 if (column.isPrimaryKey()) {
                     if (column.isForeignKey()) {
-                        PrimaryKeyGenerator keyGenerator = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
+                        if (columnDependency == null) {
+                            throw new NullPointerException("Could not get column dependency for " + column.getFullyQualifiedName() + ".");
+                        }
+
+                        PrimaryKeyGenerator keyGenerator = columnDependency.getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
                         JType primaryKeyType = keyGenerator.getJClass();
                         newPrimaryKey.arg(JOp.cond(getValue.ne(JExpr._null()), JExpr._new(primaryKeyType).arg(getValue), JExpr._null()));
                     } else {
@@ -692,8 +727,11 @@ public class RowGenerator extends BaseClassGenerator {
                         if (setter == null) {
                             return;
                         }
+                        if (columnDependency == null) {
+                            throw new NullPointerException("Could not get column dependency for " + column.getFullyQualifiedName() + ".");
+                        }
 
-                        PrimaryKeyGenerator keyGenerator = column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
+                        PrimaryKeyGenerator keyGenerator = columnDependency.getDependency().getTable().getGenerator().getPrimaryKeyGenerator();
                         JType primaryKeyType = keyGenerator.getJClass();
                         JInvocation getLong = cursor.invoke("getLong").arg(columnName);
                         body.invoke(setter).arg(JOp.cond(getLong.ne(JExpr._null()), JExpr._new(primaryKeyType).arg(getLong), JExpr._null()));
@@ -747,7 +785,12 @@ public class RowGenerator extends BaseClassGenerator {
             if (rowField != null) {
                 mJoinConstructor.body().assign(rowField.fieldVar, param);
             } else {
-                mJoinConstructor.body().assign(mBasicColumns.columnFieldFor(column).fieldVar, param);
+                ColumnField columnField = mBasicColumns.columnFieldFor(column);
+                if (columnField == null) {
+                    throw new NullPointerException("Could not get column field for " + column.getFullyQualifiedName() + ".");
+                }
+
+                mJoinConstructor.body().assign(columnField.fieldVar, param);
             }
         }
     }
@@ -772,6 +815,10 @@ public class RowGenerator extends BaseClassGenerator {
             JVar param = basicParams.get(column);
             if (param != null) {
                 ColumnField field = mBasicColumns.columnFieldFor(column);
+                if (field == null) {
+                    throw new NullPointerException("Could not get column field for " + column.getFullyQualifiedName() + ".");
+                }
+
                 mValueConstructor.body().assign(field.fieldVar, basicParams.get(column));
             }
         }
@@ -806,6 +853,10 @@ public class RowGenerator extends BaseClassGenerator {
             @Override
             public void visit(Column column, BaseColumns context) {
                 ColumnField field = context.columnFieldFor(column);
+                if (field == null) {
+                    throw new NullPointerException("Could not get column field for " + column.getFullyQualifiedName() + ".");
+                }
+
                 JMethod setter = getJClass().method(
                         JMod.PUBLIC,
                         model().VOID,
@@ -884,11 +935,6 @@ public class RowGenerator extends BaseClassGenerator {
         }
 
         @Nullable
-        JMethod setterForPrimaryKeyColumn(@Nonnull Column column) {
-            return mTableGenerator.getPrimaryKeyGenerator().getSetterFor(column);
-        }
-
-        @Nullable
         JMethod getterForPrimaryKeyColumn(@Nonnull Column column) {
             return mTableGenerator.getPrimaryKeyGenerator().getGetterFor(column);
         }
@@ -918,8 +964,13 @@ public class RowGenerator extends BaseClassGenerator {
 
 
         protected RowField makeRowFieldFor(Column column) {
-            RowGenerator row = column
-                    .getColumnDependency().getDependency().getTable().getGenerator().getRow();
+            ColumnDependency columnDependency = column.getColumnDependency();
+            if (columnDependency == null) {
+                throw new NullPointerException("Could not get column dependency for " + column.getFullyQualifiedName() + ".");
+            }
+
+            RowGenerator row = columnDependency.getDependency().getTable().getGenerator().getRow();
+
             return new RowField(getJClass(), column, row, BaseField.name(column.getName()) + "Row");
         }
 
@@ -929,7 +980,12 @@ public class RowGenerator extends BaseClassGenerator {
 
         private JType getValueParamType(@Nonnull Column column) {
             if (column.isForeignKey()) {
-                return column.getColumnDependency().getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
+                ColumnDependency columnDependency = column.getColumnDependency();
+                if (columnDependency == null) {
+                    throw new NullPointerException("Could not get column dependency for " + column.getFullyQualifiedName() + ".");
+                }
+
+                return columnDependency.getDependency().getTable().getGenerator().getPrimaryKeyGenerator().getJClass();
             } else {
                 return getRowParamTypeWrtNullability(column);
             }
@@ -953,7 +1009,12 @@ public class RowGenerator extends BaseClassGenerator {
 
         private JType getRowParamType(@Nonnull Column column) {
             if (column.isForeignKey()) {
-                return column.getColumnDependency().getDependency().getTable().getGenerator().getRow().getJClass();
+                ColumnDependency columnDependency = column.getColumnDependency();
+                if (columnDependency == null) {
+                    throw new NullPointerException("Could not get column dependency for " + column.getFullyQualifiedName() + ".");
+                }
+
+                return columnDependency.getDependency().getTable().getGenerator().getRow().getJClass();
             } else {
                 return getRowParamTypeWrtNullability(column);
             }

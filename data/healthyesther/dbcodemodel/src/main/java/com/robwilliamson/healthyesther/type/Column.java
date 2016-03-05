@@ -53,6 +53,11 @@ public class Column {
     }
 
     @Nonnull
+    public String getFullyQualifiedName() {
+        return getTable().getName() + "." + getName();
+    }
+
+    @Nonnull
     public String getVarName() {
         return Strings.lowerCase(Strings.underscoresToCamel(getName()));
     }

@@ -20,11 +20,6 @@ public abstract class BaseField {
         this.fieldVar = fieldVar;
     }
 
-    public BaseField(BaseField other) {
-        this.name = other.name;
-        this.fieldVar = other.fieldVar;
-    }
-
     public static String memberName(String name) {
         return "m" + Strings.capitalize(name(name));
     }

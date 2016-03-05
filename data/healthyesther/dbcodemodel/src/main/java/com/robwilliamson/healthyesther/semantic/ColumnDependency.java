@@ -3,7 +3,6 @@ package com.robwilliamson.healthyesther.semantic;
 import com.robwilliamson.healthyesther.type.Column;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ColumnDependency {
     public final Column dependent;

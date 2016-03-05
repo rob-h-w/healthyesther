@@ -23,15 +23,6 @@ public class ColumnField extends BaseField {
         this.column = column;
     }
 
-    public ColumnField(ColumnField other) {
-        super(other);
-        this.column = other.column;
-    }
-
-    public static Map<String, ColumnField> makeMap(JDefinedClass owningClass, List<Column> columns, Column.Picker picker) {
-        return makeMap(columns, new DefaultMaker(owningClass), picker);
-    }
-
     public static Map<String, ColumnField> makeMap(List<Column> columns, Maker maker, Column.Picker picker) {
         Map<String, ColumnField> map = new HashMap<>(columns.size());
         for (Column column : columns) {
@@ -41,10 +32,6 @@ public class ColumnField extends BaseField {
             map.put(column.getName(), maker.make(column));
         }
         return map;
-    }
-
-    public static List<ColumnField> makeSortedList(JDefinedClass owningClass, List<Column> columns, Column.Picker picker) {
-        return makeSortedList(makeMap(owningClass, columns, picker), picker);
     }
 
     public static List<ColumnField> makeSortedList(Map<String, ColumnField> map, Column.Picker picker) {
