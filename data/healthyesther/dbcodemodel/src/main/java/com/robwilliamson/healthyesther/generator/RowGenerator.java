@@ -128,55 +128,50 @@ public class RowGenerator extends BaseClassGenerator {
             return;
         }
 
-        CodeGenerator.ASYNC.schedule(new Runnable() {
+        JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
+        final JVar databaseVar = loadRelations.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+        final JBlock body = loadRelations.body();
+        System.out.println("---\n\n" + getTableGenerator().getTable().getName());
+        Column.Visitor<BaseColumns> makeRelation = new Column.Visitor<BaseColumns>() {
             @Override
-            public void run() {
-                JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
-                final JVar databaseVar = loadRelations.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
-                final JBlock body = loadRelations.body();
-                System.out.println("---\n\n" + getTableGenerator().getTable().getName());
-                Column.Visitor<BaseColumns> makeRelation = new Column.Visitor<BaseColumns>() {
-                    @Override
-                    public void visit(Column column, BaseColumns context) {
-                        Relation relation = Relation.getRelationOf(column);
-                        RowField rowField = context.rowFieldFor(column);
-                        ColumnField columnField = context.columnFieldFor(column);
+            public void visit(Column column, BaseColumns context) {
+                Relation relation = Relation.getRelationOf(column);
+                RowField rowField = context.rowFieldFor(column);
+                ColumnField columnField = context.columnFieldFor(column);
 
-                        if (relation != null && rowField != null) {
+                if (relation != null && rowField != null) {
 
-                            JExpression selector;
-                            if (columnField == null) {
-                                selector = callGetConcretePrimaryKey(null, null).invoke(context.getterForPrimaryKeyColumn(column));
-                            } else {
-                                selector = columnField.fieldVar;
-                            }
-
-                            System.out.print(relation.getBaseColumn().getFullyQualifiedName() + " : " + relation.getRelatedColumn().getFullyQualifiedName());
-                            String methodName;
-                            if (column.isNotNull()) {
-                                System.out.println(" not null.");
-                                methodName = "select1";
-                            } else {
-                                System.out.println(" nullable.");
-                                methodName = "select0Or1";
-                            }
-
-                            Database dbGenerator = getTableGenerator().getDatabaseGenerator();
-                            JInvocation invocation = dbGenerator.getJClass().staticRef(dbGenerator.getTableFieldFor(relation.getBaseColumn()))
-                                    .invoke(methodName);
-                            invocation.arg(databaseVar);
-                            invocation.arg(selector);
-                            body.assign(
-                                    rowField.fieldVar,
-                                    invocation);
-                        }
+                    JExpression selector;
+                    if (columnField == null) {
+                        selector = callGetConcretePrimaryKey(null, null).invoke(context.getterForPrimaryKeyColumn(column));
+                    } else {
+                        selector = columnField.fieldVar;
                     }
-                };
 
-                mPrimaryKeyColumns.forEach(makeRelation);
-                mBasicColumns.forEach(makeRelation);
+                    System.out.print(relation.getBaseColumn().getFullyQualifiedName() + " : " + relation.getRelatedColumn().getFullyQualifiedName());
+                    String methodName;
+                    if (column.isNotNull()) {
+                        System.out.println(" not null.");
+                        methodName = "select1";
+                    } else {
+                        System.out.println(" nullable.");
+                        methodName = "select0Or1";
+                    }
+
+                    Database dbGenerator = getTableGenerator().getDatabaseGenerator();
+                    JInvocation invocation = dbGenerator.getJClass().staticRef(dbGenerator.getTableFieldFor(relation.getBaseColumn()))
+                            .invoke(methodName);
+                    invocation.arg(databaseVar);
+                    invocation.arg(selector);
+                    body.assign(
+                            rowField.fieldVar,
+                            invocation);
+                }
             }
-        });
+        };
+
+        mPrimaryKeyColumns.forEach(makeRelation);
+        mBasicColumns.forEach(makeRelation);
     }
 
     private boolean hasRelations() {
