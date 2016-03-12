@@ -19,6 +19,7 @@ import com.sun.codemodel.JConditional;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JExpression;
+import com.sun.codemodel.JFieldRef;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
@@ -127,7 +128,7 @@ public class RowGenerator extends BaseClassGenerator {
             return;
         }
 
-        JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
+        final JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
         final JVar databaseVar = loadRelations.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
         final JBlock body = loadRelations.body();
         Column.Visitor<BaseColumns> makeRelation = new Column.Visitor<BaseColumns>() {
@@ -139,28 +140,56 @@ public class RowGenerator extends BaseClassGenerator {
 
                 if (relation != null && rowField != null) {
 
-                    JExpression selector;
+                    JVar selectorValue;
                     if (columnField == null) {
-                        selector = callGetConcretePrimaryKey(null, null).invoke(context.getterForPrimaryKeyColumn(column));
+                        JMethod primaryKeyGetter = context.getterForPrimaryKeyColumn(column);
+                        //noinspection ConstantConditions
+                        selectorValue = body.decl(primaryKeyGetter.type(), column.getVarName(),
+                                callGetConcretePrimaryKey(null, null).invoke(primaryKeyGetter));
                     } else {
-                        selector = columnField.fieldVar;
+                        selectorValue = columnField.fieldVar;
                     }
 
                     String methodName;
-                    if (column.isNotNull()) {
+                    final boolean isNotNull = column.isNotNull();
+                    if (isNotNull) {
                         methodName = "select1";
                     } else {
                         methodName = "select0Or1";
                     }
 
                     Database dbGenerator = getTableGenerator().getDatabaseGenerator();
-                    JInvocation invocation = dbGenerator.getJClass().staticRef(dbGenerator.getTableFieldFor(relation.getBaseColumn()))
-                            .invoke(methodName);
+                    JFieldRef tableField = dbGenerator.getJClass().staticRef(
+                            dbGenerator.getTableFieldFor(relation.getBaseColumn()));
+
+                    JBlock bodyForThisColumn = body;
+
+                    if(!isNotNull) {
+                        bodyForThisColumn = body._if(selectorValue.ne(JExpr._null()))._then();
+                    }
+
+                    JInvocation invocation = tableField.invoke(methodName);
                     invocation.arg(databaseVar);
-                    invocation.arg(selector);
-                    body.assign(
+                    invocation.arg(selectorValue);
+                    bodyForThisColumn.assign(
                             rowField.fieldVar,
                             invocation);
+
+                    if (!relation.getBaseColumn().getTable().hasDependencies()) {
+                        return;
+                    }
+
+                    if (!isNotNull) {
+                        bodyForThisColumn = bodyForThisColumn
+                                ._if(rowField.fieldVar.ne(JExpr._null()))
+                                ._then();
+                    }
+
+                    bodyForThisColumn
+                            .invoke(
+                                    rowField.fieldVar,
+                                    loadRelations)
+                            .arg(databaseVar);
                 }
             }
         };

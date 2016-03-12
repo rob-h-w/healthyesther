@@ -376,8 +376,11 @@ public class MedicationEventTable
         }
 
         public final void loadRelations(Database database) {
-            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, getConcretePrimaryKey().getEventId());
-            mMedicationIdRow = HealthDatabase.MEDICATION_TABLE.select1(database, getConcretePrimaryKey().getMedicationId());
+            com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId = getConcretePrimaryKey().getEventId();
+            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
+            mEventIdRow.loadRelations(database);
+            com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId = getConcretePrimaryKey().getMedicationId();
+            mMedicationIdRow = HealthDatabase.MEDICATION_TABLE.select1(database, medicationId);
         }
 
     }

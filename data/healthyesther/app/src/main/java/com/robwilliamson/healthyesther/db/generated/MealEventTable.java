@@ -445,9 +445,14 @@ public class MealEventTable
         }
 
         public final void loadRelations(Database database) {
-            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, getConcretePrimaryKey().getEventId());
-            mMealIdRow = HealthDatabase.MEAL_TABLE.select1(database, getConcretePrimaryKey().getMealId());
-            mUnitsIdRow = HealthDatabase.UNITS_TABLE.select0Or1(database, mUnitsId);
+            com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId = getConcretePrimaryKey().getEventId();
+            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
+            mEventIdRow.loadRelations(database);
+            com.robwilliamson.healthyesther.db.generated.MealTable.PrimaryKey mealId = getConcretePrimaryKey().getMealId();
+            mMealIdRow = HealthDatabase.MEAL_TABLE.select1(database, mealId);
+            if (mUnitsId!= null) {
+                mUnitsIdRow = HealthDatabase.UNITS_TABLE.select0Or1(database, mUnitsId);
+            }
         }
 
     }
