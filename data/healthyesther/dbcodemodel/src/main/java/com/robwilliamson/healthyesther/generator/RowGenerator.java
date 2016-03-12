@@ -149,9 +149,6 @@ public class RowGenerator extends BaseClassGenerator {
                                 selector = callGetConcretePrimaryKey(null, null).invoke(context.getterForPrimaryKeyColumn(column));
                             } else {
                                 selector = columnField.fieldVar;
-                                /*model().ref(WhereContains.class).staticInvoke("columnEqualling")
-                                        .arg(relation.getBaseColumn().getName())
-                                        .arg(columnField.fieldVar);*/
                             }
 
                             System.out.print(relation.getBaseColumn().getFullyQualifiedName() + " : " + relation.getRelatedColumn().getFullyQualifiedName());
