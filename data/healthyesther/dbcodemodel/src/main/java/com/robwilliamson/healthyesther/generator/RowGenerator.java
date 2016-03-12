@@ -6,7 +6,6 @@ import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.semantic.BaseField;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
@@ -131,7 +130,6 @@ public class RowGenerator extends BaseClassGenerator {
         JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
         final JVar databaseVar = loadRelations.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
         final JBlock body = loadRelations.body();
-        System.out.println("---\n\n" + getTableGenerator().getTable().getName());
         Column.Visitor<BaseColumns> makeRelation = new Column.Visitor<BaseColumns>() {
             @Override
             public void visit(Column column, BaseColumns context) {
@@ -148,13 +146,10 @@ public class RowGenerator extends BaseClassGenerator {
                         selector = columnField.fieldVar;
                     }
 
-                    System.out.print(relation.getBaseColumn().getFullyQualifiedName() + " : " + relation.getRelatedColumn().getFullyQualifiedName());
                     String methodName;
                     if (column.isNotNull()) {
-                        System.out.println(" not null.");
                         methodName = "select1";
                     } else {
-                        System.out.println(" nullable.");
                         methodName = "select0Or1";
                     }
 
