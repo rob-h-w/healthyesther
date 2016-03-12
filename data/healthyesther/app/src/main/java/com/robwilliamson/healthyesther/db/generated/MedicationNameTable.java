@@ -367,6 +367,10 @@ public class MedicationNameTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mMedicationIdRow = HealthDatabase.MEDICATION_TABLE.select0Or1(database, getConcretePrimaryKey().getMedicationId());
+        }
+
     }
 
 }

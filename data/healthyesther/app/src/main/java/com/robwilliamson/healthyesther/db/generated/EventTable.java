@@ -495,6 +495,10 @@ public class EventTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mTypeIdRow = HealthDatabase.EVENT_TYPE_TABLE.select1(database, mTypeId);
+        }
+
     }
 
 }

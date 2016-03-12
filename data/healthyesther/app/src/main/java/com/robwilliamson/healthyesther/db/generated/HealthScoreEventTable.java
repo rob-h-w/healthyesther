@@ -407,6 +407,11 @@ public class HealthScoreEventTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, getConcretePrimaryKey().getEventId());
+            mHealthScoreIdRow = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, getConcretePrimaryKey().getHealthScoreId());
+        }
+
     }
 
 }

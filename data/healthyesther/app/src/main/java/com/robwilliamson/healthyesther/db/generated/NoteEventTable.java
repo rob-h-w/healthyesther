@@ -375,6 +375,11 @@ public class NoteEventTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, getConcretePrimaryKey().getEventId());
+            mNoteIdRow = HealthDatabase.NOTE_TABLE.select1(database, getConcretePrimaryKey().getNoteId());
+        }
+
     }
 
 }

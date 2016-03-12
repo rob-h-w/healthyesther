@@ -38,7 +38,7 @@ public abstract class Table {
 
     public static class NotFoundException extends RuntimeException {
         public NotFoundException(@Nonnull Table table, @Nonnull Where where) {
-            super("Could not find a row from table " + table.getName() + " matching selection statement \"" + where.getWhere() +"\".");
+            super("Could not find a row from table " + table.getName() + " matching selection statement \"" + where.getWhere() + "\".");
         }
     }
 }

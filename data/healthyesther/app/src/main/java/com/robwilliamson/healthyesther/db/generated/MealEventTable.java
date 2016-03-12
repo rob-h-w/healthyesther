@@ -444,6 +444,12 @@ public class MealEventTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, getConcretePrimaryKey().getEventId());
+            mMealIdRow = HealthDatabase.MEAL_TABLE.select1(database, getConcretePrimaryKey().getMealId());
+            mUnitsIdRow = HealthDatabase.UNITS_TABLE.select0Or1(database, mUnitsId);
+        }
+
     }
 
 }

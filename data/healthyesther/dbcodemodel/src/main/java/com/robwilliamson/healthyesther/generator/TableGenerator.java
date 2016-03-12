@@ -35,14 +35,21 @@ import javax.annotation.Nullable;
 @ClassGeneratorFeatures(name = "Table", parameterName = "Table")
 public class TableGenerator extends BaseClassGenerator {
     private final com.robwilliamson.healthyesther.semantic.Table mTable;
+    @Nonnull
+    private final Database mDatabaseGenerator;
     private RowGenerator mRowGenerator;
     private PrimaryKeyGenerator mPrimaryKeyGenerator;
     private JMethod mSelect0Or1;
 
     public TableGenerator(
+            @Nonnull
             JPackage jPackage,
-            com.robwilliamson.healthyesther.semantic.Table table) throws JClassAlreadyExistsException {
+            @Nonnull
+            com.robwilliamson.healthyesther.semantic.Table table,
+            @Nonnull
+            Database database) throws JClassAlreadyExistsException {
         mTable = table;
+        mDatabaseGenerator = database;
         setJClass(jPackage._class(JMod.PUBLIC, getName()));
         getJClass()._extends(Table.class);
         getJClass()._implements(Serializable.class);
@@ -50,6 +57,11 @@ public class TableGenerator extends BaseClassGenerator {
         makeGetName();
         makeCreate();
         makeDrop();
+    }
+
+    @Nonnull
+    public Database getDatabaseGenerator() {
+        return mDatabaseGenerator;
     }
 
     private void makeColumnNameFields() {

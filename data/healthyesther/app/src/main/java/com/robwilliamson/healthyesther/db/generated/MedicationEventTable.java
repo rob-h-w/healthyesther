@@ -375,6 +375,11 @@ public class MedicationEventTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, getConcretePrimaryKey().getEventId());
+            mMedicationIdRow = HealthDatabase.MEDICATION_TABLE.select1(database, getConcretePrimaryKey().getMedicationId());
+        }
+
     }
 
 }

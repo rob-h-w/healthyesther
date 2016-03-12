@@ -3,10 +3,15 @@ package com.robwilliamson.healthyesther.type;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
+import com.robwilliamson.healthyesther.semantic.Relation;
 import com.robwilliamson.healthyesther.semantic.Table;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +19,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class Column {
+    private static final List<Column> sColumns = new ArrayList<>();
+    private static final Map<String, Column> sColumnsByName = new HashMap<>();
+
     @SuppressWarnings("unused")
     private String name;
     @SuppressWarnings("unused")
@@ -27,6 +35,43 @@ public class Column {
     private transient Integer mMaxLength = null;
 
     Column() {
+        sColumns.add(this);
+    }
+
+    public static void registerAll() {
+        for (Column column : sColumns) {
+            column.register();
+        }
+    }
+
+    public static void makeAllRelations() {
+        registerAll();
+
+        for (Column column : sColumns) {
+            column.makeRelations();
+        }
+    }
+
+    public void register() {
+        sColumnsByName.put(getFullyQualifiedName(), this);
+    }
+
+    public void makeRelations() {
+        if (isForeignKey()) {
+            ColumnDependency columnDependency = getColumnDependency();
+            if (columnDependency == null) {
+                throw new NullPointerException("Could not get column dependency for " + getFullyQualifiedName() + ".");
+            }
+
+            String baseColumnName = columnDependency.table + "." + columnDependency.column;
+            Column baseColumn = sColumnsByName.get(baseColumnName);
+
+            if (baseColumn == null) {
+                throw new IllegalStateException("Column, " + getFullyQualifiedName() + ", references a base column, " + baseColumnName + ", that is not defined.");
+            }
+
+            Relation.with().baseColumn(baseColumn).and().relatedColumn(this).get();
+        }
     }
 
     @Nullable

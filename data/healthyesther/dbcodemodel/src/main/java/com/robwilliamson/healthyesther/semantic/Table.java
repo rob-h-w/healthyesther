@@ -8,11 +8,16 @@ import com.robwilliamson.healthyesther.type.DbObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 public class Table extends DbObject {
+    private static final Map<String, Table> sTablesByName = new HashMap<>();
     private TableGenerator mGenerator;
     private List<String> mPrimaryKeyColumnNames = null;
 
@@ -23,12 +28,23 @@ public class Table extends DbObject {
 
         table.copyTo(this);
 
+        sTablesByName.put(getName(), this);
+
         for (Column column : getColumns()) {
             column.setTable(this);
         }
 
         // Sort the columns.
         Arrays.sort(getColumns(), new Column.Comparator());
+    }
+
+    @Nonnull
+    public static Table forName(@Nonnull String name) {
+        if (!sTablesByName.containsKey(name)) {
+            throw new NotFoundException(name);
+        }
+
+        return sTablesByName.get(name);
     }
 
     public static List<Table> getTables(DbObject[] objects) {
@@ -174,6 +190,12 @@ public class Table extends DbObject {
         }
 
         return mPrimaryKeyColumnNames.contains(column.getName());
+    }
+
+    public static class NotFoundException extends RuntimeException {
+        public NotFoundException(@Nonnull String name) {
+            super("The table named " + name + " could not be found.");
+        }
     }
 
     public static class DependencyLoopException extends RuntimeException {

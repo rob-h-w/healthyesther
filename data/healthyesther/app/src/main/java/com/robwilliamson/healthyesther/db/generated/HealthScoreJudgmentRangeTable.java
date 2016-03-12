@@ -452,6 +452,10 @@ public class HealthScoreJudgmentRangeTable
             return true;
         }
 
+        public final void loadRelations(Database database) {
+            mScoreIdRow = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, mScoreId);
+        }
+
     }
 
 }

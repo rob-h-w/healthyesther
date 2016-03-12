@@ -6,9 +6,11 @@ import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.semantic.BaseField;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
+import com.robwilliamson.healthyesther.semantic.Relation;
 import com.robwilliamson.healthyesther.semantic.RowField;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JBlock;
@@ -116,8 +118,80 @@ public class RowGenerator extends BaseClassGenerator {
                 makeRemove();
                 makeEquals();
                 makeIsValid();
+                makeLoadRelations();
             }
         });
+    }
+
+    private void makeLoadRelations() {
+        if (!hasRelations()) {
+            return;
+        }
+
+        CodeGenerator.ASYNC.schedule(new Runnable() {
+            @Override
+            public void run() {
+                JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
+                final JVar databaseVar = loadRelations.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+                final JBlock body = loadRelations.body();
+                System.out.println("---\n\n" + getTableGenerator().getTable().getName());
+                Column.Visitor<BaseColumns> makeRelation = new Column.Visitor<BaseColumns>() {
+                    @Override
+                    public void visit(Column column, BaseColumns context) {
+                        Relation relation = Relation.getRelationOf(column);
+                        RowField rowField = context.rowFieldFor(column);
+                        ColumnField columnField = context.columnFieldFor(column);
+
+                        if (relation != null && rowField != null) {
+
+                            JExpression selector;
+                            if (columnField == null) {
+                                selector = callGetConcretePrimaryKey(null, null).invoke(context.getterForPrimaryKeyColumn(column));
+                            } else {
+                                selector = columnField.fieldVar;
+                                /*model().ref(WhereContains.class).staticInvoke("columnEqualling")
+                                        .arg(relation.getBaseColumn().getName())
+                                        .arg(columnField.fieldVar);*/
+                            }
+
+                            System.out.print(relation.getBaseColumn().getFullyQualifiedName() + " : " + relation.getRelatedColumn().getFullyQualifiedName());
+                            String methodName;
+                            if (column.isNotNull()) {
+                                System.out.println(" not null.");
+                                methodName = "select1";
+                            } else {
+                                System.out.println(" nullable.");
+                                methodName = "select0Or1";
+                            }
+
+                            Database dbGenerator = getTableGenerator().getDatabaseGenerator();
+                            JInvocation invocation = dbGenerator.getJClass().staticRef(dbGenerator.getTableFieldFor(relation.getBaseColumn()))
+                                    .invoke(methodName);
+                            invocation.arg(databaseVar);
+                            invocation.arg(selector);
+                            body.assign(
+                                    rowField.fieldVar,
+                                    invocation);
+                        }
+                    }
+                };
+
+                mPrimaryKeyColumns.forEach(makeRelation);
+                mBasicColumns.forEach(makeRelation);
+            }
+        });
+    }
+
+    private boolean hasRelations() {
+        //noinspection unchecked,unchecked
+        for (List<Column> columns : new List[]{mPrimaryKeyColumns.columns, mBasicColumns.columns}) {
+            for (Column column : columns) {
+                if (Relation.getRelationOf(column) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void makeApplyToRows() {

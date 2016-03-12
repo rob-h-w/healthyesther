@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.generator;
 import com.robwilliamson.healthyesther.Strings;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JArray;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JExpr;
@@ -15,6 +16,8 @@ import com.sun.codemodel.JVar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 @ClassGeneratorFeatures(name = "Database", parameterName = "Db")
 public class Database extends BaseClassGenerator {
@@ -31,9 +34,15 @@ public class Database extends BaseClassGenerator {
         makeConstructor();
         makeStaticFileName();
         makeTables();
+        Column.makeAllRelations();
         makeCreate();
         makeDrop();
         makeUpgrade();
+    }
+
+    @Nonnull
+    private static String staticFieldNameFor(@Nonnull TableGenerator tableGenerator) {
+        return Strings.constantName(tableGenerator.getPreferredParameterName());
     }
 
     private void makeUpgrade() {
@@ -74,6 +83,22 @@ public class Database extends BaseClassGenerator {
         return getJClass().constructor(JMod.PROTECTED);
     }
 
+    @Nonnull
+    public JFieldVar getTableFieldFor(@Nonnull Column column) {
+        return getTableFieldFor(column.getTable().getGenerator());
+    }
+
+    @Nonnull
+    public JFieldVar getTableFieldFor(@Nonnull TableGenerator tableGenerator) {
+        Map<String, JFieldVar> fields = getJClass().fields();
+        String fieldName = staticFieldNameFor(tableGenerator);
+        if (!fields.containsKey(fieldName)) {
+            throw new NullPointerException("Could not find field for " + fieldName);
+        }
+
+        return getJClass().fields().get(staticFieldNameFor(tableGenerator));
+    }
+
     private void makeTables() throws JClassAlreadyExistsException {
         JPackage jPackage = getJClass().getPackage();
         JArray tablesList = JExpr.newArray(model()._ref(Table.class));
@@ -83,14 +108,15 @@ public class Database extends BaseClassGenerator {
         for (com.robwilliamson.healthyesther.semantic.Table table : tables) {
             TableGenerator tableGenerator = new TableGenerator(
                     jPackage,
-                    table);
+                    table,
+                    this);
 
             table.setGenerator(tableGenerator);
 
             JFieldVar tableField = getJClass().field(
                     JMod.PUBLIC | JMod.FINAL | JMod.STATIC,
                     tableGenerator.getJClass(),
-                    Strings.constantName(tableGenerator.getPreferredParameterName()),
+                    staticFieldNameFor(tableGenerator),
                     JExpr._new(tableGenerator.getJClass()));
 
             tablesList.add(tableField);
