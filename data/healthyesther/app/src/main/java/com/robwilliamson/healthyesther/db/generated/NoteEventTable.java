@@ -383,6 +383,22 @@ public class NoteEventTable
             mNoteIdRow = HealthDatabase.NOTE_TABLE.select1(database, noteId);
         }
 
+        @Nonnull
+        public final com.robwilliamson.healthyesther.db.generated.EventTable.Row getEventRow() {
+            if (mEventIdRow == null) {
+                throw new NullPointerException("event row is not set - call loadRelations first.");
+            }
+            return mEventIdRow;
+        }
+
+        @Nonnull
+        public final com.robwilliamson.healthyesther.db.generated.NoteTable.Row getNoteRow() {
+            if (mNoteIdRow == null) {
+                throw new NullPointerException("note row is not set - call loadRelations first.");
+            }
+            return mNoteIdRow;
+        }
+
     }
 
 }

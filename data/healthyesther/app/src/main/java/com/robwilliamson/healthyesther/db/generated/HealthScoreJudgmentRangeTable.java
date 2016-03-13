@@ -456,6 +456,14 @@ public class HealthScoreJudgmentRangeTable
             mScoreIdRow = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, mScoreId);
         }
 
+        @Nonnull
+        public final com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row getHealthScoreRow() {
+            if (mScoreIdRow == null) {
+                throw new NullPointerException("health_score row is not set - call loadRelations first.");
+            }
+            return mScoreIdRow;
+        }
+
     }
 
 }

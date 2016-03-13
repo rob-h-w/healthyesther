@@ -11,6 +11,7 @@ import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
 import com.robwilliamson.healthyesther.semantic.Relation;
 import com.robwilliamson.healthyesther.semantic.RowField;
+import com.robwilliamson.healthyesther.semantic.Table;
 import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
@@ -119,8 +120,53 @@ public class RowGenerator extends BaseClassGenerator {
                 makeEquals();
                 makeIsValid();
                 makeLoadRelations();
+                makeGetRows();
             }
         });
+    }
+
+    private void makeGetRows() {
+        if (!hasRelations()) {
+            return;
+        }
+
+        Column.Visitor<BaseColumns> makeRowAccessor = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                Relation relation = Relation.getRelationOf(column);
+                RowField rowField = context.rowFieldFor(column);
+                if (!column.isForeignKey() || relation == null || rowField == null) {
+                    return;
+                }
+
+                Table table = relation.getBaseColumn().getTable();
+                RowGenerator row = table.getGenerator().getRow();
+
+                JMethod accessor = getJClass()
+                        .method(
+                                JMod.PUBLIC | JMod.FINAL,
+                                row.getJClass(),
+                                "get" + Strings.capitalize(
+                                        Strings.underscoresToCamel(table.getName()))
+                                        + "Row");
+                Utils.annotateNonull(accessor, column.isNotNull());
+                JBlock body = accessor.body();
+
+                if (column.isNotNull()) {
+                    body
+                            ._if(rowField.fieldVar.eq(JExpr._null()))
+                            ._then()
+                            ._throw(JExpr._new(
+                                    model().ref(NullPointerException.class))
+                            .arg(table.getName() + " row is not set - call loadRelations first."));
+                }
+
+                body._return(rowField.fieldVar);
+            }
+        };
+
+        mPrimaryKeyColumns.forEach(makeRowAccessor);
+        mBasicColumns.forEach(makeRowAccessor);
     }
 
     private void makeLoadRelations() {
@@ -164,7 +210,7 @@ public class RowGenerator extends BaseClassGenerator {
 
                     JBlock bodyForThisColumn = body;
 
-                    if(!isNotNull) {
+                    if (!isNotNull) {
                         bodyForThisColumn = body._if(selectorValue.ne(JExpr._null()))._then();
                     }
 

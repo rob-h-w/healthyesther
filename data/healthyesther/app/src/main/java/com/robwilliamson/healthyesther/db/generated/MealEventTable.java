@@ -455,6 +455,27 @@ public class MealEventTable
             }
         }
 
+        @Nonnull
+        public final com.robwilliamson.healthyesther.db.generated.EventTable.Row getEventRow() {
+            if (mEventIdRow == null) {
+                throw new NullPointerException("event row is not set - call loadRelations first.");
+            }
+            return mEventIdRow;
+        }
+
+        @Nonnull
+        public final com.robwilliamson.healthyesther.db.generated.MealTable.Row getMealRow() {
+            if (mMealIdRow == null) {
+                throw new NullPointerException("meal row is not set - call loadRelations first.");
+            }
+            return mMealIdRow;
+        }
+
+        @Nullable
+        public final com.robwilliamson.healthyesther.db.generated.UnitsTable.Row getUnitsRow() {
+            return mUnitsIdRow;
+        }
+
     }
 
 }

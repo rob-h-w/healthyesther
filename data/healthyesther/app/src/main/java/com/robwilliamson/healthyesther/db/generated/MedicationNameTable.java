@@ -374,6 +374,11 @@ public class MedicationNameTable
             }
         }
 
+        @Nullable
+        public final com.robwilliamson.healthyesther.db.generated.MedicationTable.Row getMedicationRow() {
+            return mMedicationIdRow;
+        }
+
     }
 
 }

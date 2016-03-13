@@ -499,6 +499,14 @@ public class EventTable
             mTypeIdRow = HealthDatabase.EVENT_TYPE_TABLE.select1(database, mTypeId);
         }
 
+        @Nonnull
+        public final com.robwilliamson.healthyesther.db.generated.EventTypeTable.Row getEventTypeRow() {
+            if (mTypeIdRow == null) {
+                throw new NullPointerException("event_type row is not set - call loadRelations first.");
+            }
+            return mTypeIdRow;
+        }
+
     }
 
 }

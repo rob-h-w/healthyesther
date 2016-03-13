@@ -143,6 +143,7 @@ public class Column {
         return mColumnDependency;
     }
 
+    @Nonnull
     public Table getTable() {
         return mTable;
     }
