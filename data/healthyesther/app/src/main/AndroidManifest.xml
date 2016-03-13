@@ -58,7 +58,7 @@
         <activity
             android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask">
             <intent-filter>
                 <data android:scheme="@string/HEALTHY_ESTHER_DROPBOX_KEY" />
 

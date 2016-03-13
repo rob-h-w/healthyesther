@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/enter_value_name"
     style="@style/AppTheme.sectionLayout"
-    android:orientation="vertical"
-    android:id="@+id/enter_value_name">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/name_title"
-        android:labelFor="@+id/autocomplete_name"
-        style="@style/AppTheme.text" />
+        style="@style/AppTheme.text"
+        android:labelFor="@+id/autocomplete_name" />
 
     <AutoCompleteTextView
         android:id="@+id/autocomplete_name"

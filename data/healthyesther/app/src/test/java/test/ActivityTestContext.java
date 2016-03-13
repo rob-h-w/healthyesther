@@ -23,19 +23,16 @@ import static org.mockito.Mockito.doReturn;
 
 public class ActivityTestContext<T extends Activity> {
 
+    @Nonnull
+    private final DateTime mNow;
+    @Nonnull
+    private final Class<T> mActivityClass;
     @SuppressWarnings("NullableProblems")
     @Nonnull
     private ActivityController<T> mActivityController;
-
     @SuppressWarnings("NullableProblems")
     @Nonnull
     private T mActivity;
-
-    @Nonnull
-    private final DateTime mNow;
-
-    @Nonnull
-    private final Class<T> mActivityClass;
 
     public ActivityTestContext(@Nonnull Object testCase, @Nonnull Class<T> activityClass) {
         MockitoAnnotations.initMocks(testCase);

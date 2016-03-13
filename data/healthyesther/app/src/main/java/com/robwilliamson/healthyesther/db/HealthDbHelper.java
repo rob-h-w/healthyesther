@@ -84,6 +84,17 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
         }
     }
 
+    @Nonnull
+    private static String getDropboxFileName() {
+        String name = App.getInstance().getUsername();
+
+        if (name == null) {
+            name = "test";
+        }
+
+        return name + ".db3";
+    }
+
     @Override
     public void onConfigure(SQLiteDatabase sqLiteDatabase) {
         synchronized (sSync) {
@@ -114,17 +125,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
                 transaction.commit();
             }
         }
-    }
-
-    @Nonnull
-    private static String getDropboxFileName() {
-        String name = App.getInstance().getUsername();
-
-        if (name == null) {
-            name = "test";
-        }
-
-        return name + ".db3";
     }
 
     public void backupToDropbox() throws IOException, DbxException {

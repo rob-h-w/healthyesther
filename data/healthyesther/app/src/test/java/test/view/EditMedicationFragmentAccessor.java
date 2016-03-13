@@ -1,9 +1,6 @@
 package test.view;
 
-import android.app.Activity;
-
 import com.robwilliamson.healthyesther.R;
-import com.robwilliamson.healthyesther.fragment.edit.EditMedicationFragment;
 
 import javax.annotation.Nonnull;
 

@@ -1,6 +1,5 @@
 package test.view;
 
-import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
@@ -32,11 +31,11 @@ public class EditScoreFragmentAccessor extends Accessor {
         setText(min, R.id.min_label);
     }
 
-    public void setBestScore(int bestScore) {
-        ((SeekBar) getActivity().findViewById(R.id.best_value)).setProgress(bestScore);
-    }
-
     public int getBestScore() {
         return ((SeekBar) getActivity().findViewById(R.id.best_value)).getProgress();
+    }
+
+    public void setBestScore(int bestScore) {
+        ((SeekBar) getActivity().findViewById(R.id.best_value)).setProgress(bestScore);
     }
 }

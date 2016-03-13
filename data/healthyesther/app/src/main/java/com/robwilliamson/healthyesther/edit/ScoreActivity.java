@@ -1,5 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.util.Pair;
 
@@ -60,6 +62,12 @@ public class ScoreActivity extends AbstractEditActivity implements BaseFragment.
                 for (HealthScoreJudgmentRangeTable.Row judgmentRow : fragment.getJudgments()) {
                     judgmentRow.applyTo(transaction);
                 }
+
+                Intent result = new Intent();
+
+                result.putExtra(HealthScoreTable.NAME, row);
+
+                setResult(Activity.RESULT_OK, result);
 
                 runOnUiThread(new Runnable() {
                     @Override

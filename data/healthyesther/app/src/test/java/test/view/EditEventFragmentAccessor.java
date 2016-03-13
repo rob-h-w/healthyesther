@@ -1,7 +1,5 @@
 package test.view;
 
-import android.app.Activity;
-
 import com.robwilliamson.healthyesther.R;
 
 import javax.annotation.Nonnull;

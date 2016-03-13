@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;

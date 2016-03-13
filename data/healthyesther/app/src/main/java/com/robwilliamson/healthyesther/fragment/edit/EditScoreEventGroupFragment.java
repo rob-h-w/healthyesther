@@ -1,6 +1,7 @@
 package com.robwilliamson.healthyesther.fragment.edit;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -96,6 +97,15 @@ public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
         super.onPause();
 
         mResumed = false;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            refreshScores();
+        }
     }
 
     protected void addOnClickListener() {

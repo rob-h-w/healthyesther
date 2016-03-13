@@ -11,6 +11,7 @@ import com.robwilliamson.healthyesther.test.EditAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
+import com.robwilliamson.healthyesther.test.ScoreActivityAccessor;
 
 import junit.framework.Assert;
 
@@ -19,8 +20,10 @@ import org.hamcrest.Matcher;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -102,5 +105,16 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Ho
         onView(withText("Happiness")).check(matches(isDisplayed()));
         onView(withText("Sad")).check(matches(isDisplayed()));
         onView(withText("Happy")).check(matches(isDisplayed()));
+    }
+
+    public void test_createNewScoreType_showsScoreInHealthScoreActivity() {
+        final String SLOON = "Sloon";
+        onView(HealthScoreActivityAccessor.trackAnotherScoreButton()).perform(click());
+
+        onView(ScoreActivityAccessor.scoreName()).perform(click());
+        onView(ScoreActivityAccessor.scoreName()).perform(typeText(SLOON));
+        onView(EditAccessor.ok()).perform(click());
+
+        onView(HealthScoreActivityAccessor.editScoreGroupLayout()).check(matches(hasDescendant(withText(SLOON))));
     }
 }

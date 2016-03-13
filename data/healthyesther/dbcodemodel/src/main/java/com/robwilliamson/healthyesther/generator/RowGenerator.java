@@ -158,7 +158,7 @@ public class RowGenerator extends BaseClassGenerator {
                             ._then()
                             ._throw(JExpr._new(
                                     model().ref(NullPointerException.class))
-                            .arg(table.getName() + " row is not set - call loadRelations first."));
+                                    .arg(table.getName() + " row is not set - call loadRelations first."));
                 }
 
                 body._return(rowField.fieldVar);
