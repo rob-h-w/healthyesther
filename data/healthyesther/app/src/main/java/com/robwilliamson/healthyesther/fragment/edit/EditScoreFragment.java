@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.RatingBar;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
@@ -17,7 +20,9 @@ import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -93,6 +98,26 @@ public class EditScoreFragment extends SuggestionEditFragment<HealthScoreTable.R
         outState.putSerializable(INITIAL_SCORE, mInitialScore);
     }
 
+    @Nonnull
+    public List<HealthScoreJudgmentRangeTable.Row> getJudgments() {
+        List<HealthScoreJudgmentRangeTable.Row> rows = new ArrayList<>();
+        HealthScoreTable.Row scoreRow = getRow();
+
+        if (scoreRow == null) {
+            return rows;
+        }
+
+        SeekBar bestScoreBar = Utils.checkNotNull(getBestScoreBar());
+
+        rows.add(new HealthScoreJudgmentRangeTable.Row(
+                scoreRow,
+                (long) bestScoreBar.getProgress(),
+                null,
+                null));
+
+        return rows;
+    }
+
     @Nullable
     @Override
     public HealthScoreTable.Row getRow() {
@@ -100,12 +125,20 @@ public class EditScoreFragment extends SuggestionEditFragment<HealthScoreTable.R
             return null;
         }
 
-        return getRow(mScores, getName(), new NameComparator<HealthScoreTable.Row>() {
+        HealthScoreTable.Row row = getRow(mScores, getName(), new NameComparator<HealthScoreTable.Row>() {
             @Override
             public boolean equals(@Nonnull HealthScoreTable.Row row, @Nonnull String name) {
                 return row.getName().equals(name);
             }
         });
+
+        if (row != null) {
+            row.setMaxLabel(getMaxLabel());
+            row.setMinLabel(getMinLabel());
+            row.setRandomQuery(getRandomQuery());
+        }
+
+        return row;
     }
 
     @Override
@@ -201,6 +234,11 @@ public class EditScoreFragment extends SuggestionEditFragment<HealthScoreTable.R
 
     private EditText getMaxLabelWidget() {
         return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.max_label, EditText.class);
+    }
+
+    @Nullable
+    private SeekBar getBestScoreBar() {
+        return Utils.View.getTypeSafeView(Utils.checkNotNull(getView()), R.id.best_value, SeekBar.class);
     }
 
     @Override

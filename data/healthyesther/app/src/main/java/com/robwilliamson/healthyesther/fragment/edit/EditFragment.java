@@ -44,7 +44,9 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
             return mRow;
         }
 
-        return createRow();
+        mRow = createRow();
+
+        return mRow;
     }
 
     public boolean hasRow() {

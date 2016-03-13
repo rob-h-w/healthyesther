@@ -3,6 +3,7 @@ package com.robwilliamson.healthyesther.edit;
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
@@ -25,6 +26,7 @@ public class ScoreActivityTest {
     private static final String SCORE_NAME = "Foonsness";
     private static final String MIN = "Not Foons";
     private static final String MAX = "All the Foons";
+    private static final int BEST = 1;
 
     private ActivityTestContext<TestableScoreActivity> mContext;
     private EditScoreFragmentAccessor mScoreAccessor;
@@ -60,6 +62,50 @@ public class ScoreActivityTest {
         assertThat(score.getMinLabel(), is(MIN));
     }
 
+    @Test
+    public void whenANewScoreIsCreated_createsSingleNewHealthScoreJudgmentRange() {
+        aNewScoreIsCreated();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row healthScoreRow = HealthDatabase.HEALTH_SCORE_TABLE
+                .select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, SCORE_NAME));
+
+        HealthScoreJudgmentRangeTable.Row judgmentRange = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE
+                .select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, healthScoreRow.getConcretePrimaryKey().getId()));
+    }
+
+    @Test
+    public void whenANewScoreIsCreated_createsSingleNewHealthScoreJudgmentRangeWithNullStartFinish() {
+        aNewScoreIsCreated();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row healthScoreRow = HealthDatabase.HEALTH_SCORE_TABLE
+                .select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, SCORE_NAME));
+
+        HealthScoreJudgmentRangeTable.Row judgmentRange = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE
+                .select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, healthScoreRow.getConcretePrimaryKey().getId()));
+
+        assertThat(judgmentRange.getStartTime(), is((Long)null));
+        assertThat(judgmentRange.getEndTime(), is((Long) null));
+    }
+
+    @Test
+    public void whenANewScoreIsCreated_createsSingleNewHealthScoreJudgmentRangeWithPassedBestScore() {
+        aNewScoreIsCreated();
+
+        Database db = HealthDbHelper.getDatabase();
+
+        HealthScoreTable.Row healthScoreRow = HealthDatabase.HEALTH_SCORE_TABLE
+                .select1(db, WhereContains.columnEqualling(HealthScoreTable.NAME, SCORE_NAME));
+
+        HealthScoreJudgmentRangeTable.Row judgmentRange = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE
+                .select1(db, WhereContains.foreignKey(HealthScoreJudgmentRangeTable.SCORE_ID, healthScoreRow.getConcretePrimaryKey().getId()));
+
+        assertThat(judgmentRange.getBestValue(), is((long)BEST));
+    }
+
     private void aNewScoreIsCreated() {
         mContext.getActivityController().setup();
 
@@ -67,6 +113,7 @@ public class ScoreActivityTest {
         mScoreAccessor.setAskPeriodically(true);
         mScoreAccessor.setMax(MAX);
         mScoreAccessor.setMin(MIN);
+        mScoreAccessor.setBestScore(BEST);
 
         mContext.pressOk();
     }

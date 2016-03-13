@@ -5,6 +5,7 @@ import android.support.v4.util.Pair;
 
 import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
@@ -49,12 +50,16 @@ public class ScoreActivity extends AbstractEditActivity implements BaseFragment.
                     return;
                 }
 
-                HealthScoreTable.Row row = getScoreFragment().getRow();
+                HealthScoreTable.Row row = fragment.getRow();
                 if (row == null) {
                     return;
                 }
 
                 row.applyTo(transaction);
+
+                for (HealthScoreJudgmentRangeTable.Row judgmentRow : fragment.getJudgments()) {
+                    judgmentRow.applyTo(transaction);
+                }
 
                 runOnUiThread(new Runnable() {
                     @Override
