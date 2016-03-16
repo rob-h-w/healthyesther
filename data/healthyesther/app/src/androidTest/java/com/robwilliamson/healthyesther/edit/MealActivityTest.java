@@ -1,5 +1,6 @@
 package com.robwilliamson.healthyesther.edit;
 
+import android.os.SystemClock;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.test.ActivityInstrumentationTestCase2;
@@ -97,6 +98,10 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
                 onView(MealEventActivityAccessor.dishName()).check(matches(withText(text)));
             }
         });
+
+        // Ensure all busy activity has settled down:
+        SystemClock.sleep(1000);
+        onView(EditAccessor.ok()).check(matches(isDisplayed()));
 
         onView(EditAccessor.ok()).perform(click());
 
