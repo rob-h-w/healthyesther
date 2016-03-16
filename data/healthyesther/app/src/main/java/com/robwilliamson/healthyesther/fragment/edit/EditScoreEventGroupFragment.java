@@ -104,6 +104,7 @@ public class EditScoreEventGroupFragment extends EditFragment<EventTable.Row> {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
+            clearScoreFragments();
             refreshScores();
         }
     }
