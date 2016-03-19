@@ -19,6 +19,7 @@ import com.robwilliamson.healthyesther.db.integration.DatabaseWrapperClass;
 import com.robwilliamson.healthyesther.dropbox.DropboxClientFactory;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -138,6 +139,8 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
             try (FileInputStream fileInputStream = new FileInputStream(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath())) {
                 uploader.uploadAndFinish(fileInputStream);
+            } catch (FileNotFoundException fileNotFoundException) {
+                // Nothing to back up. Fair enough.
             }
         }
     }
