@@ -1,6 +1,8 @@
 package com.robwilliamson.healthyesther.dropbox;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -28,7 +30,11 @@ public class DropboxSyncActivity extends DropboxActivity {
     }
 
     @Override
-    protected void loadData() {
+    protected synchronized void loadData() {
+        if (!hasRequiredPermissions()) {
+            return;
+        }
+
         setBusy(true);
 
         Boolean restore = false;
@@ -70,6 +76,11 @@ public class DropboxSyncActivity extends DropboxActivity {
     // Identifier for the permission request
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
 
+    private boolean hasRequiredPermissions() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
     // Called when the user is performing an action which requires the app to read the
     // user's contacts
     public void getPermissionToReadUserContacts() {
@@ -78,9 +89,7 @@ public class DropboxSyncActivity extends DropboxActivity {
         // in Marshmallow
         // 2) Always check for permission (even if permission has already been granted)
         // since the user can revoke permissions at any time through Settings
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
+        if (!hasRequiredPermissions()) {
             // The permission is NOT already granted.
             // Check if the user has been asked about this permission already and denied
             // it. If so, we want to give more explanation about why the permission is needed.
@@ -89,15 +98,34 @@ public class DropboxSyncActivity extends DropboxActivity {
                         Manifest.permission.READ_CONTACTS)) {
                     // Show our own UI to explain to the user why we need to read the contacts
                     // before actually requesting the permission and showing the default UI
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.read_contacts_permission_explanation)
+                            .setTitle(R.string.dropbox)
+                            .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                // Fire off an async request to actually get the permission
+                                                // This will show the standard permission request dialog UI
+                                                DropboxSyncActivity.this.requestPermissions(new String[]{
+                                                                Manifest.permission.READ_CONTACTS},
+                                                        READ_CONTACTS_PERMISSIONS_REQUEST);
+                                            }
+                                        }
+                                    }
+                            );
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
-
-                // Fire off an async request to actually get the permission
-                // This will show the standard permission request dialog UI
-                requestPermissions(new String[]{
-                                Manifest.permission.READ_CONTACTS},
-                        READ_CONTACTS_PERMISSIONS_REQUEST);
             }
         }
+    }
+
+    @Override
+    public boolean shouldShowRequestPermissionRationale(@Nonnull String permission) {
+        return permission.equals(Manifest.permission.READ_CONTACTS)
+                || super.shouldShowRequestPermissionRationale(permission);
+
     }
 
     // Callback with the request from calling requestPermissions(...)
@@ -112,6 +140,7 @@ public class DropboxSyncActivity extends DropboxActivity {
                 Toast.makeText(this, R.string.read_contacts_permission_granted, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, R.string.read_contacts_permission_denied, Toast.LENGTH_SHORT).show();
+                finish();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

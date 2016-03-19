@@ -67,6 +67,7 @@
     <string name="event_date_time_format">yyyy-MM-dd HH:mm:ss</string>
 
     <string name="dropbox">Dropbox</string>
+    <string name="read_contacts_permission_explanation">The Read Contacts permission is needed to name the database file after your Google email address.</string>
     <string name="read_contacts_permission_granted">Read Contacts permission granted</string>
     <string name="read_contacts_permission_denied">Read Contacts permission denied</string>
     <string name="dropbox_sync_failed">Dropbox synchronization failed.</string>
