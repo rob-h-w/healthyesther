@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
+import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 
 import java.io.IOException;
@@ -50,7 +51,12 @@ public class DropboxSyncActivity extends DropboxActivity {
                         HealthDbHelper.getInstance().restoreFromDropbox();
                     }
                 } catch (IOException | DbxException e) {
-                    // TODO: Some failure UI here.
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(DropboxSyncActivity.this, R.string.dropbox_sync_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
                     e.printStackTrace();
                 }
                 setBusy(false);
@@ -103,9 +109,9 @@ public class DropboxSyncActivity extends DropboxActivity {
         if (requestCode == READ_CONTACTS_PERMISSIONS_REQUEST) {
             if (grantResults.length == 1 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Read Contacts permission granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.read_contacts_permission_granted, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Read Contacts permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.read_contacts_permission_denied, Toast.LENGTH_SHORT).show();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

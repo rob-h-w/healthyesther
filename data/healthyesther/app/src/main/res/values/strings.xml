@@ -65,6 +65,10 @@
     <string name="getting_more">Getting more…</string>
     <string name="event_icon_content_description">Image indicating the type of event displayed.</string>
     <string name="event_date_time_format">yyyy-MM-dd HH:mm:ss</string>
+
     <string name="dropbox">Dropbox</string>
+    <string name="read_contacts_permission_granted">Read Contacts permission granted</string>
+    <string name="read_contacts_permission_denied">Read Contacts permission denied</string>
+    <string name="dropbox_sync_failed">Dropbox synchronization failed.</string>
 
 </resources>
