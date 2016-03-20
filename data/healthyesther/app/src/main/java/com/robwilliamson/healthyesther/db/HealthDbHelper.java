@@ -10,6 +10,7 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.SearchResult;
 import com.dropbox.core.v2.files.UploadUploader;
+import com.dropbox.core.v2.files.WriteMode;
 import com.robwilliamson.healthyesther.App;
 import com.robwilliamson.healthyesther.Log;
 import com.robwilliamson.healthyesther.db.includes.Database;
@@ -93,6 +94,8 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             name = "test";
         }
 
+        name = name.replace('@', '_');
+
         return name + ".db3";
     }
 
@@ -137,7 +140,9 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             @Nonnull
             final String dbFilename = getDropboxFileName();
             @Nonnull
-            final UploadUploader uploader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.upload("/" + dbFilename));
+            final UploadUploader uploader = com.robwilliamson.healthyesther.Utils.checkNotNull(
+                    client.files.uploadBuilder("/" + dbFilename)
+                            .withMode(WriteMode.OVERWRITE).start());
 
             try (FileInputStream fileInputStream = new FileInputStream(mContext.getDatabasePath(Contract.NAME).getAbsolutePath())) {
                 uploader.uploadAndFinish(fileInputStream);

@@ -57,20 +57,26 @@ public class BusyActivity extends BaseFragmentActivity {
 
     private void updateUi() {
         Utils.View.assertIsOnUiThread();
-        boolean dialogNotNull = mDialog != null;
+        boolean dialogIsNull = mDialog == null;
 
         if (isBusy()) {
-            if (dialogNotNull) {
+            if (!dialogIsNull) {
                 return;
             }
 
             addDialog();
         } else {
-            if (!dialogNotNull) {
+            if (dialogIsNull) {
                 return;
             }
 
-            mDialog.dismiss();
+            try {
+                mDialog.dismiss();
+            } catch (IllegalArgumentException e) {
+                if (!e.getMessage().endsWith("not attached to window manager")) {
+                    throw e;
+                }
+            }
             mDialog = null;
         }
 

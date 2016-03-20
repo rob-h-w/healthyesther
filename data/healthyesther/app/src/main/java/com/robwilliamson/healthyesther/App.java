@@ -22,6 +22,7 @@ public class App extends Application {
     private static App sInstance = null;
     private static long sUiThreadId;
     private static volatile boolean sInForeground = false;
+    private static volatile String sName = null;
 
     public static long getUiThreadId() {
         return sUiThreadId;
@@ -62,18 +63,21 @@ public class App extends Application {
 
     @Nullable
     public synchronized String getUsername() {
+        if (sName != null) {
+            return sName;
+        }
+
         AccountManager mgr = AccountManager.get(this);
 
         Account[] accounts = mgr.getAccounts();
 
-        String name = null;
         for (Account account : accounts) {
             if (account.type.equals("com.google")) {
-                name = account.name;
+                sName = account.name;
                 break;
             }
         }
 
-        return name;
+        return sName;
     }
 }
