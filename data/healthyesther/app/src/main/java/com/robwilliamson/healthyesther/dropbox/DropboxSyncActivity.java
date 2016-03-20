@@ -64,9 +64,11 @@ public class DropboxSyncActivity extends DropboxActivity {
                         }
                     });
                     e.printStackTrace();
+                } finally {
+                    setBusy(false);
+                    finish();
                 }
-                setBusy(false);
-                finish();
+
                 return null;
             }
         };

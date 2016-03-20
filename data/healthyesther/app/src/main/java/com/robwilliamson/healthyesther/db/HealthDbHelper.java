@@ -135,12 +135,15 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             @Nonnull
             final DbxClientV2 client = DropboxClientFactory.getClient();
             @Nonnull
-            final UploadUploader uploader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.upload("/" + getDropboxFileName()));
+            final String dbFilename = getDropboxFileName();
+            @Nonnull
+            final UploadUploader uploader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.upload("/" + dbFilename));
 
-            try (FileInputStream fileInputStream = new FileInputStream(mContext.getDatabasePath(getDatabaseName()).getAbsolutePath())) {
+            try (FileInputStream fileInputStream = new FileInputStream(mContext.getDatabasePath(Contract.NAME).getAbsolutePath())) {
                 uploader.uploadAndFinish(fileInputStream);
             } catch (FileNotFoundException fileNotFoundException) {
                 // Nothing to back up. Fair enough.
+                fileNotFoundException.printStackTrace();
             }
         }
     }
