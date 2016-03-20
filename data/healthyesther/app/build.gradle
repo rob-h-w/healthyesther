@@ -32,8 +32,8 @@ android {
         applicationId "com.robwilliamson.healthyesther"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 20
-        versionName "0.9.1"
+        versionCode 21
+        versionName "0.9.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
