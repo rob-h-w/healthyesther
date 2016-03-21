@@ -79,7 +79,8 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(ConfirmationDialogAccessor.okButton()).perform(click());
 
         // Ensure we're back in the home activity.
-        onView(HomeActivityAccessor.navigationDrawer()).check(matches(isDisplayed()));
+        onView(HomeActivityAccessor.AddMode.healthScoreButton()).check(matches(isDisplayed()));
+        onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
 
         // Check we have the same number of entries as before.
         final int finalCount = Database.countEntries();
