@@ -17,6 +17,7 @@ import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -102,6 +103,11 @@ public abstract class AbstractEditActivity extends DbActivity {
     }
 
     protected final void resetFragments(@Nonnull List<Pair<EditFragment, String>> editFragments) {
+        // Reverse so the fragments end up in the order they were added top-down.
+        // Copy the list so the method remains idempotent.
+        List<Pair<EditFragment, String>> fragmentsToAdd = new ArrayList<>(editFragments);
+        Collections.reverse(fragmentsToAdd);
+
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -117,7 +123,7 @@ public abstract class AbstractEditActivity extends DbActivity {
 
         final List<TransactionExecutor.Operation> operations = new ArrayList<>();
 
-        for (Pair<EditFragment, String> pair : editFragments) {
+        for (Pair<EditFragment, String> pair : fragmentsToAdd) {
             transaction.add(getActivityContentLayoutResourceId(), pair.first, pair.second);
             if (pair.first instanceof InitializationQuerier) {
                 InitializationQuerier querier = (InitializationQuerier) pair.first;
