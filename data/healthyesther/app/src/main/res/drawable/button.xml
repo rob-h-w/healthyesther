@@ -35,7 +35,7 @@
                 android:startColor="@color/button_overlay_gradient_1_start"
                 android:type="linear" />
 
-            <corners style="@style/button.corners" />
+            <corners android:radius="@dimen/button_corner_radius" />
 
         </shape>
 
@@ -51,7 +51,7 @@
                 android:startColor="@color/button_overlay_gradient_2_start"
                 android:type="linear" />
 
-            <corners style="@style/button.corners" />
+            <corners android:radius="@dimen/button_corner_radius" />
 
         </shape>
     </item>

@@ -5,8 +5,10 @@
 
     <solid android:color="@color/button_focused" />
 
-    <stroke style="@style/button.stroke.focused" />
+    <stroke
+        android:width="@dimen/border_stroke_width"
+        android:color="@color/button_stroke_focused" />
 
-    <corners style="@style/button.corners" />
+    <corners android:radius="@dimen/button_corner_radius" />
 
 </shape>

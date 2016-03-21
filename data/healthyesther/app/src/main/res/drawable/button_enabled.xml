@@ -7,9 +7,11 @@
 
             <solid android:color="@color/button_enabled" />
 
-            <stroke style="@style/button.stroke" />
+            <stroke
+                android:width="@dimen/border_stroke_width"
+                android:color="@color/button_stroke_enabled" />
 
-            <corners style="@style/button.corners" />
+            <corners android:radius="@dimen/button_corner_radius" />
 
         </shape>
     </item>

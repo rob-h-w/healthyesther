@@ -90,25 +90,4 @@
         <item name="android:padding">@dimen/button_padding</item>
     </style>
 
-    <style name="button.corners">
-        <item name="android:radius">@dimen/button_corner_radius</item>
-    </style>
-
-    <style name="button.stroke">
-        <item name="android:color">@color/button_stroke_enabled</item>
-        <item name="android:width">@dimen/button_stroke_width</item>
-    </style>
-
-    <style name="button.stroke.disabled" parent="button.stroke">
-        <item name="android:color">@color/button_stroke_disabled</item>
-    </style>
-
-    <style name="button.stroke.focused" parent="button.stroke">
-        <item name="android:color">@color/button_stroke_focused</item>
-    </style>
-
-    <style name="button.stroke.pressed" parent="button.stroke">
-        <item name="android:color">@color/button_stroke_pressed</item>
-    </style>
-
 </resources>
