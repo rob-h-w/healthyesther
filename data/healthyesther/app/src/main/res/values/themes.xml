@@ -11,7 +11,7 @@
         <item name="android:listViewStyle">@style/listView</item>
         <item name="android:popupMenuStyle">@style/popupMenu</item>
         <item name="android:textColorPrimary">@color/dark_foreground</item>
-        <item name="android:textColorSecondary">@color/light_background</item>
+        <item name="android:textColorSecondary">@color/dark_foreground</item>
         <item name="android:textColor">@color/dark_foreground</item>
         <item name="toolbarStyle">@style/toolbar</item>
     </style>

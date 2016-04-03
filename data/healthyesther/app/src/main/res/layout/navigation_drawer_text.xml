@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@android:id/text1"
     app:theme="@style/HealthyEstherTheme"
-    android:textColor="?android:textColorSecondary"
+    android:textColor="@color/light_foreground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceListItemSmall"

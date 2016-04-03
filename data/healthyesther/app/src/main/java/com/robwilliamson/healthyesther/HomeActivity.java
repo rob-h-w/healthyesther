@@ -93,7 +93,6 @@ public class HomeActivity extends DbActivity
 
     public void restoreActionBar() {
         ActionBar actionBar = Utils.checkNotNull(getSupportActionBar());
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_launcher);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }
