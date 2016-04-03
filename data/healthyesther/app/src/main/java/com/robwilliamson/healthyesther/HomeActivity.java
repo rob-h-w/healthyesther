@@ -1,9 +1,9 @@
 package com.robwilliamson.healthyesther;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.view.Menu;
 
 import com.robwilliamson.healthyesther.db.generated.EventTable;
@@ -87,9 +87,8 @@ public class HomeActivity extends DbActivity
     }
 
     public void restoreActionBar() {
-        ActionBar actionBar = Utils.checkNotNull(getActionBar());
-        //noinspection deprecation
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ActionBar actionBar = Utils.checkNotNull(getSupportActionBar());
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_launcher);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
     }

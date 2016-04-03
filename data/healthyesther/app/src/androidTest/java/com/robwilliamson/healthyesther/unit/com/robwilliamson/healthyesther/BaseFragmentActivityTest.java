@@ -1,15 +1,17 @@
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther;
 
+import android.content.Context;
 import android.content.Intent;
 import android.test.ActivityUnitTestCase;
 
 import com.robwilliamson.healthyesther.BaseFragmentActivity;
 import com.robwilliamson.healthyesther.EventActivity;
+import com.robwilliamson.healthyesther.R;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class BaseFragmentActivityTest extends ActivityUnitTestCase {
+public class BaseFragmentActivityTest extends ActivityUnitTestCase<EventActivity> {
 
     public BaseFragmentActivityTest() {
         super(EventActivity.class);
@@ -29,7 +31,7 @@ public class BaseFragmentActivityTest extends ActivityUnitTestCase {
     }
 
     public void testLaunchedState() throws Exception {
-        final EventActivity activity = (EventActivity) getActivity();
+        final EventActivity activity = getActivity();
 
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
@@ -43,13 +45,7 @@ public class BaseFragmentActivityTest extends ActivityUnitTestCase {
                     onPause(activity);
 
                     assertFalse(isActive(activity));
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                    t = e;
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                    t = e;
-                } catch (IllegalAccessException e) {
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                     t = e;
                 }
@@ -67,6 +63,8 @@ public class BaseFragmentActivityTest extends ActivityUnitTestCase {
         getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
+                Context context = getInstrumentation().getTargetContext();
+                context.setTheme(R.style.HealthyEstherTheme);
                 startActivity(new Intent(Intent.ACTION_MAIN), null, null);
             }
         });

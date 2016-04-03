@@ -80,8 +80,7 @@ public class SettingsActivity extends PreferenceActivity {
      * "simplified" settings UI should be shown.
      */
     private static boolean isSimplePreferences(Context context) {
-        return ALWAYS_SIMPLE_PREFS
-                || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB
                 || !isXLargeTablet(context);
     }
 
@@ -119,6 +118,7 @@ public class SettingsActivity extends PreferenceActivity {
         hiddenScores.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                @SuppressWarnings("unchecked")
                 Set<String> modifiedValues = (Set<String>) newValue;
 
                 final String hidden = getString(R.string.hidden);

@@ -3,14 +3,15 @@ package com.robwilliamson.healthyesther;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 import javax.annotation.Nullable;
 
-public class BaseFragmentActivity extends FragmentActivity {
+public class BaseFragmentActivity extends AppCompatActivity {
     private volatile boolean mActive = false;
 
     @Override
@@ -18,6 +19,9 @@ public class BaseFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawableResource(R.drawable.background);
         setContentView(getContentLayoutResourceId());
+
+        Toolbar toolbar = (Toolbar) Utils.checkNotNull(findViewById(R.id.toolbar));
+        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -72,10 +76,5 @@ public class BaseFragmentActivity extends FragmentActivity {
     @Nullable
     protected <T extends Fragment> T getFragment(String tag, Class<T> type) {
         return Utils.View.getTypeSafeFragment(getSupportFragmentManager(), tag, type);
-    }
-
-    @Nullable
-    protected Fragment getFragment(String tag) {
-        return getFragment(tag, Fragment.class);
     }
 }

@@ -19,6 +19,7 @@
     <dimen name="button_corner_radius">6dip</dimen>
     <dimen name="button_stroke_width">2dip</dimen>
     <dimen name="button_padding">7dip</dimen>
+    <dimen name="nav_dividerHeight">1dp</dimen>
     <!-- End Button values -->
 
 </resources>

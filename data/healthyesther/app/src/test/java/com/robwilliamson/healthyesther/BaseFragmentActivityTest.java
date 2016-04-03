@@ -2,15 +2,20 @@ package com.robwilliamson.healthyesther;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.LinearLayout;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
@@ -33,6 +38,29 @@ public class BaseFragmentActivityTest {
     ActivityController<TestableBaseFragmentActivity> mActivityController = Robolectric.buildActivity(TestableBaseFragmentActivity.class);
     @Nonnull
     private TestableBaseFragmentActivity mFragmentActivity = mActivityController.get();
+
+    @Mock
+    private Window.Callback mCallback;
+
+    @Mock
+    private ViewGroup mViewRoot;
+
+    @Mock
+    private View mDecorView;
+
+    @Mock
+    private Toolbar mToolbar;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        /*
+        Window window = mFragmentActivity.getWindow();
+        doReturn(mCallback).when(window).getCallback();
+        doReturn(mViewRoot).when(window).findViewById(android.R.id.content);
+        doReturn(mToolbar).when(window).findViewById(R.id.toolbar);
+        doReturn(mDecorView).when(window).getDecorView();*/
+    }
 
     @Test
     public void onCreate_setsBackgroundDrawable() {
@@ -82,14 +110,14 @@ public class BaseFragmentActivityTest {
 
     @Test
     public void onPause_setsActiveFalse() {
-        mActivityController.create().start().resume().pause();
+        mActivityController.setup().pause();
 
         assertThat(mFragmentActivity.isActive(), is(false));
     }
 
     @Test
     public void onResume_setsActiveTrue() {
-        mActivityController.create().start().resume();
+        mActivityController.setup();
 
         assertThat(mFragmentActivity.isActive(), is(true));
     }
@@ -101,14 +129,13 @@ public class BaseFragmentActivityTest {
 
     @Test
     public void getActivityContentLayoutReosurceId_callsFindViewById() {
-        mFragmentActivity.getActivityContentLayout();
+        mActivityController.setup();
+        View layout = Utils.checkNotNull(mFragmentActivity.getActivityContentLayout());
 
-        assertThat(mFragmentActivity.getViewId(), is(mFragmentActivity.getActivityContentLayoutResourceId()));
+        assertThat(layout.getId(), is(mFragmentActivity.getActivityContentLayoutResourceId()));
     }
 
     private static class TestableBaseFragmentActivity extends BaseFragmentActivity {
-        @Nonnull
-        private Window mWindow = mock(Window.class);
 
         @Nullable
         private Integer mContentLayoutResourceId;
@@ -120,12 +147,7 @@ public class BaseFragmentActivityTest {
         private Intent mIntent;
 
         @Nullable
-        private Integer mViewId;
-
-        @Override
-        public Window getWindow() {
-            return mWindow;
-        }
+        private Window mWindow;
 
         public Integer getContentView() {
             return mContentLayoutResourceId;
@@ -160,24 +182,12 @@ public class BaseFragmentActivityTest {
         }
 
         @Override
-        public int getContentLayoutResourceId() {
-            return super.getContentLayoutResourceId();
-        }
+        public Window getWindow() {
+            if (mWindow == null) {
+                mWindow = Mockito.spy(super.getWindow());
+            }
 
-        @Override
-        public LinearLayout getActivityContentLayout() {
-            return super.getActivityContentLayout();
-        }
-
-        @Override
-        public View findViewById(int id) {
-            mViewId = id;
-            return null;
-        }
-
-        @Nullable
-        public Integer getViewId() {
-            return mViewId;
+            return mWindow;
         }
     }
 }

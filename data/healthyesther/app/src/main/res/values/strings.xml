@@ -71,5 +71,7 @@
     <string name="read_contacts_permission_granted">Read Contacts permission granted</string>
     <string name="read_contacts_permission_denied">Read Contacts permission denied</string>
     <string name="dropbox_sync_failed">Dropbox synchronization failed.</string>
+    <string name="title_activity_about">About</string>
+    <string name="launcher_icon">Launcher Icon</string>
 
 </resources>

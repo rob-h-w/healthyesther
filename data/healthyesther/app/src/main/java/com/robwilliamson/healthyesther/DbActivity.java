@@ -99,7 +99,7 @@ public abstract class DbActivity extends BusyActivity
     }
 
     @Override
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_backup_to_dropbox) {
             Intent startBackupIntent = new Intent(this, DropboxSyncActivity.class);
             startBackupIntent.putExtra(DropboxSyncActivity.RESTORE, false);
@@ -116,7 +116,7 @@ public abstract class DbActivity extends BusyActivity
             return true;
         }
 
-        return super.onMenuItemSelected(featureId, item);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

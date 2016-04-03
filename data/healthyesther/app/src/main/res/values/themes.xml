@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="HealthyEstherTheme" parent="_HealthyEstherTheme"/>
+
+    <style name="_HealthyEstherTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:buttonStyle">@style/button</item>
+        <item name="colorAccent">@color/dark_foreground</item>
+        <item name="android:colorForeground">@color/dark_foreground</item>
+        <item name="android:itemTextAppearance">@style/itemTextAppearance</item>
+        <item name="android:listViewStyle">@style/listView</item>
+        <item name="android:popupMenuStyle">@style/popupMenu</item>
+        <item name="android:textColorPrimary">@color/dark_foreground</item>
+        <item name="android:textColorSecondary">@color/light_background</item>
+        <item name="android:textColor">@color/dark_foreground</item>
+        <item name="toolbarStyle">@style/toolbar</item>
+    </style>
+
+    <style name="NavigationDrawerTheme" parent="HealthyEstherTheme">
+        <item name="android:dividerHeight">@dimen/nav_dividerHeight</item>
+        <item name="android:divider">@android:color/black</item>
+    </style>
+</resources>

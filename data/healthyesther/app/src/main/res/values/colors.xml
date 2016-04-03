@@ -7,6 +7,16 @@
     <color name="border_background_pressed">#e66f</color>
     <color name="content_background">#bfff</color>
     <color name="content_background_selected">#f66f</color>
+    <color name="content_foreground">@color/dark_foreground</color>
+
+    <color name="navigation_drawer_background">#a35b5ba7</color>
+    <color name="navigation_drawer_item_background">#a3a3a3f5</color>
+    <color name="navigation_drawer_selector_background">#e9cacaf2</color>
+
+    <color name="dark_foreground">#0707ae</color>
+    <color name="light_foreground">#e6e6fa</color>
+    <color name="dark_background">#5b5ba7</color>
+    <color name="light_background">#cfcffd</color>
 
     <!-- button -->
     <color name="button_disabled">#80f2f2f2</color>
@@ -33,4 +43,7 @@
     <color name="button_stroke_enabled">#fff</color>
     <color name="button_stroke_focused">#fff</color>
     <color name="button_stroke_pressed">#000</color>
+    <color name="stats_bar_color">#1111b8</color>
+    <color name="status_bar_color">#1111b8</color>
+    <color name="surround_color">#1111b8</color>
 </resources>

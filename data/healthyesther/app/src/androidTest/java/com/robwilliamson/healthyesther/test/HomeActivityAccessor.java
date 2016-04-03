@@ -24,7 +24,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class HomeActivityAccessor {
     public static Matcher<View> navigationDrawer() {
-        return withContentDescription("Esther's Health App, Open navigation drawer");
+        return withContentDescription("Navigate up");
     }
 
     public static void openNavigationDrawer() {

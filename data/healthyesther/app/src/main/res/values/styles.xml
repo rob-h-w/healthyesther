@@ -1,17 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="android:buttonStyle">@style/button</item>
+    <style name="AppTheme" parent="HealthyEstherTheme">
     </style>
 
-    <style name="AppTheme.rootScrollView">
+    <style name="AppTheme.rootScrollView" parent="AppTheme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:fillViewport">true</item>
     </style>
 
-    <style name="AppTheme.rootLayout">
+    <style name="AppTheme.rootLayout" parent="AppTheme">
         <item name="android:padding">0dip</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -21,34 +20,34 @@
         <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
     </style>
 
-    <style name="AppTheme.contentLayout">
+    <style name="AppTheme.contentLayout" parent="AppTheme">
         <item name="android:background">@drawable/content_background</item>
         <item name="android:padding">@dimen/content_layout_padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="AppTheme.contentLayout.clickable">
+    <style name="AppTheme.contentLayout.clickable" parent="AppTheme.contentLayout">
         <item name="android:background">@drawable/clickable_content_background</item>
     </style>
 
-    <style name="AppTheme.sectionLayout">
+    <style name="AppTheme.sectionLayout" parent="AppTheme">
         <item name="android:background">@drawable/border</item>
         <item name="android:padding">@dimen/section_layout_padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="AppTheme.sectionLayout.clickable">
+    <style name="AppTheme.sectionLayout.clickable" parent="AppTheme.sectionLayout">
         <item name="android:background">@drawable/clickable_border</item>
     </style>
 
-    <style name="AppTheme.text">
+    <style name="AppTheme.text" parent="AppTheme">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="AppTheme.text.textEditor">
+    <style name="AppTheme.text.textEditor" parent="AppTheme.text">
         <item name="android:layout_width">match_parent</item>
         <item name="android:inputType">textCapSentences|textAutoComplete|textAutoCorrect</item>
         <item name="android:singleLine">true</item>
@@ -57,37 +56,52 @@
         <item name="android:imeOptions">flagNoFullscreen|actionNext</item>
     </style>
 
-    <style name="AppTheme.text.textEditor.multiline">
+    <style name="AppTheme.text.textEditor.multiline" parent="AppTheme.text.textEditor">
         <item name="android:singleLine">false</item>
         <item name="android:inputType">textMultiLine|textCapSentences|textAutoComplete|textAutoCorrect</item>
         <item name="android:textIsSelectable">true</item>
     </style>
 
-    <style name="AppTheme.text.emphasized">
+    <style name="AppTheme.text.emphasized" parent="AppTheme.text">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
 
-    <style name="AppTheme.text.title">
+    <style name="AppTheme.text.title" parent="AppTheme.text">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:layout_gravity">center</item>
     </style>
 
-    <style name="AppTheme.text.small">
+    <style name="AppTheme.text.small" parent="AppTheme.text">
         <item name="android:textSize">5pt</item>
     </style>
 
     <style name="button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">@color/button_text</item>
-        <item name="android:shadowColor">@color/button_text_shadow</item>
-        <item name="android:shadowDx">2</item>
-        <item name="android:shadowDy">2</item>
-        <item name="android:shadowRadius">5</item>
         <item name="android:textSize">@dimen/button_text_size</item>
         <item name="android:background">@drawable/button</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:padding">@dimen/button_padding</item>
+    </style>
+
+    <style name="itemTextAppearance">
+        <item name="android:background">@color/dark_background</item>
+        <item name="android:textColor">@color/light_foreground</item>
+    </style>
+
+    <style name="listView" parent="@android:style/Widget.ListView">
+        <item name="android:background">@color/dark_background</item>
+    </style>
+
+    <style name="popupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:background">@color/dark_background</item>
+        <item name="android:textColor">@color/light_foreground</item>
+    </style>
+
+    <style name="toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/light_background</item>
+        <item name="popupTheme">@style/popupMenu</item>
     </style>
 
 </resources>

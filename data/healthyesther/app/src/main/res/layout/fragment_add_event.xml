@@ -17,31 +17,37 @@
             android:stretchColumns="0,1">
 
             <TableRow>
-            <Button
-                android:id="@+id/create_meal_event_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/meal" />
 
-            <Button
-                android:id="@+id/create_medication_event_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/medication" />
+                <Button
+                    android:id="@+id/create_meal_event_button"
+                    style="@style/AppTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/meal" />
+
+                <Button
+                    android:id="@+id/create_medication_event_button"
+                    style="@style/AppTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/medication" />
             </TableRow>
 
             <TableRow>
-            <Button
-                android:id="@+id/create_health_score_event_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/health_score" />
 
-            <Button
-                android:id="@+id/create_note_event_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/note" />
+                <Button
+                    android:id="@+id/create_health_score_event_button"
+                    style="@style/AppTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/health_score" />
+
+                <Button
+                    android:id="@+id/create_note_event_button"
+                    style="@style/AppTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/note" />
             </TableRow>
         </TableLayout>
 

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/base_activity_root_layout"
+    android:theme="@style/AppTheme"
     style="@style/AppTheme.rootLayout"
-    android:orientation="vertical"
-    tools:context=".DbActivity">
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
 
     <ScrollView style="@style/AppTheme.rootScrollView">
 
@@ -19,4 +23,4 @@
 
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

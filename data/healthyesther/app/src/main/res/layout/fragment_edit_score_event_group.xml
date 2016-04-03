@@ -3,4 +3,4 @@
     android:id="@+id/edit_score_group_layout"
     style="@style/AppTheme.contentLayout"
     android:orientation="vertical"
-    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment"></LinearLayout>
+    tools:context="com.robwilliamson.healthyesther.fragment.edit.EditScoreEventGroupFragment" />
