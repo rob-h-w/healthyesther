@@ -64,6 +64,11 @@ public class HomeActivity extends DbActivity
 
         DbFragment fragment = mode.getFragment(getSupportFragmentManager());
 
+        if (fragment.isVisible()) {
+            // The fragment is already visible. No need to switch modes.
+            return;
+        }
+
         if (fragment.getArguments() == null && getIntent().getExtras() != null) {
             fragment.setArguments(getIntent().getExtras());
         }
