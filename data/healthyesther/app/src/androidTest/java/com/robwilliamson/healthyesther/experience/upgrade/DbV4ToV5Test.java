@@ -1,8 +1,7 @@
 package com.robwilliamson.healthyesther.experience.upgrade;
 
-import android.test.ActivityInstrumentationTestCase2;
+import android.support.test.runner.AndroidJUnit4;
 
-import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
@@ -12,36 +11,36 @@ import com.robwilliamson.healthyesther.db.generated.NoteEventTable;
 import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
+import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.test.Database;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DbV4ToV5Test extends ActivityInstrumentationTestCase2<HomeActivity> {
-    public DbV4ToV5Test() {
-        super(HomeActivity.class);
+@RunWith(AndroidJUnit4.class)
+public class DbV4ToV5Test {
+    @Before
+    public void setUp() throws Exception {
+        Database.useV4Database();
+
+        HomeActivityAccessor.setShowNavigationDrawer(false);
+
+        DateTimeConverter.now(); // Force initialization of the converter.
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        Database.useV4Database(getInstrumentation());
-
-        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
-
-        getActivity();
+    @After
+    public void tearDown() throws Exception {
+        Database.deleteDatabase();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        Database.deleteDatabase(getInstrumentation().getTargetContext());
-
-        super.tearDown();
-    }
-
+    @Test
     public void test_whenUpgraded_noEventDetailsWithSameEvent() {
         com.robwilliamson.healthyesther.db.includes.Database db = HealthDbHelper.getDatabase();
         EventTable.Row[] events = DatabaseAccessor.EVENT_TABLE.select(db, WhereContains.any());

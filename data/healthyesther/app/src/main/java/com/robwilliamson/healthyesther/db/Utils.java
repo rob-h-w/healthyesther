@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
@@ -530,7 +529,7 @@ public final class Utils {
                         ContentValues eventValues = new ContentValues();
                         String utcTime = Utils.Time.toUtcString(time.as(DateTime.class));
                         eventValues.put(EventTable.CREATED, utcTime);
-                        eventValues.put(EventTable.WHEN, utcTime);
+                        eventValues.put('[' + EventTable.WHEN + ']', utcTime);
                         eventValues.put(EventTable.TYPE_ID, EventTypeTable.MEAL.getId().getId());
 
                         long eventId = db.insert(DatabaseAccessor.EVENT_TABLE.getName(), null, eventValues);

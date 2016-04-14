@@ -1,6 +1,6 @@
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.util.time;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.util.time.Range;
 import com.robwilliamson.healthyesther.util.time.RangeSet;
@@ -10,12 +10,19 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
 import org.joda.time.ReadableInstant;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class RangeSetTest extends AndroidTestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(AndroidJUnit4.class)
+public class RangeSetTest {
     private static final DateTime FROM = new DateTime(2010, 4, 19, 13, 0, 0, 0, DateTimeZone.UTC);
     private static final DateTime TO = new DateTime(2010, 4, 19, 14, 0, 0, 0, DateTimeZone.UTC);
     private static final DateTime CENTRE = new DateTime(2010, 4, 19, 13, 30, 0, 0, DateTimeZone.UTC);
-    private static final Duration SIGMA = Duration.standardMinutes(30);
     private static final Duration SMALL_SIGMA = Duration.standardMinutes(1);
 
     private static final Range SMALL_FROM_RANGE = new Range(FROM, SMALL_SIGMA);
@@ -31,6 +38,7 @@ public class RangeSetTest extends AndroidTestCase {
             SMALL_CENTRE_RANGE.startingFrom(SMALL_CENTRE_RANGE.to),
             SMALL_TO_RANGE.startingFrom(SMALL_TO_RANGE.to));
 
+    @Test
     public void testOverlaps() {
         assertTrue(SMALL_RANGES.overlaps(SMALL_RANGES));
         assertTrue(SMALL_RANGES.overlaps(FROM_EDGE_RANGE));
@@ -39,26 +47,31 @@ public class RangeSetTest extends AndroidTestCase {
         assertTrue(SMALL_RANGES.overlaps(SMALL_RANGES_FUTURE_EDGES));
     }
 
+    @Test
     public void testOverlapsInclusive() {
         assertTrue(SMALL_RANGES.overlaps(SMALL_RANGES, TimeRegion.Comparison.INCLUSIVE));
         assertTrue(SMALL_RANGES.overlaps(SMALL_RANGES_FUTURE_EDGES, TimeRegion.Comparison.INCLUSIVE));
     }
 
+    @Test
     public void testOverlapsExclusive() {
         assertTrue(SMALL_RANGES.overlaps(SMALL_RANGES, TimeRegion.Comparison.EXCLUSIVE));
         assertFalse(SMALL_RANGES.overlaps(SMALL_RANGES_FUTURE_EDGES, TimeRegion.Comparison.EXCLUSIVE));
     }
 
+    @Test
     public void testIsIn() {
         assertTrue(HUGE_RANGE.contains(SMALL_RANGES));
     }
 
+    @Test
     public void testStartingFromDate() {
         RangeSet subject = new RangeSet(HUGE_RANGE).startingFrom(2015, 4, 18);
         assertFalse(subject.contains(FROM));
         assertTrue(subject.contains(FROM.withDate(2015, 4, 18)));
     }
 
+    @Test
     public void testNextEdge() {
         ReadableInstant nextEdge = SMALL_RANGES.getEdgeAfter(TO.plus(Duration.standardDays(1)));
         assertNull(nextEdge);

@@ -15,7 +15,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 
 public class Transaction implements com.robwilliamson.healthyesther.db.includes.Transaction {
-    private static final String LOG_TAG = Transaction.class.getName();
     private final Set<CompletionHandler> mCompletionHandlers = new HashSet<>();
     @Nonnull
     private DatabaseWrapperClass mDatabase;

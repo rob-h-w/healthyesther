@@ -1,6 +1,6 @@
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.reminder;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.reminder.TimingModel;
 import com.robwilliamson.healthyesther.util.time.Range;
@@ -8,13 +8,19 @@ import com.robwilliamson.healthyesther.util.time.Range;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static com.robwilliamson.healthyesther.unit.Assert.assertIsEqual;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-public class TimingModelTest extends AndroidTestCase {
+@RunWith(AndroidJUnit4.class)
+public class TimingModelTest {
     private static final DateTime MORNING_8AM_21 = new DateTime(2015, 3, 21, 8, 0).withZone(DateTimeZone.UTC);
     private static final DateTime MORNING_21 = new DateTime(2015, 3, 21, 7, 0);
     private static final DateTime MIDDAY_21 = new DateTime(2015, 3, 21, 12, 0);
@@ -28,9 +34,8 @@ public class TimingModelTest extends AndroidTestCase {
     private MockTimingModelEnvironment mEnvironment;
     private TimingModel mSubject;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         mEnvironment = new MockTimingModelEnvironment();
         mSubject = new TimingModel(
                 mEnvironment,
@@ -39,6 +44,7 @@ public class TimingModelTest extends AndroidTestCase {
                 ALLOWED);
     }
 
+    @Test
     public void testOnAlarmElapsed_inDisallowedRange() {
         mEnvironment.now = MIDNIGHT_21;
         mSubject.onAlarmElapsed();
@@ -46,6 +52,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertEquals(0, mEnvironment.sendReminderCallCount);
     }
 
+    @Test
     public void testOnAlarmElapsed_inAllowedRange() {
         mEnvironment.now = MORNING_21;
         mSubject.onAlarmElapsed();
@@ -53,6 +60,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertEquals(1, mEnvironment.sendReminderCallCount);
     }
 
+    @Test
     public void testOnAlarmElapsed_doesNotChangeNextAfterPrematureElapsed() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
@@ -63,6 +71,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertNull(mEnvironment.setLastNotifiedTimeParams);
     }
 
+    @Test
     public void testOnAlarmElapsed_isIdempotent() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
@@ -82,6 +91,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertNull(mEnvironment.setLastNotifiedTimeParams);
     }
 
+    @Test
     public void testEnsureNotificationIsPending_nextIsSet() throws Exception {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.plus(Duration.standardMinutes(1));
@@ -90,6 +100,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(mEnvironment.nextNotificationTime, mEnvironment.setNextNotificationTimeParams.alarmTime);
     }
 
+    @Test
     public void testEnsureNotificationIsPending_nextIsNull() throws Exception {
         mEnvironment.now = MIDDAY_21;
         ensureNotificationIsPending(mSubject);
@@ -97,6 +108,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setNextNotificationTimeParams.alarmTime);
     }
 
+    @Test
     public void testEnsureNotificationIsPending_nextIsTooFarInTheFuture() throws Exception {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.withYear(2016);
@@ -105,6 +117,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setNextNotificationTimeParams.alarmTime);
     }
 
+    @Test
     public void testEnsureNotificationIsPending_nextIsInThePast() throws Exception {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.minus(HALF_PERIOD);
@@ -113,6 +126,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setNextNotificationTimeParams.alarmTime);
     }
 
+    @Test
     public void testOnApplicationCreated_nightNoNotificationsSet() {
         mEnvironment.now = MIDDAY_21;
         mSubject.onApplicationCreated();
@@ -120,6 +134,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
 
+    @Test
     public void testOnBootCompleted() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
@@ -129,12 +144,14 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
 
+    @Test
     public void testOnNotified() {
         mSubject.onNotified();
         assertIsEqual(MORNING_8AM_21, Duration.standardSeconds(1), mEnvironment.setLastNotifiedTimeParams.time);
         assertIsEqual(MORNING_8AM_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
 
+    @Test
     public void testOnScreenOn() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
@@ -144,6 +161,7 @@ public class TimingModelTest extends AndroidTestCase {
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
 
+    @Test
     public void testOnUserEntry() {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.setLastNotifiedTime(MIDDAY_21.minus(HALF_PERIOD));

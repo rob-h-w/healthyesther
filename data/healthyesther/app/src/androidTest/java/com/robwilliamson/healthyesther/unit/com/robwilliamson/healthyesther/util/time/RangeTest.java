@@ -1,6 +1,6 @@
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.util.time;
 
-import android.test.AndroidTestCase;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.util.time.Range;
 import com.robwilliamson.healthyesther.util.time.TimeRegion;
@@ -9,10 +9,17 @@ import com.robwilliamson.healthyesther.util.time.TimeRegion.Comparison;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static com.robwilliamson.healthyesther.unit.Assert.assertIsEqual;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class RangeTest extends AndroidTestCase {
+@RunWith(AndroidJUnit4.class)
+public class RangeTest {
     private static final DateTime FROM = new DateTime(2010, 4, 19, 13, 0, 0, 0, DateTimeZone.UTC);
     private static final DateTime TO = new DateTime(2010, 4, 19, 14, 0, 0, 0, DateTimeZone.UTC);
     private static final DateTime CENTRE = new DateTime(2010, 4, 19, 13, 30, 0, 0, DateTimeZone.UTC);
@@ -27,24 +34,27 @@ public class RangeTest extends AndroidTestCase {
 
     private Range mSubject;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         mSubject = new Range(FROM, TO);
     }
 
+    @Test
     public void testFromToConstructor() {
         checkTimingIsCorrect(new Range(FROM, TO));
     }
 
+    @Test
     public void testTransposedFromToConstructor() {
         checkTimingIsCorrect(new Range(TO, FROM));
     }
 
+    @Test
     public void testCentreSigmaConstructor() {
         checkTimingIsCorrect(new Range(CENTRE, SIGMA));
     }
 
+    @Test
     public void testInRangeDefault() {
         assertTrue(mSubject.contains(FROM));
         assertTrue(mSubject.contains(CENTRE));
@@ -55,6 +65,7 @@ public class RangeTest extends AndroidTestCase {
         assertFalse(mSubject.contains(SMALL_TO_RANGE));
     }
 
+    @Test
     public void testInRangeInclusive() {
         assertTrue(mSubject.contains(FROM, Comparison.INCLUSIVE));
         assertTrue(mSubject.contains(TO, Comparison.INCLUSIVE));
@@ -65,6 +76,7 @@ public class RangeTest extends AndroidTestCase {
         assertFalse(mSubject.contains(SMALL_TO_RANGE, Comparison.INCLUSIVE));
     }
 
+    @Test
     public void testInRangeExclusive() {
         assertFalse(mSubject.contains(FROM, Comparison.EXCLUSIVE));
         assertFalse(mSubject.contains(TO, Comparison.EXCLUSIVE));
@@ -75,6 +87,7 @@ public class RangeTest extends AndroidTestCase {
         assertFalse(mSubject.contains(SMALL_TO_RANGE, Comparison.EXCLUSIVE));
     }
 
+    @Test
     public void testRangeOverlaps() {
         assertTrue(mSubject.overlaps(SMALL_FROM_RANGE));
         assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE));
@@ -83,6 +96,7 @@ public class RangeTest extends AndroidTestCase {
         assertTrue(mSubject.overlaps(TO_EDGE_RANGE));
     }
 
+    @Test
     public void testRangeOverlapsInclusive() {
         assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Comparison.INCLUSIVE));
         assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Comparison.INCLUSIVE));
@@ -91,6 +105,7 @@ public class RangeTest extends AndroidTestCase {
         assertTrue(mSubject.overlaps(TO_EDGE_RANGE, Comparison.INCLUSIVE));
     }
 
+    @Test
     public void testRangeOverlapsExclusive() {
         assertTrue(mSubject.overlaps(SMALL_FROM_RANGE, Comparison.EXCLUSIVE));
         assertTrue(mSubject.overlaps(SMALL_CENTRE_RANGE, Comparison.EXCLUSIVE));
@@ -100,6 +115,7 @@ public class RangeTest extends AndroidTestCase {
         assertTrue(mSubject.overlaps(new Range(FROM, TO.plus(SIGMA)), Comparison.EXCLUSIVE));
     }
 
+    @Test
     public void testStarting() {
         Duration difference = Duration.millis(TO.getMillis() - FROM.getMillis());
         Range subject = mSubject.startingFrom(TO);
@@ -109,18 +125,21 @@ public class RangeTest extends AndroidTestCase {
         assertEquals(SIGMA, subject.sigma);
     }
 
+    @Test
     public void testStartingYesterday() {
         Range subject = mSubject.startingYesterday();
         assertIsEqual(FROM.minus(Duration.standardDays(1)), subject.from);
         assertIsEqual(TO.minus(Duration.standardDays(1)), subject.to);
     }
 
+    @Test
     public void testStartingTomorrow() {
         Range subject = mSubject.startingTomorrow();
         assertIsEqual(FROM.plus(Duration.standardDays(1)), subject.from);
         assertIsEqual(TO.plus(Duration.standardDays(1)), subject.to);
     }
 
+    @Test
     public void testStartingFromDate() {
         TimeRegion subject = mSubject.startingFrom(2016, 7, 13);
         assertTrue(subject.contains(FROM.withDate(2016, 7, 13)));

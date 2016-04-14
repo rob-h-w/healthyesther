@@ -1,7 +1,7 @@
 package com.robwilliamson.healthyesther.dialog;
 
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.InstrumentationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.Settings;
 import com.robwilliamson.healthyesther.db.Utils;
@@ -11,33 +11,40 @@ import com.robwilliamson.healthyesther.test.EditScoreFragmentAccessor;
 import com.robwilliamson.healthyesther.test.HealthScoreActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-public class EditScoreDialogTest extends ActivityInstrumentationTestCase2<ScoreEventActivity> {
-    public EditScoreDialogTest() {
-        super(ScoreEventActivity.class);
-    }
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+import javax.annotation.Nonnull;
 
+@RunWith(AndroidJUnit4.class)
+public class EditScoreDialogTest {
+    @Rule
+    public ActivityTestRule<ScoreEventActivity> mActivityRule = new ActivityTestRule<>(
+            ScoreEventActivity.class);
+
+
+    @Before
+    public void setUp() throws Exception {
         Utils.Db.TestData.cleanOldData();
         Settings.INSTANCE.resetExclusionList();
-
-        getActivity();
     }
 
+    @Test
     public void testOpenExisting() {
         HealthScoreActivityAccessor.editScore("Happiness");
         final HealthScoreTable.Row score = new HealthScoreTable.Row("Happiness", true, "Happy", "Sad");
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return EditScoreDialogTest.this;
-            }
-
-            @Override
             public void checkContent() {
                 EditScoreFragmentAccessor.checkUnmodifiedContent(score);
+            }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
             }
         });
     }

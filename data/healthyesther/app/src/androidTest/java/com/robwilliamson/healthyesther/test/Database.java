@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.test;
 
 import android.app.Instrumentation;
 import android.content.Context;
+import android.support.test.InstrumentationRegistry;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
@@ -17,14 +18,13 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 
 public final class Database {
-    public static void useV4Database(Instrumentation instrumentation) throws IOException, NoSuchFieldException, IllegalAccessException {
-        Context testContext = instrumentation.getContext();
-        Context targetContext = instrumentation.getTargetContext();
+    public static void useV4Database() throws IOException, NoSuchFieldException, IllegalAccessException {
+        Context testContext = InstrumentationRegistry.getContext();
 
         // Record the string before we delete the db because deletion also resets HealthDbHelper.
-        String dbPath = getDatabaseAbsolutePath(targetContext);
+        String dbPath = getDatabaseAbsolutePath();
 
-        deleteDatabase(targetContext);
+        deleteDatabase();
 
         int v4DbId = testContext.getResources().getIdentifier("v4", "raw", testContext.getPackageName());
 
@@ -33,14 +33,14 @@ public final class Database {
         }
     }
 
-    public static void useV3Database(Instrumentation instrumentation) throws IOException, NoSuchFieldException, IllegalAccessException {
+    public static void useV3Database() throws IOException, NoSuchFieldException, IllegalAccessException {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         Context testContext = instrumentation.getContext();
-        Context targetContext = instrumentation.getTargetContext();
 
         // Record the string before we delete the db because deletion also resets HealthDbHelper.
-        String dbPath = getDatabaseAbsolutePath(targetContext);
+        String dbPath = getDatabaseAbsolutePath();
 
-        deleteDatabase(targetContext);
+        deleteDatabase();
 
         int v3DbId = testContext.getResources().getIdentifier("v3", "raw", testContext.getPackageName());
 
@@ -49,10 +49,10 @@ public final class Database {
         }
     }
 
-    public static void deleteDatabase(Context targetContext) throws NoSuchFieldException, IllegalAccessException {
+    public static void deleteDatabase() throws NoSuchFieldException, IllegalAccessException {
         HealthDbHelper.closeDb();
 
-        File file = new File(getDatabaseAbsolutePath(targetContext));
+        File file = new File(getDatabaseAbsolutePath());
 
         if (file.exists()) {
             Assert.assertTrue("Unable to delete " + file.getAbsolutePath(), file.delete());
@@ -68,7 +68,8 @@ public final class Database {
      * HealthDbHelper's life must be managed carefully in order to set up the conditions of first
      * application startup with an old Db, and new code.
      */
-    public static String getDatabaseAbsolutePath(Context targetContext) {
+    public static String getDatabaseAbsolutePath() {
+        Context targetContext = InstrumentationRegistry.getTargetContext();
         return targetContext.getDatabasePath(
                 HealthDbHelper.getInstance().getDatabaseName()).getAbsolutePath();
     }

@@ -2,7 +2,7 @@ package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.db.
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.test.InstrumentationTestCase;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
@@ -11,15 +11,27 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
+import com.robwilliamson.healthyesther.test.Database;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
 
-public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+@RunWith(AndroidJUnit4.class)
+public class ReplaceUtcWithCurrentLocaleTest {
     static {
         // Ensure the time converter is loaded.
         new DateTimeConverter();
@@ -27,60 +39,30 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
 
     private SQLiteDatabase mDb;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        Utils.Db.TestData.cleanOldData();
-        Utils.Db.TestData.insertV3FakeData();
+    @Before
+    public void setUp() throws Exception {
+        Database.useV3Database();
 
         mDb = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
     }
 
-    /**
-     * Make sure all resources are cleaned up and garbage collected before moving on to the next
-     * test. Subclasses that override this method should make sure they call super.tearDown()
-     * at the end of the overriding method.
-     *
-     * @throws Exception
-     */
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
+        Database.deleteDatabase();
     }
 
+    @Test
     public void testNormalUpgradePath() throws Exception {
         Cursor c = mDb.query(DatabaseAccessor.EVENT_TABLE.getName(), null, null, null, null, null, null);
-        final Set<Integer> oldEventHashes = new HashSet<>(c.getCount());
-        final Set<EventDates> oldEvents = getEvents(c);
-        for (EventDates dates : oldEvents) {
-            dates.assertIsNullOrUtc();
-            oldEventHashes.add(dates.hashCode());
-        }
-
-        EventTable.Row[] rows = DatabaseAccessor.EVENT_TABLE.select(HealthDbHelper.getDatabase(), WhereContains.any());
-
-        try (Transaction transaction = HealthDbHelper.getDatabase().getTransaction()) {
-            for (EventTable.Row row : rows) {
-                row.applyTo(transaction);
-            }
-        }
-
-        c = mDb.query(DatabaseAccessor.EVENT_TABLE.getName(), null, null, null, null, null, null);
         final Set<EventDates> newEvents = getEvents(c);
         for (EventDates dates : newEvents) {
             // Assert the dates are null or local.
-            dates.assertIsNullOrLocal();
-
-            // Assert the dates are the same.
-            EventDates utcVersion = new EventDates();
-            utcVersion.when = toUtcString(dates.when);
-            utcVersion.created = toUtcString(dates.created);
-            utcVersion.modified = toUtcString(dates.modified);
-
-            assertTrue("Expect the old event dates set to contain an equivalent to each new date, like the one at " +
-                            dates + ". This has UTC equivalent " + utcVersion,
-                    oldEventHashes.contains(utcVersion.hashCode()));
+            try {
+                dates.assertIsNullOrLocal();
+            } catch (Throwable e) {
+                e.printStackTrace();
+                fail("threw " + e);
+            }
         }
     }
 
@@ -151,14 +133,8 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
             return name + ": " + value;
         }
 
-        public void assertIsNullOrUtc() {
-            assertIsNullOrUtc(when);
-            assertIsNullOrUtc(created);
-            assertIsNullOrUtc(modified);
-        }
-
         public void assertIsNullOrLocal() {
-            assertIsNullOrLocal(when, TimeZone.getDefault());
+            assertIsNullOrLocal(when, null);
             assertIsNullOrLocal(created, DateTimeZone.UTC.toTimeZone());
             assertIsNullOrLocal(modified, DateTimeZone.UTC.toTimeZone());
         }
@@ -171,18 +147,26 @@ public class ReplaceUtcWithCurrentLocaleTest extends InstrumentationTestCase {
             return str.hashCode();
         }
 
-        private void assertIsNullOrLocal(String dateString, TimeZone expectedTimeZone) {
+        private void assertIsNullOrLocal(
+                @Nullable String dateString,
+                @Nullable TimeZone expectedTimeZone) {
             if (dateString == null) {
                 return;
             }
 
             DateTime dateTime = Utils.Time.fromLocalString(dateString);
-            assertTrue(
-                    "Expect " + dateString + " to use timezone " + expectedTimeZone + ".",
-                    dateTime.getZone().toTimeZone().getRawOffset() == expectedTimeZone.getRawOffset());
+
+            if (expectedTimeZone == null) {
+                assertTrue(dateString.contains(" -") || dateString.contains(" +"));
+            } else {
+                assertTrue(
+                        "Expect " + dateString + " to use timezone " + expectedTimeZone + ".",
+                        dateTime.getZone().toTimeZone().getRawOffset()
+                                == expectedTimeZone.getRawOffset());
+            }
         }
 
-        private void assertIsNullOrUtc(String dateString) {
+        private void assertIsNullOrUtcOrSpaceSeparated(String dateString) {
             if (dateString == null) {
                 return;
             }

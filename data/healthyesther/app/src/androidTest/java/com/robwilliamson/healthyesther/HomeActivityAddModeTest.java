@@ -1,45 +1,46 @@
 package com.robwilliamson.healthyesther;
 
-import android.os.Environment;
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.InstrumentationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-public class HomeActivityAddModeTest extends ActivityInstrumentationTestCase2<HomeActivity> {
-    private static final String DROPBOX_PATH = Environment.getExternalStorageDirectory().getPath() +
-            "/Android/data/com.dropbox.android";
-    private static final String DB_PATH = DROPBOX_PATH + "/files/scratch";
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-    public HomeActivityAddModeTest() {
-        super(HomeActivity.class);
-    }
+import javax.annotation.Nonnull;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+@RunWith(AndroidJUnit4.class)
+public class HomeActivityAddModeTest {
+    @Rule
+    public ActivityTestRule<HomeActivity> mActivityRule = new ActivityTestRule<>(
+            HomeActivity.class);
 
-        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
+    @Before
+    public void setUp() throws Exception {
+        HomeActivityAccessor.setShowNavigationDrawer(false);
 
         Utils.Db.TestData.cleanOldData();
-
-        getActivity();
 
         HomeActivityAccessor.AddMode.start();
     }
 
+    @Test
     public void testAddModeContents() {
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return HomeActivityAddModeTest.this;
-            }
-
-            @Override
             public void checkContent() {
                 HomeActivityAccessor.AddMode.checkUnmodifiedContent();
+            }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
             }
         });
     }

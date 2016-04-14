@@ -2,38 +2,51 @@ package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther;
 
 import android.content.Context;
 import android.content.Intent;
-import android.test.ActivityUnitTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.BaseFragmentActivity;
 import com.robwilliamson.healthyesther.EventActivity;
 import com.robwilliamson.healthyesther.R;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class BaseFragmentActivityTest extends ActivityUnitTestCase<EventActivity> {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-    public BaseFragmentActivityTest() {
-        super(EventActivity.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class BaseFragmentActivityTest {
+    @Rule
+    public ActivityTestRule<EventActivity> mActivityRule = new ActivityTestRule<>(
+            EventActivity.class);
 
+    @Test
     public void testNotCreatedState() throws Exception {
         final EventActivity[] activity = new EventActivity[1];
 
-        getInstrumentation().runOnMainSync(new Runnable() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                activity[0] = new EventActivity();
+                activity[0] = mActivityRule.getActivity();
             }
         });
 
         assertFalse(isActive(activity[0]));
     }
 
+    @Test
     public void testLaunchedState() throws Exception {
-        final EventActivity activity = getActivity();
+        final EventActivity activity = mActivityRule.getActivity();
 
-        getInstrumentation().runOnMainSync(new Runnable() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
                 activity.onResume();
@@ -57,15 +70,14 @@ public class BaseFragmentActivityTest extends ActivityUnitTestCase<EventActivity
         });
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        getInstrumentation().runOnMainSync(new Runnable() {
+    @Before
+    public void setUp() throws Exception {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
             @Override
             public void run() {
-                Context context = getInstrumentation().getTargetContext();
+                Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
                 context.setTheme(R.style.HealthyEstherTheme);
-                startActivity(new Intent(Intent.ACTION_MAIN), null, null);
+                mActivityRule.getActivity().startActivity(new Intent(Intent.ACTION_MAIN), null);
             }
         });
     }

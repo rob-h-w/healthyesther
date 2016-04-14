@@ -7,8 +7,15 @@ import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
+import com.robwilliamson.healthyesther.db.includes.DateTime;
+import com.robwilliamson.healthyesther.db.includes.Where;
+
+import org.joda.time.DateTimeZone;
+
+import java.util.Arrays;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class V4 implements Upgrade {
     static void createDefaultJudgmentFor(
@@ -52,6 +59,28 @@ public class V4 implements Upgrade {
                 best,
                 8 * Utils.Time.HOUR_MS,
                 20 * Utils.Time.HOUR_MS).applyTo(transaction);
+    }
+
+    @Nonnull
+    private static Object addTimezone(@Nullable String time, @Nonnull DateTimeZone zone) {
+        if (time == null) {
+            return DateTime.class;
+        }
+
+        org.joda.time.DateTime dateTime;
+
+        if (time.contains("T")) {
+            if (time.contains(" -") || time.contains(" +")) {
+                dateTime = Utils.Time.fromDatabaseString(time);
+            } else {
+                dateTime = Utils.Time.fromUtcString(time);
+            }
+        } else {
+            time = time.replace(' ', 'T');
+            dateTime = org.joda.time.DateTime.parse(time).withZoneRetainFields(zone);
+        }
+
+        return DateTime.from(dateTime);
     }
 
     @Override
@@ -101,6 +130,39 @@ public class V4 implements Upgrade {
 
             DatabaseAccessor.checkForeignKeys(sqLiteDb);
             DatabaseAccessor.activateForeignKeyChecking(sqLiteDb);
+        }
+
+        try (final Cursor events = sqLiteDb.query(
+                HealthDatabase.EVENT_TABLE.getName(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                "_id ASC")) {
+
+            if (events.moveToFirst()) {
+                final int _ID = events.getColumnIndex("_id");
+                final int WHEN = events.getColumnIndex("when");
+                final int CREATED = events.getColumnIndex("created");
+                final int MODIFIED = events.getColumnIndex("modified");
+
+                do {
+                    transaction.update(
+                            HealthDatabase.EVENT_TABLE.getName(),
+                            new Where() {
+                                @Nullable
+                                @Override
+                                public String getWhere() {
+                                    return "_id = " + events.getInt(_ID);
+                                }
+                            },
+                            Arrays.asList("[when]", "created", "modified"),
+                            addTimezone(events.getString(WHEN), DateTimeZone.getDefault()),
+                            addTimezone(events.getString(CREATED), DateTimeZone.UTC),
+                            addTimezone(events.getString(MODIFIED), DateTimeZone.UTC));
+                } while (events.moveToNext());
+            }
         }
     }
 }

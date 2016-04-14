@@ -3,8 +3,8 @@ package com.robwilliamson.healthyesther.edit;
 import android.os.SystemClock;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.matcher.ViewMatchers;
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.InstrumentationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.R;
@@ -26,6 +26,11 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MealEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import javax.annotation.Nonnull;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -42,8 +47,14 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.robwilliamson.healthyesther.test.Strings.from;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
+import static org.junit.Assert.fail;
 
-public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+@RunWith(AndroidJUnit4.class)
+public class MealActivityEspressoTest {
+    @Rule
+    public ActivityTestRule<HomeActivity> mActivityRule = new ActivityTestRule<>(
+            HomeActivity.class);
+
     private static final DateTime when;
     private static final String MEAL_NAME = "Bacon";
     private static final String EVENT_NAME = "Breakfast";
@@ -52,35 +63,29 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         when = DateTimeConverter.now();
     }
 
-    public MealActivityTest() {
-        super(HomeActivity.class);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
+    @Before
+    public void setUp() throws Exception {
+        HomeActivityAccessor.setShowNavigationDrawer(false);
 
         Utils.Db.TestData.cleanOldData();
-
-        getActivity();
 
         HomeActivityAccessor.AddMode.start();
     }
 
+    @Test
     public void testAddNewMeal() {
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return MealActivityTest.this;
-            }
-
-            @Override
             public void checkContent() {
                 onView(MealEventActivityAccessor.dishTitle()).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
                 onView(MealEventActivityAccessor.dishName()).check(matches(withHint(from(R.string.descriptive_name_for_the_dish))));
+            }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
             }
         });
 
@@ -89,13 +94,14 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return MealActivityTest.this;
-            }
-
-            @Override
             public void checkContent() {
                 onView(MealEventActivityAccessor.dishName()).check(matches(withText(text)));
+            }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
             }
         });
 
@@ -108,6 +114,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         checkDatabaseCorrectnessForName(text, 1);
     }
 
+    @Test
     public void testAddMultipleMeals() {
         String[] mealNames = new String[]{
                 "trout",
@@ -133,6 +140,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertThat(meals.length, is(5));
     }
 
+    @Test
     public void test_addMealName_updatesEventName() {
         String mealName = "A Meal";
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
@@ -141,11 +149,13 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         onView(EditAccessor.eventEditText()).check(matches(withText(mealName)));
     }
 
+    @Test
     public void test_emptyName_cannotCommit() {
         onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
         onView(EditAccessor.ok()).check(doesNotExist());
     }
 
+    @Test
     public void test_editExisting_orientation() {
         setupMealEvent();
         HomeActivityAccessor.EditMode.start();
@@ -153,18 +163,20 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return MealActivityTest.this;
-            }
-
-            @Override
             public void checkContent() {
                 onView(EditAccessor.eventEditText()).check(matches(withText(MEAL_NAME)));
                 onView(MealEventActivityAccessor.dishName()).check(matches(withText(MEAL_NAME)));
             }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
+            }
         });
     }
 
+    @Test
     public void test_editExisting_commitsUpdate() {
         setupMealEvent();
         HomeActivityAccessor.EditMode.start();
@@ -183,6 +195,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertThat(event.getName(), is(EVENT_NAME));
     }
 
+    @Test
     public void test_editExistingModifyMealName_commitsUpdate() {
         final String NEW_FOOD = "Egg";
         setupMealEvent();
@@ -215,7 +228,7 @@ public class MealActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
 
     private void setupMealEvent() {
         Database db = HealthDbHelper.getDatabase();
-        EventTable.Row event = null;
+        EventTable.Row event;
         try (Transaction transaction = db.getTransaction()) {
             event = new EventTable.Row(EventTypeTable.MEAL.getId(), when, when, null, MEAL_NAME);
             event.applyTo(transaction);

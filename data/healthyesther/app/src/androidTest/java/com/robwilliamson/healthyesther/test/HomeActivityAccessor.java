@@ -2,6 +2,7 @@ package com.robwilliamson.healthyesther.test;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.view.View;
 
@@ -31,14 +32,15 @@ public class HomeActivityAccessor {
         onView(navigationDrawer()).perform(click());
     }
 
-    public static void setShowNavigationDrawer(Boolean show, Context targetContext) {
+    public static void setShowNavigationDrawer(Boolean show) {
+        Context targetContext = InstrumentationRegistry.getTargetContext();
         PreferenceManager.getDefaultSharedPreferences(targetContext).edit().putBoolean(NavigationDrawerFragment.PREF_USER_LEARNED_DRAWER, !show).apply();
     }
 
-    public static void checkUnmodifiedMenuContent(Context context) {
+    public static void checkUnmodifiedMenuContent() {
         // Ensure we're at the home screen.
         onView(navigationDrawer()).check(matches(isDisplayed()));
-        openActionBarOverflowOrOptionsMenu(context);
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getContext());
         onView(MenuAccessor.backupToDropbox()).check(matches(isEnabled()));
         onView(MenuAccessor.restoreFromDropbox()).check(matches(isEnabled()));
         onView(MenuAccessor.settings()).check(matches(isEnabled()));

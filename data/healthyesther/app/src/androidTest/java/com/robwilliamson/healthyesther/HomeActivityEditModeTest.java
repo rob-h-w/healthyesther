@@ -1,40 +1,45 @@
 package com.robwilliamson.healthyesther;
 
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.InstrumentationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-public class HomeActivityEditModeTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-    public HomeActivityEditModeTest() {
-        super(HomeActivity.class);
-    }
+import javax.annotation.Nonnull;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+@RunWith(AndroidJUnit4.class)
+public class HomeActivityEditModeTest {
+    @Rule
+    public ActivityTestRule<HomeActivity> mActivityRule = new ActivityTestRule<>(
+            HomeActivity.class);
 
-        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
+    @Before
+    public void setUp() throws Exception {
+        HomeActivityAccessor.setShowNavigationDrawer(false);
 
         com.robwilliamson.healthyesther.db.Utils.Db.TestData.cleanOldData();
-
-        getActivity();
 
         HomeActivityAccessor.EditMode.start();
     }
 
+    @Test
     public void testEditModeContents() {
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return HomeActivityEditModeTest.this;
-            }
-
-            @Override
             public void checkContent() {
                 HomeActivityAccessor.EditMode.checkUnmodifiedContent();
+            }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
             }
         });
     }

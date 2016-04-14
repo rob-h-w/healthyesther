@@ -1,7 +1,8 @@
 package com.robwilliamson.healthyesther;
 
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.InstrumentationTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.test.ConfirmationDialogAccessor;
@@ -10,69 +11,78 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.annotation.Nonnull;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.robwilliamson.healthyesther.test.HomeActivityAccessor.AddMode.healthScoreButton;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+@RunWith(AndroidJUnit4.class)
+public class HomeActivityEspressoTest {
+    @Rule
+    public ActivityTestRule<HomeActivity> mActivityRule = new ActivityTestRule<>(
+            HomeActivity.class);
 
-    public HomeActivityTest() {
-        super(HomeActivity.class);
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
+    @Before
+    public void setUp() throws Exception {
+        HomeActivityAccessor.setShowNavigationDrawer(false);
 
         Utils.Db.TestData.cleanOldData();
-
-        getActivity();
     }
 
+    @Test
     public void testMenuContents() {
         Orientation.check(new Orientation.Subject() {
             @Override
-            public InstrumentationTestCase getTestCase() {
-                return HomeActivityTest.this;
+            public void checkContent() {
+                HomeActivityAccessor.checkUnmodifiedMenuContent();
             }
 
+            @Nonnull
             @Override
-            public void checkContent() {
-                HomeActivityAccessor.checkUnmodifiedMenuContent(getInstrumentation().getTargetContext());
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
             }
         });
     }
 
+    @Test
     public void testBackupToDropbox() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
         onView(healthScoreButton()).check(matches(isDisplayed()));
     }
 
+    @Test
     public void testRestoreFromDropbox() throws Exception {
         final int expectedCount = populateSomeDropboxData();
 
         // Backup the data to Dropbox.
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(MenuAccessor.backupToDropbox()).perform(click());
 
         // Ensure we're back in the home activity.
         onView(HomeActivityAccessor.navigationDrawer()).check(matches(isDisplayed()));
 
         // Remove it from current use.
-        Database.deleteDatabase(getInstrumentation().getTargetContext());
+        Database.deleteDatabase();
 
         // Check there are no entries.
         final int emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
 
         // Restore from Dropbox.
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(MenuAccessor.restoreFromDropbox()).perform(click());
 
         // Confirm.
@@ -87,39 +97,42 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         assertEquals(expectedCount, finalCount);
     }
 
+    @Test
     public void testConfirmationDialogOrientation() {
         populateSomeDropboxData();
 
         // Open the dialog.
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(MenuAccessor.restoreFromDropbox()).perform(click());
 
         Orientation.check(new Orientation.Subject() {
-            @Override
-            public InstrumentationTestCase getTestCase() {
-                return HomeActivityTest.this;
-            }
-
             @Override
             public void checkContent() {
                 ConfirmationDialogAccessor.checkUnmodifiedContent(
                         R.string.confirm_restore_from_dropbox_message);
             }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
+            }
         });
     }
 
+    @Test
     public void testConfirmationDialogCancel() throws Exception {
         populateSomeDropboxData();
 
         // Remove it from current use.
-        Database.deleteDatabase(getInstrumentation().getTargetContext());
+        Database.deleteDatabase();
 
         // Check there are no entries.
         int emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
 
         // Restore from Dropbox.
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(MenuAccessor.restoreFromDropbox()).perform(click());
 
         // Cancel.

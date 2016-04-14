@@ -1,7 +1,7 @@
 package com.robwilliamson.healthyesther.edit;
 
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.InstrumentationTestCase;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 
 import com.robwilliamson.healthyesther.HomeActivity;
@@ -16,6 +16,12 @@ import com.robwilliamson.healthyesther.test.ScoreActivityAccessor;
 import junit.framework.Assert;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.annotation.Nonnull;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -29,41 +35,41 @@ import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.not;
 
-public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
-    public HealthScoreActivityTest() {
-        super(HomeActivity.class);
-    }
+@RunWith(AndroidJUnit4.class)
+public class HealthScoreActivityTest {
+    @Rule
+    public ActivityTestRule<HomeActivity> mActivityRule = new ActivityTestRule<>(
+            HomeActivity.class);
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        HomeActivityAccessor.setShowNavigationDrawer(false, getInstrumentation().getTargetContext());
+    @Before
+    public void setUp() throws Exception {
+        HomeActivityAccessor.setShowNavigationDrawer(false);
 
         Utils.Db.TestData.cleanOldData();
         Settings.INSTANCE.resetExclusionList();
-
-        getActivity();
 
         HomeActivityAccessor.AddMode.start();
 
         onView(HomeActivityAccessor.AddMode.healthScoreButton()).perform(click());
     }
 
+    @Test
     public void testOpenAddScoreActivity() {
         Orientation.check(new Orientation.Subject() {
-            @Override
-            public InstrumentationTestCase getTestCase() {
-                return HealthScoreActivityTest.this;
-            }
-
             @Override
             public void checkContent() {
                 HealthScoreActivityAccessor.checkUnmodifiedContent();
             }
+
+            @Nonnull
+            @Override
+            public ActivityTestRule getActivityTestRule() {
+                return mActivityRule;
+            }
         });
     }
 
+    @Test
     public void testHideScoreActivity() {
         HealthScoreActivityAccessor.hideScore("Happiness");
         onView(HealthScoreActivityAccessor.editScoreGroupLayout()).check(matches(
@@ -71,6 +77,7 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Ho
         Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Happiness"));
     }
 
+    @Test
     public void testHideMultipleScores() {
         HealthScoreActivityAccessor.hideScore("Happiness");
         HealthScoreActivityAccessor.hideScore("Energy");
@@ -82,16 +89,19 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Ho
         Assert.assertTrue(Settings.INSTANCE.getDefaultExcludedEditScores().contains("Energy"));
     }
 
+    @Test
     public void test_addScore_updatesDatabase() {
         onView(HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy")).perform(click());
 
         onView(EditAccessor.ok()).perform(click());
     }
 
+    @Test
     public void test_emptyName_cannotCommit() {
         onView(EditAccessor.ok()).check(doesNotExist());
     }
 
+    @Test
     public void test_setARatingThenEdit_doesNotCrash() {
         Matcher<View> happinessScore = HealthScoreActivityAccessor.score("Happiness", "Sad", "Happy");
         onView(happinessScore).perform(click());
@@ -107,6 +117,7 @@ public class HealthScoreActivityTest extends ActivityInstrumentationTestCase2<Ho
         onView(withText("Happy")).check(matches(isDisplayed()));
     }
 
+    @Test
     public void test_createNewScoreType_showsScoreInHealthScoreActivity() {
         final String SLOON = "Sloon";
         onView(HealthScoreActivityAccessor.trackAnotherScoreButton()).perform(click());

@@ -2,7 +2,10 @@ package com.robwilliamson.healthyesther.test;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.test.InstrumentationTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
+
+import javax.annotation.Nonnull;
 
 public class Orientation {
     public static void check(Subject subject) {
@@ -13,7 +16,9 @@ public class Orientation {
     }
 
     private static void setOrientation(int orientation, Subject subject) {
-        final Activity initial = Espresso.waitForActivityToResume(subject.getTestCase());
+        final Activity initial = Espresso.waitForActivityToResume(
+                InstrumentationRegistry.getInstrumentation(),
+                subject.getActivityTestRule());
         final int initialOrientation = initial.getRequestedOrientation();
 
         // Only set the orientation if necessary.
@@ -23,8 +28,9 @@ public class Orientation {
     }
 
     public interface Subject {
-        InstrumentationTestCase getTestCase();
-
         void checkContent();
+
+        @Nonnull
+        ActivityTestRule getActivityTestRule();
     }
 }

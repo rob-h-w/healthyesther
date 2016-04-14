@@ -2,47 +2,54 @@ package com.robwilliamson.healthyesther.test;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnitRunner;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
 import android.support.test.runner.lifecycle.Stage;
-import android.test.InstrumentationTestCase;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
+
 public class Espresso {
     public static <T> Matcher<T> both(Matcher<T> left, Matcher<T> right) {
-        return new Both<T>(left, right);
+        return new Both<>(left, right);
     }
 
-    public static Activity waitForActivityToResume(InstrumentationTestCase testCase) {
-        Collection<Activity> resumed = getResumed(testCase);
+    public static Activity waitForActivityToResume(
+            Instrumentation testCase,
+            ActivityTestRule activityTestRule) {
+        Collection<Activity> resumed = getResumed(testCase, activityTestRule);
         while (resumed.isEmpty()) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            resumed = getResumed(testCase);
+            resumed = getResumed(testCase, activityTestRule);
         }
 
         return (resumed.iterator().next());
     }
 
-    private static Collection<Activity> getResumed(InstrumentationTestCase testCase) {
-        final Instrumentation instrumentation = testCase.getInstrumentation();
+    @Nonnull
+    private static Collection<Activity> getResumed(
+            final Instrumentation instrumentation,
+            ActivityTestRule activityTestRule) {
         final ActivityLifecycleMonitor monitor = monitor((AndroidJUnitRunner) instrumentation);
         final CountDownLatch latch = new CountDownLatch(1);
         final Object[] resumed = {null};
 
         try {
-            testCase.runTestOnUiThread(new Runnable() {
+            activityTestRule.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     resumed[0] = monitor.getActivitiesInStage(Stage.RESUMED);
@@ -50,7 +57,7 @@ public class Espresso {
                 }
             });
         } catch (Throwable throwable) {
-            return null;
+            return new ArrayList<>(0);
         }
 
         try {
