@@ -1,5 +1,7 @@
 apply plugin: 'java'
+//noinspection GroovyUnusedAssignment
 sourceCompatibility = javaVersion
+//noinspection GroovyUnusedAssignment
 targetCompatibility = javaVersion
 
 def dbDefinition = getRootDir().absolutePath + "/db_definition"
