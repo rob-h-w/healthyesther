@@ -2,9 +2,9 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/base_activity_root_layout"
-    android:theme="@style/AppTheme"
     style="@style/AppTheme.rootLayout"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/AppTheme">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

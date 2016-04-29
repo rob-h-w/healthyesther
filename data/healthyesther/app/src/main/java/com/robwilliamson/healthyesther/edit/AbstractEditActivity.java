@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
@@ -38,6 +42,17 @@ public abstract class AbstractEditActivity extends DbActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = Utils.checkNotNull(getSupportActionBar());
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        Toolbar toolbar = Utils.checkNotNull((Toolbar) findViewById(R.id.toolbar));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         if (savedInstanceState != null) {
             mSavedInstanceState = savedInstanceState;
