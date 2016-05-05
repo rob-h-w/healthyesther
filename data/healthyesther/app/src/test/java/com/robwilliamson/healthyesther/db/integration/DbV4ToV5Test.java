@@ -1,3 +1,7 @@
+/**
+ * © Robert Williamson 2014-2016.
+ * This program is distributed under the terms of the GNU General Public License.
+ */
 package com.robwilliamson.healthyesther.db.integration;
 
 
@@ -32,6 +36,10 @@ import static org.junit.Assert.fail;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class DbV4ToV5Test {
+    static {
+        DateTimeConverter.now();
+    }
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);

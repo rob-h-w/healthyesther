@@ -1,3 +1,7 @@
+/**
+  * © Robert Williamson 2014-2016.
+  * This program is distributed under the terms of the GNU General Public License.
+  */
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.db.utils;
 
 import android.os.Bundle;
