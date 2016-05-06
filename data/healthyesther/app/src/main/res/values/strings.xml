@@ -77,5 +77,6 @@ This program is distributed under the terms of the GNU General Public License.
     <string name="dropbox_sync_failed">Dropbox synchronization failed.</string>
     <string name="title_activity_about">About</string>
     <string name="launcher_icon">Launcher Icon</string>
+    <string name="about">About</string>
 
 </resources>

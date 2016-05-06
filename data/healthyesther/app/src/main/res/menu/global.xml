@@ -15,4 +15,7 @@ This program is distributed under the terms of the GNU General Public License.
     <item
         android:id="@+id/action_restore_from_dropbox"
         android:title="@string/action_restore_from_dropbox"  />
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/about"/>
 </menu>
