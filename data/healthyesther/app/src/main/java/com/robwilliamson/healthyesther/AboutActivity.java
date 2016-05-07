@@ -9,11 +9,14 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+
+import javax.annotation.Nonnull;
 
 public class AboutActivity extends BaseFragmentActivity {
 
-    @SuppressLint("PrivateResource")
+    @SuppressLint({"PrivateResource", "SetJavaScriptEnabled"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +24,8 @@ public class AboutActivity extends BaseFragmentActivity {
         setContentView(R.layout.activity_about);
 
         WebView webView = Utils.checkNotNull((WebView) findViewById(R.id.about_content));
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new Version(), "_version");
         webView.loadUrl("file:///android_res/raw/about.htm");
 
         ActionBar actionBar = Utils.checkNotNull(getSupportActionBar());
@@ -39,5 +44,24 @@ public class AboutActivity extends BaseFragmentActivity {
                 onBackPressed();
             }
         });
+    }
+
+    private static class Version {
+        @JavascriptInterface
+        @Nonnull
+        public String name() {
+            return BuildConfig.VERSION_NAME;
+        }
+
+        @JavascriptInterface
+        public int code() {
+            return BuildConfig.VERSION_CODE;
+        }
+
+        @JavascriptInterface
+        @Nonnull
+        public String toString() {
+            return "v" + name() + " (" + code() + ")";
+        }
     }
 }
