@@ -36,8 +36,8 @@ android {
         applicationId "com.robwilliamson.healthyesther"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 26
-        versionName "0.9.7"
+        versionCode 27
+        versionName "0.9.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         //noinspection GroovyAssignabilityCheck
         signingConfig signingConfigs.release
