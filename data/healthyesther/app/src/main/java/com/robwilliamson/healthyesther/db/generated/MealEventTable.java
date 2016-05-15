@@ -178,6 +178,7 @@ public class MealEventTable
             return mMealId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -409,6 +410,7 @@ public class MealEventTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

@@ -72,6 +72,7 @@ public abstract class BaseClassGenerator implements ClassOwner {
         JDefinedClass theClass = getJClass();
         JCodeModel model = model();
         JMethod eqMethod = theClass.method(JMod.PUBLIC, model.BOOLEAN, "equals");
+        eqMethod.annotate(Override.class);
         JBlock equals = eqMethod.body();
         JVar other = eqMethod.param(model.ref(Object.class), "other");
 

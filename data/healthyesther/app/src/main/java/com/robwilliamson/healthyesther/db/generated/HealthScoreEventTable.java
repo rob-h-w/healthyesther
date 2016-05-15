@@ -177,6 +177,7 @@ public class HealthScoreEventTable
             return mHealthScoreId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -375,6 +376,7 @@ public class HealthScoreEventTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

@@ -165,6 +165,7 @@ public class MedicationTable
             return mId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -312,6 +313,7 @@ public class MedicationTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

@@ -176,6 +176,7 @@ public class NoteEventTable
             return mNoteId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -346,6 +347,7 @@ public class NoteEventTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

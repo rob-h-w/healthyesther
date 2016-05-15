@@ -147,6 +147,7 @@ public class AndroidMetadataTable
     {
 
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -243,6 +244,7 @@ public class AndroidMetadataTable
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

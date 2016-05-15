@@ -170,6 +170,7 @@ public class EventTable
             return mId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -448,6 +449,7 @@ public class EventTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

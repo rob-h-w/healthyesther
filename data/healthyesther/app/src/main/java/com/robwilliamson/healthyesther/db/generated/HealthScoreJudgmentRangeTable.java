@@ -168,6 +168,7 @@ public class HealthScoreJudgmentRangeTable
             return mId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -411,6 +412,7 @@ public class HealthScoreJudgmentRangeTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;

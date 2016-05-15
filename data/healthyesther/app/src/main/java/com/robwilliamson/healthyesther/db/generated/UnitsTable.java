@@ -166,6 +166,7 @@ public class UnitsTable
             return mId;
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
@@ -339,6 +340,7 @@ public class UnitsTable
             );
         }
 
+        @Override
         public boolean equals(Object other) {
             if (other == null) {
                 return false;
