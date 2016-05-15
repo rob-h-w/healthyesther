@@ -496,7 +496,9 @@ public class EventTable
         }
 
         public final void loadRelations(Database database) {
-            mTypeIdRow = HealthDatabase.EVENT_TYPE_TABLE.select1(database, mTypeId);
+            if (mTypeIdRow == null) {
+                mTypeIdRow = HealthDatabase.EVENT_TYPE_TABLE.select1(database, mTypeId);
+            }
         }
 
         @Nonnull

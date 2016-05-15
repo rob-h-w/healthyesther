@@ -409,10 +409,14 @@ public class HealthScoreEventTable
 
         public final void loadRelations(Database database) {
             com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId = getConcretePrimaryKey().getEventId();
-            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
-            mEventIdRow.loadRelations(database);
+            if (mEventIdRow == null) {
+                mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
+                mEventIdRow.loadRelations(database);
+            }
             com.robwilliamson.healthyesther.db.generated.HealthScoreTable.PrimaryKey healthScoreId = getConcretePrimaryKey().getHealthScoreId();
-            mHealthScoreIdRow = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, healthScoreId);
+            if (mHealthScoreIdRow == null) {
+                mHealthScoreIdRow = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, healthScoreId);
+            }
         }
 
         @Nonnull

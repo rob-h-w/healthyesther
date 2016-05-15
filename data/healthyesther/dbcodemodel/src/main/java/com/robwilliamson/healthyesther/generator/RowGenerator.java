@@ -218,6 +218,9 @@ public class RowGenerator extends BaseClassGenerator {
                         bodyForThisColumn = body._if(selectorValue.ne(JExpr._null()))._then();
                     }
 
+                    bodyForThisColumn =
+                            bodyForThisColumn._if(rowField.fieldVar.eq(JExpr._null()))._then();
+
                     JInvocation invocation = tableField.invoke(methodName);
                     invocation.arg(databaseVar);
                     invocation.arg(selectorValue);

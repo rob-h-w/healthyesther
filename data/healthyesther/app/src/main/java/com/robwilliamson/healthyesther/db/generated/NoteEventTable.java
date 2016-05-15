@@ -377,10 +377,14 @@ public class NoteEventTable
 
         public final void loadRelations(Database database) {
             com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId = getConcretePrimaryKey().getEventId();
-            mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
-            mEventIdRow.loadRelations(database);
+            if (mEventIdRow == null) {
+                mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
+                mEventIdRow.loadRelations(database);
+            }
             com.robwilliamson.healthyesther.db.generated.NoteTable.PrimaryKey noteId = getConcretePrimaryKey().getNoteId();
-            mNoteIdRow = HealthDatabase.NOTE_TABLE.select1(database, noteId);
+            if (mNoteIdRow == null) {
+                mNoteIdRow = HealthDatabase.NOTE_TABLE.select1(database, noteId);
+            }
         }
 
         @Nonnull

@@ -370,7 +370,9 @@ public class MedicationNameTable
         public final void loadRelations(Database database) {
             com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId = getConcretePrimaryKey().getMedicationId();
             if (medicationId!= null) {
-                mMedicationIdRow = HealthDatabase.MEDICATION_TABLE.select0Or1(database, medicationId);
+                if (mMedicationIdRow == null) {
+                    mMedicationIdRow = HealthDatabase.MEDICATION_TABLE.select0Or1(database, medicationId);
+                }
             }
         }
 
