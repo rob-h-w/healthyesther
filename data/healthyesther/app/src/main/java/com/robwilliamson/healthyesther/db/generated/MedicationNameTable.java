@@ -367,7 +367,7 @@ public class MedicationNameTable
             return true;
         }
 
-        public final void loadRelations(Database database) {
+        public void loadRelations(Database database) {
             com.robwilliamson.healthyesther.db.generated.MedicationTable.PrimaryKey medicationId = getConcretePrimaryKey().getMedicationId();
             if (medicationId!= null) {
                 if (mMedicationIdRow == null) {
@@ -377,7 +377,7 @@ public class MedicationNameTable
         }
 
         @Nullable
-        public final com.robwilliamson.healthyesther.db.generated.MedicationTable.Row getMedicationRow() {
+        public com.robwilliamson.healthyesther.db.generated.MedicationTable.Row getMedicationRow() {
             return mMedicationIdRow;
         }
 

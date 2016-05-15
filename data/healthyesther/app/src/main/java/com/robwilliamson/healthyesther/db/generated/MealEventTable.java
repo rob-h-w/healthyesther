@@ -444,7 +444,7 @@ public class MealEventTable
             return true;
         }
 
-        public final void loadRelations(Database database) {
+        public void loadRelations(Database database) {
             com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId = getConcretePrimaryKey().getEventId();
             if (mEventIdRow == null) {
                 mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
@@ -462,7 +462,7 @@ public class MealEventTable
         }
 
         @Nonnull
-        public final com.robwilliamson.healthyesther.db.generated.EventTable.Row getEventRow() {
+        public com.robwilliamson.healthyesther.db.generated.EventTable.Row getEventRow() {
             if (mEventIdRow == null) {
                 throw new NullPointerException("event row is not set - call loadRelations first.");
             }
@@ -470,7 +470,7 @@ public class MealEventTable
         }
 
         @Nonnull
-        public final com.robwilliamson.healthyesther.db.generated.MealTable.Row getMealRow() {
+        public com.robwilliamson.healthyesther.db.generated.MealTable.Row getMealRow() {
             if (mMealIdRow == null) {
                 throw new NullPointerException("meal row is not set - call loadRelations first.");
             }
@@ -478,7 +478,7 @@ public class MealEventTable
         }
 
         @Nullable
-        public final com.robwilliamson.healthyesther.db.generated.UnitsTable.Row getUnitsRow() {
+        public com.robwilliamson.healthyesther.db.generated.UnitsTable.Row getUnitsRow() {
             return mUnitsIdRow;
         }
 

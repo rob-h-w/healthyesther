@@ -375,7 +375,7 @@ public class NoteEventTable
             return true;
         }
 
-        public final void loadRelations(Database database) {
+        public void loadRelations(Database database) {
             com.robwilliamson.healthyesther.db.generated.EventTable.PrimaryKey eventId = getConcretePrimaryKey().getEventId();
             if (mEventIdRow == null) {
                 mEventIdRow = HealthDatabase.EVENT_TABLE.select1(database, eventId);
@@ -388,7 +388,7 @@ public class NoteEventTable
         }
 
         @Nonnull
-        public final com.robwilliamson.healthyesther.db.generated.EventTable.Row getEventRow() {
+        public com.robwilliamson.healthyesther.db.generated.EventTable.Row getEventRow() {
             if (mEventIdRow == null) {
                 throw new NullPointerException("event row is not set - call loadRelations first.");
             }
@@ -396,7 +396,7 @@ public class NoteEventTable
         }
 
         @Nonnull
-        public final com.robwilliamson.healthyesther.db.generated.NoteTable.Row getNoteRow() {
+        public com.robwilliamson.healthyesther.db.generated.NoteTable.Row getNoteRow() {
             if (mNoteIdRow == null) {
                 throw new NullPointerException("note row is not set - call loadRelations first.");
             }

@@ -452,14 +452,14 @@ public class HealthScoreJudgmentRangeTable
             return true;
         }
 
-        public final void loadRelations(Database database) {
+        public void loadRelations(Database database) {
             if (mScoreIdRow == null) {
                 mScoreIdRow = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, mScoreId);
             }
         }
 
         @Nonnull
-        public final com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row getHealthScoreRow() {
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreTable.Row getHealthScoreRow() {
             if (mScoreIdRow == null) {
                 throw new NullPointerException("health_score row is not set - call loadRelations first.");
             }

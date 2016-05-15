@@ -148,7 +148,7 @@ public class RowGenerator extends BaseClassGenerator {
 
                 JMethod accessor = getJClass()
                         .method(
-                                JMod.PUBLIC | JMod.FINAL,
+                                JMod.PUBLIC,
                                 row.getJClass(),
                                 "get" + Strings.capitalize(
                                         Strings.underscoresToCamel(table.getName()))
@@ -178,7 +178,7 @@ public class RowGenerator extends BaseClassGenerator {
             return;
         }
 
-        final JMethod loadRelations = getJClass().method(JMod.PUBLIC | JMod.FINAL, model().VOID, "loadRelations");
+        final JMethod loadRelations = getJClass().method(JMod.PUBLIC, model().VOID, "loadRelations");
         final JVar databaseVar = loadRelations.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
         final JBlock body = loadRelations.body();
         Column.Visitor<BaseColumns> makeRelation = new Column.Visitor<BaseColumns>() {
