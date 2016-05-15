@@ -41,6 +41,10 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class TransactionTest {
+    static {
+        // Ensure the converter is loaded before using Joda time & converter.
+        DateTimeConverter.now();
+    }
     private static final String TABLE = "table";
     private static final String[] COLUMN_NAMES = {
             "nullString",
