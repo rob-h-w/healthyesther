@@ -197,6 +197,14 @@ public class MedicationEventTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MedicationEventTable.PrimaryKey.class.getCanonicalName().hashCode();
+            hash = (hash^mEventId.hashCode());
+            hash = (hash^mMedicationId.hashCode());
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {

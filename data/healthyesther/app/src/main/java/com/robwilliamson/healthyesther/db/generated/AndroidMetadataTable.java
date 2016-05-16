@@ -161,6 +161,12 @@ public class AndroidMetadataTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = AndroidMetadataTable.PrimaryKey.class.getCanonicalName().hashCode();
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {

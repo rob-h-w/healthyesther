@@ -184,6 +184,13 @@ public class UnitsTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = UnitsTable.PrimaryKey.class.getCanonicalName().hashCode();
+            hash = (hash^Long.valueOf(mId).hashCode());
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {

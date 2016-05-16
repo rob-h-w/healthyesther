@@ -1,7 +1,7 @@
 /**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
-  */
+ * © Robert Williamson 2014-2016.
+ * This program is distributed under the terms of the GNU General Public License.
+ */
 package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
@@ -49,9 +49,29 @@ public class PrimaryKeyGenerator extends BaseClassGenerator {
                 makeConstructors();
                 makeValueAccessors();
                 makeEquals();
+                makeHashCode();
                 implementWhere();
             }
         });
+    }
+
+    private void makeHashCode() {
+        Utils.Hasher hasher = Utils.Hasher.makeBasicHashCode(getJClass(), model());
+        for(ColumnField field: mSortedPrimaryKeyFields) {
+            Utils.Type type = null;
+            if (field.fieldVar.type().isPrimitive()) {
+                type = Utils.Type.fromString(field.fieldVar.type().unboxify().name());
+            } else if (field.column.isForeignKey() || field.column.isString()) {
+                if(field.column.isNotNull()) {
+                    type = Utils.Type.REF;
+                } else {
+                    type = Utils.Type.NULLABLE_REF;
+                }
+            }
+
+            hasher.hash(field.fieldVar, type);
+        }
+        hasher.getBody()._return(hasher.getHash());
     }
 
     private void implementWhere() {

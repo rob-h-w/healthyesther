@@ -197,6 +197,14 @@ public class NoteEventTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = NoteEventTable.PrimaryKey.class.getCanonicalName().hashCode();
+            hash = (hash^mEventId.hashCode());
+            hash = (hash^mNoteId.hashCode());
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {

@@ -197,6 +197,14 @@ public class MedicationNameTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MedicationNameTable.PrimaryKey.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            hash = ((mMedicationId == null)?hash:(hash^mMedicationId.hashCode()));
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {

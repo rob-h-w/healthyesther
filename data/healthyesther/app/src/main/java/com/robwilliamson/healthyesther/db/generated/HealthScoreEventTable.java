@@ -198,6 +198,14 @@ public class HealthScoreEventTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = HealthScoreEventTable.PrimaryKey.class.getCanonicalName().hashCode();
+            hash = (hash^mEventId.hashCode());
+            hash = (hash^mHealthScoreId.hashCode());
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {

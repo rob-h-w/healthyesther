@@ -199,6 +199,14 @@ public class MealEventTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MealEventTable.PrimaryKey.class.getCanonicalName().hashCode();
+            hash = (hash^mEventId.hashCode());
+            hash = (hash^mMealId.hashCode());
+            return hash;
+        }
+
         @Nullable
         @Override
         public String getWhere() {
