@@ -382,6 +382,20 @@ public class UnitsTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = UnitsTable.Row.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            if (mSiFactor!= null) {
+                hash = (hash^Double.valueOf(mSiFactor).hashCode());
+            }
+            UnitsTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

@@ -382,6 +382,18 @@ public class EventTypeTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = EventTypeTable.Row.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            hash = ((mIcon == null)?hash:(hash^mIcon.hashCode()));
+            EventTypeTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

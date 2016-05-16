@@ -1,7 +1,7 @@
 /**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
-  */
+ * © Robert Williamson 2014-2016.
+ * This program is distributed under the terms of the GNU General Public License.
+ */
 package com.robwilliamson.healthyesther.generator;
 
 import com.robwilliamson.healthyesther.CodeGenerator;
@@ -20,6 +20,7 @@ import com.robwilliamson.healthyesther.type.Column;
 import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JConditional;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
@@ -125,6 +126,7 @@ public class RowGenerator extends BaseClassGenerator {
                 makeIsValid();
                 makeLoadRelations();
                 makeGetRows();
+                makeHashCode();
             }
         });
     }
@@ -539,6 +541,82 @@ public class RowGenerator extends BaseClassGenerator {
         body._if(makeEquals(primaryKey, oPrimaryKey).not())._then()._return(JExpr.lit(false));
 
         body._return(JExpr.lit(true));
+    }
+
+    private void makeHashCode() {
+        final Utils.Hasher hasher = Utils.Hasher.makeBasicHashCode(getJClass(), model());
+        final JVar[] primaryKey = {null};
+        final JBlock[] ifPrimaryKeyIsNotNull = {null};
+        final JBlock body = hasher.getBody();
+
+        Column.Visitor<BaseColumns> makeHash = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                ColumnField columnField = context.columnFieldFor(column);
+                JExpression fieldVar = null;
+                hasher.setBody(body);
+
+                if (columnField != null) {
+                    fieldVar = columnField.fieldVar;
+                } else {
+                    if (column.isPrimaryKey() && primaryKey[0] == null) {
+
+                        primaryKey[0] = body.decl(getTableGenerator().getPrimaryKeyGenerator().getJClass(),
+                                "primaryKey",
+                                JExpr.invoke("getConcretePrimaryKey"));
+                    }
+
+                    JMethod getterForPrimaryKeyColumn = context.getterForPrimaryKeyColumn(column);
+
+                    if (getterForPrimaryKeyColumn != null) {
+                        fieldVar = primaryKey[0].invoke(getterForPrimaryKeyColumn);
+                    }
+
+                    if (fieldVar == null) {
+                        System.out.println("columnfield null for " + column.getFullyQualifiedName());
+                        return;
+                    }
+                }
+
+                if (fieldVar == null) {
+                    System.out.println("fieldVar null for " + column.getFullyQualifiedName());
+                    return;
+                }
+
+                JCodeModel model = model();
+                JType primitiveType = column.getPrimitiveType(model);
+                Utils.Type type;
+
+                if (primaryKey[0] != null) {
+                    if (ifPrimaryKeyIsNotNull[0] == null) {
+                        ifPrimaryKeyIsNotNull[0] = body._if(primaryKey[0].ne(JExpr._null()))._then();
+                    }
+
+                    hasher.setBody(ifPrimaryKeyIsNotNull[0]);
+                }
+
+                if (column.isString() || !primitiveType.isPrimitive() || column.isForeignKey()) {
+                    if (column.isNotNull() && !column.isForeignKey()) {
+                        type = Utils.Type.REF;
+                    } else {
+                        type = Utils.Type.NULLABLE_REF;
+                    }
+                } else {
+                    if (!column.isNotNull() && !column.isPrimaryKey()) {
+                        hasher.setBody(hasher.getBody()._if(fieldVar.ne(JExpr._null()))._then());
+                    }
+
+                    type = Utils.Type.fromString(primitiveType.unboxify().name());
+                }
+
+                hasher.hash(fieldVar, type);
+            }
+        };
+
+        mBasicColumns.forEach(makeHash);
+        mPrimaryKeyColumns.forEach(makeHash);
+
+        body._return(hasher.getHash());
     }
 
     private Map<Column, JVar> objectOrClassFromNullables(final JBlock body) {

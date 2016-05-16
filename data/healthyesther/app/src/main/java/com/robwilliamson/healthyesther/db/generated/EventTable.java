@@ -511,6 +511,21 @@ public class EventTable
             return mTypeIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = EventTable.Row.class.getCanonicalName().hashCode();
+            hash = ((mTypeId == null)?hash:(hash^mTypeId.hashCode()));
+            hash = (hash^mCreated.hashCode());
+            hash = (hash^mWhen.hashCode());
+            hash = ((mModified == null)?hash:(hash^mModified.hashCode()));
+            hash = ((mName == null)?hash:(hash^mName.hashCode()));
+            EventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

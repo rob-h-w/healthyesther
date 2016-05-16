@@ -383,6 +383,17 @@ public class MedicationNameTable
             return mMedicationIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MedicationNameTable.Row.class.getCanonicalName().hashCode();
+            MedicationNameTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^primaryKey.getName().hashCode());
+                hash = ((primaryKey.getMedicationId() == null)?hash:(hash^primaryKey.getMedicationId().hashCode()));
+            }
+            return hash;
+        }
+
     }
 
 }

@@ -437,6 +437,20 @@ public class HealthScoreEventTable
             return mHealthScoreIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = HealthScoreEventTable.Row.class.getCanonicalName().hashCode();
+            if (mScore!= null) {
+                hash = (hash^Long.valueOf(mScore).hashCode());
+            }
+            HealthScoreEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = ((primaryKey.getEventId() == null)?hash:(hash^primaryKey.getEventId().hashCode()));
+                hash = ((primaryKey.getHealthScoreId() == null)?hash:(hash^primaryKey.getHealthScoreId().hashCode()));
+            }
+            return hash;
+        }
+
     }
 
 }

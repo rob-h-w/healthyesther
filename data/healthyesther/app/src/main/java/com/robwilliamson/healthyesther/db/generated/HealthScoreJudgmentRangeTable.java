@@ -468,6 +468,24 @@ public class HealthScoreJudgmentRangeTable
             return mScoreIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = HealthScoreJudgmentRangeTable.Row.class.getCanonicalName().hashCode();
+            hash = ((mScoreId == null)?hash:(hash^mScoreId.hashCode()));
+            hash = (hash^Long.valueOf(mBestValue).hashCode());
+            if (mEndTime!= null) {
+                hash = (hash^Long.valueOf(mEndTime).hashCode());
+            }
+            if (mStartTime!= null) {
+                hash = (hash^Long.valueOf(mStartTime).hashCode());
+            }
+            HealthScoreJudgmentRangeTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

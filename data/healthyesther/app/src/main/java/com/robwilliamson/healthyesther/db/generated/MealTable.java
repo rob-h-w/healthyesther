@@ -352,6 +352,17 @@ public class MealTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MealTable.Row.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            MealTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

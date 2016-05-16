@@ -405,6 +405,17 @@ public class MedicationEventTable
             return mMedicationIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MedicationEventTable.Row.class.getCanonicalName().hashCode();
+            MedicationEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = ((primaryKey.getEventId() == null)?hash:(hash^primaryKey.getEventId().hashCode()));
+                hash = ((primaryKey.getMedicationId() == null)?hash:(hash^primaryKey.getMedicationId().hashCode()));
+            }
+            return hash;
+        }
+
     }
 
 }

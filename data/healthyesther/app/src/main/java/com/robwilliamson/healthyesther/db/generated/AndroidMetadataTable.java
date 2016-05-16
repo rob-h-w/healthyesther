@@ -277,6 +277,13 @@ public class AndroidMetadataTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = AndroidMetadataTable.Row.class.getCanonicalName().hashCode();
+            hash = ((mLocale == null)?hash:(hash^mLocale.hashCode()));
+            return hash;
+        }
+
     }
 
 }

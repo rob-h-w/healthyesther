@@ -440,6 +440,20 @@ public class HealthScoreTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = HealthScoreTable.Row.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            hash += (mRandomQuery? 3 : 31);
+            hash = ((mMaxLabel == null)?hash:(hash^mMaxLabel.hashCode()));
+            hash = ((mMinLabel == null)?hash:(hash^mMinLabel.hashCode()));
+            HealthScoreTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

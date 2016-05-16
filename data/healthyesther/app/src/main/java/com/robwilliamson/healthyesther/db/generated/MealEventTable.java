@@ -484,6 +484,21 @@ public class MealEventTable
             return mUnitsIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MealEventTable.Row.class.getCanonicalName().hashCode();
+            hash = ((mUnitsId == null)?hash:(hash^mUnitsId.hashCode()));
+            if (mAmount!= null) {
+                hash = (hash^Double.valueOf(mAmount).hashCode());
+            }
+            MealEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = ((primaryKey.getEventId() == null)?hash:(hash^primaryKey.getEventId().hashCode()));
+                hash = ((primaryKey.getMealId() == null)?hash:(hash^primaryKey.getMealId().hashCode()));
+            }
+            return hash;
+        }
+
     }
 
 }

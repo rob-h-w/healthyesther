@@ -352,6 +352,17 @@ public class MedicationTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = MedicationTable.Row.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            MedicationTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

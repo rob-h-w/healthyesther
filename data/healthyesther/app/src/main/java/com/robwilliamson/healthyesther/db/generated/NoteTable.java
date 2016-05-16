@@ -382,6 +382,18 @@ public class NoteTable
             return true;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = NoteTable.Row.class.getCanonicalName().hashCode();
+            hash = (hash^mName.hashCode());
+            hash = ((mNote == null)?hash:(hash^mNote.hashCode()));
+            NoteTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = (hash^Long.valueOf(primaryKey.getId()).hashCode());
+            }
+            return hash;
+        }
+
     }
 
 }

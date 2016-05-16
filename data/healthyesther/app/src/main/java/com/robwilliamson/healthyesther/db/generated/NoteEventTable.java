@@ -405,6 +405,17 @@ public class NoteEventTable
             return mNoteIdRow;
         }
 
+        @Override
+        public int hashCode() {
+            int hash = NoteEventTable.Row.class.getCanonicalName().hashCode();
+            NoteEventTable.PrimaryKey primaryKey = getConcretePrimaryKey();
+            if (primaryKey!= null) {
+                hash = ((primaryKey.getEventId() == null)?hash:(hash^primaryKey.getEventId().hashCode()));
+                hash = ((primaryKey.getNoteId() == null)?hash:(hash^primaryKey.getNoteId().hashCode()));
+            }
+            return hash;
+        }
+
     }
 
 }
