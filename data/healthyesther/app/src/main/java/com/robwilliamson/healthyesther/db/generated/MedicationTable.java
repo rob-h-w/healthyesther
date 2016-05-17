@@ -13,6 +13,7 @@ import com.robwilliamson.healthyesther.db.includes.Order;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 
 /**
@@ -217,6 +218,10 @@ public class MedicationTable
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(1);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.MedicationEventTable.Row[] mMedicationEventMedicationId;
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.MedicationNameTable.Row[] mMedicationNameMedicationId;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -357,6 +362,21 @@ public class MedicationTable
                 return false;
             }
             return true;
+        }
+
+        public void loadAllRelations(Database database) {
+            mMedicationEventMedicationId = HealthDatabase.MEDICATION_EVENT_TABLE.select(database, WhereContains.foreignKey("medication_id", getConcretePrimaryKey().getId()));
+            mMedicationNameMedicationId = HealthDatabase.MEDICATION_NAME_TABLE.select(database, WhereContains.foreignKey("medication_id", getConcretePrimaryKey().getId()));
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.MedicationEventTable.Row[] getMedicationEventMedicationId() {
+            return mMedicationEventMedicationId;
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.MedicationNameTable.Row[] getMedicationNameMedicationId() {
+            return mMedicationNameMedicationId;
         }
 
         @Override

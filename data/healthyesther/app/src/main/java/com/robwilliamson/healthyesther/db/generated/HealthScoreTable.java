@@ -13,6 +13,7 @@ import com.robwilliamson.healthyesther.db.includes.Order;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 
 /**
@@ -225,6 +226,10 @@ public class HealthScoreTable
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(5);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(4);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(5);
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable.Row[] mHealthScoreJudgmentRangeScoreId;
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable.Row[] mHealthScoreEventHealthScoreId;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -445,6 +450,21 @@ public class HealthScoreTable
                 return false;
             }
             return true;
+        }
+
+        public void loadAllRelations(Database database) {
+            mHealthScoreJudgmentRangeScoreId = HealthDatabase.HEALTH_SCORE_JUDGMENT_RANGE_TABLE.select(database, WhereContains.foreignKey("score_id", getConcretePrimaryKey().getId()));
+            mHealthScoreEventHealthScoreId = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(database, WhereContains.foreignKey("health_score_id", getConcretePrimaryKey().getId()));
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable.Row[] getHealthScoreJudgmentRangeScoreId() {
+            return mHealthScoreJudgmentRangeScoreId;
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable.Row[] getHealthScoreEventHealthScoreId() {
+            return mHealthScoreEventHealthScoreId;
         }
 
         @Override

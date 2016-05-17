@@ -228,6 +228,13 @@ public class Column {
         throw new IllegalArgumentException("Type " + typeName + " is unsupported.");
     }
 
+    @Override
+    public int hashCode() {
+        int hash = getClass().getCanonicalName().hashCode();
+        hash ^= getFullyQualifiedName().hashCode();
+        return hash;
+    }
+
     /**
      * Like {@link #getPrimitiveType(JCodeModel)}, but resolves dependencies.
      *

@@ -67,7 +67,7 @@ public final class Strings {
         return builder.toString();
     }
 
-    public static String underscoresToCamel(String string) {
+    private static String charToCamel(char c, String string) {
         if (isEmpty(string)) {
             return "";
         }
@@ -76,7 +76,7 @@ public final class Strings {
 
         boolean capitalizeNext = false;
         for (char ch : string.toCharArray()) {
-            if (ch != '_') {
+            if (ch != c) {
                 if (capitalizeNext) {
                     builder.append(Character.toUpperCase(ch));
                     capitalizeNext = false;
@@ -89,6 +89,14 @@ public final class Strings {
         }
 
         return builder.toString();
+    }
+
+    public static String underscoresToCamel(String string) {
+        return charToCamel('_', string);
+    }
+
+    public static String dotsToCamel(String string) {
+        return charToCamel('.', string);
     }
 
     public static String stripSquareBrackets(String string) {

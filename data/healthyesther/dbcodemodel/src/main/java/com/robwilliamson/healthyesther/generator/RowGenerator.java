@@ -10,6 +10,7 @@ import com.robwilliamson.healthyesther.db.includes.BaseRow;
 import com.robwilliamson.healthyesther.db.includes.BaseTransactable;
 import com.robwilliamson.healthyesther.db.includes.Cursor;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.semantic.BaseField;
 import com.robwilliamson.healthyesther.semantic.ColumnDependency;
 import com.robwilliamson.healthyesther.semantic.ColumnField;
@@ -39,8 +40,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -125,10 +128,94 @@ public class RowGenerator extends BaseClassGenerator {
                 makeEquals();
                 makeIsValid();
                 makeLoadRelations();
+                makeLoadAllRelations();
                 makeGetRows();
                 makeHashCode();
             }
         });
+    }
+
+    private void makeLoadAllRelations() {
+        if (!hasRelations(true)) {
+            return;
+        }
+
+        final JDefinedClass clazz = getJClass();
+        JMethod method = clazz.method(JMod.PUBLIC, model().VOID, "loadAllRelations");
+        final JVar database = method.param(com.robwilliamson.healthyesther.db.includes.Database.class, "database");
+        final JBlock body = method.body();
+        final Set<Relation> done = new HashSet<>();
+
+        if (hasRelations()) {
+            // Load the foreign key relations first.
+            body.invoke("loadRelations").arg(database);
+        }
+
+        Column.Visitor<BaseColumns> makeForeignRelation = new Column.Visitor<BaseColumns>() {
+            @Override
+            public void visit(Column column, BaseColumns context) {
+                if (column.isForeignKey()) {
+                    // We've already made a relation for this in loadRelations.
+                    return;
+                }
+
+                Set<Relation> relationSet = Relation.getAllRelationsOf(column);
+                relationSet.remove(Relation.getRelationOf(column));
+
+                Relation[] relations = new Relation[relationSet.size()];
+                relationSet.toArray(relations);
+
+                Arrays.sort(relations);
+
+                for (Relation relation: relations) {
+                    if (done.contains(relation)) {
+                        continue;
+                    }
+
+                    // Make a field variable for this relation.
+                    Column relatedColumn = relation.getRelatedColumn();
+                    RowGenerator relatedRowGenerator = relatedColumn.getTable().getGenerator().getRow();
+                    String columnName = Strings.capitalize(
+                            Strings.dotsToCamel(
+                                Strings.underscoresToCamel(
+                                        relatedColumn.getFullyQualifiedName())));
+                    JFieldVar fieldVar = clazz.field(
+                            JMod.PRIVATE,
+                            relatedRowGenerator.getJClass().array(),
+                            "m" + columnName);
+                    fieldVar.annotate(Nullable.class);
+
+                    // Make a row accessor for this relation.
+                    JMethod rowAccessor = clazz.method(
+                            JMod.PUBLIC,
+                            relatedRowGenerator.getJClass().array(),
+                            "get" + columnName);
+                    rowAccessor.annotate(Nullable.class);
+                    rowAccessor.body()._return(fieldVar);
+
+                    // Load the row for this relation.
+                    Database dbGenerator = getTableGenerator().getDatabaseGenerator();
+                    JFieldRef tableField = dbGenerator.getJClass().staticRef(
+                            dbGenerator.getTableFieldFor(relatedColumn));
+                    JMethod primaryKeyGetter = context.getterForPrimaryKeyColumn(column);
+                    JExpression whereContains = model()
+                            .ref(WhereContains.class)
+                            .staticInvoke("foreignKey")
+                            .arg(relatedColumn.getName())
+                            .arg(callGetConcretePrimaryKey(null, null)
+                                    .invoke(primaryKeyGetter));
+                    body.assign(fieldVar, tableField.invoke("select")
+                            .arg(database)
+                            .arg(whereContains));
+
+                    // Mark this relation as done.
+                    done.add(relation);
+                }
+            }
+        };
+
+        mPrimaryKeyColumns.forEach(makeForeignRelation);
+        mBasicColumns.forEach(makeForeignRelation);
     }
 
     private void makeGetRows() {
@@ -254,11 +341,21 @@ public class RowGenerator extends BaseClassGenerator {
     }
 
     private boolean hasRelations() {
+        return hasRelations(false);
+    }
+
+    private boolean hasRelations(boolean foreign) {
         //noinspection unchecked,unchecked
         for (List<Column> columns : new List[]{mPrimaryKeyColumns.columns, mBasicColumns.columns}) {
             for (Column column : columns) {
-                if (Relation.getRelationOf(column) != null) {
-                    return true;
+                if (foreign) {
+                    if (!Relation.getAllRelationsOf(column).isEmpty()) {
+                        return true;
+                    }
+                } else {
+                    if (Relation.getRelationOf(column) != null) {
+                        return true;
+                    }
                 }
             }
         }

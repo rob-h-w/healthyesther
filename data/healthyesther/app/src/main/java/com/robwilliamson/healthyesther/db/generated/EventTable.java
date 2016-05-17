@@ -14,6 +14,7 @@ import com.robwilliamson.healthyesther.db.includes.Order;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 
 /**
@@ -231,6 +232,14 @@ public class EventTable
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(6);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(5);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(6);
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.MealEventTable.Row[] mMealEventEventId;
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.NoteEventTable.Row[] mNoteEventEventId;
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable.Row[] mHealthScoreEventEventId;
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.MedicationEventTable.Row[] mMedicationEventEventId;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -508,6 +517,34 @@ public class EventTable
             if (mTypeIdRow == null) {
                 mTypeIdRow = HealthDatabase.EVENT_TYPE_TABLE.select1(database, mTypeId);
             }
+        }
+
+        public void loadAllRelations(Database database) {
+            loadRelations(database);
+            mMealEventEventId = HealthDatabase.MEAL_EVENT_TABLE.select(database, WhereContains.foreignKey("event_id", getConcretePrimaryKey().getId()));
+            mNoteEventEventId = HealthDatabase.NOTE_EVENT_TABLE.select(database, WhereContains.foreignKey("event_id", getConcretePrimaryKey().getId()));
+            mHealthScoreEventEventId = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(database, WhereContains.foreignKey("event_id", getConcretePrimaryKey().getId()));
+            mMedicationEventEventId = HealthDatabase.MEDICATION_EVENT_TABLE.select(database, WhereContains.foreignKey("event_id", getConcretePrimaryKey().getId()));
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.MealEventTable.Row[] getMealEventEventId() {
+            return mMealEventEventId;
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.NoteEventTable.Row[] getNoteEventEventId() {
+            return mNoteEventEventId;
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable.Row[] getHealthScoreEventEventId() {
+            return mHealthScoreEventEventId;
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.MedicationEventTable.Row[] getMedicationEventEventId() {
+            return mMedicationEventEventId;
         }
 
         @Nonnull

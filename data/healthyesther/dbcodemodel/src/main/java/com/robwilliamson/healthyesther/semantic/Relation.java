@@ -1,7 +1,7 @@
 /**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
-  */
+ * © Robert Williamson 2014-2016.
+ * This program is distributed under the terms of the GNU General Public License.
+ */
 package com.robwilliamson.healthyesther.semantic;
 
 import com.robwilliamson.healthyesther.type.Column;
@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Relation {
+public class Relation implements Comparable<Relation> {
     private static final Map<Column, Set<Relation>> sRelationsByBaseColumn = new HashMap<>();
     private static final Map<Column, Relation> sRelationsByRelatedColumn = new HashMap<>();
 
@@ -65,6 +65,19 @@ public class Relation {
     @Nonnull
     public Column getRelatedColumn() {
         return mRelatedColumn;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = getClass().getCanonicalName().hashCode();
+        hash ^= mBaseColumn.hashCode();
+        hash ^= mRelatedColumn.hashCode();
+        return hash;
+    }
+
+    @Override
+    public int compareTo(@Nonnull Relation relation) {
+        return hashCode() - relation.hashCode();
     }
 
     public static class Builder {

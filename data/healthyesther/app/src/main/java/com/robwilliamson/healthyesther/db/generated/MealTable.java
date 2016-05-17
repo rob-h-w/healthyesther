@@ -13,6 +13,7 @@ import com.robwilliamson.healthyesther.db.includes.Order;
 import com.robwilliamson.healthyesther.db.includes.Table;
 import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.Where;
+import com.robwilliamson.healthyesther.db.includes.WhereContains;
 
 
 /**
@@ -217,6 +218,8 @@ public class MealTable
         public final static ArrayList<String> COLUMN_NAMES = new ArrayList<String>(2);
         public final static ArrayList<String> COLUMN_NAMES_FOR_INSERTION = new ArrayList<String>(1);
         public final static ArrayList<String> COLUMN_NAMES_FOR_UPDATE = new ArrayList<String>(2);
+        @Nullable
+        private com.robwilliamson.healthyesther.db.generated.MealEventTable.Row[] mMealEventMealId;
 
         static {
             COLUMN_NAMES.add("_id");
@@ -357,6 +360,15 @@ public class MealTable
                 return false;
             }
             return true;
+        }
+
+        public void loadAllRelations(Database database) {
+            mMealEventMealId = HealthDatabase.MEAL_EVENT_TABLE.select(database, WhereContains.foreignKey("meal_id", getConcretePrimaryKey().getId()));
+        }
+
+        @Nullable
+        public com.robwilliamson.healthyesther.db.generated.MealEventTable.Row[] getMealEventMealId() {
+            return mMealEventMealId;
         }
 
         @Override
