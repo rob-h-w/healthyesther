@@ -7,6 +7,7 @@ package com.robwilliamson.healthyesther.analysis;
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.EventTypeTable;
+import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 
 import org.junit.Before;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class WeeklyFrequencyAnalyzerTest {
-    private static EventTypeTable.PrimaryKey mTypeKey = new EventTypeTable.PrimaryKey(0);
+    private static EventTypeTable.PrimaryKey mMealTypeKey = com.robwilliamson.healthyesther.db.integration.EventTypeTable.MEAL.getId();
 
     static {
         DateTimeConverter.now();
@@ -41,6 +42,12 @@ public class WeeklyFrequencyAnalyzerTest {
     @Mock
     private EventTypeTable.Row mEventType;
 
+    @Mock
+    private MealEventTable.Row mMealEvent;
+
+    @Mock
+    private MealEventTable.PrimaryKey mMealEventKey;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -49,30 +56,34 @@ public class WeeklyFrequencyAnalyzerTest {
 
     @Test
     public void instantiated_hasNoFrequencies() {
-        assertThat(mAnalyzer.getFrequencyFor(mTypeKey), is((WeeklyFrequency) null));
+        assertThat(mAnalyzer.getFrequencyFor(mMealEventKey), is((WeeklyFrequency) null));
     }
 
     @Test
     public void whenConsideringAnEvent_addsItToAFrequency() {
-        mockEvent();
+        mockMealEvent();
         mAnalyzer.consider(mEvent);
 
-        assertThat(mAnalyzer.getFrequencyFor(mTypeKey), is(not((WeeklyFrequency) null)));
+        assertThat(mAnalyzer.getFrequencyFor(mMealEventKey), is(not((WeeklyFrequency) null)));
     }
 
     @Test
     public void whenConsideringAnEvent_addsItOnceToAFrequency() {
-        mockEvent();
+        mockMealEvent();
         mAnalyzer.consider(mEvent);
 
         //noinspection ConstantConditions
-        assertThat(mAnalyzer.getFrequencyFor(mTypeKey).getUniqueCount(), is(1));
+        assertThat(mAnalyzer.getFrequencyFor(mMealEventKey).getUniqueCount(), is(1));
     }
 
-    private void mockEvent() {
+    private void mockMealEvent() {
         doReturn(mEventKey).when(mEvent).getConcretePrimaryKey();
         doReturn(mEventType).when(mEvent).getEventTypeRow();
         doReturn(DateTimeConverter.now()).when(mEvent).getWhen();
-        doReturn(new EventTypeTable.PrimaryKey(0)).when(mEventType).getConcretePrimaryKey();
+        doReturn(mMealTypeKey).when(mEventType).getConcretePrimaryKey();
+        doReturn(new MealEventTable.Row[]{
+                mMealEvent
+        }).when(mEvent).getMealEventEventId();
+        doReturn(mMealEventKey).when(mMealEvent).getConcretePrimaryKey();
     }
 }

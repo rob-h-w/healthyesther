@@ -4,10 +4,17 @@
  */
 package com.robwilliamson.healthyesther.analysis;
 
+import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.EventTypeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
+import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
+import com.robwilliamson.healthyesther.db.generated.MealEventTable;
+import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
+import com.robwilliamson.healthyesther.db.generated.NoteEventTable;
+import com.robwilliamson.healthyesther.db.includes.Database;
+import com.robwilliamson.healthyesther.db.includes.Key;
 
 import org.apache.commons.math3.stat.Frequency;
 import org.joda.time.DateTime;
@@ -52,23 +59,73 @@ public class WeeklyFrequency extends Frequency {
     }
 
     static public class Analyzer implements EventAnalyzer {
-        private final Map<EventTypeTable.PrimaryKey, WeeklyFrequency> mFrequencies = new HashMap<>();
+        private final Map<Key, WeeklyFrequency> mFrequencies = new HashMap<>();
 
         @Override
         public void consider(@Nonnull EventTable.Row row) {
-            row.loadRelations(HealthDbHelper.getDatabase());
+            Database database = HealthDbHelper.getDatabase();
+            row.loadAllRelations(database);
 
             EventTypeTable.PrimaryKey typeKey = row.getEventTypeRow().getConcretePrimaryKey();
-            if (!mFrequencies.containsKey(typeKey)) {
-                mFrequencies.put(typeKey, new WeeklyFrequency());
+            com.robwilliamson.healthyesther.db.integration.EventTypeTable type =
+                    com.robwilliamson.healthyesther.db.integration.EventTypeTable.valueOf(typeKey);
+            Key keys[];
+            int i = 0;
+
+            switch (type) {
+                case MEAL:
+                    MealEventTable.Row[] meals = Utils.checkNotNull(row.getMealEventEventId());
+                    keys = new MealEventTable.PrimaryKey[meals.length];
+                    for (MealEventTable.Row meal : meals) {
+                        keys[i] = meal.getConcretePrimaryKey();
+                        i++;
+                    }
+                    break;
+                case MEDICATION:
+                    MedicationEventTable.Row[] meds = Utils.checkNotNull(row.getMedicationEventEventId());
+                    keys = new MedicationEventTable.PrimaryKey[meds.length];
+                    for (MedicationEventTable.Row med : meds) {
+                        keys[i] = med.getConcretePrimaryKey();
+                        i++;
+                    }
+                    break;
+                case HEALTH:
+                    HealthScoreEventTable.Row[] scores = Utils.checkNotNull(row.getHealthScoreEventEventId());
+                    keys = new HealthScoreEventTable.PrimaryKey[scores.length];
+                    for (HealthScoreEventTable.Row score : scores) {
+                        keys[i] = score.getConcretePrimaryKey();
+                        i++;
+                    }
+                    break;
+                case NOTE:
+                    NoteEventTable.Row[] notes = Utils.checkNotNull(row.getNoteEventEventId());
+                    keys = new NoteEventTable.PrimaryKey[notes.length];
+                    for (NoteEventTable.Row note : notes) {
+                        keys[i] = note.getConcretePrimaryKey();
+                        i++;
+                    }
+                    break;
+                default:
+                    throw new UnsupportedOperationException();
             }
 
-            mFrequencies.get(typeKey).addValue(row);
+            for (Key key : keys) {
+                if (!mFrequencies.containsKey(keys)) {
+                    mFrequencies.put(key, new WeeklyFrequency());
+                }
+
+                mFrequencies.get(key).addValue(row);
+            }
         }
 
         @Nullable
-        public WeeklyFrequency getFrequencyFor(EventTypeTable.PrimaryKey eventType) {
-            return mFrequencies.get(eventType);
+        public WeeklyFrequency getFrequencyFor(MealEventTable.PrimaryKey key) {
+            return getFor(key);
+        }
+
+        @Nullable
+        private WeeklyFrequency getFor(Key eventDetail) {
+            return mFrequencies.get(eventDetail);
         }
     }
 }
