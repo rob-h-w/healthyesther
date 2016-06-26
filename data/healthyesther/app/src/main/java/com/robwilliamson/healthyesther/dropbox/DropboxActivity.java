@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import com.dropbox.core.android.Auth;
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.BusyActivity;
-import com.robwilliamson.healthyesther.DbActivity;
 
 
 /**

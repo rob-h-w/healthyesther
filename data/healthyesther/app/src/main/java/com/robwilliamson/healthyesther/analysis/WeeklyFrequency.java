@@ -110,7 +110,7 @@ public class WeeklyFrequency extends Frequency {
             }
 
             for (Key key : keys) {
-                if (!mFrequencies.containsKey(keys)) {
+                if (!mFrequencies.containsKey(key)) {
                     mFrequencies.put(key, new WeeklyFrequency());
                 }
 
@@ -120,6 +120,21 @@ public class WeeklyFrequency extends Frequency {
 
         @Nullable
         public WeeklyFrequency getFrequencyFor(MealEventTable.PrimaryKey key) {
+            return getFor(key);
+        }
+
+        @Nullable
+        public WeeklyFrequency getFrequencyFor(MedicationEventTable.PrimaryKey key) {
+            return getFor(key);
+        }
+
+        @Nullable
+        public WeeklyFrequency getFrequencyFor(HealthScoreEventTable.PrimaryKey key) {
+            return getFor(key);
+        }
+
+        @Nullable
+        public WeeklyFrequency getFrequencyFor(NoteEventTable.PrimaryKey key) {
             return getFor(key);
         }
 
