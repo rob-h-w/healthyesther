@@ -148,7 +148,7 @@ public abstract class SuggestionEditFragment<R extends BaseRow> extends EditFrag
     }
 
     protected Long getSuggestionId(String name) {
-        return mSuggestionIds == null ? null : mSuggestionIds.get(name);
+        return mSuggestionIds == null ? null : mSuggestionIds.get(name.trim());
     }
 
     protected abstract AutoCompleteTextView getNameView();

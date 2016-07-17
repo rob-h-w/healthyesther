@@ -35,6 +35,7 @@ public abstract class EditFragment<R extends BaseRow> extends DbFragment {
 
     @Nullable
     protected R getRow(@Nonnull Map<String, R> nameToRowMap, @Nonnull String name, @Nullable NameComparator<R> comparator) {
+        name = name.trim();
         if (nameToRowMap.containsKey(name)) {
             R row = nameToRowMap.get(name);
 

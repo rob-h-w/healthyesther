@@ -186,7 +186,7 @@ public class EditScoreFragment extends SuggestionEditFragment<HealthScoreTable.R
             return "";
         }
 
-        return getNameView().getText().toString();
+        return getNameView().getText().toString().trim();
     }
 
     private void setName(@Nonnull String name) {
@@ -216,7 +216,7 @@ public class EditScoreFragment extends SuggestionEditFragment<HealthScoreTable.R
     }
 
     private String getMinLabel() {
-        return getMinLabelWidget().getText().toString();
+        return getMinLabelWidget().getText().toString().trim();
     }
 
     private void setMinLabel(String value) {
@@ -228,7 +228,7 @@ public class EditScoreFragment extends SuggestionEditFragment<HealthScoreTable.R
     }
 
     private String getMaxLabel() {
-        return getMaxLabelWidget().getText().toString();
+        return getMaxLabelWidget().getText().toString().trim();
     }
 
     private void setMaxLabel(String value) {

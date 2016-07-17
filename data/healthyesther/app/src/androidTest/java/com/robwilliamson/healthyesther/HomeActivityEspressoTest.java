@@ -14,6 +14,7 @@ import com.robwilliamson.healthyesther.test.Database;
 import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.MenuAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
+import com.robwilliamson.healthyesther.test.rule.Retry;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,6 +37,9 @@ public class HomeActivityEspressoTest {
     @Rule
     public ActivityTestRule<HomeActivity> mActivityRule = new ActivityTestRule<>(
             HomeActivity.class);
+
+    @Rule
+    public Retry mRetry = new Retry(2);
 
     @Before
     public void setUp() throws Exception {

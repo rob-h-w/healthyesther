@@ -118,7 +118,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
                 if (mSettingRowName) {
                     return;
                 }
-                updateRowName(s.toString());
+                updateRowName(s.toString().trim());
             }
         };
     }
@@ -159,11 +159,11 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     }
 
     public String getName() {
-        return getNameView().getText().toString();
+        return getNameView().getText().toString().trim();
     }
 
     public void setName(@Nullable String name) {
-        updateRowName(name);
+        updateRowName(name.trim());
 
         updateUi();
     }

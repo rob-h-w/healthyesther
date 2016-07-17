@@ -52,7 +52,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> impl
         AutoCompleteTextView nameView = getNameView();
 
         if (nameView != null) {
-            return nameView.getText().toString();
+            return nameView.getText().toString().trim();
         }
 
         return null;
@@ -75,7 +75,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> impl
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (getRow() != null) {
-                    getRow().setNote(s.toString());
+                    getRow().setNote(s.toString().trim());
                 }
             }
 
@@ -202,7 +202,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> impl
                 EditText noteView = getNoteView();
 
                 if (noteView != null) {
-                    noteView.setText(note);
+                    noteView.setText(note.trim());
                 }
             }
 
@@ -215,7 +215,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> impl
                 EditText noteView = getNoteView();
 
                 if (noteView != null) {
-                    noteView.setText(note);
+                    noteView.setText(note.trim());
                 }
             }
         }
@@ -229,7 +229,7 @@ public class EditNoteFragment extends SuggestionEditFragment<NoteTable.Row> impl
             return "";
         }
 
-        return getNoteView().getText().toString();
+        return getNoteView().getText().toString().trim();
     }
 
     @javax.annotation.Nullable

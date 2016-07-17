@@ -90,7 +90,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
 
             @Override
             public void afterTextChanged(Editable s) {
-                getRow().setName(s.toString());
+                getRow().setName(s.toString().trim());
             }
         });
 
@@ -117,7 +117,7 @@ public class EditMealFragment extends SuggestionEditFragment<MealTable.Row>
             return "";
         }
 
-        return getNameView().getText().toString();
+        return getNameView().getText().toString().trim();
     }
 
     @Override

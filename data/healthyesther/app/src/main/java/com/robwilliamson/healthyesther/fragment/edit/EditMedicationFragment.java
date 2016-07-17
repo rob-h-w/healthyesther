@@ -65,12 +65,18 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
     @Override
     public MedicationTable.Row getRow() {
         final String name = getName();
-        return getRow(mNameToRowMap, getName(), new NameComparator<MedicationTable.Row>() {
+        MedicationTable.Row row = getRow(mNameToRowMap, name, new NameComparator<MedicationTable.Row>() {
             @Override
             public boolean equals(@Nonnull MedicationTable.Row row, @Nonnull String name) {
                 return name.equals(row.getName());
             }
         });
+
+        if (row == null) {
+            throw new NullPointerException(name);
+        }
+
+        return row;
     }
 
     @Override
@@ -126,7 +132,7 @@ public class EditMedicationFragment extends SuggestionEditFragment<MedicationTab
     @Nonnull
     public String getName() {
         if (getNameView() != null) {
-            return getNameView().getText().toString();
+            return getNameView().getText().toString().trim();
         }
 
         return "";
