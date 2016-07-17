@@ -40,6 +40,7 @@ import javax.annotation.Nonnull;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -78,7 +79,9 @@ public class MealActivityEspressoTest {
 
     @Test
     public void testAddNewMeal() {
-        onView(HomeActivityAccessor.AddMode.mealScoreButton()).perform(click());
+        onView(HomeActivityAccessor.AddMode.mealScoreButton())
+                .perform(scrollTo())
+                .perform(click());
         Orientation.check(new Orientation.Subject() {
             @Override
             public void checkContent() {
@@ -94,7 +97,9 @@ public class MealActivityEspressoTest {
         });
 
         final String text = "A big old trout";
-        onView(MealEventActivityAccessor.dishName()).perform(typeText(text));
+        onView(MealEventActivityAccessor.dishName())
+                .perform(scrollTo())
+                .perform(typeText(text));
 
         Orientation.check(new Orientation.Subject() {
             @Override

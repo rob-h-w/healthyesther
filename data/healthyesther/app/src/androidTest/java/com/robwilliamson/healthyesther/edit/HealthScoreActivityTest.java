@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -124,7 +125,9 @@ public class HealthScoreActivityTest {
     @Test
     public void test_createNewScoreType_showsScoreInHealthScoreActivity() {
         final String SLOON = "Sloon";
-        onView(HealthScoreActivityAccessor.trackAnotherScoreButton()).perform(click());
+        onView(HealthScoreActivityAccessor.trackAnotherScoreButton())
+                .perform(scrollTo())
+                .perform(click());
 
         onView(ScoreActivityAccessor.scoreName()).perform(click());
         onView(ScoreActivityAccessor.scoreName()).perform(typeText(SLOON));
