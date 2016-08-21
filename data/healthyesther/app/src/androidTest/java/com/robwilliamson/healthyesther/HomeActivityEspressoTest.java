@@ -4,6 +4,7 @@
   */
 package com.robwilliamson.healthyesther;
 
+import android.os.SystemClock;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -89,12 +90,16 @@ public class HomeActivityEspressoTest {
         final int emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
 
+        SystemClock.sleep(2000);
+
         // Restore from Dropbox.
         openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
         onView(MenuAccessor.restoreFromDropbox()).perform(click());
 
         // Confirm.
         onView(ConfirmationDialogAccessor.okButton()).perform(click());
+
+        SystemClock.sleep(2000);
 
         // Ensure we're back in the home activity.
         onView(HomeActivityAccessor.AddMode.healthScoreButton()).check(matches(isDisplayed()));
