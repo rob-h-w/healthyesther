@@ -4,7 +4,9 @@
   */
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.reminder;
 
+import android.content.Context;
 import android.support.test.runner.AndroidJUnit4;
+import android.test.mock.MockContext;
 
 import com.robwilliamson.healthyesther.reminder.TimingModel;
 import com.robwilliamson.healthyesther.util.time.Range;
@@ -35,11 +37,13 @@ public class TimingModelTest {
     private static final Duration HALF_PERIOD = Duration.standardMinutes(30);
     private static final Duration MIN_NOTIFICATION_SEPARATION = Duration.standardMinutes(30);
 
+    private MockContext mContext;
     private MockTimingModelEnvironment mEnvironment;
     private TimingModel mSubject;
 
     @Before
     public void setUp() throws Exception {
+        mContext = new MockContext();
         mEnvironment = new MockTimingModelEnvironment();
         mSubject = new TimingModel(
                 mEnvironment,
@@ -51,7 +55,7 @@ public class TimingModelTest {
     @Test
     public void testOnAlarmElapsed_inDisallowedRange() {
         mEnvironment.now = MIDNIGHT_21;
-        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed(mContext);
         assertIsEqual(MORNING_21, mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
     }
@@ -59,7 +63,7 @@ public class TimingModelTest {
     @Test
     public void testOnAlarmElapsed_inAllowedRange() {
         mEnvironment.now = MORNING_21;
-        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed(mContext);
         assertIsEqual(MORNING_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(1, mEnvironment.sendReminderCallCount);
     }
@@ -69,7 +73,7 @@ public class TimingModelTest {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
         mEnvironment.lastNotifiedTime = MIDDAY_21.minus(HALF_PERIOD);
-        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed(mContext);
         assertIsEqual(MIDDAY_21.plus(HALF_PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
         assertNull(mEnvironment.setLastNotifiedTimeParams);
@@ -80,15 +84,15 @@ public class TimingModelTest {
         mEnvironment.now = MIDDAY_21;
         mEnvironment.nextNotificationTime = MIDDAY_21.plus(HALF_PERIOD);
         mEnvironment.lastNotifiedTime = MIDDAY_21.minus(HALF_PERIOD);
-        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed(mContext);
 
         assertIsEqual(MIDDAY_21.plus(HALF_PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
         assertNull(mEnvironment.setLastNotifiedTimeParams);
 
         mEnvironment.now = MIDDAY_21.plus(Duration.standardMinutes(1));
-        mSubject.onAlarmElapsed();
-        mSubject.onAlarmElapsed();
+        mSubject.onAlarmElapsed(mContext);
+        mSubject.onAlarmElapsed(mContext);
 
         assertIsEqual(MIDDAY_21.plus(HALF_PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
@@ -133,7 +137,7 @@ public class TimingModelTest {
     @Test
     public void testOnApplicationCreated_nightNoNotificationsSet() {
         mEnvironment.now = MIDDAY_21;
-        mSubject.onApplicationCreated();
+        mSubject.onApplicationCreated(mContext);
 
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
@@ -141,8 +145,8 @@ public class TimingModelTest {
     @Test
     public void testOnBootCompleted() {
         mEnvironment.now = MIDDAY_21;
-        mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
-        mSubject.onBootCompleted();
+        mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)), mContext);
+        mSubject.onBootCompleted(mContext);
 
         assertEquals(1, mEnvironment.sendReminderCallCount);
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
@@ -150,7 +154,7 @@ public class TimingModelTest {
 
     @Test
     public void testOnNotified() {
-        mSubject.onNotified();
+        mSubject.onNotified(mContext);
         assertIsEqual(MORNING_8AM_21, Duration.standardSeconds(1), mEnvironment.setLastNotifiedTimeParams.time);
         assertIsEqual(MORNING_8AM_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
     }
@@ -158,8 +162,8 @@ public class TimingModelTest {
     @Test
     public void testOnScreenOn() {
         mEnvironment.now = MIDDAY_21;
-        mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)));
-        mSubject.onScreenOn();
+        mEnvironment.setLastNotifiedTime(MORNING_21.minus(Duration.standardDays(1)), mContext);
+        mSubject.onScreenOn(mContext);
 
         assertEquals(1, mEnvironment.sendReminderCallCount);
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
@@ -168,29 +172,32 @@ public class TimingModelTest {
     @Test
     public void testOnUserEntry() {
         mEnvironment.now = MIDDAY_21;
-        mEnvironment.setLastNotifiedTime(MIDDAY_21.minus(HALF_PERIOD));
+        mEnvironment.setLastNotifiedTime(MIDDAY_21.minus(HALF_PERIOD), mContext);
         mEnvironment.appInForeground = true;
-        mSubject.onUserEntry();
+        mSubject.onUserEntry(mContext);
         assertIsEqual(MIDDAY_21.plus(PERIOD), mEnvironment.setAlarmParams.alarmTime);
         assertEquals(0, mEnvironment.sendReminderCallCount);
     }
 
     private void ensureNotificationIsPending(TimingModel model) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method method = TimingModel.class.getDeclaredMethod("ensureNotificationIsPending");
+        Method method = TimingModel.class.getDeclaredMethod(
+                "ensureNotificationIsPending",
+                Context.class
+        );
         method.setAccessible(true);
-        method.invoke(model);
+        method.invoke(model, mContext);
     }
 
     private static class MockTimingModelEnvironment implements TimingModel.Environment {
         public DateTime now = MORNING_8AM_21;
-        public boolean appInForeground = false;
-        public DateTime lastNotifiedTime = null;
-        public DateTime nextNotificationTime = null;
+        boolean appInForeground = false;
+        DateTime lastNotifiedTime = null;
+        DateTime nextNotificationTime = null;
 
-        public SetLastNotifiedTimeParams setLastNotifiedTimeParams = null;
-        public SetNextNotificationTimeParams setNextNotificationTimeParams = null;
-        public SetAlarmParams setAlarmParams = null;
-        public int sendReminderCallCount = 0;
+        SetLastNotifiedTimeParams setLastNotifiedTimeParams = null;
+        SetNextNotificationTimeParams setNextNotificationTimeParams = null;
+        SetAlarmParams setAlarmParams = null;
+        int sendReminderCallCount = 0;
 
         @Override
         public DateTime getNow() {
@@ -198,7 +205,7 @@ public class TimingModelTest {
         }
 
         @Override
-        public DateTime getLastNotifiedTime() {
+        public DateTime getLastNotifiedTime(Context context) {
             if (lastNotifiedTime != null) {
                 return lastNotifiedTime;
             }
@@ -207,13 +214,13 @@ public class TimingModelTest {
         }
 
         @Override
-        public void setLastNotifiedTime(final DateTime time) {
+        public void setLastNotifiedTime(final DateTime time, Context context) {
             setLastNotifiedTimeParams = new SetLastNotifiedTimeParams();
             setLastNotifiedTimeParams.time = time;
         }
 
         @Override
-        public DateTime getNextNotificationTime() {
+        public DateTime getNextNotificationTime(Context context) {
             if (nextNotificationTime != null) {
                 return nextNotificationTime;
             }
@@ -222,7 +229,7 @@ public class TimingModelTest {
         }
 
         @Override
-        public void setNextNotificationTime(DateTime time) {
+        public void setNextNotificationTime(DateTime time, Context context) {
             setNextNotificationTimeParams = new SetNextNotificationTimeParams();
             setNextNotificationTimeParams.alarmTime = time;
         }
@@ -233,13 +240,13 @@ public class TimingModelTest {
         }
 
         @Override
-        public void setAlarm(DateTime alarmTime) {
+        public void setAlarm(DateTime alarmTime, Context context) {
             setAlarmParams = new SetAlarmParams();
             setAlarmParams.alarmTime = alarmTime;
         }
 
         @Override
-        public void sendReminder() {
+        public void sendReminder(Context context) {
             sendReminderCallCount++;
         }
 
@@ -248,11 +255,11 @@ public class TimingModelTest {
         }
 
         public static class SetNextNotificationTimeParams {
-            public DateTime alarmTime;
+            DateTime alarmTime;
         }
 
         public static class SetAlarmParams {
-            public DateTime alarmTime;
+            DateTime alarmTime;
         }
     }
 }

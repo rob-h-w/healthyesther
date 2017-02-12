@@ -45,7 +45,6 @@ public enum TimingManager {
     private static final long BIP = 50;
     private static final long GAP = 150;
     private static final long MINI_GAP = 75;
-    private Context mContext;
     private Environment mModelEnvironment = new Environment();
     private volatile TimingModel mTimingModel = null;
 
@@ -71,50 +70,33 @@ public enum TimingManager {
 
     public void applicationCreated(Context context) {
         log("applicationCreated");
-        setContext(context);
-        getTimingModel().onApplicationCreated();
+        getTimingModel().onApplicationCreated(context);
     }
 
     public void onAlarmElapsed(Context context) {
-        setContext(context);
-        getTimingModel().onAlarmElapsed();
+        getTimingModel().onAlarmElapsed(context);
     }
 
     public void onBootCompleted(Context context) {
-        setContext(context);
-        getTimingModel().onBootCompleted();
+        getTimingModel().onBootCompleted(context);
     }
 
     public void onScreenOn(Context context) {
-        setContext(context);
-        getTimingModel().onScreenOn();
+        getTimingModel().onScreenOn(context);
     }
 
-    public void onUserEntry(Context context) {
-        setContext(context);
-        getTimingModel().onUserEntry();
+    private SharedPreferences getPreferences(Context context) {
+        return context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
-    private SharedPreferences getPreferences() {
-        return getContext().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+    private PendingIntent getOperation(Context context) {
+        Intent intent = new Intent(context, ReminderIntentService.class);
+
+        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private PendingIntent getOperation() {
-        Intent intent = new Intent(getContext(), ReminderIntentService.class);
-
-        return PendingIntent.getService(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private Context getContext() {
-        return mContext;
-    }
-
-    private void setContext(Context context) {
-        this.mContext = context;
-    }
-
-    private DateTime getTime(String key) {
-        String timeString = getPreferences().getString(key, null);
+    private DateTime getTime(String key, Context context) {
+        String timeString = getPreferences(context).getString(key, null);
 
         if (timeString == null) {
             return null;
@@ -126,16 +108,16 @@ public enum TimingManager {
             log("Couldn't get time from " + timeString, exception);
 
             // Remove the invalid value.
-            setTime(key, null);
+            setTime(key, null, context);
             return null;
         }
     }
 
-    private void setTime(String key, DateTime time) {
+    private void setTime(String key, DateTime time, Context context) {
         if (time == null) {
-            getPreferences().edit().remove(key).apply();
+            getPreferences(context).edit().remove(key).apply();
         } else {
-            getPreferences().edit().putString(key, Utils.Time.toLocalString(time)).apply();
+            getPreferences(context).edit().putString(key, Utils.Time.toLocalString(time)).apply();
         }
     }
 
@@ -157,31 +139,31 @@ public enum TimingManager {
         }
 
         @Override
-        public DateTime getLastNotifiedTime() {
-            DateTime lastNotified = makeLocal(getTime(PREVIOUS_REMINDER));
+        public DateTime getLastNotifiedTime(Context context) {
+            DateTime lastNotified = makeLocal(getTime(PREVIOUS_REMINDER, context));
             log("getLastNotifiedTime " + lastNotified);
             return lastNotified;
         }
 
         @Override
-        public void setLastNotifiedTime(DateTime time) {
+        public void setLastNotifiedTime(DateTime time, Context context) {
             time = makeLocal(time);
-            setTime(PREVIOUS_REMINDER, time);
+            setTime(PREVIOUS_REMINDER, time, context);
             log("setLastNotifiedTime " + time);
         }
 
         @Override
-        public DateTime getNextNotificationTime() {
-            DateTime nextNotificationTime = makeLocal(getTime(NEXT_REMINDER));
+        public DateTime getNextNotificationTime(Context context) {
+            DateTime nextNotificationTime = makeLocal(getTime(NEXT_REMINDER, context));
             log("getNextNotificationTime" + nextNotificationTime);
             return nextNotificationTime;
         }
 
         @Override
-        public void setNextNotificationTime(DateTime time) {
+        public void setNextNotificationTime(DateTime time, Context context) {
             time = makeLocal(time);
             log("setNextNotificationTime(" + time + ")");
-            setTime(NEXT_REMINDER, time);
+            setTime(NEXT_REMINDER, time, context);
         }
 
         @Override
@@ -190,34 +172,36 @@ public enum TimingManager {
         }
 
         @Override
-        public void setAlarm(DateTime alarmTime) {
+        public void setAlarm(DateTime alarmTime, Context context) {
             alarmTime = makeLocal(alarmTime);
             AlarmManager alarmManager =
-                    (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+                    (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             if (BuildConfig.DEBUG) {
                 long millisUntil = alarmTime.getMillis() - getNow().getMillis();
-                int seconds = Math.round(millisUntil / 1000);
-                int minutes = Math.round(seconds / 60);
 
                 log("setting new notification in " + millisUntil + "ms, expected to trigger at " + alarmTime);
             }
 
             // Use time elapsed since boot.
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME, Utils.Time.toBootRealTimeElapsedMillis(alarmTime), getOperation());
+            alarmManager.set(
+                    AlarmManager.ELAPSED_REALTIME,
+                    Utils.Time.toBootRealTimeElapsedMillis(alarmTime),
+                    getOperation(context)
+            );
         }
 
         @Override
-        public void sendReminder() {
+        public void sendReminder(Context context) {
             Uri soundToBugEsther = Uri.parse("android.resource://com.robwilliamson.healthyesther/" + R.raw.hello);
-            Intent intent = new Intent(getContext(), HomeActivity.class);
-            PendingIntent reminderPendingIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification notification = new Notification.Builder(getContext())
-                    .setContentTitle(getContext().getString(R.string.reminder_content_title))
-                    .setContentText(getContext().getString(R.string.reminder_content))
+            Intent intent = new Intent(context, HomeActivity.class);
+            PendingIntent reminderPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification notification = new Notification.Builder(context)
+                    .setContentTitle(context.getString(R.string.reminder_content_title))
+                    .setContentText(context.getString(R.string.reminder_content))
                     .setSmallIcon(R.drawable.ic_notification)
                     .setContentIntent(reminderPendingIntent)
-                    .setTicker(getContext().getString(R.string.reminder_ticker))
+                    .setTicker(context.getString(R.string.reminder_ticker))
                     .setAutoCancel(true)
                     .setVibrate(new long[]{
                             0, BIP, GAP, BIP, GAP, BIP, GAP, BIP,
@@ -229,11 +213,11 @@ public enum TimingManager {
                     .build();
 
             NotificationManager notificationManager =
-                    (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
             notificationManager.notify(1, notification);
 
-            mTimingModel.onNotified();
+            mTimingModel.onNotified(context);
             log("Reminder sent");
         }
     }

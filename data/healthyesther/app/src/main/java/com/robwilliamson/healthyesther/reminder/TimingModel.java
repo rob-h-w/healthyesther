@@ -4,6 +4,8 @@
   */
 package com.robwilliamson.healthyesther.reminder;
 
+import android.content.Context;
+
 import com.robwilliamson.healthyesther.util.time.Range;
 import com.robwilliamson.healthyesther.util.time.RangeSet;
 
@@ -30,37 +32,37 @@ public class TimingModel {
                 allowedNotificationTimes.startingTomorrow());
     }
 
-    public void onAlarmElapsed() {
-        notifyIfAppropriate();
-        ensureNotificationIsPending();
+    public void onAlarmElapsed(Context context) {
+        notifyIfAppropriate(context);
+        ensureNotificationIsPending(context);
     }
 
-    public void onApplicationCreated() {
-        ensureNotificationIsPending();
+    public void onApplicationCreated(Context context) {
+        ensureNotificationIsPending(context);
     }
 
-    public void onBootCompleted() {
-        notifyIfAppropriate();
-        ensureNotificationIsPending();
+    public void onBootCompleted(Context context) {
+        notifyIfAppropriate(context);
+        ensureNotificationIsPending(context);
     }
 
-    public void onNotified() {
+    public void onNotified(Context context) {
         DateTime now = mEnvironment.getNow();
-        mEnvironment.setLastNotifiedTime(now);
-        mEnvironment.setNextNotificationTime(null);
-        setAlarm(getNextNotificationAfter(now));
+        mEnvironment.setLastNotifiedTime(now, context);
+        mEnvironment.setNextNotificationTime(null, context);
+        setAlarm(getNextNotificationAfter(now), context);
     }
 
-    public void onScreenOn() {
-        notifyIfAppropriate();
-        ensureNotificationIsPending();
+    public void onScreenOn(Context context) {
+        notifyIfAppropriate(context);
+        ensureNotificationIsPending(context);
     }
 
-    public void onUserEntry() {
-        setAlarm(getNextNotificationAfter(mEnvironment.getNow()));
+    public void onUserEntry(Context context) {
+        setAlarm(getNextNotificationAfter(mEnvironment.getNow()), context);
     }
 
-    private boolean shouldNotify() {
+    private boolean shouldNotify(Context context) {
         DateTime now = mEnvironment.getNow();
         boolean notificationAllowed = allowedTimes().contains(now) &&
                 !mEnvironment.appInForeground();
@@ -69,12 +71,12 @@ public class TimingModel {
             return false;
         }
 
-        if (hasNotifiedBefore()) {
-            if (coolOffPeriod().contains(now)) {
+        if (hasNotifiedBefore(context)) {
+            if (coolOffPeriod(context).contains(now)) {
                 return false;
             }
 
-            DateTime next = mEnvironment.getNextNotificationTime();
+            DateTime next = mEnvironment.getNextNotificationTime(context);
             if (next == null ||
                     new Range(now, SIGMA).contains(next) ||
                     next.isBefore(now)) {
@@ -87,22 +89,22 @@ public class TimingModel {
         return false;
     }
 
-    private void notifyIfAppropriate() {
-        if (shouldNotify()) {
-            mEnvironment.sendReminder();
+    private void notifyIfAppropriate(Context context) {
+        if (shouldNotify(context)) {
+            mEnvironment.sendReminder(context);
         }
     }
 
-    private void ensureNotificationIsPending() {
+    private void ensureNotificationIsPending(Context context) {
         DateTime now = mEnvironment.getNow();
-        DateTime next = mEnvironment.getNextNotificationTime();
+        DateTime next = mEnvironment.getNextNotificationTime(context);
 
         if (next == null
                 || next.isBefore(now)
                 || next.minus(mPeriod).isAfter(now)) {
-            setAlarm(getNextNotificationAfter(now));
+            setAlarm(getNextNotificationAfter(now), context);
         } else {
-            setAlarm(next);
+            setAlarm(next, context);
         }
     }
 
@@ -126,12 +128,12 @@ public class TimingModel {
         return next;
     }
 
-    private boolean hasNotifiedBefore() {
-        return mEnvironment.getLastNotifiedTime() != null;
+    private boolean hasNotifiedBefore(Context context) {
+        return mEnvironment.getLastNotifiedTime(context) != null;
     }
 
-    private Range coolOffPeriod() {
-        return new Range(mEnvironment.getLastNotifiedTime(), mMinTimeBetweenNotifications);
+    private Range coolOffPeriod(Context context) {
+        return new Range(mEnvironment.getLastNotifiedTime(context), mMinTimeBetweenNotifications);
     }
 
     private RangeSet allowedTimes() {
@@ -139,26 +141,26 @@ public class TimingModel {
         return mAllowedNotificationTimes.startingFrom(yesterday.getYear(), yesterday.getMonthOfYear(), yesterday.getDayOfMonth());
     }
 
-    private void setAlarm(DateTime alarmTime) {
-        mEnvironment.setAlarm(alarmTime);
-        mEnvironment.setNextNotificationTime(alarmTime);
+    private void setAlarm(DateTime alarmTime, Context context) {
+        mEnvironment.setAlarm(alarmTime, context);
+        mEnvironment.setNextNotificationTime(alarmTime, context);
     }
 
     public interface Environment {
         DateTime getNow();
 
-        DateTime getLastNotifiedTime();
+        DateTime getLastNotifiedTime(Context context);
 
-        void setLastNotifiedTime(DateTime time);
+        void setLastNotifiedTime(DateTime time, Context context);
 
-        DateTime getNextNotificationTime();
+        DateTime getNextNotificationTime(Context context);
 
-        void setNextNotificationTime(DateTime time);
+        void setNextNotificationTime(DateTime time, Context context);
 
         boolean appInForeground();
 
-        void setAlarm(DateTime alarmTime);
+        void setAlarm(DateTime alarmTime, Context context);
 
-        void sendReminder();
+        void sendReminder(Context context);
     }
 }
