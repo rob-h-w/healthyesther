@@ -78,5 +78,7 @@ This program is distributed under the terms of the GNU General Public License.
     <string name="title_activity_about">About</string>
     <string name="launcher_icon">Launcher Icon</string>
     <string name="about">About</string>
+    <string name="_1_hour_ago">1 hour ago</string>
+    <string name="now">now</string>
 
 </resources>

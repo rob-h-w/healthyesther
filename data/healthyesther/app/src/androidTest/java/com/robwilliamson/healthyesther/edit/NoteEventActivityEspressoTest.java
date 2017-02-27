@@ -6,6 +6,8 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.AppCompatButton;
+import android.widget.Button;
 
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.Settings;
@@ -20,6 +22,9 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.NoteEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,6 +70,7 @@ public class NoteEventActivityEspressoTest {
         Orientation.check(new Orientation.Subject() {
             @Override
             public void checkContent() {
+                onView(NoteEventActivityAccessor.noteContent()).perform(click());
                 NoteEventActivityAccessor.checkUnmodifiedContent();
             }
 
@@ -109,6 +115,23 @@ public class NoteEventActivityEspressoTest {
         onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
 
         onView(EditAccessor.ok()).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void test_setNoteRelativeTime_modifiesEventTime() {
+        onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
+
+        final DateTime expected = DateTime.now().minusMinutes(35);
+        StringBuilder expectedString = new StringBuilder();
+        expectedString.append(expected.getHourOfDay() % 12)
+                .append(":")
+                .append(expected.getMinuteOfHour())
+                .append(" ")
+                .append(expected.getHourOfDay() >= 12 ? "PM" : "AM");
+        onView(EditAccessor.whenRelativeSelectorLayout()).perform(click());
+        onView(EditAccessor.whenTime()).check(
+                matches(
+                        withText(expectedString.toString())));
     }
 
     @Test

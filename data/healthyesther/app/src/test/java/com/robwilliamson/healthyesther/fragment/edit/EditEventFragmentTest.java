@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.SeekBar;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
@@ -60,6 +61,8 @@ public class EditEventFragmentTest {
     private TestableEditEventFragment mEditEventFragment;
     @Mock
     private Editable mEditable;
+    @Mock
+    private SeekBar mSeekBar;
 
     @Before
     public void setup() {
@@ -165,6 +168,7 @@ public class EditEventFragmentTest {
         private Button mTimeButton;
         private TextWatcher mTextWatcher;
         private View.OnFocusChangeListener mFocusChangeListener;
+        private SeekBar mSeekBar;
 
         @Override
         protected Button getDateButton() {
@@ -179,6 +183,11 @@ public class EditEventFragmentTest {
         @Override
         protected Button getTimeButton() {
             return mTimeButton;
+        }
+
+        @Override
+        protected SeekBar getRelativeTimeSelector() {
+            return mSeekBar;
         }
 
         @Override

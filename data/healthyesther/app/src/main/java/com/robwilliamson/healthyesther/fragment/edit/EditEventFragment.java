@@ -11,6 +11,8 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
@@ -30,9 +32,11 @@ import javax.annotation.Nullable;
  */
 public class EditEventFragment extends EditFragment<EventTable.Row>
         implements DateTimePickerListener {
-    private boolean mUserEditedEventName;
-    private boolean mSettingRowName;
+    private static String SHOW_RELATIVE_TIME_PICKER = "Show Relative Time Picker";
     private boolean mRowNameSet;
+    private boolean mSettingRowName;
+    private boolean mShowRelativeTimePicker = false;
+    private boolean mUserEditedEventName;
 
     public static EditEventFragment getInstance(@Nonnull EventTable.Row row) {
         EditEventFragment fragment = new EditEventFragment();
@@ -44,6 +48,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     public void setRow(@NonNull EventTable.Row row) {
         super.setRow(row);
         mRowNameSet = !Utils.Strings.nullOrEmpty(row.getName());
+        mShowRelativeTimePicker = !row.isInDatabase();
         updateUi();
     }
 
@@ -51,10 +56,16 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(EventTable.NAME)) {
-            EventTable.Row row = (EventTable.Row) savedInstanceState.getSerializable(EventTable.NAME);
-            if (row != null) {
-                setRow(row);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(EventTable.NAME)) {
+                EventTable.Row row = (EventTable.Row) savedInstanceState.getSerializable(EventTable.NAME);
+                if (row != null) {
+                    setRow(row);
+                }
+            }
+
+            if (savedInstanceState.containsKey(SHOW_RELATIVE_TIME_PICKER)) {
+                mShowRelativeTimePicker = savedInstanceState.getBoolean(SHOW_RELATIVE_TIME_PICKER);
             }
         }
 
@@ -65,22 +76,34 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     public void onResume() {
         super.onResume();
 
-        getTimeButton().setOnClickListener(new View.OnClickListener() {
+        getRelativeTimeSelector().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                TimePickerFragment dialog = new TimePickerFragment();
-                dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), getWhen());
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                int minutes = (int) Math.ceil(((float)i / 100) * 60);
+                setWhen(DateTime.now().minusMinutes(minutes));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
-        getDateButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerFragment dialog = new DatePickerFragment();
-                dialog.setListener(EditEventFragment.this);
-                dialog.show(getFragmentManager(), getWhen());
-            }
+        getTimeButton().setOnClickListener(v -> {
+            TimePickerFragment dialog = new TimePickerFragment();
+            dialog.setListener(EditEventFragment.this);
+            dialog.show(getFragmentManager(), getWhen());
+        });
+
+        getDateButton().setOnClickListener(v -> {
+            DatePickerFragment dialog = new DatePickerFragment();
+            dialog.setListener(EditEventFragment.this);
+            dialog.show(getFragmentManager(), getWhen());
         });
 
         getNameView().setOnFocusChangeListener(createFocusChangeListener());
@@ -92,12 +115,9 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
 
     @Nonnull
     View.OnFocusChangeListener createFocusChangeListener() {
-        return new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                mUserEditedEventName = !getName().isEmpty();
-                mRowNameSet = false;
-            }
+        return (v, hasFocus) -> {
+            mUserEditedEventName = !getName().isEmpty();
+            mRowNameSet = false;
         };
     }
 
@@ -127,6 +147,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(EventTable.NAME, getRow());
+        outState.putBoolean(SHOW_RELATIVE_TIME_PICKER, mShowRelativeTimePicker);
     }
 
     @Override
@@ -218,6 +239,21 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
             }
         }
         mSettingRowName = false;
+
+        @Nullable View relativeTimeSelectorLayout = getRelativeTimeSelectorLayout();
+        if (relativeTimeSelectorLayout != null) {
+            getRelativeTimeSelectorLayout().setVisibility(
+                    mShowRelativeTimePicker ? View.VISIBLE : View.GONE
+            );
+        }
+    }
+
+    protected LinearLayout getRelativeTimeSelectorLayout() {
+        return getTypeSafeView(R.id.edit_event_time_relative_layout, LinearLayout.class);
+    }
+
+    protected SeekBar getRelativeTimeSelector() {
+        return getTypeSafeView(R.id.edit_event_time_relative_seekbar, SeekBar.class);
     }
 
     protected Button getTimeButton() {

@@ -22,6 +22,14 @@ public class EditAccessor {
         return both(withContentDescription("OK"), withId(App.getInstance().getResources().getIdentifier("action_modify", "id", "com.robwilliamson.healthyesther")));
     }
 
+    public static Matcher<View> whenRelativeSelectorLayout() {
+        return withId(R.id.edit_event_time_relative_layout);
+    }
+
+    public static Matcher<View> whenRelativeSelector() {
+        return withId(R.id.edit_event_time_relative_seekbar);
+    }
+
     public static Matcher<View> whenTitle() {
         return both(withText(R.string.when), withParent(withParent(withId(R.id.edit_event_layout))));
     }

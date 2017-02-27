@@ -18,6 +18,27 @@ This program is distributed under the terms of the GNU General Public License.
             android:text="@string/when" />
 
         <LinearLayout
+            android:id="@+id/edit_event_time_relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/edit_event_time_ago_label"
+                style="@style/AppTheme.text.small"
+                android:text="@string/_1_hour_ago"/>
+            <SeekBar
+                android:id="@+id/edit_event_time_relative_seekbar"
+                android:progress="0"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:rotation="180"/>
+            <TextView
+                android:id="@+id/edit_event_time_now_label"
+                style="@style/AppTheme.text.small"
+                android:text="@string/now"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -26,7 +47,7 @@ This program is distributed under the terms of the GNU General Public License.
                 android:id="@+id/edit_event_time_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="0dip" />
+                android:layout_marginStart="0dip" />
 
             <Button
                 android:id="@+id/edit_event_date_button"
