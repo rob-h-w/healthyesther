@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class Utils {
-    public static String format(@Nonnull Throwable e) {
+    static String format(@Nonnull Throwable e) {
         StringBuilder str = new StringBuilder();
         final String nl = "/n";
         str.append(e.getMessage()).append(nl);
@@ -62,7 +62,7 @@ public final class Utils {
 
     public static final class View {
 
-        public static void forEachRadioButton(@Nonnull RadioGroup radioGroup, @Nonnull RadioButtonHandler handler) {
+        static void forEachRadioButton(@Nonnull RadioGroup radioGroup, @Nonnull RadioButtonHandler handler) {
             final int count = radioGroup.getChildCount();
             for (int i = 0; i < count; i++) {
                 android.view.View view = radioGroup.getChildAt(i);

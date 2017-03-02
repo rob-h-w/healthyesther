@@ -124,7 +124,7 @@ public class MealEventActivityTest {
     public void withExistingMeal_populatesAutocompleteListWithMealName() {
         withExistingMeal();
 
-        assertThat(((String) Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
+        assertThat(Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0),
                 is(MEAL_NAME));
     }
 
@@ -139,7 +139,7 @@ public class MealEventActivityTest {
     public void withExistingMealConfigurationChanged_populatesAutocompleteListWithMealName() {
         withExistingMealConfigurationChanged();
 
-        assertThat(((String) Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0)),
+        assertThat(Utils.checkNotNull(mMealAccessor.getNameTextView()).getAdapter().getItem(0),
                 is(MEAL_NAME));
     }
 

@@ -6,8 +6,6 @@ package com.robwilliamson.healthyesther.edit;
 
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v7.widget.AppCompatButton;
-import android.widget.Button;
 
 import com.robwilliamson.healthyesther.HomeActivity;
 import com.robwilliamson.healthyesther.Settings;
@@ -22,8 +20,6 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.NoteEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
@@ -122,16 +118,18 @@ public class NoteEventActivityEspressoTest {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
 
         final DateTime expected = DateTime.now().minusMinutes(35);
-        StringBuilder expectedString = new StringBuilder();
-        expectedString.append(expected.getHourOfDay() % 12)
-                .append(":")
-                .append(expected.getMinuteOfHour())
-                .append(" ")
-                .append(expected.getHourOfDay() >= 12 ? "PM" : "AM");
+        int hourOfDay = expected.getHourOfDay();
+        final String meridianSufix = hourOfDay > 11 ? "PM" : "AM";
+        hourOfDay = hourOfDay == 12 ? 0 : hourOfDay % 12;
+        String expectedString = String.valueOf(hourOfDay) +
+                ":" +
+                expected.getMinuteOfHour() +
+                " " +
+                meridianSufix;
         onView(EditAccessor.whenRelativeSelectorLayout()).perform(click());
         onView(EditAccessor.whenTime()).check(
                 matches(
-                        withText(expectedString.toString())));
+                        withText(expectedString)));
     }
 
     @Test

@@ -184,7 +184,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     }
 
     public void setName(@Nullable String name) {
-        updateRowName(name.trim());
+        updateRowName(name == null ? "" : name.trim());
 
         updateUi();
     }
