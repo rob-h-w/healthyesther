@@ -4,14 +4,14 @@
   */
 package com.robwilliamson.healthyesther.util.time;
 
-import org.joda.time.DateTime;
-import org.joda.time.ReadableInstant;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 
 public abstract class TimeRegion {
-    public final DateTime from;
-    public final DateTime to;
+    public final ZonedDateTime from;
+    public final ZonedDateTime to;
 
-    protected TimeRegion(DateTime from, DateTime to) {
+    protected TimeRegion(ZonedDateTime from, ZonedDateTime to) {
         this.from = from.isBefore(to) ? from : to;
         this.to = to.isAfter(from) ? to : from;
     }
@@ -28,11 +28,19 @@ public abstract class TimeRegion {
 
     public abstract boolean contains(TimeRegion region, Comparison comparison);
 
-    public boolean contains(ReadableInstant instant) {
+    public boolean contains(ZonedDateTime time) {
+        return contains(time, Comparison.INCLUSIVE);
+    }
+
+    public boolean contains(ZonedDateTime time, Comparison comparison) {
+        return contains(time.toInstant(), comparison);
+    }
+
+    public boolean contains(Instant instant) {
         return contains(instant, Comparison.INCLUSIVE);
     }
 
-    public abstract boolean contains(ReadableInstant instant, Comparison comparison);
+    public abstract boolean contains(Instant instant, Comparison comparison);
 
     public abstract TimeRegion startingFrom(int year, int monthOfYear, int dayOfMonth);
 

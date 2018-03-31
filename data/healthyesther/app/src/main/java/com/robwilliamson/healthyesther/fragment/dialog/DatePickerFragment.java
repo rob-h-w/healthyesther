@@ -23,7 +23,7 @@ public class DatePickerFragment extends AbstractDateTimePickerFragment
                 getActivity(),
                 this,
                 getLocalDateTime().getYear(),
-                getLocalDateTime().getMonthOfYear() - 1,
+                getLocalDateTime().getMonthValue() - 1,
                 getLocalDateTime().getDayOfMonth());
 
     }
@@ -35,7 +35,10 @@ public class DatePickerFragment extends AbstractDateTimePickerFragment
 
     @Override
     public void onDateSet(android.widget.DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        setDateTime(getLocalDateTime().withDate(year, monthOfYear + 1, dayOfMonth));
+        setDateTime(getLocalDateTime()
+                .withYear(year)
+                .withMonth(monthOfYear)
+                .withDayOfMonth(dayOfMonth));
         callCallback();
     }
 }

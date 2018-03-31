@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
@@ -13,13 +13,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.robwilliamson.healthyesther.DbActivity;
 import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.Utils;
-import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.use.InitializationQuerier;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -50,13 +47,9 @@ public abstract class AbstractEditActivity extends DbActivity {
         ActionBar actionBar = Utils.checkNotNull(getSupportActionBar());
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        Toolbar toolbar = Utils.checkNotNull((Toolbar) findViewById(R.id.toolbar));
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        @SuppressWarnings("RedundantCast") Toolbar toolbar =
+                Utils.checkNotNull((Toolbar) findViewById(R.id.toolbar));
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         if (savedInstanceState != null) {
             mSavedInstanceState = savedInstanceState;
@@ -113,6 +106,7 @@ public abstract class AbstractEditActivity extends DbActivity {
 
         List<Pair<EditFragment, String>> fragments = getEditFragments(false);
         for (Pair<EditFragment, String> fragmentStringPair : fragments) {
+            assert fragmentStringPair.first != null;
             if (!fragmentStringPair.first.isValid()) {
                 return false;
             }
@@ -151,12 +145,9 @@ public abstract class AbstractEditActivity extends DbActivity {
             }
         }
 
-        getExecutor().perform(new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                for (TransactionExecutor.Operation operation : operations) {
-                    operation.doTransactionally(database, transaction);
-                }
+        getExecutor().perform((database, transaction1) -> {
+            for (TransactionExecutor.Operation operation : operations) {
+                operation.doTransactionally(database, transaction1);
             }
         });
 

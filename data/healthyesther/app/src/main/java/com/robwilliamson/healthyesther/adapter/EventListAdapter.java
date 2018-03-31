@@ -15,14 +15,12 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, EventTable.Row> {
-    private DateTimeFormatter mDateTimeFormatter;
+    private volatile static DateTimeFormatter sDateTimeFormatter;
 
     public EventListAdapter(Activity context, int layoutId) {
         super(context, layoutId, EventListAdapter.Tag.class, View.class);
@@ -34,8 +32,10 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         init(context);
     }
 
-    private void init(Context context) {
-        mDateTimeFormatter = DateTimeFormat.forPattern(context.getString(R.string.event_date_time_format));
+    private synchronized void init(Context context) {
+        if (sDateTimeFormatter == null) {
+            sDateTimeFormatter = DateTimeFormatter.ofPattern(context.getString(R.string.event_date_time_format));
+        }
     }
 
     /**
@@ -90,8 +90,8 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
         tag.title.setText(data.getName());
         tag.time.setText(
                 com.robwilliamson.healthyesther.db.Utils.Time.toString(
-                        data.getWhen().as(DateTime.class),
-                        mDateTimeFormatter));
+                        data.getWhen().as(ZonedDateTime.class),
+                        sDateTimeFormatter));
     }
 
     protected static class Tag {

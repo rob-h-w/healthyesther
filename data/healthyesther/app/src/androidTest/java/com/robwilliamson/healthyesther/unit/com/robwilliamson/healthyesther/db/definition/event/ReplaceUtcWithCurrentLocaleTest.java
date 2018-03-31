@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.db.definition.event;
 
@@ -11,24 +11,21 @@ import android.support.test.runner.AndroidJUnit4;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.EventTable;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
-import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import com.robwilliamson.healthyesther.test.Database;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TimeZone;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static org.junit.Assert.assertTrue;
@@ -55,6 +52,7 @@ public class ReplaceUtcWithCurrentLocaleTest {
         Database.deleteDatabase();
     }
 
+    @SuppressWarnings("RedundantThrows")
     @Test
     public void testNormalUpgradePath() throws Exception {
         Cursor c = mDb.query(DatabaseAccessor.EVENT_TABLE.getName(), null, null, null, null, null, null);
@@ -68,14 +66,6 @@ public class ReplaceUtcWithCurrentLocaleTest {
                 fail("threw " + e);
             }
         }
-    }
-
-    private String toUtcString(String timeString) {
-        if (timeString == null) {
-            return null;
-        }
-
-        return Utils.Time.toUtcString(Utils.Time.fromLocalString(timeString).withZone(DateTimeZone.UTC));
     }
 
     private Set<EventDates> getEvents(Cursor c) {
@@ -98,8 +88,8 @@ public class ReplaceUtcWithCurrentLocaleTest {
 
     private class EventDates {
         public String when;
-        public String created;
-        public String modified;
+        String created;
+        String modified;
 
         @Override
         public boolean equals(Object o) {
@@ -137,10 +127,10 @@ public class ReplaceUtcWithCurrentLocaleTest {
             return name + ": " + value;
         }
 
-        public void assertIsNullOrLocal() {
+        void assertIsNullOrLocal() {
             assertIsNullOrLocal(when, null);
-            assertIsNullOrLocal(created, DateTimeZone.UTC.toTimeZone());
-            assertIsNullOrLocal(modified, DateTimeZone.UTC.toTimeZone());
+            assertIsNullOrLocal(created, ZoneOffset.UTC);
+            assertIsNullOrLocal(modified, ZoneOffset.UTC);
         }
 
         private int hash(String str) {
@@ -153,30 +143,20 @@ public class ReplaceUtcWithCurrentLocaleTest {
 
         private void assertIsNullOrLocal(
                 @Nullable String dateString,
-                @Nullable TimeZone expectedTimeZone) {
+                @Nullable ZoneId expectedTimeZone) {
             if (dateString == null) {
                 return;
             }
 
-            DateTime dateTime = Utils.Time.fromLocalString(dateString);
+            ZonedDateTime dateTime = Utils.Time.fromLocalString(dateString);
 
             if (expectedTimeZone == null) {
                 assertTrue(dateString.contains(" -") || dateString.contains(" +"));
             } else {
                 assertTrue(
                         "Expect " + dateString + " to use timezone " + expectedTimeZone + ".",
-                        dateTime.getZone().toTimeZone().getRawOffset()
-                                == expectedTimeZone.getRawOffset());
+                        dateTime.getZone().equals(expectedTimeZone));
             }
-        }
-
-        private void assertIsNullOrUtcOrSpaceSeparated(String dateString) {
-            if (dateString == null) {
-                return;
-            }
-
-            DateTime dateTime = Utils.Time.fromUtcString(dateString);
-            assertTrue("Expect " + dateString + " to be UTC.", dateTime.getZone().equals(DateTimeZone.UTC));
         }
 
         private boolean equals(String left, String right) {

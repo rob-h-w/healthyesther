@@ -22,21 +22,20 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -107,49 +106,54 @@ public final class Utils {
     }
 
     public static class Time {
+        @SuppressWarnings("WeakerAccess")
         public final static long SECOND_MS = 1000;
+        @SuppressWarnings("WeakerAccess")
         public final static long MINUTE_MS = 60 * SECOND_MS;
         public final static long HOUR_MS = 60 * MINUTE_MS;
         public final static long DAY_MS = 24 * HOUR_MS;
         private static final String LOG_TAG = Time.class.getSimpleName();
-        private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss ZZ";
+        private static final String TZ_FORMAT = "yyyy-MM-dd'T'HH:mm:ss xxx";
         private static final String FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
         private static final String DB_DEFAULT_FORMAT = "yyyy-MM-dd' 'HH:mm:ss";
-        private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormat.forPattern(TZ_FORMAT).withOffsetParsed();
+        private static final DateTimeFormatter LOCAL_FORMATTER = DateTimeFormatter.ofPattern(TZ_FORMAT);
         private static final DateTimeFormatter DB_FORMATTER = LOCAL_FORMATTER;
-        private static final DateTimeFormatter DB_DEFAULT_FORMATTER = DateTimeFormat.forPattern(DB_DEFAULT_FORMAT).withZoneUTC();
-        private static final DateTimeFormatter UTC_FORMATTER = DateTimeFormat.forPattern(FORMAT).withZoneUTC();
+        private static final DateTimeFormatter DB_DEFAULT_FORMATTER = DateTimeFormatter.ofPattern(DB_DEFAULT_FORMAT)
+                .withZone(ZoneId.systemDefault());
+        private static final DateTimeFormatter UTC_FORMATTER = DateTimeFormatter
+                .ofPattern(FORMAT)
+                .withZone(ZoneOffset.UTC);
 
-        public static void bundle(Bundle bundle, String name, DateTime dateTime) {
-            bundle.putString(name, toString(dateTime, ISODateTimeFormat.dateTime()));
+        public static void bundle(Bundle bundle, String name, ZonedDateTime dateTime) {
+            bundle.putString(name, toString(dateTime, LOCAL_FORMATTER));
         }
 
-        public static DateTime unBundle(Bundle bundle, String name) {
+        public static ZonedDateTime unBundle(Bundle bundle, String name) {
             String raw = bundle.getString(name);
-            return fromString(raw, ISODateTimeFormat.dateTime());
+            return fromString(raw, LOCAL_FORMATTER);
         }
 
-        public static DateTime localNow() {
-            return DateTime.now().withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        public static ZonedDateTime localNow() {
+            return ZonedDateTime.now();
         }
 
-        public static String toLocalString(DateTime dateTime) {
+        public static String toLocalString(ZonedDateTime dateTime) {
             return toString(dateTime, LOCAL_FORMATTER);
         }
 
-        public static DateTime fromLocalString(String string) {
+        public static ZonedDateTime fromLocalString(String string) {
             return fromString(string, LOCAL_FORMATTER);
         }
 
-        public static String toUtcString(DateTime dateTime) {
+        public static String toUtcString(ZonedDateTime dateTime) {
             return toString(dateTime, UTC_FORMATTER);
         }
 
-        public static DateTime fromUtcString(String string) {
+        public static ZonedDateTime fromUtcString(String string) {
             return fromString(string, UTC_FORMATTER);
         }
 
-        public static String toDatabaseString(DateTime dateTime) {
+        public static String toDatabaseString(ZonedDateTime dateTime) {
             return toString(dateTime, DB_FORMATTER);
         }
 
@@ -160,9 +164,9 @@ public final class Utils {
          * database.
          *
          * @param string The DB String representation of the DateTime.
-         * @return The JodaTime DateTime or null if string is null.
+         * @return The ZonedDateTime or null if string is null.
          */
-        public static DateTime fromDatabaseString(String string) {
+        public static ZonedDateTime fromDatabaseString(String string) {
             if (string == null) {
                 return null;
             }
@@ -175,27 +179,27 @@ public final class Utils {
             }
         }
 
-        public static DateTime fromDatabaseDefaultString(String string) {
+        public static ZonedDateTime fromDatabaseDefaultString(String string) {
             return fromString(string, DB_DEFAULT_FORMATTER);
         }
 
-        public static String toString(DateTime dateTime, DateTimeFormatter formatter) {
+        public static String toString(ZonedDateTime dateTime, DateTimeFormatter formatter) {
             if (dateTime == null) {
                 return null;
             }
 
-            return formatter.print(dateTime);
+            return formatter.format(dateTime);
         }
 
-        public static DateTime fromString(String string, DateTimeFormatter formatter) {
+        public static ZonedDateTime fromString(String string, DateTimeFormatter formatter) {
             com.robwilliamson.healthyesther.Utils.checkNotNull(string);
-            return formatter.parseDateTime(string);
+            return ZonedDateTime.parse(string, formatter);
         }
 
-        public static long toBootRealTimeElapsedMillis(DateTime time) {
+        public static long toBootRealTimeElapsedMillis(ZonedDateTime time) {
             long bootOffsetMillis = SystemClock.elapsedRealtime();
-            long bootTimeMillis = DateTime.now().getMillis() - bootOffsetMillis;
-            return time.getMillis() - bootTimeMillis;
+            long bootTimeMillis = ZonedDateTime.now().toInstant().toEpochMilli() - bootOffsetMillis;
+            return time.toInstant().toEpochMilli() - bootTimeMillis;
         }
     }
 
@@ -355,8 +359,16 @@ public final class Utils {
                                         pseudoRandom %= pseudoRandomMax;
 
                                         if (!hadDailyMedication && haveDailyMedication(hour)) {
-                                            com.robwilliamson.healthyesther.db.includes.DateTime time = com.robwilliamson.healthyesther.db.includes.DateTime.from(DateTime.now().withDate(year, month, day)
-                                                    .withTime(hour, minute(), second(), 0));
+                                            com.robwilliamson.healthyesther.db.includes.DateTime time =
+                                                    com.robwilliamson.healthyesther.db.includes
+                                                        .DateTime.from(ZonedDateTime.now()
+                                                            .withYear(year)
+                                                            .withMonth(month)
+                                                            .withDayOfMonth(day)
+                                                            .withHour(hour)
+                                                            .withMinute(minute())
+                                                            .withSecond(second())
+                                                            .withNano(0));
                                             EventTable.Row eventRow = new EventTable.Row(
                                                     EventTypeTable.MEDICATION.getId(),
                                                     time,
@@ -460,8 +472,9 @@ public final class Utils {
 
             private static com.robwilliamson.healthyesther.db.includes.DateTime time(int year, int month,
                                                                                      int day, int hour) {
-                return com.robwilliamson.healthyesther.db.includes.DateTime.from(DateTime.now().withDate(year, month, day)
-                        .withTime(hour, minute(), second(), 0));
+                return com.robwilliamson.healthyesther.db.includes.DateTime.from(ZonedDateTime.now()
+                        .withYear(year).withMonth(month).withDayOfMonth(day)
+                        .withHour(hour).withMinute(minute()).withSecond(second()).withNano(0));
             }
 
             private static boolean haveDailyMedication(int hour) {
@@ -531,7 +544,7 @@ public final class Utils {
                             @Nonnull com.robwilliamson.healthyesther.db.includes.DateTime time,
                             @Nonnull MealTable.PrimaryKey primaryKey) {
                         ContentValues eventValues = new ContentValues();
-                        String utcTime = Utils.Time.toUtcString(time.as(DateTime.class));
+                        String utcTime = Utils.Time.toUtcString(time.as(ZonedDateTime.class));
                         eventValues.put(EventTable.CREATED, utcTime);
                         eventValues.put('[' + EventTable.WHEN + ']', utcTime);
                         eventValues.put(EventTable.TYPE_ID, EventTypeTable.MEAL.getId().getId());

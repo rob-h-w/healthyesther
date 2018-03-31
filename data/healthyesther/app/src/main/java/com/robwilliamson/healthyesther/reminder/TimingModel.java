@@ -9,11 +9,11 @@ import android.content.Context;
 import com.robwilliamson.healthyesther.util.time.Range;
 import com.robwilliamson.healthyesther.util.time.RangeSet;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 
 public class TimingModel {
-    private static final Duration SIGMA = Duration.standardMinutes(1);
+    private static final Duration SIGMA = Duration.ofMinutes(1);
     private final Environment mEnvironment;
     private final Duration mMinTimeBetweenNotifications;
     private final RangeSet mAllowedNotificationTimes;
@@ -47,7 +47,7 @@ public class TimingModel {
     }
 
     public void onNotified(Context context) {
-        DateTime now = mEnvironment.getNow();
+        ZonedDateTime now = ZonedDateTime.from(mEnvironment.getNow());
         mEnvironment.setLastNotifiedTime(now, context);
         mEnvironment.setNextNotificationTime(null, context);
         setAlarm(getNextNotificationAfter(now), context);
@@ -63,7 +63,7 @@ public class TimingModel {
     }
 
     private boolean shouldNotify(Context context) {
-        DateTime now = mEnvironment.getNow();
+        ZonedDateTime now = mEnvironment.getNow();
         boolean notificationAllowed = allowedTimes().contains(now) &&
                 !mEnvironment.appInForeground();
 
@@ -76,7 +76,7 @@ public class TimingModel {
                 return false;
             }
 
-            DateTime next = mEnvironment.getNextNotificationTime(context);
+            ZonedDateTime next = mEnvironment.getNextNotificationTime(context);
             if (next == null ||
                     new Range(now, SIGMA).contains(next) ||
                     next.isBefore(now)) {
@@ -96,8 +96,8 @@ public class TimingModel {
     }
 
     private void ensureNotificationIsPending(Context context) {
-        DateTime now = mEnvironment.getNow();
-        DateTime next = mEnvironment.getNextNotificationTime(context);
+        ZonedDateTime now = mEnvironment.getNow();
+        ZonedDateTime next = mEnvironment.getNextNotificationTime(context);
 
         if (next == null
                 || next.isBefore(now)
@@ -108,18 +108,18 @@ public class TimingModel {
         }
     }
 
-    private DateTime getNextNotificationAfter(DateTime before) {
+    private ZonedDateTime getNextNotificationAfter(ZonedDateTime before) {
         if (before == null) {
             before = mEnvironment.getNow();
         }
 
-        DateTime next = before.plus(mPeriod);
+        ZonedDateTime next = before.plus(mPeriod);
 
         if (allowedTimes().contains(next)) {
             return next;
         }
 
-        next = allowedTimes().getEdgeAfter(next);
+        next = allowedTimes().getEdgeAfter(next.toInstant());
 
         if (next == null) {
             next = allowedTimes().to;
@@ -137,29 +137,32 @@ public class TimingModel {
     }
 
     private RangeSet allowedTimes() {
-        DateTime yesterday = mEnvironment.getNow().minus(Duration.standardDays(1));
-        return mAllowedNotificationTimes.startingFrom(yesterday.getYear(), yesterday.getMonthOfYear(), yesterday.getDayOfMonth());
+        ZonedDateTime yesterday = mEnvironment.getNow().minus(Duration.ofDays(1));
+        return mAllowedNotificationTimes.startingFrom(
+                yesterday.getYear(),
+                yesterday.getMonthValue(),
+                yesterday.getDayOfMonth());
     }
 
-    private void setAlarm(DateTime alarmTime, Context context) {
+    private void setAlarm(ZonedDateTime alarmTime, Context context) {
         mEnvironment.setAlarm(alarmTime, context);
         mEnvironment.setNextNotificationTime(alarmTime, context);
     }
 
     public interface Environment {
-        DateTime getNow();
+        ZonedDateTime getNow();
 
-        DateTime getLastNotifiedTime(Context context);
+        ZonedDateTime getLastNotifiedTime(Context context);
 
-        void setLastNotifiedTime(DateTime time, Context context);
+        void setLastNotifiedTime(ZonedDateTime time, Context context);
 
-        DateTime getNextNotificationTime(Context context);
+        ZonedDateTime getNextNotificationTime(Context context);
 
-        void setNextNotificationTime(DateTime time, Context context);
+        void setNextNotificationTime(ZonedDateTime time, Context context);
 
         boolean appInForeground();
 
-        void setAlarm(DateTime alarmTime, Context context);
+        void setAlarm(ZonedDateTime alarmTime, Context context);
 
         void sendReminder(Context context);
     }

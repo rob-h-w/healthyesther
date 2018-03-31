@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther;
 
@@ -42,6 +42,7 @@ public class HomeActivityEspressoTest {
     @Rule
     public Retry mRetry = new Retry(2);
 
+    @SuppressWarnings("RedundantThrows")
     @Before
     public void setUp() throws Exception {
         HomeActivityAccessor.setShowNavigationDrawer(false);

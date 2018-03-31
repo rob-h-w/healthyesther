@@ -17,11 +17,13 @@ import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.Key;
 
 import org.apache.commons.math3.stat.Frequency;
-import org.joda.time.DateTime;
 
+import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -39,8 +41,10 @@ public class WeeklyFrequency extends Frequency {
 
     @Nonnull
     static String name(@Nonnull EventTable.Row event) {
-        DateTime when = event.getWhen().as(DateTime.class);
-        return String.valueOf(when.dayOfWeek().get()) + ':' + when.getHourOfDay();
+        ZonedDateTime when = event.getWhen().as(ZonedDateTime.class);
+        return String.valueOf(
+                when.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault()))
+                + ':' + when.getHour();
     }
 
     @Nonnull

@@ -11,10 +11,6 @@ import android.app.Application;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.reminder.TimingManager;
 
-import net.danlew.android.joda.JodaTimeAndroid;
-
-import org.joda.time.DateTimeZone;
-
 import java.util.TimeZone;
 
 import javax.annotation.Nullable;
@@ -48,9 +44,6 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        JodaTimeAndroid.init(this);
-        DateTimeZone.setDefault(DateTimeZone.forOffsetMillis(TimeZone.getDefault().getRawOffset()));
 
         if (BuildConfig.DEBUG) {
             HealthDbHelper.sDebug = true;

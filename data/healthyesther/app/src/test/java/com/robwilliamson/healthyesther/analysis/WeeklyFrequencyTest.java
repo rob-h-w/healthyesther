@@ -18,9 +18,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class WeeklyFrequencyTest {
     private static final String[] dateTimeStrings = {
@@ -46,7 +47,7 @@ public class WeeklyFrequencyTest {
         DateTimeConverter.now();
         dateTimes = new ArrayList<>(dateTimeStrings.length);
         for (String dateTime : dateTimeStrings) {
-            org.joda.time.DateTime jTime = Utils.Time.fromLocalString(dateTime);
+            ZonedDateTime jTime = Utils.Time.fromLocalString(dateTime);
             dateTimes.add(DateTime.from(jTime));
         }
     }
@@ -86,7 +87,7 @@ public class WeeklyFrequencyTest {
 
     @Test
     public void name_isCorrect() {
-        assertThat(WeeklyFrequency.name(events(1).get(0)), is("7:11"));
+        assertThat(WeeklyFrequency.name(events(1).get(0)), is("Sun:11"));
     }
 
     @Test

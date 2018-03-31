@@ -17,15 +17,12 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
-import net.danlew.android.joda.JodaTimeAndroid;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import javax.annotation.Nonnull;
@@ -66,12 +63,13 @@ public class ScoreEventActivityTest {
 
         mEventFragmentAccessor = new EditEventFragmentAccessor(mContext);
         mScoreEventGroupFramgentAccessor = new EditScoreEventGroupAccessor(mContext);
-        JodaTimeAndroid.init(RuntimeEnvironment.application);
     }
 
     @After
     public void teardown() {
-        mContext.close();
+        if (mContext != null) {
+            mContext.close();
+        }
     }
 
     @SuppressWarnings("ConstantConditions")

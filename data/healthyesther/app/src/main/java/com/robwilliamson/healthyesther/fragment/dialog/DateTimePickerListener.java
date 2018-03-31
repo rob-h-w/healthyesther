@@ -4,8 +4,8 @@
   */
 package com.robwilliamson.healthyesther.fragment.dialog;
 
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
 
 public interface DateTimePickerListener {
-    void onDateTimeChange(DateTime dateTime);
+    void onDateTimeChange(ZonedDateTime dateTime);
 }

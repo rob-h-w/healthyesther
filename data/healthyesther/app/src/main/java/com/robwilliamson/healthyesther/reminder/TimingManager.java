@@ -21,19 +21,27 @@ import com.robwilliamson.healthyesther.R;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.util.time.Range;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
-
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.TimeZone;
 
 public enum TimingManager {
     INSTANCE;
 
-    private static final Duration PERIOD = Duration.standardHours(1);
-    private static final Duration MULTIPLE_NOTIFICATION_THRESHOLD = Duration.standardMinutes(50);
-    private static final Range ALLOWED_NOTIFICATION_RANGE = new Range(Utils.Time.localNow().withTime(7, 0, 0, 0),
-            Utils.Time.localNow().withTime(22, 0, 0, 0));
+    private static final Duration PERIOD = Duration.ofHours(1);
+    private static final Duration MULTIPLE_NOTIFICATION_THRESHOLD = Duration.ofMinutes(50);
+    private static final Range ALLOWED_NOTIFICATION_RANGE = new Range(
+            Utils.Time.localNow()
+                    .withHour(7)
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0),
+            Utils.Time.localNow()
+                    .withHour(22)
+                    .withMinute(0)
+                    .withSecond(0)
+                    .withNano(0));
 
     private static final String PREFERENCES_NAME =
             "com.robwilliamson.healthyesther.reminder.TimingManager";
@@ -48,12 +56,12 @@ public enum TimingManager {
     private Environment mModelEnvironment = new Environment();
     private volatile TimingModel mTimingModel = null;
 
-    private static DateTime makeLocal(DateTime time) {
+    private static ZonedDateTime makeLocal(ZonedDateTime time) {
         if (time == null) {
             return null;
         }
 
-        return time.withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        return time.withZoneSameInstant(ZoneId.systemDefault());
     }
 
     private static void log(String message) {
@@ -95,7 +103,7 @@ public enum TimingManager {
         return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private DateTime getTime(String key, Context context) {
+    private ZonedDateTime getTime(String key, Context context) {
         String timeString = getPreferences(context).getString(key, null);
 
         if (timeString == null) {
@@ -113,7 +121,7 @@ public enum TimingManager {
         }
     }
 
-    private void setTime(String key, DateTime time, Context context) {
+    private void setTime(String key, ZonedDateTime time, Context context) {
         if (time == null) {
             getPreferences(context).edit().remove(key).apply();
         } else {
@@ -132,35 +140,35 @@ public enum TimingManager {
     private class Environment implements TimingModel.Environment {
 
         @Override
-        public DateTime getNow() {
-            DateTime now = Utils.Time.localNow();
+        public ZonedDateTime getNow() {
+            ZonedDateTime now = Utils.Time.localNow();
             log("getNow returning " + now);
             return now;
         }
 
         @Override
-        public DateTime getLastNotifiedTime(Context context) {
-            DateTime lastNotified = makeLocal(getTime(PREVIOUS_REMINDER, context));
+        public ZonedDateTime getLastNotifiedTime(Context context) {
+            ZonedDateTime lastNotified = makeLocal(getTime(PREVIOUS_REMINDER, context));
             log("getLastNotifiedTime " + lastNotified);
             return lastNotified;
         }
 
         @Override
-        public void setLastNotifiedTime(DateTime time, Context context) {
+        public void setLastNotifiedTime(ZonedDateTime time, Context context) {
             time = makeLocal(time);
             setTime(PREVIOUS_REMINDER, time, context);
             log("setLastNotifiedTime " + time);
         }
 
         @Override
-        public DateTime getNextNotificationTime(Context context) {
-            DateTime nextNotificationTime = makeLocal(getTime(NEXT_REMINDER, context));
+        public ZonedDateTime getNextNotificationTime(Context context) {
+            ZonedDateTime nextNotificationTime = makeLocal(getTime(NEXT_REMINDER, context));
             log("getNextNotificationTime" + nextNotificationTime);
             return nextNotificationTime;
         }
 
         @Override
-        public void setNextNotificationTime(DateTime time, Context context) {
+        public void setNextNotificationTime(ZonedDateTime time, Context context) {
             time = makeLocal(time);
             log("setNextNotificationTime(" + time + ")");
             setTime(NEXT_REMINDER, time, context);
@@ -172,13 +180,14 @@ public enum TimingManager {
         }
 
         @Override
-        public void setAlarm(DateTime alarmTime, Context context) {
+        public void setAlarm(ZonedDateTime alarmTime, Context context) {
             alarmTime = makeLocal(alarmTime);
             AlarmManager alarmManager =
                     (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             if (BuildConfig.DEBUG) {
-                long millisUntil = alarmTime.getMillis() - getNow().getMillis();
+                long millisUntil = alarmTime.toInstant().toEpochMilli()
+                        - getNow().toInstant().toEpochMilli();
 
                 log("setting new notification in " + millisUntil + "ms, expected to trigger at " + alarmTime);
             }

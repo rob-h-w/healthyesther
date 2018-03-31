@@ -7,47 +7,50 @@ package com.robwilliamson.healthyesther.util.time;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.ReadableInstant;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 
 import javax.annotation.Nonnull;
 
 public class Range extends TimeRegion {
-    public final DateTime centre;
+    public final ZonedDateTime centre;
     public final Duration sigma;
 
-    public Range(DateTime from, DateTime to) {
+    public Range(ZonedDateTime from, ZonedDateTime to) {
         super(from, to);
-        this.sigma = Duration.millis((this.to.getMillis() - this.from.getMillis()) / 2);
+        this.sigma = Duration.ofMillis(
+                (this.to.toInstant().toEpochMilli() - this.from.toInstant().toEpochMilli()) / 2);
         this.centre = this.from.plus(this.sigma);
     }
 
-    public Range(DateTime centre, Duration sigma) {
+    public Range(ZonedDateTime centre, Duration sigma) {
         super(centre.minus(sigma), centre.plus(sigma));
         this.centre = centre;
         this.sigma = sigma;
     }
 
     @Nonnull
-    public static Builder Starting(@Nonnull DateTime dateTime) {
+    public static Builder Starting(@Nonnull ZonedDateTime dateTime) {
         return new Builder(dateTime);
     }
 
-    public Range startingFrom(DateTime time) {
+    public Range startingFrom(ZonedDateTime time) {
         return new Range(time, time.plus(sigma).plus(sigma));
     }
 
     public Range startingTomorrow() {
-        return startingFrom(from.plus(Duration.standardDays(1)));
+        return startingFrom(from.plus(Duration.ofDays(1)));
     }
 
     public Range startingYesterday() {
-        return startingFrom(from.minus(Duration.standardDays(1)));
+        return startingFrom(from.minus(Duration.ofDays(1)));
     }
 
     public Duration length() {
-        return new Duration(from, to);
+        return Duration.between(from, to);
     }
 
     @Override
@@ -56,12 +59,13 @@ public class Range extends TimeRegion {
             return true;
         }
 
-        if (region.contains(from, comparison) || region.contains(to, comparison)) {
+        if (region.contains(from.toInstant(), comparison)
+                || region.contains(to.toInstant(), comparison)) {
             return true;
         }
 
-        return region.contains(from, Comparison.INCLUSIVE) &&
-                region.contains(to, Comparison.INCLUSIVE);
+        return region.contains(from.toInstant(), Comparison.INCLUSIVE) &&
+                region.contains(to.toInstant(), Comparison.INCLUSIVE);
     }
 
     @Override
@@ -70,8 +74,8 @@ public class Range extends TimeRegion {
     }
 
     @Override
-    public boolean contains(ReadableInstant instant, Comparison comparison) {
-        if (instant.isAfter(from) && instant.isBefore(to)) {
+    public boolean contains(Instant instant, Comparison comparison) {
+        if (instant.isAfter(from.toInstant()) && instant.isBefore(to.toInstant())) {
             return true;
         }
 
@@ -79,25 +83,33 @@ public class Range extends TimeRegion {
             return false;
         }
 
-        return instant.isEqual(from) || instant.isEqual(to);
+        return instant.equals(from.toInstant()) || instant.equals(to.toInstant());
     }
 
     @Override
     public TimeRegion startingFrom(int year, int monthOfYear, int dayOfMonth) {
-        return startingFrom(from.withDate(year, monthOfYear, dayOfMonth));
+        return startingFrom(from
+                .withYear(year)
+                .withMonth(monthOfYear)
+                .withDayOfMonth(dayOfMonth));
     }
 
     @Override
     protected boolean isIn(TimeRegion region, Comparison comparison) {
-        return region.contains(from, comparison) && region.contains(to, comparison);
+        return region.contains(from.toInstant(), comparison)
+                && region.contains(to.toInstant(), comparison);
     }
 
     public static class Builder {
         @Nonnull
-        private final DateTime mStarting;
+        private final ZonedDateTime mStarting;
 
-        public Builder(@Nonnull DateTime starting) {
-            mStarting = starting.withZone(Utils.Time.localNow().getZone()).withMillisOfDay(0);
+        public Builder(@Nonnull ZonedDateTime starting) {
+            mStarting = starting.withZoneSameLocal(Utils.Time.localNow().getZone())
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
         }
 
         @Nonnull
@@ -108,7 +120,9 @@ public class Range extends TimeRegion {
             if (start == null || end == null) {
                 return new Range(mStarting, mStarting.plusDays(1));
             } else {
-                return new Range(mStarting.plusMillis(start.intValue()), mStarting.plusMillis(end.intValue()));
+                return new Range(
+                        mStarting.plus(start.intValue(), ChronoUnit.MILLIS),
+                        mStarting.plus(end.intValue(), ChronoUnit.MILLIS));
             }
         }
     }

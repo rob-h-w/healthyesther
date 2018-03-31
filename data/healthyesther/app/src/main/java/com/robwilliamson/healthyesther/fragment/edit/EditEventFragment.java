@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.fragment.edit;
 
@@ -21,8 +21,8 @@ import com.robwilliamson.healthyesther.fragment.dialog.DatePickerFragment;
 import com.robwilliamson.healthyesther.fragment.dialog.DateTimePickerListener;
 import com.robwilliamson.healthyesther.fragment.dialog.TimePickerFragment;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 public class EditEventFragment extends EditFragment<EventTable.Row>
         implements DateTimePickerListener {
     private static String SHOW_RELATIVE_TIME_PICKER = "Show Relative Time Picker";
+    private static DateTimeFormatter TIME = DateTimeFormatter.ofPattern("h:mm a");
     private boolean mRowNameSet;
     private boolean mSettingRowName;
     private boolean mShowRelativeTimePicker = false;
@@ -80,7 +81,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 int minutes = (int) Math.ceil(((float)i / 100) * 60);
-                setWhen(DateTime.now().minusMinutes(minutes));
+                setWhen(ZonedDateTime.now().minusMinutes(minutes));
             }
 
             @Override
@@ -151,7 +152,7 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
     }
 
     @Override
-    public void onDateTimeChange(DateTime dateTime) {
+    public void onDateTimeChange(ZonedDateTime dateTime) {
         if (getRow() != null) {
             getRow().setWhen(com.robwilliamson.healthyesther.db.includes.DateTime.from(dateTime));
         }
@@ -195,16 +196,16 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
         }
     }
 
-    public DateTime getWhen() {
+    public ZonedDateTime getWhen() {
         if (hasRow()) {
             //noinspection ConstantConditions
-            return getRow().getWhen().as(DateTime.class);
+            return getRow().getWhen().as(ZonedDateTime.class);
         }
 
         return null;
     }
 
-    public void setWhen(@Nonnull DateTime when) {
+    public void setWhen(@Nonnull ZonedDateTime when) {
         if (hasRow()) {
             //noinspection ConstantConditions
             getRow().setWhen(com.robwilliamson.healthyesther.db.includes.DateTime.from(when));
@@ -231,11 +232,17 @@ public class EditEventFragment extends EditFragment<EventTable.Row>
             }
 
             if (getTimeButton() != null) {
-                getTimeButton().setText(Utils.Time.toString(row.getWhen().as(DateTime.class), DateTimeFormat.shortTime()));
+                getTimeButton().setText(
+                        Utils.Time.toString(
+                                row.getWhen().as(ZonedDateTime.class),
+                                TIME));
             }
 
             if (getDateButton() != null) {
-                getDateButton().setText(Utils.Time.toString(row.getWhen().as(DateTime.class), DateTimeFormat.mediumDate()));
+                getDateButton().setText(
+                        Utils.Time.toString(
+                                row.getWhen().as(ZonedDateTime.class),
+                                DateTimeFormatter.ISO_LOCAL_DATE));
             }
         }
         mSettingRowName = false;

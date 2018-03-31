@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
@@ -20,17 +20,19 @@ import com.robwilliamson.healthyesther.test.HomeActivityAccessor;
 import com.robwilliamson.healthyesther.test.NoteEventActivityAccessor;
 import com.robwilliamson.healthyesther.test.Orientation;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.time.ZonedDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
@@ -50,6 +52,7 @@ public class NoteEventActivityEspressoTest {
     private static final String NOTE_NAME = "A Note";
     private static final String NOTE_CONTENT = "Some important notes.";
 
+    @SuppressWarnings("RedundantThrows")
     @Before
     public void setUp() throws Exception {
         HomeActivityAccessor.setShowNavigationDrawer(false);
@@ -116,17 +119,22 @@ public class NoteEventActivityEspressoTest {
     @Test
     public void test_setNoteRelativeTime_modifiesEventTime() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
+        onView(EditAccessor.whenRelativeSelectorLayout()).perform(click());
 
-        final DateTime expected = DateTime.now().minusMinutes(35);
-        int hourOfDay = expected.getHourOfDay();
-        final String meridianSufix = hourOfDay > 11 ? "PM" : "AM";
+        final ZonedDateTime expected = ZonedDateTime.now().minusMinutes(36);
+        int hourOfDay = expected.getHour();
+        final String meridianSuffix = hourOfDay > 11 ? "PM" : "AM";
         hourOfDay = hourOfDay == 12 ? 0 : hourOfDay % 12;
+        String minute = String.valueOf(expected.getMinute());
+        if (minute.length() == 1) {
+            minute = "0" + minute;
+        }
+
         String expectedString = String.valueOf(hourOfDay) +
                 ":" +
-                expected.getMinuteOfHour() +
+                minute +
                 " " +
-                meridianSufix;
-        onView(EditAccessor.whenRelativeSelectorLayout()).perform(click());
+                meridianSuffix;
         onView(EditAccessor.whenTime()).check(
                 matches(
                         withText(expectedString)));
@@ -136,6 +144,7 @@ public class NoteEventActivityEspressoTest {
     public void test_createNote_updatesDatabase() {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         onView(NoteEventActivityAccessor.nameValue()).perform(typeText(NOTE_NAME));
+        onView(NoteEventActivityAccessor.noteContent()).perform(scrollTo());
         onView(NoteEventActivityAccessor.noteContent()).perform(typeText(NOTE_CONTENT));
         onView(EditAccessor.ok()).perform(click());
 

@@ -8,14 +8,12 @@ import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.Utils;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
+import java.time.ZonedDateTime;
 import java.util.TimeZone;
 
 public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment {
     private DateTimePickerListener mListener;
-    private DateTime mDateTime;
+    private ZonedDateTime mDateTime;
 
     protected void restoreDialog(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -29,17 +27,17 @@ public abstract class AbstractDateTimePickerFragment extends FixedDialogFragment
         Utils.Time.bundle(outState, getClass().getCanonicalName(), mDateTime);
     }
 
-    public void show(android.support.v4.app.FragmentManager manager, DateTime initialTime) {
+    public void show(android.support.v4.app.FragmentManager manager, ZonedDateTime initialTime) {
         setDateTime(initialTime);
         show(manager, getName());
     }
 
-    protected DateTime getLocalDateTime() {
+    protected ZonedDateTime getLocalDateTime() {
         return mDateTime;
     }
 
-    public void setDateTime(DateTime dateTime) {
-        mDateTime = dateTime.withZone(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+    public void setDateTime(ZonedDateTime dateTime) {
+        mDateTime = dateTime;
     }
 
     protected abstract String getName();

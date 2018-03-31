@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther.util.time;
 
@@ -10,12 +10,13 @@ import com.robwilliamson.healthyesther.util.time.Range;
 import com.robwilliamson.healthyesther.util.time.TimeRegion;
 import com.robwilliamson.healthyesther.util.time.TimeRegion.Comparison;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import static com.robwilliamson.healthyesther.unit.Assert.assertIsEqual;
 import static org.junit.Assert.assertEquals;
@@ -24,11 +25,35 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class RangeTest {
-    private static final DateTime FROM = new DateTime(2010, 4, 19, 13, 0, 0, 0, DateTimeZone.UTC);
-    private static final DateTime TO = new DateTime(2010, 4, 19, 14, 0, 0, 0, DateTimeZone.UTC);
-    private static final DateTime CENTRE = new DateTime(2010, 4, 19, 13, 30, 0, 0, DateTimeZone.UTC);
-    private static final Duration SIGMA = Duration.standardMinutes(30);
-    private static final Duration SMALL_SIGMA = Duration.standardMinutes(1);
+    private static final ZonedDateTime FROM = ZonedDateTime.of(
+            2010,
+            4,
+            19,
+            13,
+            0,
+            0,
+            0,
+            ZoneOffset.UTC);
+    private static final ZonedDateTime TO = ZonedDateTime.of(
+            2010,
+            4,
+            19,
+            14,
+            0,
+            0,
+            0,
+            ZoneOffset.UTC);
+    private static final ZonedDateTime CENTRE = ZonedDateTime.of(
+            2010,
+            4,
+            19,
+            13,
+            30,
+            0,
+            0,
+            ZoneOffset.UTC);
+    private static final Duration SIGMA = Duration.ofMinutes(30);
+    private static final Duration SMALL_SIGMA = Duration.ofMinutes(1);
 
     private static final Range SMALL_FROM_RANGE = new Range(FROM, SMALL_SIGMA);
     private static final Range SMALL_CENTRE_RANGE = new Range(CENTRE, SMALL_SIGMA);
@@ -38,6 +63,7 @@ public class RangeTest {
 
     private Range mSubject;
 
+    @SuppressWarnings("RedundantThrows")
     @Before
     public void setUp() throws Exception {
         mSubject = new Range(FROM, TO);
@@ -121,7 +147,8 @@ public class RangeTest {
 
     @Test
     public void testStarting() {
-        Duration difference = Duration.millis(TO.getMillis() - FROM.getMillis());
+        Duration difference = Duration.ofMillis(
+                TO.toInstant().toEpochMilli() - FROM.toInstant().toEpochMilli());
         Range subject = mSubject.startingFrom(TO);
         assertIsEqual(TO, subject.from);
         assertIsEqual(TO.plus(difference), subject.to);
@@ -132,21 +159,24 @@ public class RangeTest {
     @Test
     public void testStartingYesterday() {
         Range subject = mSubject.startingYesterday();
-        assertIsEqual(FROM.minus(Duration.standardDays(1)), subject.from);
-        assertIsEqual(TO.minus(Duration.standardDays(1)), subject.to);
+        assertIsEqual(FROM.minus(Duration.ofDays(1)), subject.from);
+        assertIsEqual(TO.minus(Duration.ofDays(1)), subject.to);
     }
 
     @Test
     public void testStartingTomorrow() {
         Range subject = mSubject.startingTomorrow();
-        assertIsEqual(FROM.plus(Duration.standardDays(1)), subject.from);
-        assertIsEqual(TO.plus(Duration.standardDays(1)), subject.to);
+        assertIsEqual(FROM.plus(Duration.ofDays(1)), subject.from);
+        assertIsEqual(TO.plus(Duration.ofDays(1)), subject.to);
     }
 
     @Test
     public void testStartingFromDate() {
         TimeRegion subject = mSubject.startingFrom(2016, 7, 13);
-        assertTrue(subject.contains(FROM.withDate(2016, 7, 13)));
+        assertTrue(subject.contains(FROM
+                .withYear(2016)
+                .withMonth(7)
+                .withDayOfMonth(13)));
     }
 
     private void checkTimingIsCorrect(Range subject) {

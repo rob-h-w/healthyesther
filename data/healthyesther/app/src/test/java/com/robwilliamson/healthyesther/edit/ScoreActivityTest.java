@@ -15,7 +15,7 @@ import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import test.ActivityTestContext;
@@ -24,7 +24,7 @@ import test.view.EditScoreFragmentAccessor;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class ScoreActivityTest {
     private static final String SCORE_NAME = "Foonsness";

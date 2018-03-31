@@ -9,13 +9,15 @@ import android.util.Log;
 import com.robwilliamson.healthyesther.db.Utils;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 
+import java.time.ZonedDateTime;
+
 import javax.annotation.Nonnull;
 
-public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateTime> {
+public class DateTimeConverter implements DateTime.Converter<ZonedDateTime> {
     private static final String LOG_TAG = DateTimeConverter.class.getName();
 
     static {
-        DateTime.register(org.joda.time.DateTime.class, new DateTimeConverter());
+        DateTime.register(ZonedDateTime.class, new DateTimeConverter());
     }
 
     @Nonnull
@@ -25,13 +27,13 @@ public class DateTimeConverter implements DateTime.Converter<org.joda.time.DateT
 
     @Nonnull
     @Override
-    public DateTime from(@Nonnull org.joda.time.DateTime fromType) {
+    public DateTime from(@Nonnull ZonedDateTime fromType) {
         return new DateTime(Utils.Time.toLocalString(fromType));
     }
 
     @Nonnull
     @Override
-    public org.joda.time.DateTime to(@Nonnull Class<org.joda.time.DateTime> type, @Nonnull DateTime dateTime) {
+    public ZonedDateTime to(@Nonnull Class<ZonedDateTime> type, @Nonnull DateTime dateTime) {
         try {
             return Utils.Time.fromLocalString(dateTime.getString());
         } catch (IllegalArgumentException e) {

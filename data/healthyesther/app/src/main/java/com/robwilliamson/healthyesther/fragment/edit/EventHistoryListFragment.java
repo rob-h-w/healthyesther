@@ -8,24 +8,24 @@ import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.Utils;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 
 public class EventHistoryListFragment extends EventListFragment {
     private static final String FROM = "from";
-    private static final Duration WEEK = Duration.standardDays(7);
+    private static final Duration WEEK = Duration.ofDays(7);
 
-    private DateTime mFrom;
+    private ZonedDateTime mFrom;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public EventHistoryListFragment() {
-        mFrom = DateTime.now().minus(WEEK);
+        mFrom = ZonedDateTime.now().minus(WEEK);
     }
 
-    public static EventHistoryListFragment getInstance(DateTime from) {
+    public static EventHistoryListFragment getInstance(ZonedDateTime from) {
         EventHistoryListFragment fragment = new EventHistoryListFragment();
         Bundle arguments = new Bundle();
         arguments.putString(FROM, Utils.Time.toDatabaseString(from));

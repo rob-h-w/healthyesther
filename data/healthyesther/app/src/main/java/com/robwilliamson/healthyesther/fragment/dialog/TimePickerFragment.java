@@ -23,8 +23,8 @@ public class TimePickerFragment extends AbstractDateTimePickerFragment
         return new TimePickerDialog(
                 getActivity(),
                 this,
-                getLocalDateTime().getHourOfDay(),
-                getLocalDateTime().getMinuteOfHour(),
+                getLocalDateTime().getHour(),
+                getLocalDateTime().getMinute(),
                 DateFormat.is24HourFormat(getActivity()));
 
     }
@@ -36,7 +36,11 @@ public class TimePickerFragment extends AbstractDateTimePickerFragment
 
     @Override
     public void onTimeSet(android.widget.TimePicker view, int hourOfDay, int minute) {
-        setDateTime(getLocalDateTime().withTime(hourOfDay, minute, 0, 0));
+        setDateTime(getLocalDateTime()
+                .withHour(hourOfDay)
+                .withMinute(minute)
+                .withSecond(0)
+                .withNano(0));
         callCallback();
     }
 }

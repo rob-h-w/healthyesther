@@ -1,14 +1,12 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.dropbox;
 
 import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.http.OkHttpRequestor;
+import com.dropbox.core.http.StandardHttpRequestor;
 import com.dropbox.core.v2.DbxClientV2;
-
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
@@ -18,11 +16,12 @@ public class DropboxClientFactory {
 
     public static void init(@Nonnull String accessToken) {
         if (sDbxClient == null) {
-            String userLocale = Locale.getDefault().toString();
-            DbxRequestConfig requestConfig = new DbxRequestConfig(
-                    "healthy Esther",
-                    userLocale,
-                    OkHttpRequestor.INSTANCE);
+            StandardHttpRequestor requestor = new StandardHttpRequestor(
+                    StandardHttpRequestor.Config.DEFAULT_INSTANCE);
+            DbxRequestConfig requestConfig = DbxRequestConfig
+                    .newBuilder("healthy Esther")
+                    .withHttpRequestor(requestor)
+                    .build();
 
             sDbxClient = new DbxClientV2(requestConfig, accessToken);
         }

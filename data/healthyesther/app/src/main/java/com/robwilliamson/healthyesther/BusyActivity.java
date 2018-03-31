@@ -1,14 +1,16 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.view.Window;
 
 import java.util.concurrent.CountDownLatch;
 
+@SuppressLint("Registered")
 public class BusyActivity extends BaseFragmentActivity {
     private static volatile Dialog mDialog;
     private volatile int mBusy = 0;

@@ -14,8 +14,9 @@ import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Where;
 
-import org.joda.time.DateTimeZone;
-
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import javax.annotation.Nonnull;
@@ -66,12 +67,12 @@ public class V4 implements Upgrade {
     }
 
     @Nonnull
-    private static Object addTimezone(@Nullable String time, @Nonnull DateTimeZone zone) {
+    private static Object addTimezone(@Nullable String time, @Nonnull ZoneId zone) {
         if (time == null) {
             return DateTime.class;
         }
 
-        org.joda.time.DateTime dateTime;
+        ZonedDateTime dateTime;
 
         if (time.contains("T")) {
             if (time.contains(" -") || time.contains(" +")) {
@@ -81,7 +82,7 @@ public class V4 implements Upgrade {
             }
         } else {
             time = time.replace(' ', 'T');
-            dateTime = org.joda.time.DateTime.parse(time).withZoneRetainFields(zone);
+            dateTime = Utils.Time.fromUtcString(time).withZoneSameLocal(zone);
         }
 
         return DateTime.from(dateTime);
@@ -162,9 +163,9 @@ public class V4 implements Upgrade {
                                 }
                             },
                             Arrays.asList("[when]", "created", "modified"),
-                            addTimezone(events.getString(WHEN), DateTimeZone.getDefault()),
-                            addTimezone(events.getString(CREATED), DateTimeZone.UTC),
-                            addTimezone(events.getString(MODIFIED), DateTimeZone.UTC));
+                            addTimezone(events.getString(WHEN), ZoneId.systemDefault()),
+                            addTimezone(events.getString(CREATED), ZoneOffset.UTC),
+                            addTimezone(events.getString(MODIFIED), ZoneOffset.UTC));
                 } while (events.moveToNext());
             }
         }

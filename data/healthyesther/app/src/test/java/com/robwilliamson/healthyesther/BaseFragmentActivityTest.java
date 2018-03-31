@@ -1,29 +1,28 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.ActivityController;
+
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,35 +34,18 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class BaseFragmentActivityTest {
     @Nonnull
+    private
     ActivityController<TestableBaseFragmentActivity> mActivityController = Robolectric.buildActivity(TestableBaseFragmentActivity.class);
     @Nonnull
     private TestableBaseFragmentActivity mFragmentActivity = mActivityController.get();
 
-    @Mock
-    private Window.Callback mCallback;
-
-    @Mock
-    private ViewGroup mViewRoot;
-
-    @Mock
-    private View mDecorView;
-
-    @Mock
-    private Toolbar mToolbar;
-
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        /*
-        Window window = mFragmentActivity.getWindow();
-        doReturn(mCallback).when(window).getCallback();
-        doReturn(mViewRoot).when(window).findViewById(android.R.id.content);
-        doReturn(mToolbar).when(window).findViewById(R.id.toolbar);
-        doReturn(mDecorView).when(window).getDecorView();*/
     }
 
     @Test
@@ -99,7 +81,7 @@ public class BaseFragmentActivityTest {
 
         assertNotNull(mFragmentActivity.getIntent());
 
-        assertThat(mFragmentActivity.getIntent().getComponent().getClassName(),
+        assertThat(Objects.requireNonNull(mFragmentActivity.getIntent().getComponent()).getClassName(),
                 is(SettingsActivity.class.getName()));
     }
 

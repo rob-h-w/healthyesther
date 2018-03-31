@@ -11,7 +11,6 @@ import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
 import com.robwilliamson.healthyesther.db.includes.Where;
 
-import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +18,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class TransactionTest {
     static {
@@ -55,7 +55,16 @@ public class TransactionTest {
             "DATE_TIME",
             "nullDateTime"
     };
-    private static final DateTime DATE_TIME = new DateTime(new org.joda.time.DateTime().withDate(2015, 10, 24).withTime(22, 36, 21, 0).withZoneRetainFields(DateTimeZone.forTimeZone(TimeZone.getTimeZone("GMT"))));
+    private static final DateTime DATE_TIME = new DateTime(
+            ZonedDateTime.of(
+                    2015,
+                    10,
+                    24,
+                    22,
+                    36,
+                    21,
+                    0,
+                    ZoneId.of("GMT")));
     private static final String DATE_TIME_STRING = "2015-10-24T22:36:21 +00:00";
     private static final Object[] VALUES = {
             String.class,

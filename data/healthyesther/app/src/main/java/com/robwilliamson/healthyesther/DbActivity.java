@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther;
 
@@ -37,7 +37,10 @@ public abstract class DbActivity extends BusyActivity
     private Executor mExecutor;
     private volatile AsyncTask<Void, Void, Void> mTask = null;
 
-    private static void setEnabled(Menu menu, int itemId, boolean enabled) {
+    private static void setEnabled(
+            Menu menu,
+            int itemId,
+            @SuppressWarnings("SameParameterValue") boolean enabled) {
         MenuItem item = menu.findItem(itemId);
 
         if (item != null) {
@@ -50,11 +53,8 @@ public abstract class DbActivity extends BusyActivity
         Log.e(LOG_TAG, "transaction failed", e);
         setBusy(false);
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                throw new DatabaseException(e);
-            }
+        runOnUiThread(() -> {
+            throw new DatabaseException(e);
         });
     }
 
@@ -125,13 +125,12 @@ public abstract class DbActivity extends BusyActivity
 
     @Override
     public void onDialogOk(ConfirmationDialogFragment dialogFragment) {
-        runAsTask(new Runnable() {
-            @Override
-            public void run() {
-                Intent startRestoreIntent = new Intent(DbActivity.this, DropboxSyncActivity.class);
-                startRestoreIntent.putExtra(DropboxSyncActivity.RESTORE, true);
-                startActivity(startRestoreIntent);
-            }
+        runAsTask(() -> {
+            Intent startRestoreIntent = new Intent(
+                    DbActivity.this,
+                    DropboxSyncActivity.class);
+            startRestoreIntent.putExtra(DropboxSyncActivity.RESTORE, true);
+            startActivity(startRestoreIntent);
         });
     }
 
@@ -145,7 +144,7 @@ public abstract class DbActivity extends BusyActivity
         return com.robwilliamson.healthyesther.Utils.checkNotNull(mExecutor);
     }
 
-    protected final void runAsTask(final Runnable runnable) {
+    protected final synchronized void runAsTask(final Runnable runnable) {
         mTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -171,7 +170,7 @@ public abstract class DbActivity extends BusyActivity
     }
 
     public static class DatabaseException extends RuntimeException {
-        public DatabaseException(Throwable throwable) {
+        DatabaseException(Throwable throwable) {
             super(throwable);
         }
     }
