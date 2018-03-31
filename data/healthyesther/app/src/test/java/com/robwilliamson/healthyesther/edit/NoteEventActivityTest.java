@@ -1,4 +1,4 @@
-/**
+/*
   * © Robert Williamson 2014-2016.
   * This program is distributed under the terms of the GNU General Public License.
   */
@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import test.ActivityTestContext;
@@ -33,7 +33,7 @@ import test.view.EditNoteEventFragmentAccessor;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class NoteEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
@@ -210,7 +210,7 @@ public class NoteEventActivityTest {
     public void whenNoteAlreadyExists_populatesAutocompleteWithNoteName() {
         noteAlreadyExists();
 
-        assertThat((String) Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
+        assertThat(Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
     }
 
     @Test
@@ -224,7 +224,7 @@ public class NoteEventActivityTest {
     public void whenNoteAlreadyExistsAfterConfigurationChange_populatesAutocompleteWithNoteName() {
         noteAlreadyExistsAfterConfigurationChange();
 
-        assertThat((String) Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
+        assertThat(Utils.checkNotNull(mNoteEventFragmentAccessor.getNameView()).getAdapter().getItem(0), is(NOTE_NAME));
     }
 
     private void noteAlreadyExistsAfterConfigurationChange() {
@@ -277,7 +277,8 @@ public class NoteEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mContext.getActivityController().withIntent(intent).setup();
+        mContext.reset(intent);
+        mContext.getActivityController().setup();
         Robolectric.flushBackgroundThreadScheduler();
         Robolectric.flushForegroundThreadScheduler();
     }

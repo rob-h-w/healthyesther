@@ -1,10 +1,11 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package test;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,9 +19,10 @@ import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
@@ -66,7 +68,16 @@ public class ActivityTestContext<T extends Activity> {
     }
 
     public void reset() {
-        mActivityController = Robolectric.buildActivity(mActivityClass);
+        this.reset(null);
+    }
+
+    public void reset(@Nullable Intent intent) {
+        if (intent != null) {
+            mActivityController = Robolectric.buildActivity(mActivityClass, intent);
+        } else {
+            mActivityController = Robolectric.buildActivity(mActivityClass);
+        }
+
         mActivity = mActivityController.get();
     }
 

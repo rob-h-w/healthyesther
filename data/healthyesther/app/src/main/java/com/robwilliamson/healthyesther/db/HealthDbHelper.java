@@ -145,7 +145,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             final String dbFilename = getDropboxFileName();
             @Nonnull
             final UploadUploader uploader = com.robwilliamson.healthyesther.Utils.checkNotNull(
-                    client.files.uploadBuilder("/" + dbFilename)
+                    client.files().uploadBuilder("/" + dbFilename)
                             .withMode(WriteMode.OVERWRITE).start());
 
             try (FileInputStream fileInputStream = new FileInputStream(mContext.getDatabasePath(Contract.NAME).getAbsolutePath())) {
@@ -165,7 +165,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             @Nonnull
             final String dbFilename = getDropboxFileName();
             @Nonnull
-            final SearchResult result = client.files.search("", dbFilename);
+            final SearchResult result = client.files().search("", dbFilename);
 
             if (result.getMatches().isEmpty()) {
                 return;
@@ -175,7 +175,7 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             closeDb();
 
             @Nonnull
-            final DbxDownloader<FileMetadata> dbxDownloader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files.download("/" + dbFilename));
+            final DbxDownloader<FileMetadata> dbxDownloader = com.robwilliamson.healthyesther.Utils.checkNotNull(client.files().download("/" + dbFilename));
             @Nonnull
             final String outputPath = mContext.getDatabasePath(getDatabaseName()).getAbsolutePath();
             Log.d(getClass().getName(), outputPath);

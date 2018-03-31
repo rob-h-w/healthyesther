@@ -1,4 +1,4 @@
-/**
+/*
   * © Robert Williamson 2014-2016.
   * This program is distributed under the terms of the GNU General Public License.
   */
@@ -184,6 +184,7 @@ public enum TimingManager {
             }
 
             // Use time elapsed since boot.
+            assert alarmManager != null;
             alarmManager.set(
                     AlarmManager.ELAPSED_REALTIME,
                     Utils.Time.toBootRealTimeElapsedMillis(alarmTime),
@@ -215,6 +216,7 @@ public enum TimingManager {
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
+            assert notificationManager != null;
             notificationManager.notify(1, notification);
 
             mTimingModel.onNotified(context);

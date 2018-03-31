@@ -1,12 +1,10 @@
-/**
+/*
   * © Robert Williamson 2014-2016.
   * This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 
 import com.robwilliamson.healthyesther.BuildConfig;
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
@@ -19,12 +17,15 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isIn;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class ScoreEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
@@ -65,6 +66,7 @@ public class ScoreEventActivityTest {
 
         mEventFragmentAccessor = new EditEventFragmentAccessor(mContext);
         mScoreEventGroupFramgentAccessor = new EditScoreEventGroupAccessor(mContext);
+        JodaTimeAndroid.init(RuntimeEnvironment.application);
     }
 
     @After
@@ -246,8 +248,8 @@ public class ScoreEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mContext.reset();
-        mContext.getActivityController().withIntent(intent).setup();
+        mContext.reset(intent);
+        mContext.getActivityController().setup();
     }
 
     private void newScoreEventIsAdded() {

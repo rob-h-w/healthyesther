@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import test.ActivityTestContext;
@@ -35,7 +35,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class MedicationEventActivityTest {
     private static final String EVENT_NAME = "Event Name";
@@ -191,9 +191,9 @@ public class MedicationEventActivityTest {
         Intent intent = mContext.getActivity().getIntent();
         Bundle bundle = new Bundle();
         mContext.getActivityController().pause().saveInstanceState(bundle).stop().destroy();
-        mContext.reset();
+        mContext.reset(intent);
 
-        mContext.getActivityController().withIntent(intent).setup(bundle);
+        mContext.getActivityController().setup(bundle);
     }
 
     private void anExistingMedicationNameIsEdited() {
@@ -226,7 +226,8 @@ public class MedicationEventActivityTest {
 
         Intent intent = new Intent();
         intent.putExtra(HealthDatabase.EVENT_TABLE.getName(), event);
-        mContext.getActivityController().withIntent(intent).setup();
+        mContext.reset(intent);
+        mContext.getActivityController().setup();
         return medEvent;
     }
 

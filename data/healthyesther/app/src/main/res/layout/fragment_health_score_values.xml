@@ -9,34 +9,6 @@ This program is distributed under the terms of the GNU General Public License.
 
     <include layout="@layout/enter_value_name" />
 
-    <LinearLayout
-        style="@style/AppTheme.sectionLayout"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/best_value_title"
-                style="@style/AppTheme.text"
-                android:layout_gravity="start"
-                android:text="@string/best_value" />
-
-            <TextView
-                android:id="@+id/best_value_current_value"
-                style="@style/AppTheme.text"
-                android:layout_gravity="end" />
-
-        </FrameLayout>
-
-        <SeekBar
-            android:id="@+id/best_value"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
     <LinearLayout style="@style/AppTheme.sectionLayout">
 
         <Switch
@@ -74,6 +46,38 @@ This program is distributed under the terms of the GNU General Public License.
             android:id="@+id/max_label"
             style="@style/AppTheme.text.textEditor"
             android:hint="@string/maximum_value_name_hint" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/AppTheme.sectionLayout"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/best_value_title"
+                style="@style/AppTheme.text"
+                android:layout_gravity="start"
+                android:text="@string/best_value" />
+
+            <TextView
+                android:id="@+id/best_value_current_value"
+                style="@style/AppTheme.text"
+                android:layout_gravity="end" />
+
+            <com.robwilliamson.healthyesther.widget.MultiRangePicker
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </FrameLayout>
+
+        <SeekBar
+            android:id="@+id/best_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </LinearLayout>

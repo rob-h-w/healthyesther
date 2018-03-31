@@ -7,9 +7,6 @@ package com.robwilliamson.healthyesther;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Application;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.ContactsContract;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
 import com.robwilliamson.healthyesther.reminder.TimingManager;

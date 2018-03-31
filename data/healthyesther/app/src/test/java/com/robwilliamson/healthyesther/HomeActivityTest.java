@@ -1,12 +1,10 @@
-/**
+/*
   * © Robert Williamson 2014-2016.
   * This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
@@ -21,18 +19,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.internal.ShadowExtractor;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowIntent;
-import org.robolectric.util.ActivityController;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 
-@RunWith(RobolectricGradleTestRunner.class)
+@RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class HomeActivityTest {
     private TestableHomeActivity mActivity;
@@ -69,9 +67,10 @@ public class HomeActivityTest {
     }
 
     private <T> void whenEventSelected_launchesActivityType(T primaryKey, Class activityClass) {
+        //noinspection ResultOfMethodCallIgnored
         doReturn(primaryKey).when(mRow).getTypeId();
         mActivity.onEventSelected(mRow);
-        ShadowIntent shadowIntent = ((ShadowIntent) ShadowExtractor.extract(mActivity.startActivityIntent));
+        ShadowIntent shadowIntent = ((ShadowIntent) Shadow.extract(mActivity.startActivityIntent));
         assertThat(shadowIntent.getIntentClass(), is(equalTo(activityClass)));
 
     }
@@ -79,15 +78,6 @@ public class HomeActivityTest {
     private static class TestableHomeActivity extends HomeActivity {
         public Intent startActivityIntent = null;
 
-        /**
-         * Same as {@link #startActivity(Intent, Bundle)} with no options
-         * specified.
-         *
-         * @param intent The intent to start.
-         * @throws ActivityNotFoundException
-         * @see {@link #startActivity(Intent, Bundle)}
-         * @see #startActivityForResult
-         */
         @Override
         public void startActivity(Intent intent) {
             startActivityIntent = intent;
