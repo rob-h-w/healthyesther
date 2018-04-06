@@ -1,11 +1,10 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.db;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -22,7 +21,6 @@ import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,13 +29,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.annotation.Nonnull;
 
@@ -55,54 +49,16 @@ public final class Utils {
         }
     }
 
-    public static String join(Object[] list, String separator) {
-        return join(separator, true, list);
-    }
-
-    public static String join(String separator, boolean joinNull, ArrayList<? extends Object> list) {
-        return join(separator, joinNull, list.toArray());
-    }
-
-    public static String join(String separator, boolean joinNull, Object... list) {
-        if (list == null) {
-            return "";
-        }
-
-        StringBuilder str = new StringBuilder();
-        String thisSeparator = "";
-        for (Object item : list) {
-            if (!joinNull && item == null) {
-                continue;
-            }
-
-            str.append(thisSeparator).append(item);
-            thisSeparator = separator;
-        }
-
-        return str.toString();
-    }
-
     public static boolean noString(String string) {
         return string == null || string.length() == 0;
     }
 
-    public static String assertString(String string) {
-        if (noString(string)) {
-            throw new StringMissingException();
-        }
-
-        return string;
-    }
-
     public static boolean equals(Object left, Object right) {
-        if (left == null && right == null) {
-            return true;
-        }
+        return left == null
+                && right == null
+                || !(left == null || right == null)
+                && left.equals(right);
 
-        return !(left == null || right == null) && left.equals(right);
-    }
-
-    public static class StringMissingException extends RuntimeException {
     }
 
     public static class Time {
@@ -179,7 +135,7 @@ public final class Utils {
             }
         }
 
-        public static ZonedDateTime fromDatabaseDefaultString(String string) {
+        static ZonedDateTime fromDatabaseDefaultString(String string) {
             return fromString(string, DB_DEFAULT_FORMATTER);
         }
 
@@ -191,7 +147,7 @@ public final class Utils {
             return formatter.format(dateTime);
         }
 
-        public static ZonedDateTime fromString(String string, DateTimeFormatter formatter) {
+        static ZonedDateTime fromString(String string, DateTimeFormatter formatter) {
             com.robwilliamson.healthyesther.Utils.checkNotNull(string);
             return ZonedDateTime.parse(string, formatter);
         }
@@ -204,43 +160,18 @@ public final class Utils {
     }
 
     public static class Strings {
-        public static boolean validateLength(String string, int min, int max) {
-            return string != null && string.length() > min - 1 && string.length() < max + 1;
-        }
 
         public static boolean nullOrEmpty(String string) {
             return string == null || string.isEmpty();
         }
 
         public static boolean equals(String first, String second) {
-            if (first == second) {
-                return true;
-            }
+            return first.equals(second) || second != null && first.equals(second);
 
-            if (first == null || second == null) {
-                return false;
-            }
-
-            return first.equals(second);
         }
     }
 
     public static class Db {
-        public static HashMap<String, Long> cursorToSuggestionList(Cursor cursor,
-                                                                   String suggestionColumnName,
-                                                                   String rowIdColumnName) {
-            final HashMap<String, Long> suggestionIds = new HashMap<String, Long>(cursor.getCount());
-            final int suggestionIndex = cursor.getColumnIndex(suggestionColumnName);
-            final int rowIdIndex = cursor.getColumnIndex(rowIdColumnName);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    suggestionIds.put(cursor.getString(suggestionIndex), cursor.getLong(rowIdIndex));
-                } while (cursor.moveToNext());
-            }
-
-            return suggestionIds;
-        }
 
         @Nonnull
         public static String cleanName(@Nonnull String name) {
@@ -257,17 +188,18 @@ public final class Utils {
         }
 
         public static class TestData {
+            @SuppressWarnings("unused")
             private static final String LOG_TAG = TestData.class.getName();
             private static final int pseudoRandomMax = 1000;
             private static int pseudoRandom;
-            private static Pair<Integer, Integer> skipDailyEventRange = new Pair<Integer, Integer>(0, 20);
-            private static Pair<Integer, Integer> randomMedicationRange = new Pair<Integer, Integer>(0, 4);
-            private static Pair<Integer, Integer> breakfast = new Pair<Integer, Integer>(6, 11);
-            private static Pair<Integer, Integer> lunch = new Pair<Integer, Integer>(12, 15);
-            private static Pair<Integer, Integer> dinner = new Pair<Integer, Integer>(16, 22);
+            private static Pair<Integer, Integer> skipDailyEventRange = new Pair<>(0, 20);
+            private static Pair<Integer, Integer> randomMedicationRange = new Pair<>(0, 4);
+            private static Pair<Integer, Integer> breakfast = new Pair<>(6, 11);
+            private static Pair<Integer, Integer> lunch = new Pair<>(12, 15);
+            private static Pair<Integer, Integer> dinner = new Pair<>(16, 22);
             private static Transaction transaction;
 
-            public static void transactionWithDb(@Nonnull Runnable runnable) {
+            static void transactionWithDb(@Nonnull Runnable runnable) {
                 Database database = HealthDbHelper.getDatabase();
 
                 try (Transaction t = database.getTransaction()) {
@@ -294,128 +226,123 @@ public final class Utils {
             }
 
             public static void insertFakeData() {
-                transactionWithDb(new Runnable() {
-                    @Override
-                    public void run() {
-                        long[] breakfast = new long[]{
-                                insertMeal("Toppas"),
-                                insertMeal("Toast"),
-                                insertMeal("Yoghurt"),
-                                insertMeal("Melon")
-                        };
+                transactionWithDb(() -> {
+                    long[] breakfast = new long[]{
+                            insertMeal("Toppas"),
+                            insertMeal("Toast"),
+                            insertMeal("Yoghurt"),
+                            insertMeal("Melon")
+                    };
 
-                        long[] lunch = new long[]{
-                                insertMeal("Sandwiches"),
-                                insertMeal("Soup")
-                        };
+                    long[] lunch = new long[]{
+                            insertMeal("Sandwiches"),
+                            insertMeal("Soup")
+                    };
 
-                        long[] dinner = new long[]{
-                                insertMeal("Coq au vin"),
-                                insertMeal("Spaghetti bolognese"),
-                                insertMeal("Beef and prune casserole"),
-                                insertMeal("Frauen pizza"),
-                                insertMeal("Chester Burger"),
-                                insertMeal("Männer pizza")
-                        };
+                    long[] dinner = new long[]{
+                            insertMeal("Coq au vin"),
+                            insertMeal("Spaghetti bolognese"),
+                            insertMeal("Beef and prune casserole"),
+                            insertMeal("Frauen pizza"),
+                            insertMeal("Chester Burger"),
+                            insertMeal("Männer pizza")
+                    };
 
-                        long[] medication = new long[]{
-                                insertMedication("Paracetamol"),
-                                insertMedication("Ibuprofen"),
-                                insertMedication("ACC Akut"),
-                                insertMedication("Fluoxetine"),
-                                insertMedication("Citalopram"),
-                                insertMedication("Escitalopram")
-                        };
+                    long[] medication = new long[]{
+                            insertMedication("Paracetamol"),
+                            insertMedication("Ibuprofen"),
+                            insertMedication("ACC Akut"),
+                            insertMedication("Fluoxetine"),
+                            insertMedication("Citalopram"),
+                            insertMedication("Escitalopram")
+                    };
 
-                        long dailyMedicationId = medication[5];
+                    long dailyMedicationId = medication[5];
 
-                        Set<Integer> thirtyOneDayMonths = new HashSet<Integer>();
-                        thirtyOneDayMonths.addAll(Arrays.asList(1,
-                                3,
-                                5,
-                                7,
-                                8,
-                                10,
-                                12));
-                        Set<Integer> thirtyDayMonths = new HashSet<Integer>();
-                        thirtyDayMonths.addAll(Arrays.asList(4,
-                                6,
-                                9,
-                                11));
+                    Set<Integer> thirtyOneDayMonths = new HashSet<>(Arrays.asList(1,
+                            3,
+                            5,
+                            7,
+                            8,
+                            10,
+                            12));
+                    Set<Integer> thirtyDayMonths = new HashSet<>(Arrays.asList(4,
+                            6,
+                            9,
+                            11));
 
-                        for (int year = 2013; year <= 2014; year++) {
-                            for (int month = 1; month <= 12; month++) {
-                                final int daysInMonth = thirtyDayMonths.contains(month) ? 30 :
-                                        (thirtyOneDayMonths.contains(month) ? 31 : 28);
-                                for (int day = 1; day <= daysInMonth; day++) {
-                                    boolean hadDailyMedication = false;
-                                    boolean hadBreakfast = false;
-                                    boolean hadLunch = false;
-                                    boolean hadDinner = false;
-                                    for (int hour = 0; hour < 24; hour++) {
-                                        pseudoRandom = pseudoRandom + 31 * hour * day * month * year;
-                                        pseudoRandom |= pseudoRandom << 17;
-                                        pseudoRandom |= pseudoRandom >> 23;
-                                        pseudoRandom %= pseudoRandomMax;
+                    for (int year = 2013; year <= 2014; year++) {
+                        for (int month = 1; month <= 12; month++) {
+                            final int daysInMonth = thirtyDayMonths.contains(month) ? 30 :
+                                    (thirtyOneDayMonths.contains(month) ? 31 : 28);
+                            for (int day = 1; day <= daysInMonth; day++) {
+                                boolean hadDailyMedication = false;
+                                boolean hadBreakfast = false;
+                                boolean hadLunch = false;
+                                boolean hadDinner = false;
+                                for (int hour = 0; hour < 24; hour++) {
+                                    pseudoRandom = pseudoRandom + 31 * hour * day * month * year;
+                                    pseudoRandom |= pseudoRandom << 17;
+                                    pseudoRandom |= pseudoRandom >> 23;
+                                    pseudoRandom %= pseudoRandomMax;
 
-                                        if (!hadDailyMedication && haveDailyMedication(hour)) {
-                                            com.robwilliamson.healthyesther.db.includes.DateTime time =
-                                                    com.robwilliamson.healthyesther.db.includes
-                                                        .DateTime.from(ZonedDateTime.now()
-                                                            .withYear(year)
-                                                            .withMonth(month)
-                                                            .withDayOfMonth(day)
-                                                            .withHour(hour)
-                                                            .withMinute(minute())
-                                                            .withSecond(second())
-                                                            .withNano(0));
-                                            EventTable.Row eventRow = new EventTable.Row(
-                                                    EventTypeTable.MEDICATION.getId(),
-                                                    time,
-                                                    time,
-                                                    null,
-                                                    "Daily medication"
-                                            );
-                                            eventRow.applyTo(transaction);
-                                            MedicationEventTable.Row medicationEvent = new MedicationEventTable.Row(eventRow.getNextPrimaryKey(),
-                                                    new MedicationTable.PrimaryKey(dailyMedicationId));
-                                            medicationEvent.applyTo(transaction);
-                                            hadDailyMedication = true;
-                                        }
+                                    if (!hadDailyMedication && haveDailyMedication(hour)) {
+                                        com.robwilliamson.healthyesther.db.includes.DateTime time =
+                                                com.robwilliamson.healthyesther.db.includes
+                                                    .DateTime.from(ZonedDateTime.now()
+                                                        .withYear(year)
+                                                        .withMonth(month)
+                                                        .withDayOfMonth(day)
+                                                        .withHour(hour)
+                                                        .withMinute(minute())
+                                                        .withSecond(second())
+                                                        .withNano(0));
+                                        EventTable.Row eventRow = new EventTable.Row(
+                                                EventTypeTable.MEDICATION.getId(),
+                                                time,
+                                                time,
+                                                null,
+                                                "Daily medication"
+                                        );
+                                        eventRow.applyTo(transaction);
+                                        MedicationEventTable.Row medicationEvent = new MedicationEventTable.Row(eventRow.getNextPrimaryKey(),
+                                                new MedicationTable.PrimaryKey(dailyMedicationId));
+                                        medicationEvent.applyTo(transaction);
+                                        hadDailyMedication = true;
+                                    }
 
-                                        if (!hadBreakfast && haveBreakfast(hour)) {
-                                            insertMeal(
-                                                    year,
-                                                    month,
-                                                    day,
-                                                    hour,
-                                                    "Breakfast",
-                                                    randomId(breakfast));
-                                            hadBreakfast = true;
-                                        }
+                                    if (!hadBreakfast && haveBreakfast(hour)) {
+                                        insertMeal(
+                                                year,
+                                                month,
+                                                day,
+                                                hour,
+                                                "Breakfast",
+                                                randomId(breakfast));
+                                        hadBreakfast = true;
+                                    }
 
-                                        if (!hadLunch && haveLunch(hour)) {
-                                            insertMeal(
-                                                    year, month, day, hour,
-                                                    "Lunch",
-                                                    randomId(lunch));
-                                            hadLunch = true;
-                                        }
+                                    if (!hadLunch && haveLunch(hour)) {
+                                        insertMeal(
+                                                year, month, day, hour,
+                                                "Lunch",
+                                                randomId(lunch));
+                                        hadLunch = true;
+                                    }
 
-                                        if (!hadDinner && haveDinner(hour)) {
-                                            insertMeal(
-                                                    year, month, day, hour,
-                                                    "Dinner",
-                                                    randomId(dinner));
-                                            hadDinner = true;
-                                        }
+                                    if (!hadDinner && haveDinner(hour)) {
+                                        insertMeal(
+                                                year, month, day, hour,
+                                                "Dinner",
+                                                randomId(dinner));
+                                        hadDinner = true;
+                                    }
 
-                                        while (inRange(rand(), randomMedicationRange)) {
-                                            insertMedication(
-                                                    year, month, day, hour,
-                                                    "Medication",
-                                                    randomId(medication));
-                                        }
+                                    while (inRange(rand(), randomMedicationRange)) {
+                                        insertMedication(
+                                                year, month, day, hour,
+                                                "Medication",
+                                                randomId(medication));
                                     }
                                 }
                             }
@@ -457,21 +384,32 @@ public final class Utils {
                 mealEventRow.applyTo(transaction);
             }
 
-            private static void insertMedication(int year, int month, int day, int hour, String medication, long medicationId) {
-                com.robwilliamson.healthyesther.db.includes.DateTime time = time(year, month, day, hour);
+            private static void insertMedication(
+                    int year,
+                    int month,
+                    int day,
+                    int hour,
+                    @SuppressWarnings("SameParameterValue") String medication,
+                    long medicationId) {
+                com.robwilliamson.healthyesther.db.includes.DateTime time =
+                        time(year, month, day, hour);
                 EventTable.Row eventRow = new EventTable.Row(EventTypeTable.MEDICATION.getId(),
                         time,
                         time,
                         null,
                         medication);
                 eventRow.applyTo(transaction);
-                MedicationEventTable.Row medicationEventRow = new MedicationEventTable.Row(eventRow.getNextPrimaryKey(),
-                        new MedicationTable.PrimaryKey(medicationId));
+                MedicationEventTable.Row medicationEventRow =
+                        new MedicationEventTable.Row(eventRow.getNextPrimaryKey(),
+                                new MedicationTable.PrimaryKey(medicationId));
                 medicationEventRow.applyTo(transaction);
             }
 
-            private static com.robwilliamson.healthyesther.db.includes.DateTime time(int year, int month,
-                                                                                     int day, int hour) {
+            private static com.robwilliamson.healthyesther.db.includes.DateTime time(
+                    int year,
+                    int month,
+                    int day,
+                    int hour) {
                 return com.robwilliamson.healthyesther.db.includes.DateTime.from(ZonedDateTime.now()
                         .withYear(year).withMonth(month).withDayOfMonth(day)
                         .withHour(hour).withMinute(minute()).withSecond(second()).withNano(0));
@@ -479,7 +417,7 @@ public final class Utils {
 
             private static boolean haveDailyMedication(int hour) {
                 return createTimeRangedEvent(hour, breakfast) ||
-                        createTimeRangedEvent(hour, new Pair<Integer, Integer>(0, 23));
+                        createTimeRangedEvent(hour, new Pair<>(0, 23));
             }
 
             private static boolean haveBreakfast(int hour) {
@@ -494,7 +432,9 @@ public final class Utils {
                 return createTimeRangedEvent(hour, dinner);
             }
 
-            private static boolean createTimeRangedEvent(int hour, Pair<Integer, Integer> timeRange) {
+            private static boolean createTimeRangedEvent(
+                    int hour,
+                    Pair<Integer, Integer> timeRange) {
                 if (!inRange(hour, timeRange)) {
                     return false;
                 }
@@ -527,6 +467,7 @@ public final class Utils {
                 return pseudoRandom;
             }
 
+            @SuppressWarnings("unused")
             public static void insertV3FakeData() {
                 final SQLiteDatabase db = HealthDbHelper.getDatabaseWrapper().getSqliteDatabase();
                 transactionWithDb(new Runnable() {
@@ -563,27 +504,9 @@ public final class Utils {
     }
 
     public static class File {
-        public static String join(Object... list) {
-            return Utils.join(java.io.File.separator,
-                    false,
-                    list);
-        }
 
         public static boolean exists(String path) {
             return (new java.io.File(path)).exists();
-        }
-
-        public static void mkdirs(String directories) {
-            java.io.File dirs = new java.io.File(directories);
-            //noinspection ResultOfMethodCallIgnored
-            dirs.mkdirs();
-        }
-
-        public static void copy(String from, String to) throws IOException {
-
-            try (InputStream in = new FileInputStream(new java.io.File(from))) {
-                copy(in, to);
-            }
         }
 
         public static void copy(InputStream from, String to) throws IOException {

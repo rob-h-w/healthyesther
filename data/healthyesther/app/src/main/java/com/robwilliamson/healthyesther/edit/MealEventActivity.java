@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
@@ -12,11 +12,8 @@ import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MealEventTable;
 import com.robwilliamson.healthyesther.db.generated.MealTable;
-import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
-import com.robwilliamson.healthyesther.db.includes.Where;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.DateTimeConverter;
@@ -79,51 +76,43 @@ public class MealEventActivity extends AbstractEditActivity
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                MealTable.Row meal = getMealFragment().getRow();
+        return (database, transaction) -> {
+            MealTable.Row meal = getMealFragment().getRow();
 
-                meal.applyTo(transaction);
+            meal.applyTo(transaction);
 
-                EventTable.Row event = getEventFragment().getRow();
-                if (event == null) {
-                    event = new EventTable.Row(
-                            EventTypeTable.MEAL.getId(),
-                            DateTimeConverter.now(),
-                            DateTimeConverter.now(),
-                            null,
-                            null);
-                }
-
-                event.setTypeId(EventTypeTable.MEAL.getId());
-                event.applyTo(transaction);
-
-                MealTable.PrimaryKey oldKey = mMealEvent == null ? null : mMealEvent.getConcretePrimaryKey().getMealId();
-
-                EventTable.PrimaryKey oldEvent = mMealEvent == null ? null : mMealEvent.getConcretePrimaryKey().getEventId();
-
-                if (oldEvent != null && oldKey != null) {
-                    mMealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
-                            foreignKey(MealEventTable.EVENT_ID, oldEvent.getId()),
-                            foreignKey(MealEventTable.MEAL_ID, oldKey.getId())));
-                }
-
-                if (mMealEvent == null) {
-                    mMealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, null);
-                } else {
-                    mMealEvent.setNextPrimaryKey(new MealEventTable.PrimaryKey(event.getNextPrimaryKey(), meal.getNextPrimaryKey()));
-                }
-
-                mMealEvent.applyTo(transaction);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
+            EventTable.Row event = getEventFragment().getRow();
+            if (event == null) {
+                event = new EventTable.Row(
+                        EventTypeTable.MEAL.getId(),
+                        DateTimeConverter.now(),
+                        DateTimeConverter.now(),
+                        null,
+                        null);
             }
+
+            event.setTypeId(EventTypeTable.MEAL.getId());
+            event.applyTo(transaction);
+
+            MealTable.PrimaryKey oldKey = mMealEvent == null ? null : mMealEvent.getConcretePrimaryKey().getMealId();
+
+            EventTable.PrimaryKey oldEvent = mMealEvent == null ? null : mMealEvent.getConcretePrimaryKey().getEventId();
+
+            if (oldEvent != null && oldKey != null) {
+                mMealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select0Or1(database, and(
+                        foreignKey(MealEventTable.EVENT_ID, oldEvent.getId()),
+                        foreignKey(MealEventTable.MEAL_ID, oldKey.getId())));
+            }
+
+            if (mMealEvent == null) {
+                mMealEvent = new MealEventTable.Row(event.getNextPrimaryKey(), meal.getNextPrimaryKey(), null, null);
+            } else {
+                mMealEvent.setNextPrimaryKey(new MealEventTable.PrimaryKey(event.getNextPrimaryKey(), meal.getNextPrimaryKey()));
+            }
+
+            mMealEvent.applyTo(transaction);
+
+            runOnUiThread(this::finish);
         };
     }
 
@@ -139,32 +128,23 @@ public class MealEventActivity extends AbstractEditActivity
 
         if (event.getConcretePrimaryKey() != null) {
 
-            getExecutor().perform(new TransactionExecutor.Operation() {
-                @Override
-                public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                    mMealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select1(
-                            database,
-                            new Where() {
-                                @Nullable
-                                @Override
-                                public String getWhere() {
-                                    return MealEventTable.EVENT_ID + " = " + event.getConcretePrimaryKey().getId();
-                                }
-                            }
+            getExecutor().perform((database, transaction) -> {
+                mMealEvent = DatabaseAccessor.MEAL_EVENT_TABLE.select1(
+                        database,
+                        () -> MealEventTable.EVENT_ID
+                                + " = " + event.getConcretePrimaryKey().getId()
+                );
+
+                getExecutor().perform((database1, transaction1) -> {
+                    MealTable.Row meal = DatabaseAccessor.MEAL_TABLE.select1(
+                            database1,
+                            WhereContains.foreignKey(
+                                    MealTable._ID,
+                                    mMealEvent.getConcretePrimaryKey().getMealId().getId())
                     );
 
-                    getExecutor().perform(new TransactionExecutor.Operation() {
-                        @Override
-                        public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                            MealTable.Row meal = DatabaseAccessor.MEAL_TABLE.select1(
-                                    database,
-                                    WhereContains.foreignKey(MealTable._ID, mMealEvent.getConcretePrimaryKey().getMealId().getId())
-                            );
-
-                            getMealFragment().setRow(meal);
-                        }
-                    });
-                }
+                    getMealFragment().setRow(meal);
+                });
             });
         }
     }

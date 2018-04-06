@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.db.integration;
 
@@ -18,6 +18,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 public class DatabaseAccessor extends HealthDatabase {
+    @SuppressWarnings("WeakerAccess")
     final static String HAPPINESS_NAME = "Happiness";
     final static String ENERGY_NAME = "Energy";
     final static String DROWSINESS_NAME = "Drowsiness";
@@ -87,7 +88,7 @@ public class DatabaseAccessor extends HealthDatabase {
     }
 
     private static class IncrementalUpgradeException extends RuntimeException {
-        public IncrementalUpgradeException(int i, int from, int to, Throwable cause) {
+        IncrementalUpgradeException(int i, int from, int to, Throwable cause) {
             super(
                     "Error upgrading from database version " + from + " to v" + to + ". Failed upgrading incrementally from v" + i + " to v" + (i + 1),
                     cause);

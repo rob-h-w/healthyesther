@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
@@ -15,9 +15,7 @@ import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreEventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
-import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.includes.WhereContains;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
@@ -35,7 +33,10 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-public class ScoreEventActivity extends AbstractEditActivity implements EditScoreFragment.Watcher, EditScoreEventFragment.Watcher, BaseFragment.Watcher {
+public class ScoreEventActivity extends AbstractEditActivity implements
+        EditScoreFragment.Watcher,
+        EditScoreEventFragment.Watcher,
+        BaseFragment.Watcher {
     private final static String SCORE_GROUP_TAG = "score group";
     private final static String EVENT_TAG = "event";
 
@@ -71,109 +72,120 @@ public class ScoreEventActivity extends AbstractEditActivity implements EditScor
             event = getEventFragment();
         }
 
-        list.add(new Pair<>((EditFragment) scoreGroup, SCORE_GROUP_TAG));
-        list.add(new Pair<>((EditFragment) event, EVENT_TAG));
+        list.add(new Pair<>(scoreGroup, SCORE_GROUP_TAG));
+        list.add(new Pair<>(event, EVENT_TAG));
 
         return list;
     }
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
-                event.setTypeId(EventTypeTable.HEALTH.getId());
-                event.applyTo(transaction);
+        return (database, transaction) -> {
+            EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
+            event.setTypeId(EventTypeTable.HEALTH.getId());
+            event.applyTo(transaction);
 
-                EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
+            EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
 
-                Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scoresAndEvents = groupFragment.getScores();
+            Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scoresAndEvents =
+                    groupFragment.getScores();
 
-                for (Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> pair : scoresAndEvents.entrySet()) {
-                    if (pair.getKey() == null) {
+            for (
+                    Map.Entry<HealthScoreTable.Row,
+                            HealthScoreEventTable.Row> pair : scoresAndEvents.entrySet()) {
+                if (pair.getKey() == null) {
+                    continue;
+                }
+
+                HealthScoreTable.Row healthScoreRow =
+                        DatabaseAccessor.HEALTH_SCORE_TABLE.select0Or1(
+                                database,
+                                WhereContains.columnEqualling(
+                                        HealthScoreTable.NAME,
+                                        pair.getKey().getName()));
+
+                if (healthScoreRow == null) {
+                    healthScoreRow = pair.getKey();
+                }
+
+                healthScoreRow.applyTo(transaction);
+
+                HealthScoreEventTable.Row row = pair.getValue();
+                if (row == null) {
+                    row = DatabaseAccessor.HEALTH_SCORE_EVENT_TABLE.select0Or1(database,
+                            WhereContains.and(
+                                    WhereContains.foreignKey(
+                                            HealthScoreEventTable.EVENT_ID,
+                                            event.getNextPrimaryKey().getId()),
+                                    WhereContains.foreignKey(
+                                            HealthScoreEventTable.HEALTH_SCORE_ID,
+                                            healthScoreRow.getNextPrimaryKey().getId())
+                            ));
+                }
+
+                if (row != null) {
+                    if (row.getScore() == null && !row.isInDatabase()) {
                         continue;
                     }
 
-                    HealthScoreTable.Row healthScoreRow = DatabaseAccessor.HEALTH_SCORE_TABLE.select0Or1(
-                            database,
-                            WhereContains.columnEqualling(
-                                    HealthScoreTable.NAME,
-                                    pair.getKey().getName()));
+                    row.getNextPrimaryKey().setEventId(event.getNextPrimaryKey());
 
-                    if (healthScoreRow == null) {
-                        healthScoreRow = pair.getKey();
-                    }
-
-                    healthScoreRow.applyTo(transaction);
-
-                    HealthScoreEventTable.Row row = pair.getValue();
-                    if (row == null) {
-                        row = DatabaseAccessor.HEALTH_SCORE_EVENT_TABLE.select0Or1(database,
-                                WhereContains.and(
-                                        WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getNextPrimaryKey().getId()),
-                                        WhereContains.foreignKey(HealthScoreEventTable.HEALTH_SCORE_ID, healthScoreRow.getNextPrimaryKey().getId())
-                                ));
-                    }
-
-                    if (row != null) {
-                        if (row.getScore() == null && !row.isInDatabase()) {
-                            continue;
-                        }
-
-                        row.getNextPrimaryKey().setEventId(event.getNextPrimaryKey());
-
-                        row.applyTo(transaction);
-                    }
-
+                    row.applyTo(transaction);
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
             }
+
+            runOnUiThread(this::finish);
         };
     }
 
     @Override
     protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
-        final EventTable.Row event = Utils.checkNotNull((EventTable.Row) bundle.getSerializable(HealthDatabase.EVENT_TABLE.getName()));
+        final EventTable.Row event = Utils.checkNotNull(
+                (EventTable.Row) bundle.getSerializable(HealthDatabase.EVENT_TABLE.getName()));
         if (!event.getTypeId().equals(EventTypeTable.HEALTH.getId())) {
-            throw new EventTypeTable.BadEventTypeException(EventTypeTable.HEALTH, event.getTypeId().getId());
+            throw new EventTypeTable.BadEventTypeException(
+                    EventTypeTable.HEALTH, event.getTypeId().getId());
         }
 
         getEventFragment().setRow(event);
 
-        getExecutor().perform(new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull final Database database, @Nonnull Transaction transaction) {
-                HealthScoreEventTable.Row[] scoreEvents = HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(database, WhereContains.foreignKey(HealthScoreEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
-                final Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scores = new HashMap<>();
+        getExecutor().perform((database, transaction) -> {
+            HealthScoreEventTable.Row[] scoreEvents =
+                    HealthDatabase.HEALTH_SCORE_EVENT_TABLE.select(
+                            database,
+                            WhereContains.foreignKey(
+                                    HealthScoreEventTable.EVENT_ID,
+                                    event.getConcretePrimaryKey().getId()));
+            final Map<HealthScoreTable.Row, HealthScoreEventTable.Row> scores = new HashMap<>();
 
-                for (HealthScoreEventTable.Row scoreEvent : scoreEvents) {
-                    HealthScoreTable.Row scoreType = HealthDatabase.HEALTH_SCORE_TABLE.select1(database, WhereContains.foreignKey(HealthScoreTable._ID, scoreEvent.getConcretePrimaryKey().getHealthScoreId().getId()));
-                    scores.put(scoreType, scoreEvent);
+            for (HealthScoreEventTable.Row scoreEvent : scoreEvents) {
+                HealthScoreTable.Row scoreType =
+                        HealthDatabase.HEALTH_SCORE_TABLE.select1(
+                                database,
+                                WhereContains.foreignKey(
+                                        HealthScoreTable._ID,
+                                        scoreEvent
+                                                .getConcretePrimaryKey()
+                                                .getHealthScoreId()
+                                                .getId()));
+                scores.put(scoreType, scoreEvent);
+            }
+
+            runOnUiThread(() -> {
+                EditScoreEventGroupFragment eventGroupFragment = getScoreGroupFragment();
+                eventGroupFragment.clearScoreFragments();
+                FragmentTransaction transaction1 = getSupportFragmentManager().beginTransaction();
+
+                for (
+                        Map.Entry<HealthScoreTable.Row,
+                                HealthScoreEventTable.Row> entry : scores.entrySet()) {
+                    EditScoreEventFragment fragment = EditScoreEventFragment.newInstance(entry);
+                    eventGroupFragment.addFragment(fragment, transaction1);
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        EditScoreEventGroupFragment eventGroupFragment = getScoreGroupFragment();
-                        eventGroupFragment.clearScoreFragments();
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        for (Map.Entry<HealthScoreTable.Row, HealthScoreEventTable.Row> entry : scores.entrySet()) {
-                            EditScoreEventFragment fragment = EditScoreEventFragment.newInstance(entry);
-                            eventGroupFragment.addFragment(fragment, transaction);
-                        }
-
-                        transaction.commit();
-                    }
-                });
-            }
+                transaction1.commit();
+            });
         });
     }
 
@@ -199,22 +211,16 @@ public class ScoreEventActivity extends AbstractEditActivity implements EditScor
     public void onScoreModified(@Nonnull final HealthScoreTable.Row score) {
         invalidateOptionsMenu();
 
-        Utils.checkNotNull(getExecutor()).perform(new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                score.applyTo(transaction);
+        Utils.checkNotNull(getExecutor()).perform((database, transaction) -> {
+            score.applyTo(transaction);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
-                        if (groupFragment != null) {
-                            groupFragment.clearScoreFragments();
-                            groupFragment.refreshScores();
-                        }
-                    }
-                });
-            }
+            runOnUiThread(() -> {
+                EditScoreEventGroupFragment groupFragment = getScoreGroupFragment();
+                if (groupFragment != null) {
+                    groupFragment.clearScoreFragments();
+                    groupFragment.refreshScores();
+                }
+            });
         });
     }
 

@@ -1,6 +1,6 @@
-/**
- * © Robert Williamson 2014-2016.
- * This program is distributed under the terms of the GNU General Public License.
+/*
+  © Robert Williamson 2014-2016.
+  This program is distributed under the terms of the GNU General Public License.
  */
 package com.robwilliamson.healthyesther.analysis;
 

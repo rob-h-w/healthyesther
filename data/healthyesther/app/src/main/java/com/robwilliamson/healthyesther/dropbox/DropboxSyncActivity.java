@@ -1,16 +1,15 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.dropbox;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
@@ -35,7 +34,7 @@ public class DropboxSyncActivity extends DropboxActivity {
 
     @Override
     protected synchronized void loadData() {
-        if (!hasRequiredPermissions()) {
+        if (lacksRequiredPermissions()) {
             return;
         }
 
@@ -51,7 +50,7 @@ public class DropboxSyncActivity extends DropboxActivity {
 
         final Boolean backup = !restore;
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -61,12 +60,10 @@ public class DropboxSyncActivity extends DropboxActivity {
                         HealthDbHelper.getInstance().restoreFromDropbox();
                     }
                 } catch (IOException | DbxException e) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(DropboxSyncActivity.this, R.string.dropbox_sync_failed, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    runOnUiThread(() -> Toast.makeText(
+                            DropboxSyncActivity.this,
+                            R.string.dropbox_sync_failed,
+                            Toast.LENGTH_SHORT).show());
                     e.printStackTrace();
                 } finally {
                     setBusy(false);
@@ -82,9 +79,9 @@ public class DropboxSyncActivity extends DropboxActivity {
     // Identifier for the permission request
     private static final int READ_CONTACTS_PERMISSIONS_REQUEST = 1;
 
-    private boolean hasRequiredPermissions() {
+    private boolean lacksRequiredPermissions() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
-                == PackageManager.PERMISSION_GRANTED;
+                != PackageManager.PERMISSION_GRANTED;
     }
 
     // Called when the user is performing an action which requires the app to read the
@@ -95,34 +92,27 @@ public class DropboxSyncActivity extends DropboxActivity {
         // in Marshmallow
         // 2) Always check for permission (even if permission has already been granted)
         // since the user can revoke permissions at any time through Settings
-        if (!hasRequiredPermissions()) {
+        if (lacksRequiredPermissions()) {
             // The permission is NOT already granted.
             // Check if the user has been asked about this permission already and denied
             // it. If so, we want to give more explanation about why the permission is needed.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(
-                        Manifest.permission.READ_CONTACTS)) {
-                    // Show our own UI to explain to the user why we need to read the contacts
-                    // before actually requesting the permission and showing the default UI
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage(R.string.read_contacts_permission_explanation)
-                            .setTitle(R.string.dropbox)
-                            .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                // Fire off an async request to actually get the permission
-                                                // This will show the standard permission request dialog UI
-                                                DropboxSyncActivity.this.requestPermissions(new String[]{
-                                                                Manifest.permission.READ_CONTACTS},
-                                                        READ_CONTACTS_PERMISSIONS_REQUEST);
-                                            }
-                                        }
-                                    }
-                            );
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_CONTACTS)) {
+                // Show our own UI to explain to the user why we need to read the contacts
+                // before actually requesting the permission and showing the default UI
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.read_contacts_permission_explanation)
+                        .setTitle(R.string.dropbox)
+                        .setNeutralButton(android.R.string.ok, (dialog, which) -> {
+                            // Fire off an async request to actually get the permission
+                            // This will show the standard permission request dialog UI
+                            DropboxSyncActivity.this.requestPermissions(new String[]{
+                                            Manifest.permission.READ_CONTACTS},
+                                    READ_CONTACTS_PERMISSIONS_REQUEST);
+                        }
+                        );
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         }
     }

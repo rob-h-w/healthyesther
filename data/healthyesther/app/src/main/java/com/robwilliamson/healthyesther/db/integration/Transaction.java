@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.db.integration;
 
@@ -145,7 +145,7 @@ public class Transaction implements com.robwilliamson.healthyesther.db.includes.
         }
     }
 
-    public static class NullColumnValueException extends RuntimeException {
+    static class NullColumnValueException extends RuntimeException {
         NullColumnValueException(String column) {
             super("Column " + column + " was provided a null value. Column value lists should replace null values with class types, i.e. for a null String, use String.class.");
         }

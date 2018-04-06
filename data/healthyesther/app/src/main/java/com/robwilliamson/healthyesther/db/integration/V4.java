@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.db.integration;
 
@@ -12,7 +12,6 @@ import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
-import com.robwilliamson.healthyesther.db.includes.Where;
 
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -155,13 +154,7 @@ public class V4 implements Upgrade {
                 do {
                     transaction.update(
                             HealthDatabase.EVENT_TABLE.getName(),
-                            new Where() {
-                                @Nullable
-                                @Override
-                                public String getWhere() {
-                                    return "_id = " + events.getInt(_ID);
-                                }
-                            },
+                            () -> "_id = " + events.getInt(_ID),
                             Arrays.asList("[when]", "created", "modified"),
                             addTimezone(events.getString(WHEN), ZoneId.systemDefault()),
                             addTimezone(events.getString(CREATED), ZoneOffset.UTC),

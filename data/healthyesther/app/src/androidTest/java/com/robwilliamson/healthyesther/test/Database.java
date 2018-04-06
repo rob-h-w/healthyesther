@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.test;
 
@@ -19,10 +19,9 @@ import junit.framework.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 
 public final class Database {
-    public static void useV4Database() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public static void useV4Database() throws IOException {
         Context testContext = InstrumentationRegistry.getContext();
 
         // Record the string before we delete the db because deletion also resets HealthDbHelper.
@@ -37,7 +36,7 @@ public final class Database {
         }
     }
 
-    public static void useV3Database() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public static void useV3Database() throws IOException {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
         Context testContext = instrumentation.getContext();
 
@@ -53,7 +52,7 @@ public final class Database {
         }
     }
 
-    public static void deleteDatabase() throws NoSuchFieldException, IllegalAccessException {
+    public static void deleteDatabase() {
         HealthDbHelper.closeDb();
 
         File file = new File(getDatabaseAbsolutePath());
@@ -61,10 +60,6 @@ public final class Database {
         if (file.exists()) {
             Assert.assertTrue("Unable to delete " + file.getAbsolutePath(), file.delete());
         }
-
-        Field sInstance = HealthDbHelper.class.getDeclaredField("sInstance");
-        sInstance.setAccessible(true);
-        sInstance.set(null, null);
     }
 
     /**
@@ -72,7 +67,7 @@ public final class Database {
      * HealthDbHelper's life must be managed carefully in order to set up the conditions of first
      * application startup with an old Db, and new code.
      */
-    public static String getDatabaseAbsolutePath() {
+    private static String getDatabaseAbsolutePath() {
         Context targetContext = InstrumentationRegistry.getTargetContext();
         return targetContext.getDatabasePath(
                 HealthDbHelper.getInstance().getDatabaseName()).getAbsolutePath();

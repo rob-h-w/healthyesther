@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
@@ -13,8 +13,6 @@ import com.robwilliamson.healthyesther.Utils;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreJudgmentRangeTable;
 import com.robwilliamson.healthyesther.db.generated.HealthScoreTable;
-import com.robwilliamson.healthyesther.db.includes.Database;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.fragment.BaseFragment;
 import com.robwilliamson.healthyesther.fragment.edit.EditFragment;
@@ -41,51 +39,45 @@ public class ScoreActivity extends AbstractEditActivity implements BaseFragment.
             fragment = Utils.checkNotNull(getScoreFragment());
         }
 
-        list.add(new Pair<EditFragment, String>(fragment, EDIT_SCORE_TAG));
+        list.add(new Pair<>(fragment, EDIT_SCORE_TAG));
 
         return list;
     }
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                EditScoreFragment fragment = getScoreFragment();
-                if (fragment == null) {
-                    return;
-                }
-
-                HealthScoreTable.Row row = fragment.getRow();
-                if (row == null) {
-                    return;
-                }
-
-                row.applyTo(transaction);
-
-                for (HealthScoreJudgmentRangeTable.Row judgmentRow : fragment.getJudgments()) {
-                    judgmentRow.applyTo(transaction);
-                }
-
-                Intent result = new Intent();
-
-                result.putExtra(HealthScoreTable.NAME, row);
-
-                setResult(Activity.RESULT_OK, result);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
+        return (database, transaction) -> {
+            EditScoreFragment fragment = getScoreFragment();
+            if (fragment == null) {
+                return;
             }
+
+            HealthScoreTable.Row row = fragment.getRow();
+            if (row == null) {
+                return;
+            }
+
+            row.applyTo(transaction);
+
+            for (HealthScoreJudgmentRangeTable.Row judgmentRow : fragment.getJudgments()) {
+                judgmentRow.applyTo(transaction);
+            }
+
+            Intent result = new Intent();
+
+            result.putExtra(HealthScoreTable.NAME, row);
+
+            setResult(Activity.RESULT_OK, result);
+
+            runOnUiThread(this::finish);
         };
     }
 
     @Override
     protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
-        HealthScoreTable.Row row = (HealthScoreTable.Row) bundle.getSerializable(HealthDatabase.HEALTH_SCORE_TABLE.getName());
+        HealthScoreTable.Row row =
+                (HealthScoreTable.Row) bundle.getSerializable(
+                        HealthDatabase.HEALTH_SCORE_TABLE.getName());
 
         EditScoreFragment editScoreFragment = getScoreFragment();
 

@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.fragment.dialog;
 
@@ -13,7 +13,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -77,12 +76,11 @@ public abstract class AbstractAddNamedDialogFragment extends DialogFragment {
             public void afterTextChanged(Editable s) {
             }
         });
-        name.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String suggestion = (String) parent.getAdapter().getItem(position);
-                AbstractAddNamedDialogFragment.this.suggestionSelected(suggestion, mSuggestions.get(suggestion));
-            }
+        name.setOnItemClickListener((parent, view1, position, id) -> {
+            String suggestion = (String) parent.getAdapter().getItem(position);
+            AbstractAddNamedDialogFragment.this.suggestionSelected(
+                    suggestion,
+                    mSuggestions.get(suggestion));
         });
         getOkButton().setOnClickListener(new View.OnClickListener() {
             @Override

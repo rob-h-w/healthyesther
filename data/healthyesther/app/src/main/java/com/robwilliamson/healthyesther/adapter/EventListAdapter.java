@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.adapter;
 
@@ -17,18 +17,12 @@ import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag, View, EventTable.Row> {
     private volatile static DateTimeFormatter sDateTimeFormatter;
 
     public EventListAdapter(Activity context, int layoutId) {
         super(context, layoutId, EventListAdapter.Tag.class, View.class);
-        init(context);
-    }
-
-    public EventListAdapter(Activity context, int layoutId, List<EventTable.Row> data) {
-        super(context, layoutId, data, EventListAdapter.Tag.class, View.class);
         init(context);
     }
 
@@ -95,6 +89,7 @@ public class EventListAdapter extends OptimizedListAdapter<EventListAdapter.Tag,
     }
 
     protected static class Tag {
+        @SuppressWarnings("WeakerAccess")
         public ImageView eventIcon;
         public TextView title;
         public TextView time;

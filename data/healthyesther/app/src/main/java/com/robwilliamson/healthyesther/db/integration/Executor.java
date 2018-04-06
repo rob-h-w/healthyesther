@@ -1,9 +1,10 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.db.integration;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 
 import com.robwilliamson.healthyesther.db.HealthDbHelper;
@@ -43,8 +44,10 @@ public class Executor extends TransactionExecutor {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected AsyncTask<Void, Void, Void> createRunner() {
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> asyncTask =
+                new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 Runnable runnable = null;

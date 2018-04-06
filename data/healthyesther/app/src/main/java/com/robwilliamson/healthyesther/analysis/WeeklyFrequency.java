@@ -1,6 +1,6 @@
-/**
- * © Robert Williamson 2014-2016.
- * This program is distributed under the terms of the GNU General Public License.
+/*
+  © Robert Williamson 2014-2016.
+  This program is distributed under the terms of the GNU General Public License.
  */
 package com.robwilliamson.healthyesther.analysis;
 
@@ -30,10 +30,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class WeeklyFrequency extends Frequency {
-    public WeeklyFrequency() {
+    WeeklyFrequency() {
     }
 
-    public WeeklyFrequency(@Nonnull List<EventTable.Row> events) {
+    WeeklyFrequency(@Nonnull List<EventTable.Row> events) {
         for (EventTable.Row event : events) {
             addValue(event);
         }

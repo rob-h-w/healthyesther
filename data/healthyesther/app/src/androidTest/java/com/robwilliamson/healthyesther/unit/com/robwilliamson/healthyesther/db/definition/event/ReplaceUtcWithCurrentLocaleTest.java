@@ -48,14 +48,21 @@ public class ReplaceUtcWithCurrentLocaleTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         Database.deleteDatabase();
     }
 
     @SuppressWarnings("RedundantThrows")
     @Test
     public void testNormalUpgradePath() throws Exception {
-        Cursor c = mDb.query(DatabaseAccessor.EVENT_TABLE.getName(), null, null, null, null, null, null);
+        Cursor c = mDb.query(
+                DatabaseAccessor.EVENT_TABLE.getName(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
         final Set<EventDates> newEvents = getEvents(c);
         for (EventDates dates : newEvents) {
             // Assert the dates are null or local.

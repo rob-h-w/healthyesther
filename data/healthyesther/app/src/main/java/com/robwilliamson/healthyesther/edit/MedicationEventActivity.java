@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.edit;
 
@@ -12,9 +12,7 @@ import com.robwilliamson.healthyesther.db.generated.EventTable;
 import com.robwilliamson.healthyesther.db.generated.HealthDatabase;
 import com.robwilliamson.healthyesther.db.generated.MedicationEventTable;
 import com.robwilliamson.healthyesther.db.generated.MedicationTable;
-import com.robwilliamson.healthyesther.db.includes.Database;
 import com.robwilliamson.healthyesther.db.includes.DateTime;
-import com.robwilliamson.healthyesther.db.includes.Transaction;
 import com.robwilliamson.healthyesther.db.includes.TransactionExecutor;
 import com.robwilliamson.healthyesther.db.integration.DatabaseAccessor;
 import com.robwilliamson.healthyesther.db.integration.EventTypeTable;
@@ -76,69 +74,67 @@ public class MedicationEventActivity extends AbstractEditActivity
 
     @Override
     protected TransactionExecutor.Operation onModifySelected() {
-        return new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
-                EventTable.PrimaryKey oldEventKey = mMedEvent == null ? null : mMedEvent.getConcretePrimaryKey().getEventId();
-                event.setTypeId(EventTypeTable.MEDICATION.getId());
-                MedicationTable.Row medication = Utils.checkNotNull(getMedicationFragment().getRow());
-                MedicationTable.PrimaryKey oldMedicationKey = mMedEvent == null ? null : mMedEvent.getConcretePrimaryKey().getMedicationId();
+        return (database, transaction) -> {
+            EventTable.Row event = Utils.checkNotNull(getEventFragment().getRow());
+            EventTable.PrimaryKey oldEventKey =
+                    mMedEvent == null ? null : mMedEvent.getConcretePrimaryKey().getEventId();
+            event.setTypeId(EventTypeTable.MEDICATION.getId());
+            MedicationTable.Row medication = Utils.checkNotNull(getMedicationFragment().getRow());
+            MedicationTable.PrimaryKey oldMedicationKey =
+                    mMedEvent == null ? null : mMedEvent.getConcretePrimaryKey().getMedicationId();
 
-                if (oldEventKey != null && oldMedicationKey != null) {
-                    mMedEvent = DatabaseAccessor.MEDICATION_EVENT_TABLE.select0Or1(database, and(
-                            foreignKey(MedicationEventTable.EVENT_ID, oldEventKey.getId()),
-                            foreignKey(MedicationEventTable.MEDICATION_ID, oldMedicationKey.getId())));
-                }
-
-                event.applyTo(transaction);
-                medication.applyTo(transaction);
-
-                if (mMedEvent == null) {
-                    mMedEvent = new MedicationEventTable.Row(event.getNextPrimaryKey(), medication.getNextPrimaryKey());
-                } else {
-                    mMedEvent.setNextPrimaryKey(new MedicationEventTable.PrimaryKey(event.getNextPrimaryKey(), medication.getNextPrimaryKey()));
-                }
-
-                mMedEvent.applyTo(transaction);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                    }
-                });
+            if (oldEventKey != null && oldMedicationKey != null) {
+                mMedEvent = DatabaseAccessor.MEDICATION_EVENT_TABLE.select0Or1(database, and(
+                        foreignKey(MedicationEventTable.EVENT_ID, oldEventKey.getId()),
+                        foreignKey(MedicationEventTable.MEDICATION_ID, oldMedicationKey.getId())));
             }
+
+            event.applyTo(transaction);
+            medication.applyTo(transaction);
+
+            if (mMedEvent == null) {
+                mMedEvent = new MedicationEventTable.Row(
+                        event.getNextPrimaryKey(),
+                        medication.getNextPrimaryKey());
+            } else {
+                mMedEvent.setNextPrimaryKey(new MedicationEventTable.PrimaryKey(
+                        event.getNextPrimaryKey(),
+                        medication.getNextPrimaryKey()));
+            }
+
+            mMedEvent.applyTo(transaction);
+
+            runOnUiThread(this::finish);
         };
     }
 
     @Override
     protected void resumeFromIntentExtras(@Nonnull Bundle bundle) {
-        final EventTable.Row event = Utils.checkNotNull((EventTable.Row) bundle.getSerializable(HealthDatabase.EVENT_TABLE.getName()));
+        final EventTable.Row event =
+                Utils.checkNotNull(
+                        (EventTable.Row) bundle.getSerializable(
+                                HealthDatabase.EVENT_TABLE.getName()));
         if (!event.getTypeId().equals(EventTypeTable.MEDICATION.getId())) {
-            throw new EventTypeTable.BadEventTypeException(EventTypeTable.MEDICATION, event.getTypeId().getId());
+            throw new EventTypeTable.BadEventTypeException(
+                    EventTypeTable.MEDICATION, event.getTypeId().getId());
         }
 
         getEventFragment().setRow(event);
 
-        getExecutor().perform(new TransactionExecutor.Operation() {
-            @Override
-            public void doTransactionally(@Nonnull Database database, @Nonnull Transaction transaction) {
-                mMedEvent = HealthDatabase.MEDICATION_EVENT_TABLE.select1(
-                        database,
-                        foreignKey(MedicationEventTable.EVENT_ID, event.getConcretePrimaryKey().getId()));
+        getExecutor().perform((database, transaction) -> {
+            mMedEvent = HealthDatabase.MEDICATION_EVENT_TABLE.select1(
+                    database,
+                    foreignKey(
+                            MedicationEventTable.EVENT_ID,
+                            event.getConcretePrimaryKey().getId()));
 
-                final MedicationTable.Row med = HealthDatabase.MEDICATION_TABLE.select1(
-                        database,
-                        foreignKey(MedicationTable._ID, mMedEvent.getConcretePrimaryKey().getMedicationId().getId()));
+            final MedicationTable.Row med = HealthDatabase.MEDICATION_TABLE.select1(
+                    database,
+                    foreignKey(
+                            MedicationTable._ID,
+                            mMedEvent.getConcretePrimaryKey().getMedicationId().getId()));
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        getMedicationFragment().setRow(med);
-                    }
-                });
-            }
+            runOnUiThread(() -> getMedicationFragment().setRow(med));
         });
     }
 

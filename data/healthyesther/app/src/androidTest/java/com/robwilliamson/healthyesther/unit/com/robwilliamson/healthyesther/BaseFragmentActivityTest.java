@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.unit.com.robwilliamson.healthyesther;
 
@@ -36,53 +36,42 @@ public class BaseFragmentActivityTest {
     public void testNotCreatedState() throws Exception {
         final EventActivity[] activity = new EventActivity[1];
 
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                activity[0] = mActivityRule.getActivity();
-            }
-        });
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> activity[0] = mActivityRule.getActivity());
 
         assertFalse(isActive(activity[0]));
     }
 
     @Test
-    public void testLaunchedState() throws Exception {
+    public void testLaunchedState() {
         final EventActivity activity = mActivityRule.getActivity();
 
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                activity.onResume();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            activity.onResume();
 
-                Throwable t = null;
-                try {
-                    assertTrue(isActive(activity));
+            Throwable t = null;
+            try {
+                assertTrue(isActive(activity));
 
-                    onPause(activity);
+                onPause(activity);
 
-                    assertFalse(isActive(activity));
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                    e.printStackTrace();
-                    t = e;
-                }
+                assertFalse(isActive(activity));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+                t = e;
+            }
 
-                if (t != null) {
-                    fail("This was thrown: " + t);
-                }
+            if (t != null) {
+                fail("This was thrown: " + t);
             }
         });
     }
 
     @Before
-    public void setUp() throws Exception {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(new Runnable() {
-            @Override
-            public void run() {
-                Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-                context.setTheme(R.style.HealthyEstherTheme);
-                mActivityRule.getActivity().startActivity(new Intent(Intent.ACTION_MAIN), null);
-            }
+    public void setUp() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> {
+            Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+            context.setTheme(R.style.HealthyEstherTheme);
+            mActivityRule.getActivity().startActivity(new Intent(Intent.ACTION_MAIN), null);
         });
     }
 

@@ -1,10 +1,11 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.adapter;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,13 @@ import android.widget.ArrayAdapter;
 
 import com.robwilliamson.healthyesther.Utils;
 
-import java.util.List;
-
 public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAdapter<D> {
     private final Class<T> mTagType;
     private final Class<V> mViewType;
     private final Activity mActivity;
     private final int mLayout;
 
-    public OptimizedListAdapter(Activity context, int layout, Class<T> tagType, Class<V> viewType) {
+    OptimizedListAdapter(Activity context, int layout, Class<T> tagType, Class<V> viewType) {
         super(context, layout);
         mTagType = Utils.checkNotNull(tagType);
         mViewType = Utils.checkNotNull(viewType);
@@ -28,13 +27,9 @@ public abstract class OptimizedListAdapter<T, V extends View, D> extends ArrayAd
         mActivity = Utils.checkNotNull(context);
     }
 
-    public OptimizedListAdapter(Activity context, int layout, List<D> list, Class<T> tagType, Class<V> viewType) {
-        this(context, layout, tagType, viewType);
-        this.addAll(list);
-    }
-
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         V view = Utils.checkedCast(convertView, mViewType);
 
         if (view == null) {

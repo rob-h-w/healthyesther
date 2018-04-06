@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2016.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2016.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.db;
 
@@ -36,7 +36,6 @@ import javax.annotation.Nonnull;
 public final class HealthDbHelper extends SQLiteOpenHelper {
     private static final Object sSync = new Object();
     public static boolean sDebug = false;
-    private static volatile HealthDbHelper sInstance = null;
     private static volatile DatabaseWrapperClass sDatabase = null;
     private final Context mContext;
 
@@ -47,22 +46,12 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
 
     @Nonnull
     private static HealthDbHelper getInstance(@Nonnull Context context) {
-        synchronized (sSync) {
-            if (sInstance == null) {
-                sInstance = new HealthDbHelper(context.getApplicationContext());
-            }
-
-            return sInstance;
-        }
+        return new HealthDbHelper(context.getApplicationContext());
     }
 
     @Nonnull
     public static HealthDbHelper getInstance() {
-        if (sInstance == null) {
-            sInstance = getInstance(App.getInstance());
-        }
-
-        return sInstance;
+        return getInstance(App.getInstance());
     }
 
     @Nonnull
@@ -85,7 +74,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             if (sDatabase != null) {
                 sDatabase.getSqliteDatabase().close();
                 sDatabase = null;
-                sInstance = null;
             }
         }
     }
@@ -183,10 +171,6 @@ public final class HealthDbHelper extends SQLiteOpenHelper {
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath)) {
                 dbxDownloader.download(fileOutputStream);
             }
-
-            // We'll need to be re-created after this event in case the dropbox version is different
-            // from this one.
-            sInstance = getInstance(App.getInstance());
         }
     }
 }
