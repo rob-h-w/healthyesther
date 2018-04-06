@@ -26,6 +26,8 @@ This program is distributed under the terms of the GNU General Public License.
 
     <style name="AppTheme.contentLayout" parent="AppTheme">
         <item name="android:background">@drawable/content_background</item>
+        <item name="android:paddingTop">@dimen/content_layout_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/content_layout_padding_vertical</item>
         <item name="android:padding">@dimen/content_layout_padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -36,7 +38,7 @@ This program is distributed under the terms of the GNU General Public License.
     </style>
 
     <style name="AppTheme.sectionLayout" parent="AppTheme">
-        <item name="android:background">@drawable/border</item>
+        <item name="android:background">@color/content_background</item>
         <item name="android:padding">@dimen/section_layout_padding</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -95,7 +97,7 @@ This program is distributed under the terms of the GNU General Public License.
     </style>
 
     <style name="listView" parent="@android:style/Widget.ListView">
-        <item name="android:background">@color/dark_background</item>
+        <item name="android:background">@color/light_background</item>
     </style>
 
     <style name="popupMenu" parent="@android:style/Widget.PopupMenu">

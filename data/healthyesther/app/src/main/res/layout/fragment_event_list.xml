@@ -10,15 +10,9 @@ This program is distributed under the terms of the GNU General Public License.
 
     <ListView
         android:id="@android:id/list"
-        style="@style/AppTheme.sectionLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <TextView
-        android:id="@android:id/empty"
-        style="@style/AppTheme.sectionLayout"
+        style="@style/Widget.AppCompat.ListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" />
+        android:background="@color/list_background" />
 
 </FrameLayout>

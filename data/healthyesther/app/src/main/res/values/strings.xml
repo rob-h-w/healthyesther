@@ -80,5 +80,7 @@ This program is distributed under the terms of the GNU General Public License.
     <string name="about">About</string>
     <string name="_1_hour_ago">1 hour ago</string>
     <string name="now">now</string>
+    <string name="type">type</string>
+    <string name="name">name</string>
 
 </resources>

@@ -74,7 +74,7 @@ public class HomeActivityEspressoTest {
     }
 
     @Test
-    public void testRestoreFromDropbox() throws Exception {
+    public void testRestoreFromDropbox() {
         final int expectedCount = populateSomeDropboxData();
 
         // Backup the data to Dropbox.
@@ -91,23 +91,36 @@ public class HomeActivityEspressoTest {
         final int emptyCount = Database.countEntries();
         assertEquals(0, emptyCount);
 
-        SystemClock.sleep(2000);
+        // Note - we retry restoring from Dropbox because this is an integration test that really
+        // uses Dropbox to store the DB. Since Dropbox is eventually consistent, it's possible that
+        // DB doesn't have all its ducks in a row when we ask for the restored database. Usually a
+        // single retry after a little wait is enough to remedy this. Do 2 retries just in case.
+        int tries = 3;
+        int finalCount = 0;
+        while(tries > 0) {
+            tries--;
 
-        // Restore from Dropbox.
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
-        onView(MenuAccessor.restoreFromDropbox()).perform(click());
+            // Restore from Dropbox.
+            openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getTargetContext());
+            onView(MenuAccessor.restoreFromDropbox()).perform(click());
 
-        // Confirm.
-        onView(ConfirmationDialogAccessor.okButton()).perform(click());
+            // Confirm.
+            onView(ConfirmationDialogAccessor.okButton()).perform(click());
 
-        SystemClock.sleep(2000);
+            // Ensure we're back in the home activity.
+            onView(HomeActivityAccessor.AddMode.healthScoreButton()).check(matches(isDisplayed()));
+            onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
 
-        // Ensure we're back in the home activity.
-        onView(HomeActivityAccessor.AddMode.healthScoreButton()).check(matches(isDisplayed()));
-        onView(HomeActivityAccessor.AddMode.mealScoreButton()).check(matches(isDisplayed()));
+            finalCount = Database.countEntries();
+
+            if (finalCount > 0) {
+                break;
+            }
+
+            SystemClock.sleep(2000);
+        }
 
         // Check we have the same number of entries as before.
-        final int finalCount = Database.countEntries();
         assertEquals(expectedCount, finalCount);
     }
 
@@ -135,7 +148,7 @@ public class HomeActivityEspressoTest {
     }
 
     @Test
-    public void testConfirmationDialogCancel() throws Exception {
+    public void testConfirmationDialogCancel() {
         populateSomeDropboxData();
 
         // Remove it from current use.

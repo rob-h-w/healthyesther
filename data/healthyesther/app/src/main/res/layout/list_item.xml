@@ -13,7 +13,7 @@ This program is distributed under the terms of the GNU General Public License.
         android:id="@+id/event_list_element_type"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="type" />
+        android:text="@string/type" />
 
     <Space
         android:layout_width="@dimen/list_element_space"
@@ -23,6 +23,6 @@ This program is distributed under the terms of the GNU General Public License.
         android:id="@+id/event_list_element_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="name" />
+        android:text="@string/name" />
 
 </LinearLayout>

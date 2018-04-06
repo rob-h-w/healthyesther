@@ -24,8 +24,11 @@ This program is distributed under the terms of the GNU General Public License.
 
     <ListView
         android:id="@+id/navigation_list"
+        style="@style/Widget.AppCompat.ListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/colorBackgroundFloating"
         android:choiceMode="singleChoice"
-        android:theme="@style/NavigationDrawerTheme" />
+        android:theme="@style/NavigationDrawerTheme"
+        android:listSelector="@color/light_background"/>
 </LinearLayout>

@@ -6,21 +6,22 @@ This program is distributed under the terms of the GNU General Public License.
 <resources>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">2dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="list_element_space">10dip</dimen>
     <dimen name="min_button_width">100dip</dimen>
     <dimen name="border_stroke_width">2dip</dimen>
-    <dimen name="border_corner_radius">20dip</dimen>
+    <dimen name="border_corner_radius">0dip</dimen>
     <dimen name="border_margin">5dip</dimen>
-    <dimen name="content_layout_padding">15dip</dimen>
-    <dimen name="section_layout_padding">20dip</dimen>
+    <dimen name="content_layout_padding">2dip</dimen>
+    <dimen name="content_layout_padding_vertical">15dip</dimen>
+    <dimen name="section_layout_padding">0dip</dimen>
     <dimen name="activity_graph_minimum_height">300dip</dimen>
 
     <!-- Button values -->
     <dimen name="button_text_size">16dip</dimen>
-    <dimen name="button_corner_radius">6dip</dimen>
+    <dimen name="button_corner_radius">0dip</dimen>
     <dimen name="button_stroke_width">2dip</dimen>
     <dimen name="button_padding">7dip</dimen>
     <dimen name="nav_dividerHeight">1dp</dimen>

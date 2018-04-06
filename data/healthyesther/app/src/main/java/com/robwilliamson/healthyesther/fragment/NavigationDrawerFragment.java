@@ -1,6 +1,6 @@
-/**
-  * © Robert Williamson 2014-2018.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2018.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther.fragment;
 
@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -31,6 +31,7 @@ import com.robwilliamson.healthyesther.fragment.home.AddFragment;
 import com.robwilliamson.healthyesther.fragment.home.EditFragment;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -101,16 +102,12 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View baseView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView = (ListView) baseView.findViewById(R.id.navigation_list);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
-            }
-        });
+        mDrawerListView = baseView.findViewById(R.id.navigation_list);
+        mDrawerListView.setOnItemClickListener(
+                (parent, view, position, id) -> selectItem(position));
 
         // Build supported navigation modes.
         ArrayList<String> navigationModes = new ArrayList<>(NavigationDrawerMode.values().length);
@@ -121,7 +118,7 @@ public class NavigationDrawerFragment extends Fragment {
         String[] modeTitles = new String[navigationModes.size()];
 
         mDrawerListView.setAdapter(new ArrayAdapter<>(
-                getActivity(),
+                Objects.requireNonNull(getActivity()),
                 R.layout.navigation_drawer_text,
                 android.R.id.text1,
                 navigationModes.toArray(modeTitles)));
@@ -140,7 +137,7 @@ public class NavigationDrawerFragment extends Fragment {
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
     public void setUp(int fragmentId, DrawerLayout drawerLayout) {
-        mFragmentContainerView = getActivity().findViewById(fragmentId);
+        mFragmentContainerView = Objects.requireNonNull(getActivity()).findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
         // set a custom shadow that overlays the main content when the drawer opens
@@ -204,7 +201,7 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
     }
 
     private void selectItem(int position) {
@@ -272,12 +269,11 @@ public class NavigationDrawerFragment extends Fragment {
     private void showGlobalContextActionBar() {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setTitle(R.string.app_name);
     }
 
     private ActionBar getActionBar() {
-        return ((AppCompatActivity) getActivity()).getSupportActionBar();
+        return ((AppCompatActivity) Objects.requireNonNull(getActivity())).getSupportActionBar();
     }
 
     public enum NavigationDrawerMode {

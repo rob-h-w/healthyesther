@@ -7,20 +7,23 @@ This program is distributed under the terms of the GNU General Public License.
     <color name="busy_background">#8fff</color>
     <color name="border">#4000</color>
     <color name="border_pressed">#e000</color>
+    <color name="border_background">#bfff</color>
     <color name="border_background_selected">#866f</color>
     <color name="border_background_pressed">#e66f</color>
     <color name="content_background">#bfff</color>
     <color name="content_background_selected">#f66f</color>
     <color name="content_foreground">@color/dark_foreground</color>
 
-    <color name="navigation_drawer_background">#a35b5ba7</color>
-    <color name="navigation_drawer_item_background">#a3a3a3f5</color>
+    <color name="navigation_drawer_background">#a3f7f7fa</color>
+    <color name="navigation_drawer_item_background">#a3f3f3f7</color>
     <color name="navigation_drawer_selector_background">#e9cacaf2</color>
 
     <color name="dark_foreground">#0707ae</color>
     <color name="light_foreground">#e6e6fa</color>
     <color name="dark_background">#5b5ba7</color>
     <color name="light_background">#cfcffd</color>
+
+    <color name="list_background">#eeffffff</color>
 
     <!-- button -->
     <color name="button_disabled">#80f2f2f2</color>

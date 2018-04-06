@@ -8,6 +8,7 @@ This program is distributed under the terms of the GNU General Public License.
         android:bottom="@dimen/border_margin"
         android:right="@dimen/border_margin">
         <shape android:shape="rectangle">
+            <solid android:color="@color/border_background" />
             <corners android:radius="@dimen/border_corner_radius" />
             <stroke
                 android:width="@dimen/border_stroke_width"

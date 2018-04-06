@@ -121,7 +121,7 @@ public class NoteEventActivityEspressoTest {
         onView(HomeActivityAccessor.AddMode.noteButton()).perform(click());
         onView(EditAccessor.whenRelativeSelectorLayout()).perform(click());
 
-        final ZonedDateTime expected = ZonedDateTime.now().minusMinutes(36);
+        final ZonedDateTime expected = ZonedDateTime.now().minusMinutes(34);
         int hourOfDay = expected.getHour();
         final String meridianSuffix = hourOfDay > 11 ? "PM" : "AM";
         hourOfDay = hourOfDay == 12 ? 0 : hourOfDay % 12;

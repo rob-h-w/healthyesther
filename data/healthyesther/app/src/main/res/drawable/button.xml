@@ -33,11 +33,6 @@ This program is distributed under the terms of the GNU General Public License.
 
         <shape android:shape="rectangle">
 
-            <gradient
-                android:endColor="@color/button_overlay_gradient_1_end"
-                android:startColor="@color/button_overlay_gradient_1_start"
-                android:type="linear" />
-
             <corners android:radius="@dimen/button_corner_radius" />
 
         </shape>
@@ -47,12 +42,6 @@ This program is distributed under the terms of the GNU General Public License.
     <item>
 
         <shape android:shape="rectangle">
-
-            <gradient
-                android:angle="270"
-                android:endColor="@color/button_overlay_gradient_2_end"
-                android:startColor="@color/button_overlay_gradient_2_start"
-                android:type="linear" />
 
             <corners android:radius="@dimen/button_corner_radius" />
 

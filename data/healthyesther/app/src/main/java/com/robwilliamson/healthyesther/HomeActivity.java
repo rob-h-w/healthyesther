@@ -1,12 +1,11 @@
-/**
-  * © Robert Williamson 2014-2018.
-  * This program is distributed under the terms of the GNU General Public License.
+/*
+   © Robert Williamson 2014-2018.
+   This program is distributed under the terms of the GNU General Public License.
   */
 package com.robwilliamson.healthyesther;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
 
@@ -48,7 +47,7 @@ public class HomeActivity extends DbActivity
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                findViewById(R.id.drawer_layout));
 
         if (findViewById(R.id.drawer_layout) != null) {
             if (savedInstanceState != null) {
